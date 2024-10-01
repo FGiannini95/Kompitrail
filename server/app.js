@@ -17,6 +17,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var app = express();
+//añado linea comentario
 
 // app.use(
 //   cors({
