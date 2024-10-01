@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-//const cors = require("cors");
+const cors = require("cors");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -17,14 +17,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var app = express();
-//añado linea comentario
 
-// app.use(
-//   cors({
-//     origin: "*",
-//     // origin: "http://localhost:5173"
-//   })
-// );
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
