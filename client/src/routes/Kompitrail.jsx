@@ -3,3 +3,13 @@ export const Kompitrail = () => {
     <div>Kompitrail</div>
   )
 }
+
+//BrowserRouter
+//NavBarApp
+//Routes
+//Route path element{<Componente/>}
+
+//Home
+//Search
+//CreateRoute
+//Profile
