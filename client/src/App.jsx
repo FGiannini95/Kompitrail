@@ -1,7 +1,12 @@
+import { KompitrailProvider } from "../context/KompitrailContext";
+import { Kompitrail } from "./routes/Kompitrail";
+
 export function App() {
   return (
     <>
-      <div>Hola</div>
+      <KompitrailProvider>
+        <Kompitrail/>
+      </KompitrailProvider>
     </>
   )
 }
