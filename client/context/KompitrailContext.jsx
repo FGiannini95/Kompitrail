@@ -1,9 +1,9 @@
-import React, { Children, createContext, useState } from 'react'
+import React, { children, createContext, useState, useEffect } from 'react'
 import { getLocalStorage } from '../src/helpers/localStorageUtils';
 
 export const KompitrailContext = createContext();
 
-export const KompitrailProvider = ({Children}) => {
+export const KompitrailProvider = ({children}) => {
   const [user, setUser] = useState("");
   const [token, setToken] = useState();
   const [isLogged, setIsLogged] = useState(false);
@@ -22,7 +22,7 @@ export const KompitrailProvider = ({Children}) => {
       isLogged,
       setIsLogged
     }}>
-      {Children}
+      {children}
     </KompitrailContext.Provider> 
   )
 } 
