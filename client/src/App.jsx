@@ -1,11 +1,11 @@
 import { KompitrailProvider } from "../context/KompitrailContext";
-import { Kompitrail } from "./routes/Kompitrail";
+import { GlobalRouter } from "./routes/GlobalRouter";
 
 export function App() {
   return (
     <>
       <KompitrailProvider>
-        <Kompitrail/>
+        <GlobalRouter/>
       </KompitrailProvider>
     </>
   )
