@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom"
+
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+
 
 
 export const Register = () => {
@@ -17,6 +20,7 @@ export const Register = () => {
 
   const [formValues, setFormValues] = useState(initialFormState);
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate()
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -55,6 +59,7 @@ export const Register = () => {
   const handleCancel = () => {
     setFormValues(initialFormState);
     setErrors({});
+    navigate("/")
     console.log('He limpiado todos los campos');
   };
 
@@ -65,7 +70,7 @@ export const Register = () => {
           <Typography variant="h4">Formulario de Registro</Typography>
         </Grid>
         
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <TextField
             label="Nombre"
             name="name"
