@@ -9,7 +9,6 @@ export default [
   pluginReact.configs.flat.recommended, // Include recommended rules from React plugin
   {
     settings: {
-      // Add settings for React
       react: {
         version: "detect", // Automatically detect the version of React
       },
@@ -17,8 +16,10 @@ export default [
   },
   {
     rules: {
-      // Disable prop-types rule
-      "react/prop-types": "off", // Turn off prop-types validation
+      "no-unused-vars": "warn",
+      "react/prop-types": "off",
+      semi: ["error", "always"], // Asegura que haya punto y coma al final de las líneas
+      quotes: ["error", "double"], // Usa comillas dobles
     },
   },
 ];
