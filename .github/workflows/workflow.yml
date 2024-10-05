@@ -32,7 +32,7 @@ jobs:
           
           # Check if the author is you (change 'your-username' to your actual GitHub username)
           AUTHOR="${{ github.event.pull_request.user.login }}"
-          if [ "$AUTHOR" == "Fgiannini95" ]; then
+          if [ "$AUTHOR" == "FGiannini95" ]; then
             # If you are the author, do not count your approval automatically
             echo "As the author of this PR, your approval is pending."
             APPROVALS=0 # No automatic approval
@@ -40,7 +40,7 @@ jobs:
 
           echo "Approvals: $APPROVALS"
           
-          if [ "$AUTHOR" != "Fgiannini95" ] && [ "$APPROVALS" -lt 1 ]; then
+          if [ "$AUTHOR" != "FGiannini95" ] && [ "$APPROVALS" -lt 1 ]; then
             echo "Error: This pull request requires at least one approval from you."
             exit 1
           else
