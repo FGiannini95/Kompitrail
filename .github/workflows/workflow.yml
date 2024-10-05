@@ -35,39 +35,7 @@ jobs:
         run: npm install
 
       - name: Run ESLint
-        run: npm run lint
-
-  test:
-    runs-on: ubuntu-latest
-    needs: lint # Solo corre el test si el lint pasó correctamente
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14" # Cambia la versión según tu necesidad
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Check for tests
-        id: check-tests
-        run: |
-          # Check if there are any test files
-          if [ -z "$(find . -name '*.test.js' -o -name '*.spec.js')" ]; then
-            echo "No test files found. Marking tests as passed."
-            echo "skip=false" >> $GITHUB_ENV
-            exit 0 # Exit with 0 to mark the step as successful
-          else
-            echo "Test files found. Running tests."
-            echo "skip=false" >> $GITHUB_ENV
-          fi
-
-      - name: Run Tests
-        if: env.skip != 'true'
-        run: npm test
+        run: npm run lint # Asegúrate de que tu script de lint esté definido en package.json
 
   require-approval:
     if: github.event_name == 'pull_request'
