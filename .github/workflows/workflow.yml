@@ -35,7 +35,25 @@ jobs:
         run: npm install
 
       - name: Run ESLint
-        run: npm run lint # Asegúrate de que tu script de lint esté definido en package.json
+        run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint # Solo corre el test si el lint pasó correctamente
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14" # Cambia la versión según tu necesidad
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
 
   require-approval:
     if: github.event_name == 'pull_request'
