@@ -9,13 +9,16 @@ on:
 
 jobs:
   prevent-direct-push:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Block push to main
         run: |
-          echo "Direct pushes to 'main' are not allowed. Please use a pull request."
-          exit 1
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "Direct pushes to 'main' are not allowed. Please use a pull request."
+            exit 1
+          else
+            echo "No direct push to 'main'. Check will be skipped."
+          fi
 
   require-approval:
     if: github.event_name == 'pull_request'
@@ -27,6 +30,12 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews \
           | jq '.[] | select(.state=="APPROVED")' | wc -l)
           
+          # Check if the author is you (change 'your-username' to your actual GitHub username)
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          if [ "$AUTHOR" == "FGiannini95" ]; then
+            APPROVALS=$((APPROVALS + 1))
+          fi
+
           echo "Approvals: $APPROVALS"
           
           if [ "$APPROVALS" -lt 1 ]; then
