@@ -1,10 +1,11 @@
+import React from "react";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { NavBarApp } from "../components/NavBarApp/NavBarApp";
 import { RoutesString } from "./routes";
 import { Home } from "../pages/Home/Home";
 import { Search } from "../pages/Search/Search";
 import { Profile } from "../pages/Profile/Profile";
-
 
 export const GlobalRouter = () => {
   return (
@@ -17,5 +18,5 @@ export const GlobalRouter = () => {
         </Routes>
       </NavBarApp>
     </BrowserRouter>
-  )
-}
+  );
+};

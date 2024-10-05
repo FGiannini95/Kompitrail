@@ -1,3 +1,5 @@
+import React from "react";
+
 import { Link } from "react-router-dom";
 
 export const NavBarApp = ({ children }) => {
@@ -19,7 +21,7 @@ export const NavBarApp = ({ children }) => {
         </nav>
       </header>
 
-      <main>{ children }</main>
+      <main>{children}</main>
     </>
   );
 };

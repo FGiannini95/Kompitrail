@@ -1,5 +1,5 @@
 export const RoutesString = {
-  home : "/",
-  search : "/search",
-  profile : "/profile"
-}
+  home: "/",
+  search: "/search",
+  profile: "/profile",
+};
