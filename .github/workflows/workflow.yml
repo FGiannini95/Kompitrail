@@ -52,7 +52,20 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Check for tests
+        id: check-tests
+        run: |
+          # Check if there are any test files
+          if [ -z "$(find . -name '*.test.js' -o -name '*.spec.js')" ]; then
+            echo "No test files found. Skipping tests."
+            echo "skip=true" >> $GITHUB_ENV
+          else
+            echo "Test files found. Running tests."
+            echo "skip=false" >> $GITHUB_ENV
+          fi
+
       - name: Run Tests
+        if: env.skip != 'true'
         run: npm test
 
   require-approval:
