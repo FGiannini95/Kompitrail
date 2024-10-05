@@ -1,0 +1,37 @@
+name: Enforce Pull Requests and Approvals to Main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  prevent-direct-push:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block push to main
+        run: |
+          echo "Direct pushes to 'main' are not allowed. Please use a pull request."
+          exit 1
+
+  require-approval:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure PR has at least one approval
+        run: |
+          APPROVALS=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews \
+          | jq '.[] | select(.state=="APPROVED")' | wc -l)
+          
+          echo "Approvals: $APPROVALS"
+          
+          if [ "$APPROVALS" -lt 1 ]; then
+            echo "Error: This pull request requires at least one approval."
+            exit 1
+          else
+            echo "PR has sufficient approvals."
+          fi
