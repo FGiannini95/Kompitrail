@@ -52,12 +52,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Check for tests
+      - name: Check for test files
         id: check-tests
         run: |
           # Check if there are any test files
           if [ -z "$(find . -name '*.test.js' -o -name '*.spec.js')" ]; then
-            echo "No test files found. Marking tests as passed."
+            echo "No test files found. Skipping tests."
             echo "skip=true" >> $GITHUB_ENV
           else
             echo "Test files found. Running tests."
@@ -70,7 +70,7 @@ jobs:
 
       - name: Mark tests as passed
         if: env.skip == 'true' # Run this step only if there are no test files
-        run: echo "Tests passed (no test files found)."
+        run: echo "No test files found. Marking tests as passed."
 
   require-approval:
     if: github.event_name == 'pull_request'
