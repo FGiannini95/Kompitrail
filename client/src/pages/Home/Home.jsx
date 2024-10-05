@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export const Home = () => {
-  const [first, setFirst] = useState(second);
+  const [first, setFirst] = useState();
 
   return <h1>Home</h1>;
 };
