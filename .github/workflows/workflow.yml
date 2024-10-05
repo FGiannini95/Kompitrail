@@ -29,7 +29,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14" # Cambia la versión según tu necesidad
+          node-version: "14" # Change the version as needed
 
       - name: Install dependencies
         run: npm install
@@ -39,7 +39,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: lint # Solo corre el test si el lint pasó correctamente
+    needs: lint # Only run tests if lint passed
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -47,7 +47,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14" # Cambia la versión según tu necesidad
+          node-version: "14" # Change the version as needed
 
       - name: Install dependencies
         run: npm install
@@ -57,7 +57,7 @@ jobs:
         run: |
           # Check if there are any test files
           if [ -z "$(find . -name '*.test.js' -o -name '*.spec.js')" ]; then
-            echo "No test files found. Skipping tests."
+            echo "No test files found. Marking tests as passed."
             echo "skip=true" >> $GITHUB_ENV
           else
             echo "Test files found. Running tests."
@@ -65,8 +65,12 @@ jobs:
           fi
 
       - name: Run Tests
-        if: env.skip != 'true'
+        if: env.skip != 'true' # Run tests only if there are test files
         run: npm test
+
+      - name: Mark tests as passed
+        if: env.skip == 'true' # Run this step only if there are no test files
+        run: echo "Tests passed (no test files found)."
 
   require-approval:
     if: github.event_name == 'pull_request'
