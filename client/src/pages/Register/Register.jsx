@@ -1,47 +1,47 @@
-import { useState } from 'react';
-import { useNavigate } from "react-router-dom"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-
-
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 
 export const Register = () => {
   const initialFormState = {
-    name: '',
-    lastname: '',
-    email: '',
-    confirmEmail: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    lastname: "",
+    email: "",
+    confirmEmail: "",
+    password: "",
+    confirmPassword: "",
   };
 
   const [formValues, setFormValues] = useState(initialFormState);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormValues({
       ...formValues,
-      [name]: value
+      [name]: value,
     });
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!formValues.name) newErrors.name = 'El nombre es requerido.';
-    if (!formValues.lastname) newErrors.lastname = 'Los apellidos son requerido.';
+    if (!formValues.name) newErrors.name = "El nombre es requerido.";
+    if (!formValues.lastname)
+      newErrors.lastname = "Los apellidos son requerido.";
     if (!formValues.email) {
-      newErrors.email = 'El correo es requerido.';
+      newErrors.email = "El correo es requerido.";
     } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
-      newErrors.email = 'El correo no es válido.';
+      newErrors.email = "El correo no es válido.";
     }
-    if (!formValues.password) newErrors.password = 'La contraseña es requerida.';
+    if (!formValues.password)
+      newErrors.password = "La contraseña es requerida.";
     if (formValues.password !== formValues.confirmPassword) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden.';
+      newErrors.confirmPassword = "Las contraseñas no coinciden.";
     }
     return newErrors;
   };
@@ -52,15 +52,15 @@ export const Register = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log('Formulario enviado con éxito:', formValues);
+      console.log("Formulario enviado con éxito:", formValues);
     }
   };
 
   const handleCancel = () => {
     setFormValues(initialFormState);
     setErrors({});
-    navigate("/")
-    console.log('He limpiado todos los campos');
+    navigate("/");
+    console.log("He limpiado todos los campos");
   };
 
   return (
@@ -69,8 +69,8 @@ export const Register = () => {
         <Grid item xs={12} align="center">
           <Typography variant="h4">Formulario de Registro</Typography>
         </Grid>
-        
-        <Grid xs={12} md={6}>
+
+        <Grid item xs={12}>
           <TextField
             label="Nombre"
             name="name"
@@ -82,7 +82,7 @@ export const Register = () => {
           />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <TextField
             label="Apellidos"
             name="lastname"
@@ -94,7 +94,7 @@ export const Register = () => {
           />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <TextField
             label="Correo electrónico"
             name="email"
@@ -107,7 +107,7 @@ export const Register = () => {
           />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <TextField
             label="Confirmar correo"
             name="confirmEmail"
@@ -120,7 +120,7 @@ export const Register = () => {
           />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <TextField
             label="Contraseña"
             name="password"
@@ -133,7 +133,7 @@ export const Register = () => {
           />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <TextField
             label="Confirmar Contraseña"
             name="confirmPassword"
@@ -153,17 +153,25 @@ export const Register = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Button type="button" variant="outlined" color="secondary" fullWidth onClick={handleCancel}>
+          <Button
+            type="button"
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            onClick={handleCancel}
+          >
             Cancelar
           </Button>
         </Grid>
-        <Grid item xs={12} >
-          <Typography variant="h4" sx={{ textAlign: 'center', color: 'blue', marginBottom: 2 }}>
-          Ya estás registrado? Loguéate aqui!</Typography>
+        <Grid item xs={12}>
+          <Typography
+            variant="h4"
+            sx={{ textAlign: "center", color: "blue", marginBottom: 2 }}
+          >
+            Ya estás registrado? Loguéate aqui!
+          </Typography>
         </Grid>
       </Grid>
     </form>
   );
 };
-
-
