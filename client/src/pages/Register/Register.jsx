@@ -53,6 +53,7 @@ export const Register = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       console.log("Formulario enviado con éxito:", formValues);
+      navigate("/home");
     }
   };
 
