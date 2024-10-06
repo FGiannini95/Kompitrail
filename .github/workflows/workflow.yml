@@ -20,25 +20,6 @@ jobs:
             echo "No direct push to 'main'. Check will be skipped."
           fi
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14" # Cambia la versión según tu necesidad
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run ESLint
-        run: |
-          # Ejecutar ESLint y considerar el resultado
-          npm run lint || true # Esto asegurará que no falle el flujo de trabajo incluso si ESLint encuentra errores.
-
   require-approval:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
