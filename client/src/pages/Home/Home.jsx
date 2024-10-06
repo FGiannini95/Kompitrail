@@ -1,5 +1,7 @@
+import React, { useState, useEffect } from "react";
+
 export const Home = () => {
-  return (
-    <h1>Home</h1>
-  )
-}
+  const [first, setFirst] = useState();
+
+  return <h1>Home</h1>;
+};

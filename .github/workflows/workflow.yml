@@ -1,0 +1,48 @@
+name: GitHub Workflows for Pull Requests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  prevent-direct-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block direct push to main
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "Direct pushes to 'main' are not allowed. Please use a pull request."
+            exit 1
+          else
+            echo "No direct push to 'main'. Check will be skipped."
+          fi
+
+  require-approval:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure PR has at least one approval
+        run: |
+          APPROVALS=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews \
+          | jq '.[] | select(.state=="APPROVED")' | wc -l)
+
+          # Check if the author is you (change 'your-username' to your actual GitHub username)
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          if [ "$AUTHOR" == "FGiannini95" ]; then
+            # If you are the author, do not count your approval automatically
+            echo "As the author of this PR, your approval is pending."
+            APPROVALS=0 # No automatic approval
+          fi
+
+          echo "Approvals: $APPROVALS"
+
+          if [ "$AUTHOR" != "FGiannini95" ] && [ "$APPROVALS" -lt 1 ]; then
+            echo "Error: This pull request requires at least one approval from you."
+            exit 1
+          else
+            echo "PR has sufficient approvals or is authored by you."
+          fi

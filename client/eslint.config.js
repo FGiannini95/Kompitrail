@@ -1,38 +1,25 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import react from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
+import globals from "globals";
+import pluginJs from "@eslint/js";
+import pluginReact from "eslint-plugin-react";
 
 export default [
-  { ignores: ['dist'] },
+  { files: ["**/*.{js,mjs,cjs,jsx}"] }, // Specify the files to target (JavaScript and JSX)
+  { languageOptions: { globals: globals.browser } }, // Set global variables for browser environment
+  pluginJs.configs.recommended, // Include recommended rules from ESLint core
+  pluginReact.configs.flat.recommended, // Include recommended rules from React plugin
   {
-    files: ['**/*.{js,jsx}'],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
+    settings: {
+      react: {
+        version: "detect", // Automatically detect the version of React
       },
     },
-    settings: { react: { version: '18.3' } },
-    plugins: {
-      react,
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-    },
+  },
+  {
     rules: {
-      ...js.configs.recommended.rules,
-      ...react.configs.recommended.rules,
-      ...react.configs['jsx-runtime'].rules,
-      ...reactHooks.configs.recommended.rules,
-      'react/jsx-no-target-blank': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      "no-unused-vars": "warn",
+      "react/prop-types": "off",
+      semi: ["error", "always"], // Asegura que haya punto y coma al final de las líneas
+      quotes: ["error", "double"], // Usa comillas dobles
     },
   },
-]
+];

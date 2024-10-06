@@ -1,3 +1,5 @@
+import React from "react";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { NavBarApp } from "../components/NavBarApp/NavBarApp";
 import { RoutesString } from "./routes";
@@ -6,7 +8,6 @@ import { Search } from "../pages/Search/Search";
 import { Profile } from "../pages/Profile/Profile";
 import { Register } from "../pages/Register/Register";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
-
 
 export const GlobalRouter = () => {
   return (
@@ -21,5 +22,5 @@ export const GlobalRouter = () => {
         </Routes>
       </NavBarApp>
     </BrowserRouter>
-  )
-}
+  );
+};
