@@ -1,9 +1,9 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
+const usersControllers = require("../controllers/usersControllers");
+//import multer
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+// ruta base http://localhost:3000/users
+router.post("/createUser", usersControllers.createUser);
 
 module.exports = router;
