@@ -4,6 +4,6 @@ const usersControllers = require("../controllers/usersControllers");
 //import multer
 
 // ruta base http://localhost:3000/users
-router.post("/createUser", usersControllers.createUser);
+router.post("/createuser", usersControllers.createUser);
 
 module.exports = router;

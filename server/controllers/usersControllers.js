@@ -4,13 +4,24 @@ const bcrypt = require("bcrypt");
 
 class usersControllers {
   createUser = (req, res) => {
-    try {
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        error: "Error al hacer el registro",
+    const { name, lastname, email, password } = req.body;
+    //validación con libreria PTE
+    //encriptación de la contraseña
+    let saltRounds = 8;
+    bcrypt.genSalt(saltRounds, function (err, saltRounds) {
+      bcrypt.hash(password, saltRounds, function (err, hash) {
+        if (err) {
+          console.log(err);
+        } else {
+          let sql = `INSERT INTO user (name, lastname, email, password) VALUES ('${name}', '${lastname}', '${email}', '${hash}')`;
+          connection.query(sql, (error, result) => {
+            error
+              ? res.status(500).json({ error }, console.log(error))
+              : res.status(200).json(result);
+          });
+        }
       });
-    }
+    });
   };
 }
 
