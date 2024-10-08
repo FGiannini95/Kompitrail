@@ -9,9 +9,10 @@ import AddIcon from "@mui/icons-material/Add";
 import ChatIcon from "@mui/icons-material/Chat";
 import PersonIcon from "@mui/icons-material/Person";
 import Box from "@mui/material/Box";
+import { RoutesString } from "../../routes/routes";
 
 export const NavBarApp = ({ children }) => {
-  const [activeButton, setActiveButton] = useState("/home"); // Estado para el botón activo
+  const [activeButton, setActiveButton] = useState(RoutesString.home); // Estado para el botón activo
   const navigate = useNavigate();
 
   // Función para manejar clics en los botones
@@ -28,32 +29,32 @@ export const NavBarApp = ({ children }) => {
       <AppBar position="fixed" color="primary" sx={{ top: "auto", bottom: 0 }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-around" }}>
           <IconButton
-            onClick={() => handleButtonClick("/home")}
-            color={activeButton === "/home" ? "" : "inherit"}
+            onClick={() => handleButtonClick(RoutesString.home)}
+            color={activeButton === (RoutesString.home) ? "" : "inherit"}
           >
             <HomeIcon />
           </IconButton>
           <IconButton
-            onClick={() => handleButtonClick("/search")}
-            color={activeButton === "/search" ? "" : "inherit"}
+            onClick={() => handleButtonClick(RoutesString.search)}
+            color={activeButton === (RoutesString.search) ? "" : "inherit"}
           >
             <SearchIcon />
           </IconButton>
           <IconButton
-            onClick={() => handleButtonClick("/profile")}
-            color={activeButton === "/profile" ? "" : "inherit"} //Change the path
+            onClick={() => handleButtonClick(RoutesString.profile)}
+            color={activeButton === (RoutesString.profile) ? "" : "inherit"} //Change the path
           >
             <AddIcon sx={{ fontSize: 50 }} />
           </IconButton>
           <IconButton
-            onClick={() => handleButtonClick("/")}
-            color={activeButton === "/" ? "" : "inherit"}
+            onClick={() => handleButtonClick(RoutesString.landing)}
+            color={activeButton === (RoutesString.landing) ? "" : "inherit"}
           >
             <ChatIcon />
           </IconButton>
           <IconButton
-            onClick={() => handleButtonClick("/profile")}
-            color={activeButton === "/profile" ? "" : "inherit"}
+            onClick={() => handleButtonClick(RoutesString.profile)}
+            color={activeButton === (RoutesString.profile) ? "" : "inherit"}
           >
             <PersonIcon />
           </IconButton>
