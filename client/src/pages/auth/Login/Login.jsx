@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react'
-import { KompitrailContext } from '../../../../context/KompitrailContext'
-import { useNavigate } from 'react-router-dom';
-import { RoutesString } from '../../../routes/routes';
+import React, { useContext, useState } from "react";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { useNavigate } from "react-router-dom";
+import { RoutesString } from "../../../routes/routes";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -14,17 +14,17 @@ const initialValue = {
 };
 
 export const Login = () => {
-  const {setUser, setToken, setIsLogged} = useContext(KompitrailContext);
+  const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [login, setLogin] = useState(initialValue);
   const [msgError, setMsgError] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLogin({ 
-      ...login, 
+    setLogin({
+      ...login,
       [name]: value,
-    });    
+    });
     console.log(login);
   };
 
@@ -57,7 +57,7 @@ export const Login = () => {
           <TextField
             label="Contraseña"
             name="password"
-            type='password'
+            type="password"
             fullWidth
             // value={initialValue.password}
             onChange={handleChange}
@@ -65,28 +65,23 @@ export const Login = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Button 
-            type="submit" 
-            variant='contained' 
-            color='primary' 
-            fullWidth
-          >
+          <Button type="submit" variant="contained" color="primary" fullWidth>
             ACEPTAR
           </Button>
         </Grid>
 
-          <Grid item xs={12}>
-            <Button
-              type='button'
-              variant='outlined'
-              color='secondary'
-              fullWidth
-              onClick={handleCancel}
-            >
-              CANCELAR
-              </Button>
-          </Grid>
+        <Grid item xs={12}>
+          <Button
+            type="button"
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            onClick={handleCancel}
+          >
+            CANCELAR
+          </Button>
+        </Grid>
       </Grid>
     </form>
-  )
-}
+  );
+};

@@ -5,6 +5,8 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import axios from "axios";
+import { RoutesString } from "../../../routes/routes";
 
 export const Register = () => {
   const initialFormState = {
@@ -16,49 +18,55 @@ export const Register = () => {
     confirmPassword: "",
   };
 
-  const [formValues, setFormValues] = useState(initialFormState);
+  const [register, setRegister] = useState(initialFormState);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormValues({
-      ...formValues,
+    setRegister({
+      ...register,
       [name]: value,
     });
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!formValues.name) newErrors.name = "El nombre es requerido.";
-    if (!formValues.lastname)
-      newErrors.lastname = "Los apellidos son requerido.";
-    if (!formValues.email) {
+    if (!register.name) newErrors.name = "El nombre es requerido.";
+    if (!register.lastname) newErrors.lastname = "Los apellidos son requerido.";
+    if (!register.email) {
       newErrors.email = "El correo es requerido.";
-    } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(register.email)) {
       newErrors.email = "El correo no es válido.";
     }
-    if (!formValues.password)
-      newErrors.password = "La contraseña es requerida.";
-    if (formValues.password !== formValues.confirmPassword) {
+    if (!register.password) newErrors.password = "La contraseña es requerida.";
+    if (register.password !== register.confirmPassword) {
       newErrors.confirmPassword = "Las contraseñas no coinciden.";
     }
     return newErrors;
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Formulario enviado con éxito:", formValues);
-      navigate("/home");
+      console.log("Formulario enviado con éxito:", register);
+      axios
+        .post("http://localhost:3000/users/createuser", register)
+        .then((res) => {
+          console.log(res);
+          navigate(RoutesString.login);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
   const handleCancel = () => {
-    setFormValues(initialFormState);
+    setRegister(initialFormState);
     setErrors({});
     navigate("/");
     console.log("He limpiado todos los campos");
@@ -76,7 +84,7 @@ export const Register = () => {
             label="Nombre"
             name="name"
             fullWidth
-            value={formValues.name}
+            value={register.name}
             onChange={handleInputChange}
             error={!!errors.name}
             helperText={errors.name}
@@ -88,7 +96,7 @@ export const Register = () => {
             label="Apellidos"
             name="lastname"
             fullWidth
-            value={formValues.lastname}
+            value={register.lastname}
             onChange={handleInputChange}
             error={!!errors.lastname}
             helperText={errors.lastname}
@@ -101,7 +109,7 @@ export const Register = () => {
             name="email"
             type="email"
             fullWidth
-            value={formValues.email}
+            value={register.email}
             onChange={handleInputChange}
             error={!!errors.email}
             helperText={errors.email}
@@ -114,7 +122,7 @@ export const Register = () => {
             name="confirmEmail"
             type="email"
             fullWidth
-            value={formValues.confirmEmail}
+            value={register.confirmEmail}
             onChange={handleInputChange}
             error={!!errors.confirmEmail}
             helperText={errors.confirmEmail}
@@ -127,7 +135,7 @@ export const Register = () => {
             name="password"
             type="password"
             fullWidth
-            value={formValues.password}
+            value={register.password}
             onChange={handleInputChange}
             error={!!errors.password}
             helperText={errors.password}
@@ -140,7 +148,7 @@ export const Register = () => {
             name="confirmPassword"
             type="password"
             fullWidth
-            value={formValues.confirmPassword}
+            value={register.confirmPassword}
             onChange={handleInputChange}
             error={!!errors.confirmPassword}
             helperText={errors.confirmPassword}

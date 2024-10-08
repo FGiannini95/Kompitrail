@@ -6,7 +6,7 @@ import { RoutesString } from "./routes";
 import { Home } from "../pages/Home/Home";
 import { Search } from "../pages/Search/Search";
 import { Profile } from "../pages/Profile/Profile";
-import { Register } from "../pages/Register/Register";
+import { Register } from "../pages/auth/Register/Register";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
 import { Login } from "../pages/auth/Login/Login";
 
