@@ -3,5 +3,6 @@ export const RoutesString = {
   search: "/search",
   profile: "/profile",
   register: "/register",
+  login: "/login",
   landing: "/", //cambiar a /landing
 };
