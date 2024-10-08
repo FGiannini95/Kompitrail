@@ -8,6 +8,7 @@ import { Search } from "../pages/Search/Search";
 import { Profile } from "../pages/Profile/Profile";
 import { Register } from "../pages/Register/Register";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
+import { Login } from "../pages/auth/Login/Login";
 
 export const GlobalRouter = () => {
   return (
@@ -19,6 +20,7 @@ export const GlobalRouter = () => {
           <Route path={RoutesString.profile} element={<Profile />} />
           <Route path={RoutesString.landing} element={<LandingPage />} />
           <Route path={RoutesString.register} element={<Register />} />
+          <Route path={RoutesString.login} element={<Login />} />
         </Routes>
       </NavBarApp>
     </BrowserRouter>
