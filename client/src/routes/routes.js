@@ -4,5 +4,7 @@ export const RoutesString = {
   profile: "/profile",
   register: "/register",
   login: "/login",
+  chat: "/chat",
+  createtrip: "/trip",
   landing: "/", //cambiar a /landing
 };

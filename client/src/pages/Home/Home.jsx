@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
   const [first, setFirst] = useState();
+  const navigate = useNavigate();
 
-  return <h1>Home</h1>;
+  return (
+    <div style={{ paddingTop: "20px" }}>
+      <button onClick={() => navigate("landing")}>Go to Landing</button>
+    </div>
+  );
 };

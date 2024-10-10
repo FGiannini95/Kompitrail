@@ -30,31 +30,31 @@ export const NavBarApp = ({ children }) => {
         <Toolbar sx={{ display: "flex", justifyContent: "space-around" }}>
           <IconButton
             onClick={() => handleButtonClick(RoutesString.home)}
-            color={activeButton === (RoutesString.home) ? "" : "inherit"}
+            color={activeButton === RoutesString.home ? "" : "inherit"}
           >
             <HomeIcon />
           </IconButton>
           <IconButton
             onClick={() => handleButtonClick(RoutesString.search)}
-            color={activeButton === (RoutesString.search) ? "" : "inherit"}
+            color={activeButton === RoutesString.search ? "" : "inherit"}
           >
             <SearchIcon />
           </IconButton>
           <IconButton
-            onClick={() => handleButtonClick(RoutesString.profile)}
-            color={activeButton === (RoutesString.profile) ? "" : "inherit"} //Change the path
+            onClick={() => handleButtonClick(RoutesString.createtrip)}
+            color={activeButton === RoutesString.createtrip ? "" : "inherit"} //Change the path
           >
             <AddIcon sx={{ fontSize: 50 }} />
           </IconButton>
           <IconButton
-            onClick={() => handleButtonClick(RoutesString.landing)}
-            color={activeButton === (RoutesString.landing) ? "" : "inherit"}
+            onClick={() => handleButtonClick(RoutesString.chat)}
+            color={activeButton === RoutesString.chat ? "" : "inherit"}
           >
             <ChatIcon />
           </IconButton>
           <IconButton
             onClick={() => handleButtonClick(RoutesString.profile)}
-            color={activeButton === (RoutesString.profile) ? "" : "inherit"}
+            color={activeButton === RoutesString.profile ? "" : "inherit"}
           >
             <PersonIcon />
           </IconButton>
