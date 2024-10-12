@@ -3,10 +3,12 @@ import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../../routes/routes";
 
+import axios from "axios";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 
 const initialValue = {
   email: "",
@@ -16,7 +18,7 @@ const initialValue = {
 export const Login = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [login, setLogin] = useState(initialValue);
-  const [msgError, setMsgError] = useState({});
+  const [msgError, setMsgError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -34,7 +36,22 @@ export const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(login);
+
+    axios
+      .post("http://localhost:3000/users/loginuser", login)
+      .then((res) => {
+        setIsLogged(true);
+        setUser(res.data.user);
+        setToken(res.data.token);
+        saveLocalStorage("token", res.data.token);
+        navigate(RoutesString.home);
+      })
+      .catch((err) => {
+        console.log(err);
+        setMsgError(err.response.data);
+      });
+
+    // console.log(login);
   };
 
   return (
@@ -59,9 +76,14 @@ export const Login = () => {
             name="password"
             type="password"
             fullWidth
-            // value={initialValue.password}
             onChange={handleChange}
           />
+        </Grid>
+
+        <Grid item xs={12}>
+          <Typography variant="h6" sx={{ textAlign: "center", color: "red" }}>
+            {typeof msgError === "string" ? msgError : JSON.stringify(msgError)}
+          </Typography>
         </Grid>
 
         <Grid item xs={12}>
