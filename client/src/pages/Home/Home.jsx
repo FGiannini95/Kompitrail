@@ -8,6 +8,17 @@ export const Home = () => {
   return (
     <div style={{ paddingTop: "20px" }}>
       <button onClick={() => navigate("landing")}>Go to Landing</button>
+      <div>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque
+          repudiandae architecto minus pariatur laborum distinctio nostrum
+          deserunt! Aperiam, voluptates? Esse officiis cumque iste et deserunt.
+        </p>
+        <p>
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Error, iure!
+        </p>
+        <button onClick={() => navigate("landing")}>Go to Landing</button>
+      </div>
     </div>
   );
 };
