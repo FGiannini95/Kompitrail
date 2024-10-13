@@ -1,6 +1,6 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { Route, useLocation, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import SportsMotorsportsIcon from "@mui/icons-material/SportsMotorsports";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -9,6 +9,11 @@ import { RoutesString } from "../../routes/routes";
 const TopBar = () => {
   // This hook give as access to the current location object
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleIconMenuClick = () => {
+    navigate(RoutesString.createtrip);
+  };
 
   const leftSideComponent = () => {
     switch (location.pathname) {
@@ -45,6 +50,7 @@ const TopBar = () => {
         color="inherit"
         aria-label="open drawer"
         sx={{ ml: 2 }}
+        onClick={handleIconMenuClick}
       >
         <MenuIcon />
       </IconButton>
