@@ -2,7 +2,7 @@ import React from "react";
 
 export const Search = () => {
   return (
-    <div>
+    <div style={{ paddingTop: "50px" }}>
       <h1>Search</h1>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident nemo
