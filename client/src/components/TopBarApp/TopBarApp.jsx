@@ -1,22 +1,16 @@
 import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  InputBase,
-} from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import SportsMotorsportsIcon from "@mui/icons-material/SportsMotorsports";
-import MenuIcon from "@mui/icons-material/Menu"; // Importa el icono de menú
+import MenuIcon from "@mui/icons-material/Menu";
 import { RoutesString } from "../../routes/routes";
 
 const TopBar = () => {
   // This hook give as access to the current location object
   const location = useLocation();
 
-  const renderContent = () => {
+  const leftSideComponent = () => {
     switch (location.pathname) {
       case `${RoutesString.home}`:
         return (
@@ -38,7 +32,23 @@ const TopBar = () => {
         return <Typography variant="h6">Chat</Typography>;
       case `${RoutesString.profile}`:
         return <Typography variant="h6">Perfil</Typography>;
+      default:
+        return null;
     }
+  };
+
+  const rightSideComponent = () => {
+    return (
+      <IconButton
+        size="large"
+        edge="end"
+        color="inherit"
+        aria-label="open drawer"
+        sx={{ ml: 2 }}
+      >
+        <MenuIcon />
+      </IconButton>
+    );
   };
 
   return (
@@ -46,7 +56,7 @@ const TopBar = () => {
       position="fixed"
       style={{
         backgroundColor: "#1976d2",
-        minHeight: "64px",
+        height: "64px",
         display: "flex",
         justifyContent: "center",
       }}
@@ -58,19 +68,8 @@ const TopBar = () => {
           alignItems="center"
           width="100%"
         >
-          {/* Left side component */}
-          {renderContent()}
-
-          {/* Right side component */}
-          <IconButton
-            size="large"
-            edge="end"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ ml: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {leftSideComponent()}
+          {rightSideComponent()}
         </Box>
       </Toolbar>
     </AppBar>
