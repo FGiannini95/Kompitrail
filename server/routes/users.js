@@ -5,5 +5,6 @@ const usersControllers = require("../controllers/usersControllers");
 
 // ruta base http://localhost:3000/users
 router.post("/createuser", usersControllers.createUser);
+router.post("/loginuser", usersControllers.loginUser);
 
 module.exports = router;
