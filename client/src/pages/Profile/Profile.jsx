@@ -2,8 +2,8 @@ import React from "react";
 
 export const Profile = () => {
   return (
-    <div style={{ paddingTop: "50px" }}>
-      <h1>Perfil</h1>
+    <div>
+      <h2>Perfil</h2>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident nemo
         mollitia culpa ea sunt nisi cumque illum! Praesentium dolor modi ipsam

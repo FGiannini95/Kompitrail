@@ -6,7 +6,7 @@ export const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ paddingTop: "70px" }}>
+    <div>
       <button onClick={() => navigate("/")}>Go to Landing</button>
       <div>
         <p>
