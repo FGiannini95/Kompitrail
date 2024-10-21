@@ -10,6 +10,7 @@ import { LandingPage } from "../pages/LandingPage/LandingPage";
 import { Login } from "../pages/auth/Login/Login";
 import TopBar from "../components/TopBarApp/TopBarApp";
 import { Chat } from "../pages/Chat/Chat";
+import { InfoUser } from "../pages/InfoUser/InfoUser";
 
 export const GlobalRouter = () => {
   return (
@@ -24,6 +25,7 @@ export const GlobalRouter = () => {
           <Route path={RoutesString.register} element={<Register />} />
           <Route path={RoutesString.login} element={<Login />} />
           <Route path={RoutesString.chat} element={<Chat />} />
+          <Route path={RoutesString.infouser} element={<InfoUser />} />
         </Routes>
       </NavBarApp>
     </BrowserRouter>
