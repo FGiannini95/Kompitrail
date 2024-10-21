@@ -12,18 +12,26 @@ import Box from "@mui/material/Box";
 import { RoutesString } from "../../routes/routes";
 
 export const NavBarApp = ({ children }) => {
-  const [activeButton, setActiveButton] = useState(RoutesString.home); // Estado para el botón activo
+  const [activeButton, setActiveButton] = useState(RoutesString.home);
   const navigate = useNavigate();
 
-  // Función para manejar clics en los botones
   const handleButtonClick = (path) => {
-    setActiveButton(path); // Actualiza el botón activo
-    navigate(path); // Navega a la ruta correspondiente
+    setActiveButton(path);
+    navigate(path);
   };
+
+  const topBarHeight = 64;
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Box component="main" sx={{ flexGrow: 1, paddingBottom: "56px" }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          paddingTop: `${topBarHeight}px`,
+          paddingBottom: "56px",
+        }}
+      >
         {children}
       </Box>
       <AppBar position="fixed" color="primary" sx={{ top: "auto", bottom: 0 }}>
