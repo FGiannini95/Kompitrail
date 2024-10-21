@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import SportsMotorsportsIcon from "@mui/icons-material/SportsMotorsports";
 import MenuIcon from "@mui/icons-material/Menu";
 import { RoutesString } from "../../routes/routes";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 
 const TopBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useContext(KompitrailContext);
 
   const [animateIcon, setAnimateIcon] = useState(false);
 
@@ -25,9 +27,8 @@ const TopBar = () => {
     }
   }, [location.pathname]);
 
-  //TODO: after the onClick we have to navigate to the info profile view
   const handleIconMenuClick = () => {
-    navigate(RoutesString.createtrip);
+    navigate(RoutesString.infouser);
   };
 
   const leftSideComponent = () => {
@@ -40,8 +41,7 @@ const TopBar = () => {
             alignItems="center"
             gap="10px"
           >
-            {/* TODO: the value in the Typography must be dinamic and has to come from the context */}
-            <Typography variant="h6">Hola Federico</Typography>
+            <Typography variant="h6">{user.name}</Typography>
             <SportsMotorsportsIcon
               sx={{
                 transition: "transform 0.5s ease-in-out",

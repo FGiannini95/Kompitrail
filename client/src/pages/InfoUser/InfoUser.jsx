@@ -17,10 +17,10 @@ export const InfoUser = () => {
   const { user } = useContext(KompitrailContext);
 
   const getInitials = (name, lastname) => {
-    const firstName = name?.charAt(0).toUpperCase() || "";
-    const lastName = lastname?.charAt(0).toUpperCase() || "";
+    const firstLetterName = name?.charAt(0).toUpperCase() || "";
+    const firstLetterLastName = lastname?.charAt(0).toUpperCase() || "";
 
-    return `${firstName}${lastName}`;
+    return `${firstLetterName}${firstLetterLastName}`;
   };
 
   const iniciales = getInitials(user.name, user.lastname);
