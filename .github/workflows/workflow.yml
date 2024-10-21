@@ -6,6 +6,8 @@ on:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]
 
 jobs:
   prevent-direct-push:
@@ -21,7 +23,7 @@ jobs:
           fi
 
   require-approval:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'pull_request_review'
     runs-on: ubuntu-latest
     steps:
       - name: Ensure PR has at least one approval
@@ -30,19 +32,11 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews \
           | jq '.[] | select(.state=="APPROVED")' | wc -l)
 
-          # Check if the author is you (change 'your-username' to your actual GitHub username)
-          AUTHOR="${{ github.event.pull_request.user.login }}"
-          if [ "$AUTHOR" == "FGiannini95" ]; then
-            # If you are the author, do not count your approval automatically
-            echo "As the author of this PR, your approval is pending."
-            APPROVALS=0 # No automatic approval
-          fi
-
           echo "Approvals: $APPROVALS"
 
-          if [ "$AUTHOR" != "FGiannini95" ] && [ "$APPROVALS" -lt 1 ]; then
-            echo "Error: This pull request requires at least one approval from you."
+          if [ "$APPROVALS" -lt 1 ]; then
+            echo "Error: This pull request requires at least one approval."
             exit 1
           else
-            echo "PR has sufficient approvals or is authored by you."
+            echo "PR has sufficient approvals."
           fi

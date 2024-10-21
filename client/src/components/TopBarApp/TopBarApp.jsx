@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -7,10 +7,25 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { RoutesString } from "../../routes/routes";
 
 const TopBar = () => {
-  // This hook give as access to the current location object
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [animateIcon, setAnimateIcon] = useState(false);
+
+  useEffect(() => {
+    if (location.pathname === RoutesString.home) {
+      setAnimateIcon(true);
+
+      // Deactivate the animation after 500ms
+      const timer = setTimeout(() => {
+        setAnimateIcon(false);
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname]);
+
+  //TODO: after the onClick we have to navigate to the info profile view
   const handleIconMenuClick = () => {
     navigate(RoutesString.createtrip);
   };
@@ -25,8 +40,14 @@ const TopBar = () => {
             alignItems="center"
             gap="10px"
           >
+            {/* TODO: the value in the Typography must be dinamic and has to come from the context */}
             <Typography variant="h6">Hola Federico</Typography>
-            <SportsMotorsportsIcon />
+            <SportsMotorsportsIcon
+              sx={{
+                transition: "transform 0.5s ease-in-out",
+                transform: animateIcon ? "rotate(360deg)" : "none",
+              }}
+            />
           </Box>
         );
       case `${RoutesString.search}`:
