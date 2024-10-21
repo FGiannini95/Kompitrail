@@ -26,16 +26,15 @@ export const InfoUser = () => {
   const iniciales = getInitials(user.name, user.lastname);
 
   return (
-    <div style={{ paddingTop: "100px" }}>
+    <div style={{ paddingTop: "50px" }}>
       <Grid>
         <Grid container spacing={2}>
-          <Grid item xs={9}>
-            <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-              Info User
+          <Grid item xs={12}>
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              {user.name} {user.lastname}
             </Typography>
-            <Typography variant="h6">Lorem, ipsum.</Typography>
           </Grid>
-          <Grid
+          {/* <Grid
             item
             xs={3}
             container
@@ -46,13 +45,14 @@ export const InfoUser = () => {
             sx={{
               border: "1px solid black",
               borderRadius: "50%",
+              aspectRatio: 1 / 1,
             }}
             style={{ paddingTop: "0px", paddingLeft: "0px" }}
           >
             <Typography sx={{}} variant="h4">
               {iniciales}
             </Typography>
-          </Grid>
+          </Grid> */}
         </Grid>
         <Grid
           container
@@ -61,7 +61,7 @@ export const InfoUser = () => {
         >
           <Grid style={{ paddingRight: "10px" }}>
             <Button type="button" variant="contained" color="primary" fullWidth>
-              Lorem, ipsum.
+              Ir a premium
             </Button>
           </Grid>
           <Grid>
@@ -71,7 +71,8 @@ export const InfoUser = () => {
               color="secondary"
               fullWidth
             >
-              Lorem, ipsum dolor.
+              {/* añadir icono de compartir */}
+              Compartir prefil
             </Button>
           </Grid>
         </Grid>
@@ -79,7 +80,7 @@ export const InfoUser = () => {
 
       <Grid style={{ paddingTop: "40px" }}>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Lorem, ipsum dolor.
+          Mi cuenta
         </Typography>
         <Grid>
           <Grid container spacing={3}>
@@ -95,10 +96,9 @@ export const InfoUser = () => {
               <AccountCircleIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Lorem, ipsum.
+              <Typography sx={{ fontWeight: "bold" }}>
+                Modificar perfil
               </Typography>
-              <Typography variant="h6">Lorem, ipsum dolor.</Typography>
             </Grid>
             <Grid
               item
@@ -125,10 +125,7 @@ export const InfoUser = () => {
               <DirectionsBikeIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Lorem, ipsum.
-              </Typography>
-              <Typography variant="h6">Lorem, ipsum dolor.</Typography>
+              <Typography>Mis motos</Typography>
             </Grid>
             <Grid
               item
@@ -152,13 +149,11 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
+              {/* Añadir icono de rutas */}
               <WalletIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Lorem, ipsum.
-              </Typography>
-              <Typography variant="h6">Lorem, ipsum dolor.</Typography>
+              <Typography>Mis rutas</Typography>
             </Grid>
             <Grid
               item
@@ -185,10 +180,7 @@ export const InfoUser = () => {
               <SettingsSharpIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Lorem, ipsum.
-              </Typography>
-              <Typography variant="h6">Lorem, ipsum dolor.</Typography>
+              <Typography>Ajustes</Typography>
             </Grid>
             <Grid
               item
@@ -206,7 +198,7 @@ export const InfoUser = () => {
       </Grid>
       <Grid style={{ paddingTop: "40px" }}>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Lorem, ipsum dolor.
+          Ayuda y soporte
         </Typography>
         <Grid>
           <Grid container spacing={3}>
@@ -222,10 +214,7 @@ export const InfoUser = () => {
               <TextsmsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Lorem, ipsum.
-              </Typography>
-              <Typography variant="h6">Lorem, ipsum dolor.</Typography>
+              <Typography>Chat bot</Typography>
             </Grid>
             <Grid
               item
@@ -252,10 +241,7 @@ export const InfoUser = () => {
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Lorem, ipsum.
-              </Typography>
-              <Typography variant="h6">Lorem, ipsum dolor.</Typography>
+              <Typography>Plitica de privacidad</Typography>
             </Grid>
             <Grid
               item
