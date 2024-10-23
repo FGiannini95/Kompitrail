@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { saveLocalStorage } from "../../../helpers/localStorageUtils";
+import Link from "@mui/material/Link";
 
 const initialValue = {
   email: "",
@@ -102,6 +103,19 @@ export const Login = () => {
           >
             CANCELAR
           </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography textAlign="center">
+            ¿Aún no tienes un perfil? ¡Regístrate{" "}
+            <Link
+              href={RoutesString.register}
+              color="primary"
+              underline="hover"
+            >
+              aquí
+            </Link>
+            !
+          </Typography>
         </Grid>
       </Grid>
     </form>
