@@ -8,6 +8,7 @@ import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 
 const TopBar = () => {
+  // We use this hook to acced to the current location
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(KompitrailContext);
