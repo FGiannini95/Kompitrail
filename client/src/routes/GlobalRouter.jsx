@@ -15,30 +15,30 @@ import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
 import { KompitrailContext } from "../../context/KompitrailContext";
 
 export const GlobalRouter = () => {
-  const { token } = useContext(KompitrailContext);
+  const { user, token } = useContext(KompitrailContext);
 
   return (
     <BrowserRouter>
-      <TopBar />
-      <NavBarApp>
+      {token && user && <TopBar />}
+      {token && user && (
+        <NavBarApp>
+          <Routes>
+            <Route path={RoutesString.home} element={<Home />} />
+            <Route path={RoutesString.search} element={<Search />} />
+            <Route path={RoutesString.createtrip} element={<CreateTrip />} />
+            <Route path={RoutesString.chat} element={<Chat />} />
+            <Route path={RoutesString.profile} element={<Profile />} />
+            <Route path={RoutesString.infouser} element={<InfoUser />} />
+          </Routes>
+        </NavBarApp>
+      )}
+      {!token && !user && (
         <Routes>
           <Route path={RoutesString.landing} element={<LandingPage />} />
-          {token && (
-            <>
-              <Route path={RoutesString.register} element={<Register />} />
-              <Route path={RoutesString.login} element={<Login />} />
-              <Route path={RoutesString.home} element={<Home />} />
-              <Route path={RoutesString.search} element={<Search />} />
-              <Route path={RoutesString.createtrip} element={<CreateTrip />} />
-              <Route path={RoutesString.chat} element={<Chat />} />
-              <Route path={RoutesString.profile} element={<Profile />} />
-
-              <Route path={RoutesString.chat} element={<Chat />} />
-              <Route path={RoutesString.infouser} element={<InfoUser />} />
-            </>
-          )}
+          <Route path={RoutesString.register} element={<Register />} />
+          <Route path={RoutesString.login} element={<Login />} />
         </Routes>
-      </NavBarApp>
+      )}
     </BrowserRouter>
   );
 };
