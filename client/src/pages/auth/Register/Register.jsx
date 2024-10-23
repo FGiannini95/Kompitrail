@@ -1,7 +1,15 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import { RoutesString } from "../../../routes/routes";
 
 export const Register = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     //the handleSubmit function from react-hook-form will do some work behind the scene for us, like the valdiation and the prevent default
@@ -12,83 +20,108 @@ export const Register = () => {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log(data);
+      console.log("Datos enviados:", data);
+
+      const response = await axios.post(
+        "http://localhost:3000/users/createuser",
+        data
+      );
+
+      console.log("Respuesta del servidor:", response.data);
+      navigate("/login");
     } catch (error) {
+      console.error("Error al crear el usuario:", error);
       setError("root", {
-        message: "This email is already taken",
+        message: "Error al crear el usuario. Intenta nuevamente.",
       });
     }
   };
 
+  //TODO: validation
+  //TODO: lastName llega undefined
+  //TODO: handleCancel para limpar todos los campos
+
   return (
     <form
-      className="gap-2"
       style={{ paddingTop: "80px", display: "flex", flexDirection: "column" }}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <input
-        {...register("name", {
-          required: "Nombre obligatorio",
-          minLength: {
-            value: 2,
-            message: "El nombre debe contener 2 carácteres",
-          },
-        })}
-        type="password"
-        placeholder="Nombre"
-      />
-      {errors.name && <div className="text-red-500">{errors.name.message}</div>}
-      <input
-        {...register("lastName", {
-          required: "Apellidos obligatorios",
-          minLength: {
-            value: 8,
-            message: "Los apellidos debe contener almenos 2 carácteres",
-          },
-        })}
-        type="text"
-        placeholder="Apellidos"
-      />
-      {errors.lastName && (
-        <div className="text-red-500">{errors.lastName.message}</div>
-      )}
-      <input
-        {...register("email", {
-          required: "Correo obligatorio",
-          //If there is an error, it can return a string, otherwise always a boolean
-          validate: (value) => {
-            if (!value.includes("@")) {
-              return "El correo debe incluir @"; //TODO: add more validation
-            }
-            return true;
-          },
-        })}
-        type="text"
-        placeholder="Correo"
-      />
-      {errors.email && (
-        <div className="text-red-500">{errors.email.message}</div>
-      )}
-      <input
-        {...register("password", {
-          required: "Contraseña obligatoria",
-          minLength: {
-            value: 8,
-            message: "La contraseña debe contener 8 carácteres",
-          },
-        })}
-        type="password"
-        placeholder="Contraseña"
-      />
-      {errors.password && (
-        <div className="text-red-500">{errors.password.message}</div>
-      )}
-      <button disabled={isSubmitting} type="submit">
-        {isSubmitting ? "Cargando..." : "Crear"}
-      </button>
-      <button type="button">Cancelar</button>
-      {errors.root && <div className="text-red-500">{errors.root.message}</div>}
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            {...register("name")}
+            label="Nombre"
+            variant="outlined"
+            fullWidth
+            error={!!errors.name}
+            helperText={errors.name?.message}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            {...register("lastName")}
+            label="Apellidos"
+            variant="outlined"
+            fullWidth
+            error={!!errors.lastName}
+            helperText={errors.lastName?.message}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            {...register("email")}
+            label="Correo"
+            variant="outlined"
+            fullWidth
+            error={!!errors.email}
+            helperText={errors.email?.message}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            {...register("password")}
+            label="Contraseña"
+            type="password"
+            variant="outlined"
+            fullWidth
+            error={!!errors.password}
+            helperText={errors.password?.message}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <Button
+            disabled={isSubmitting}
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+          >
+            {isSubmitting ? "Cargando..." : "Crear"}
+          </Button>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Button
+            type="button"
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            onClick={() => navigate(RoutesString.landing)}
+          >
+            Cancelar
+          </Button>
+        </Grid>
+
+        {errors.root && (
+          <Grid item xs={12}>
+            <div className="text-red-500">{errors.root.message}</div>
+          </Grid>
+        )}
+      </Grid>
     </form>
   );
 };
