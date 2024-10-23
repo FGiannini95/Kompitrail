@@ -12,9 +12,14 @@ import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
 import WalletIcon from "@mui/icons-material/Wallet";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
+import { delLocalStorage } from "../../helpers/localStorageUtils";
 
 export const InfoUser = () => {
-  const { user } = useContext(KompitrailContext);
+  const { user, token, setUser, setToken, setIsLogged } =
+    useContext(KompitrailContext);
+  const navigate = useNavigate();
 
   const getInitials = (name, lastname) => {
     const firstLetterName = name?.charAt(0).toUpperCase() || "";
@@ -24,6 +29,14 @@ export const InfoUser = () => {
   };
 
   const iniciales = getInitials(user.name, user.lastname);
+
+  const logOut = () => {
+    delLocalStorage("token");
+    setUser();
+    setToken();
+    setIsLogged(false);
+    navigate("/");
+  };
 
   return (
     <div style={{ paddingTop: "50px" }}>
@@ -253,6 +266,40 @@ export const InfoUser = () => {
               justifyContent="center"
             >
               <ArrowForwardIosIcon />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid style={{ paddingTop: "40px" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          Desconectar perfil
+        </Typography>
+        <Grid>
+          <Grid container spacing={3}>
+            <Grid
+              item
+              xs={2}
+              container
+              spacing={0}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <LogoutIcon />
+            </Grid>
+            <Grid item xs={8}>
+              <Typography>Log Out</Typography>
+            </Grid>
+            <Grid
+              item
+              xs={2}
+              container
+              spacing={0}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <ArrowForwardIosIcon onClick={logOut} />
             </Grid>
           </Grid>
         </Grid>
