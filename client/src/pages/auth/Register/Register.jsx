@@ -40,11 +40,10 @@ export const Register = () => {
     }
   };
 
+  // Reset all the fields of the form
   const handleCancel = () => {
     reset();
   };
-
-  //TODO: lastName llega undefined
 
   return (
     <form
@@ -71,7 +70,7 @@ export const Register = () => {
 
         <Grid item xs={12}>
           <TextField
-            {...register("lastName", {
+            {...register("lastname", {
               required: "Los apellidos son obligatorio",
               minLength: {
                 value: 2,
@@ -108,9 +107,9 @@ export const Register = () => {
             {...register("password", {
               required: "La contraseña es obligatoria",
               pattern: {
-                value: /^(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                message:
-                  "La contraseña debe tener al menos 8 caracteres, un número y un carácter especial.",
+                // Password with 8 caracteres and on of the has to be a special one
+                value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message: "La contraseña no es suficientemente fuerte",
               },
             })}
             label="Contraseña"
