@@ -143,15 +143,15 @@ export const Register = () => {
           >
             Cancelar
           </Button>
-          <Grid item xs={12} paddingTop={2}>
-            <Typography textAlign="center">
-              ¿Ya tienes un perfil? ¡Haz el login{" "}
-              <Link href={RoutesString.login} color="primary" underline="hover">
-                aquí
-              </Link>
-              !
-            </Typography>
-          </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography textAlign="center">
+            ¿Ya tienes un perfil? ¡Haz el login{" "}
+            <Link href={RoutesString.login} color="primary" underline="hover">
+              aquí
+            </Link>
+            !
+          </Typography>
         </Grid>
 
         {errors.root && (
