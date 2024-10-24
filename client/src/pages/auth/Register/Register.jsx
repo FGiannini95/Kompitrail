@@ -16,6 +16,7 @@ export const Register = () => {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm();
 
   const onSubmit = async (data) => {
@@ -37,9 +38,11 @@ export const Register = () => {
     }
   };
 
-  //TODO: validation
+  const handleCancel = () => {
+    reset();
+  };
+
   //TODO: lastName llega undefined
-  //TODO: handleCancel para limpar todos los campos
 
   return (
     <form
@@ -49,7 +52,13 @@ export const Register = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
-            {...register("name")}
+            {...register("name", {
+              required: "El nombre es obligatorio",
+              minLength: {
+                value: 2,
+                message: "El nombre debe tener al menos 2 caracteres",
+              },
+            })}
             label="Nombre"
             variant="outlined"
             fullWidth
@@ -60,7 +69,13 @@ export const Register = () => {
 
         <Grid item xs={12}>
           <TextField
-            {...register("lastName")}
+            {...register("lastName", {
+              required: "Los apellidos son obligatorio",
+              minLength: {
+                value: 2,
+                message: "Los apellidos deben tener al menos 2 caracteres",
+              },
+            })}
             label="Apellidos"
             variant="outlined"
             fullWidth
@@ -71,7 +86,13 @@ export const Register = () => {
 
         <Grid item xs={12}>
           <TextField
-            {...register("email")}
+            {...register("email", {
+              required: "El correo es obligatorio",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Ingrese un correo válido",
+              },
+            })}
             label="Correo"
             variant="outlined"
             fullWidth
@@ -82,7 +103,14 @@ export const Register = () => {
 
         <Grid item xs={12}>
           <TextField
-            {...register("password")}
+            {...register("password", {
+              required: "La contraseña es obligatoria",
+              pattern: {
+                value: /^(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message:
+                  "La contraseña debe tener al menos 8 caracteres, un número y un carácter especial.",
+              },
+            })}
             label="Contraseña"
             type="password"
             variant="outlined"
@@ -110,7 +138,7 @@ export const Register = () => {
             variant="outlined"
             color="secondary"
             fullWidth
-            onClick={() => navigate(RoutesString.landing)}
+            onClick={handleCancel}
           >
             Cancelar
           </Button>
