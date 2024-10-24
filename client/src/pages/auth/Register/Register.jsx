@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Typography from "@mui/material/Typography";
 import { RoutesString } from "../../../routes/routes";
 
 export const Register = () => {
@@ -142,6 +144,15 @@ export const Register = () => {
           >
             Cancelar
           </Button>
+          <Grid item xs={12} paddingTop={2}>
+            <Typography textAlign="center">
+              ¿Ya tienes un perfil? ¡Haz el login{" "}
+              <Link href={RoutesString.login} color="primary" underline="hover">
+                aquí
+              </Link>
+              !
+            </Typography>
+          </Grid>
         </Grid>
 
         {errors.root && (
