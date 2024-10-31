@@ -32,7 +32,7 @@ export const GlobalRouter = () => {
           </Routes>
         </NavBarApp>
       )}
-      {!token && !user && (
+      {(!token || !user) && (
         <Routes>
           <Route path={RoutesString.landing} element={<LandingPage />} />
           <Route path={RoutesString.register} element={<Register />} />
