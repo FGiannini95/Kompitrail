@@ -1,11 +1,16 @@
-import React, { useContext, useEffect } from "react";
-import { Grid, Typography } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Typography,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 // import axios from "axios";
 
-// Importacion de iconos
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import SettingsSharpIcon from "@mui/icons-material/SettingsSharp";
 import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
@@ -13,6 +18,8 @@ import WalletIcon from "@mui/icons-material/Wallet";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom";
 import { delLocalStorage } from "../../helpers/localStorageUtils";
 
@@ -20,6 +27,8 @@ export const InfoUser = () => {
   const { user, token, setUser, setToken, setIsLogged } =
     useContext(KompitrailContext);
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogType, setDialogType] = useState("");
 
   const getInitials = (name, lastname) => {
     const firstLetterName = name?.charAt(0).toUpperCase() || "";
@@ -36,6 +45,29 @@ export const InfoUser = () => {
     setToken();
     setIsLogged(false);
     navigate("/");
+  };
+
+  const handleOpenDialog = (type) => {
+    setDialogType(type);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setDialogType("");
+  };
+
+  const deletePerfil = () => {
+    console.log("hola");
+  };
+
+  const handleConfirmation = () => {
+    if (dialogType === "logout") {
+      logOut();
+    } else if (dialogType === "delete") {
+      deletePerfil();
+    }
+    setOpenDialog(false);
   };
 
   return (
@@ -85,7 +117,7 @@ export const InfoUser = () => {
               fullWidth
             >
               {/* añadir icono de compartir */}
-              Compartir prefil
+              Compartir perfil
             </Button>
           </Grid>
         </Grid>
@@ -106,7 +138,7 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <AccountCircleIcon fontSize="large" />
+              <PersonIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography sx={{ fontWeight: "bold" }}>
@@ -270,7 +302,10 @@ export const InfoUser = () => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid style={{ paddingTop: "40px" }}>
+      <Grid
+        style={{ paddingTop: "40px" }}
+        onClick={() => handleOpenDialog("logout")}
+      >
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           Desconectar perfil
         </Typography>
@@ -285,7 +320,7 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <LogoutIcon />
+              <LogoutIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography>Log Out</Typography>
@@ -299,11 +334,68 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <ArrowForwardIosIcon onClick={logOut} />
+              <ArrowForwardIosIcon />
             </Grid>
           </Grid>
         </Grid>
       </Grid>
+      <Grid
+        style={{ paddingTop: "40px" }}
+        onClick={() => handleOpenDialog("delete")}
+      >
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          Eliminar perfil
+        </Typography>
+        <Grid>
+          <Grid container spacing={3}>
+            <Grid
+              item
+              xs={2}
+              container
+              spacing={0}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <DeleteOutlineIcon fontSize="large" />
+            </Grid>
+            <Grid item xs={8}>
+              <Typography>Eliminar cuenta</Typography>
+            </Grid>
+            <Grid
+              item
+              xs={2}
+              container
+              spacing={0}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <ArrowForwardIosIcon />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>
+          {dialogType === "logout" ? "Cerrar sesión" : "Eliminar perfil"}
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            {dialogType === "logout"
+              ? "¿Estás seguro de querer cerrar sesión?"
+              : "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?"}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmation} color="secondary">
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
