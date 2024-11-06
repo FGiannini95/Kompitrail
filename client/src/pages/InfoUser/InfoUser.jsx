@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import { KompitrailContext } from "../../../context/KompitrailContext";
-// import axios from "axios";
+import axios from "axios";
 
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import SettingsSharpIcon from "@mui/icons-material/SettingsSharp";
@@ -21,7 +21,12 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom";
-import { delLocalStorage } from "../../helpers/localStorageUtils";
+import {
+  delLocalStorage,
+  getLocalStorage,
+} from "../../helpers/localStorageUtils";
+import { jwtDecode } from "jwt-decode";
+import { RoutesString } from "../../routes/routes";
 
 export const InfoUser = () => {
   const { user, token, setUser, setToken, setIsLogged } =
@@ -29,6 +34,7 @@ export const InfoUser = () => {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogType, setDialogType] = useState("");
+  const tokenLocalStorage = getLocalStorage("token");
 
   const getInitials = (name, lastname) => {
     const firstLetterName = name?.charAt(0).toUpperCase() || "";
@@ -58,7 +64,16 @@ export const InfoUser = () => {
   };
 
   const deletePerfil = () => {
-    console.log("hola");
+    const { user_id } = jwtDecode(tokenLocalStorage).user;
+    axios
+      .put(`http://localhost:3000/users/deleteuser/${user_id}`)
+      .then((res) => {
+        console.log(res.data);
+        navigate(RoutesString.landing);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleConfirmation = () => {
