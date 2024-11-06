@@ -50,7 +50,7 @@ export const InfoUser = () => {
     setUser();
     setToken();
     setIsLogged(false);
-    navigate("/");
+    navigate(RoutesString.landing);
   };
 
   const handleOpenDialog = (type) => {
