@@ -81,6 +81,7 @@ export const InfoUser = () => {
       logOut();
     } else if (dialogType === "delete") {
       deleteUser();
+      logOut();
     }
     setOpenDialog(false);
   };
