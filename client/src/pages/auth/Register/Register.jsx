@@ -43,14 +43,15 @@ export const Register = () => {
   // Reset all the fields of the form
   const handleCancel = () => {
     reset();
+    navigate(RoutesString.landing);
   };
 
   return (
-    <form
-      style={{ paddingTop: "80px", display: "flex", flexDirection: "column" }}
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={2}>
+        <Grid item xs={12} align="center">
+          <Typography variant="h4">Registro</Typography>
+        </Grid>
         <Grid item xs={12}>
           <TextField
             {...register("name", {
