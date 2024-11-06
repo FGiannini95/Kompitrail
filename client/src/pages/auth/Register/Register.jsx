@@ -31,7 +31,7 @@ export const Register = () => {
       );
 
       console.log("Respuesta del servidor:", response.data);
-      navigate("/login");
+      navigate(RoutesString.login);
     } catch (error) {
       console.error("Error al crear el usuario:", error);
       setError("root", {
