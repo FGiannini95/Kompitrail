@@ -63,7 +63,7 @@ export const InfoUser = () => {
     setDialogType("");
   };
 
-  const deletePerfil = () => {
+  const deleteUser = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
       .put(`http://localhost:3000/users/deleteuser/${user_id}`)
@@ -80,7 +80,7 @@ export const InfoUser = () => {
     if (dialogType === "logout") {
       logOut();
     } else if (dialogType === "delete") {
-      deletePerfil();
+      deleteUser();
     }
     setOpenDialog(false);
   };
