@@ -80,7 +80,7 @@ class usersControllers {
   };
 
   oneUser = (req, res) => {
-    const user_id = req.params.id;
+    const { id: user_id } = req.params;
     let sql = `SELECT * FROM user WHERE user_id = ${user_id} AND is_deleted = 0`;
     connection.query(sql, (err, result) => {
       err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
@@ -88,10 +88,13 @@ class usersControllers {
   };
 
   deleteUser = (req, res) => {
-    const user_id = req.params.id;
-    let sql = `UPDATE user SET is_deleted = 1 WHERE user_id = '${user_id}`;
+    const { user_id } = req.params;
+    console.log("params", req.params);
+    let sql = `UPDATE user SET is_deleted = 1 WHERE user_id = '${user_id}'`;
     connection.query(sql, (err, result) => {
-      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+      err
+        ? res.status(400).json({ err })
+        : res.status(200).json({ message: "Usuario eliminado", result });
     });
   };
 }
