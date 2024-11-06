@@ -86,6 +86,14 @@ class usersControllers {
       err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
     });
   };
+
+  deleteUser = (req, res) => {
+    const user_id = req.params.id;
+    let sql = `UPDATE user SET is_deleted = 1 WHERE user_id = '${user_id}`;
+    connection.query(sql, (err, result) => {
+      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    });
+  };
 }
 
 module.exports = new usersControllers();
