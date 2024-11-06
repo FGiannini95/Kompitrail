@@ -45,12 +45,12 @@ class usersControllers {
 
   loginUser = (req, res) => {
     const { email, password } = req.body;
-    let sql = `SELECT * FROM user WHERE email= "${email}"`;
+    let sql = `SELECT * FROM user WHERE email= "${email}" and is_deleted = 0`;
     connection.query(sql, (err, result) => {
       if (err) return res.status(500).json(err);
 
       if (!result || result.length == 0) {
-        res.status(401).json("Email no existe");
+        res.status(401).json("El correo no existe");
       } else {
         const user = result[0];
         const hash = user.password;
@@ -71,7 +71,7 @@ class usersControllers {
 
             res.status(200).json({ token, user });
           } else {
-            res.status(401).json("Email o contraseña incorrecta");
+            res.status(401).json("Correo o contraseña incorrecta");
           }
           console.log("responseee", response);
         });
