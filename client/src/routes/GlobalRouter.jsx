@@ -13,6 +13,7 @@ import { Chat } from "../pages/Chat/Chat";
 import { InfoUser } from "../pages/InfoUser/InfoUser";
 import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
 import { KompitrailContext } from "../../context/KompitrailContext";
+import { Motorbike } from "../pages/InfoUser/Motorbike/Motorbike";
 
 export const GlobalRouter = () => {
   const { user, token } = useContext(KompitrailContext);
@@ -29,6 +30,7 @@ export const GlobalRouter = () => {
             <Route path={RoutesString.chat} element={<Chat />} />
             <Route path={RoutesString.profile} element={<Profile />} />
             <Route path={RoutesString.infouser} element={<InfoUser />} />
+            <Route path={RoutesString.motorbike} element={<Motorbike />} />
           </Routes>
         </NavBarApp>
       )}
