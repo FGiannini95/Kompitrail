@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import Grid2 from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 
 // Quiero que esté al principio mis motos y a su izquierda una flechita para volver a trás
 // Un useeffect que me traiga todas las moto de un usuario  nombre/modelo/foto
@@ -13,15 +14,20 @@ import Typography from "@mui/material/Typography";
 export const Motorbike = () => {
   const navigate = useNavigate();
   return (
-    <Grid2 container alignItems="center">
-      <Grid2>
+    <Grid container alignItems="center">
+      <Grid>
         <ArrowBackIosIcon onClick={() => navigate(-1)} />
-      </Grid2>
-      <Grid2>
+      </Grid>
+      <Grid>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           Mis motos
         </Typography>
-      </Grid2>
-    </Grid2>
+      </Grid>
+      <Grid item xs={12}>
+        <Button type="button" variant="outlined" color="secondary" fullWidth>
+          + moto
+        </Button>
+      </Grid>
+    </Grid>
   );
 };
