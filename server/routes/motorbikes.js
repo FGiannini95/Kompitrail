@@ -1,11 +1,19 @@
 var express = require("express");
 var router = express.Router();
-const motorbikeControllers = require("../controllers/motorbikesControllers");
-const usersControllers = require("../controllers/usersControllers");
 const motorbikesControllers = require("../controllers/motorbikesControllers");
-//import multer
+const multerSingle = require("../middleware/multerSingle");
 
 //ruta base http://localhost:3000/motorbikes
-router.post("/createmotorbike", motorbikesControllers.createMotorbike);
+router.post(
+  "/createmotorbike",
+  multerSingle("motorbikes"),
+  motorbikesControllers.createMotorbike
+);
+router.get("/showallmotorbikes", motorbikesControllers.showAllMotorbikes);
+router.put(
+  "/editmotorbike",
+  multerSingle("motorbikes"),
+  motorbikesControllers.editMotorbike
+);
 
 module.exports = router;
