@@ -45,12 +45,12 @@ class usersControllers {
 
   loginUser = (req, res) => {
     const { email, password } = req.body;
-    let sql = `SELECT * FROM user WHERE email= "${email}"`;
+    let sql = `SELECT * FROM user WHERE email= "${email}" and is_deleted = 0`;
     connection.query(sql, (err, result) => {
       if (err) return res.status(500).json(err);
 
       if (!result || result.length == 0) {
-        res.status(401).json("Email no existe");
+        res.status(401).json("El correo no existe");
       } else {
         const user = result[0];
         const hash = user.password;
@@ -71,11 +71,30 @@ class usersControllers {
 
             res.status(200).json({ token, user });
           } else {
-            res.status(401).json("Email o contraseña incorrecta");
+            res.status(401).json("Correo o contraseña incorrecta");
           }
           console.log("responseee", response);
         });
       }
+    });
+  };
+
+  oneUser = (req, res) => {
+    const { id: user_id } = req.params;
+    let sql = `SELECT * FROM user WHERE user_id = ${user_id} AND is_deleted = 0`;
+    connection.query(sql, (err, result) => {
+      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    });
+  };
+
+  deleteUser = (req, res) => {
+    const { id: user_id } = req.params;
+    console.log("User ID recibido:", user_id);
+    let sql = `UPDATE user SET is_deleted = 1 WHERE user_id = "${user_id}"`;
+    connection.query(sql, (err, result) => {
+      err
+        ? res.status(400).json({ err })
+        : res.status(200).json({ message: "Usuario eliminado", result });
     });
   };
 }

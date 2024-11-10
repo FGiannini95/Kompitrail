@@ -1,163 +1,136 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import axios from "axios";
+import Link from "@mui/material/Link";
+import Typography from "@mui/material/Typography";
 import { RoutesString } from "../../../routes/routes";
 
 export const Register = () => {
-  const initialFormState = {
-    name: "",
-    lastname: "",
-    email: "",
-    confirmEmail: "",
-    password: "",
-    confirmPassword: "",
-  };
-
-  const [register, setRegister] = useState(initialFormState);
-  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setRegister({
-      ...register,
-      [name]: value,
-    });
-  };
+  const {
+    register,
+    //the handleSubmit function from react-hook-form will do some work behind the scene for us, like the valdiation and the prevent default
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm();
 
-  const validate = () => {
-    const newErrors = {};
-    if (!register.name) newErrors.name = "El nombre es requerido.";
-    if (!register.lastname) newErrors.lastname = "Los apellidos son requerido.";
-    if (!register.email) {
-      newErrors.email = "El correo es requerido.";
-    } else if (!/\S+@\S+\.\S+/.test(register.email)) {
-      newErrors.email = "El correo no es válido.";
-    }
-    if (!register.password) newErrors.password = "La contraseña es requerida.";
-    if (register.password !== register.confirmPassword) {
-      newErrors.confirmPassword = "Las contraseñas no coinciden.";
-    }
-    return newErrors;
-  };
+  const onSubmit = async (data) => {
+    try {
+      console.log("Datos enviados:", data);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    setErrors(validationErrors);
+      const response = await axios.post(
+        "http://localhost:3000/users/createuser",
+        data
+      );
 
-    if (Object.keys(validationErrors).length === 0) {
-      console.log("Formulario enviado con éxito:", register);
-      axios
-        .post("http://localhost:3000/users/createuser", register)
-        .then((res) => {
-          console.log(res);
-          navigate(RoutesString.login);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      console.log("Respuesta del servidor:", response.data);
+      navigate(RoutesString.login);
+    } catch (error) {
+      console.error("Error al crear el usuario:", error);
+      setError("root", {
+        message: "Error al crear el usuario. Intenta nuevamente.",
+      });
     }
   };
 
+  // Reset all the fields of the form
   const handleCancel = () => {
-    setRegister(initialFormState);
-    setErrors({});
-    navigate("/");
-    console.log("He limpiado todos los campos");
+    reset();
+    navigate(RoutesString.landing);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={2}>
         <Grid item xs={12} align="center">
-          <Typography variant="h4">Formulario de Registro</Typography>
+          <Typography variant="h4">Registro</Typography>
         </Grid>
-
         <Grid item xs={12}>
           <TextField
+            {...register("name", {
+              required: "El nombre es obligatorio",
+              minLength: {
+                value: 2,
+                message: "El nombre debe tener al menos 2 caracteres",
+              },
+            })}
             label="Nombre"
-            name="name"
+            variant="outlined"
             fullWidth
-            value={register.name}
-            onChange={handleInputChange}
             error={!!errors.name}
-            helperText={errors.name}
+            helperText={errors.name?.message}
           />
         </Grid>
 
         <Grid item xs={12}>
           <TextField
+            {...register("lastname", {
+              required: "Los apellidos son obligatorio",
+              minLength: {
+                value: 2,
+                message: "Los apellidos deben tener al menos 2 caracteres",
+              },
+            })}
             label="Apellidos"
-            name="lastname"
+            variant="outlined"
             fullWidth
-            value={register.lastname}
-            onChange={handleInputChange}
-            error={!!errors.lastname}
-            helperText={errors.lastname}
+            error={!!errors.lastName}
+            helperText={errors.lastName?.message}
           />
         </Grid>
 
         <Grid item xs={12}>
           <TextField
-            label="Correo electrónico"
-            name="email"
-            type="email"
+            {...register("email", {
+              required: "El correo es obligatorio",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Ingrese un correo válido",
+              },
+            })}
+            label="Correo"
+            variant="outlined"
             fullWidth
-            value={register.email}
-            onChange={handleInputChange}
             error={!!errors.email}
-            helperText={errors.email}
+            helperText={errors.email?.message}
           />
         </Grid>
 
         <Grid item xs={12}>
           <TextField
-            label="Confirmar correo"
-            name="confirmEmail"
-            type="email"
-            fullWidth
-            value={register.confirmEmail}
-            onChange={handleInputChange}
-            error={!!errors.confirmEmail}
-            helperText={errors.confirmEmail}
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <TextField
+            {...register("password", {
+              required: "La contraseña es obligatoria",
+              pattern: {
+                // Password with 8 caracteres and on of the has to be a special one
+                value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message: "La contraseña no es suficientemente fuerte",
+              },
+            })}
             label="Contraseña"
-            name="password"
             type="password"
+            variant="outlined"
             fullWidth
-            value={register.password}
-            onChange={handleInputChange}
             error={!!errors.password}
-            helperText={errors.password}
+            helperText={errors.password?.message}
           />
         </Grid>
 
         <Grid item xs={12}>
-          <TextField
-            label="Confirmar Contraseña"
-            name="confirmPassword"
-            type="password"
+          <Button
+            disabled={isSubmitting}
+            type="submit"
+            variant="contained"
+            color="primary"
             fullWidth
-            value={register.confirmPassword}
-            onChange={handleInputChange}
-            error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword}
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Registrarse
+          >
+            {isSubmitting ? "Cargando..." : "Crear"}
           </Button>
         </Grid>
 
@@ -173,13 +146,20 @@ export const Register = () => {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <Typography
-            variant="h4"
-            sx={{ textAlign: "center", color: "blue", marginBottom: 2 }}
-          >
-            Ya estás registrado? Loguéate aqui!
+          <Typography textAlign="center">
+            ¿Ya tienes un perfil? ¡Haz el login{" "}
+            <Link href={RoutesString.login} color="primary" underline="hover">
+              aquí
+            </Link>
+            !
           </Typography>
         </Grid>
+
+        {errors.root && (
+          <Grid item xs={12}>
+            <div className="text-red-500">{errors.root.message}</div>
+          </Grid>
+        )}
       </Grid>
     </form>
   );
