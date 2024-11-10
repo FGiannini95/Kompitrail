@@ -4,8 +4,8 @@ require("dotenv").config();
 
 class motorbikesControllers {
   createMotorbike = (req, res) => {
-    console.log("hola");
-    let sql = `INSERT INTO motorbike (motorbike_id, user_id, motorbike_brand, motorbike_model, img) VALUES ('${motorbike_id}', '${user_id}', '${motorbike_brand}', '${motorbike_model}', 'default.png')`; //NEED DEFAULT PIC
+    console.log("hola createMotorbike");
+    let sql = `INSERT INTO motorbike (motorbike_id, user_id, motorbike_brand, motorbike_model, img) VALUES ('${motorbike_id}', '${user_id}', '${motorbike_brand}', '${motorbike_model}', 'default.png')`;
     if (req.file !== undefined) {
       let img = req.file.filename;
       sql = `INSERT INTO motorbike (motorbike_id, user_id, motorbike_brand, motorbike_model, img) VALUES ('${motorbike_id}', '${user_id}', '${motorbike_brand}', '${motorbike_model}', '${img}')`;

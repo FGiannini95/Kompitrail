@@ -1,13 +1,11 @@
 import React, { useContext, useState } from "react";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Typography,
-} from "@mui/material";
 import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import axios from "axios";
 
