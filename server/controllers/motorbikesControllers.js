@@ -24,14 +24,14 @@ class motorbikesControllers {
     });
   };
 
-  //no se si se necesita el ID
+  //no se si se necesita el ID (user o motorbike)
   editMotorbike = (req, res) => {
     console.log("Hola from edit");
     //LEFT JOIN WITH USER TABLE
     let sql = `UPDATE user SET motorbike_brand = "${motorbike_brand}", motorbike_model = "${motorbike_model}", img = "${img}" WHERE motorbike_id = ${motorbike_id}`;
   };
 
-  //no se si se necesita el ID
+  //no se si se necesita el ID (user o motorbike)
   deleteMotorbike = (req, res) => {
     console.log("hola from deleteMotorbike");
     let sql = `UPDATE motorbike SET is_deleted = 1 WHERE user_id = "${user_id}"`;
