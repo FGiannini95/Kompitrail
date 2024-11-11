@@ -130,7 +130,7 @@ export const InfoUser = () => {
               color="secondary"
               fullWidth
             >
-              {/* añadir icono de compartir */}
+              {/* TODO: añadir icono de compartir */}
               Compartir perfil
             </Button>
           </Grid>

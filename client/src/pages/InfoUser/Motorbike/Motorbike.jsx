@@ -32,7 +32,7 @@ export const Motorbike = () => {
           id: 1,
           brand: "motorbike 1",
           model: "model X",
-          img: ["url_foto1"],
+          img: ["default.png"],
         },
         {
           id: 2,
