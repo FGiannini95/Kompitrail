@@ -89,7 +89,6 @@ class usersControllers {
 
   deleteUser = (req, res) => {
     const { id: user_id } = req.params;
-    console.log("User ID recibido:", user_id);
     let sql = `UPDATE user SET is_deleted = 1 WHERE user_id = "${user_id}"`;
     connection.query(sql, (err, result) => {
       err
