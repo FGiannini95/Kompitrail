@@ -12,22 +12,45 @@ import { KompitrailContext } from "../../../../context/KompitrailContext";
 const initialValue = {
   brand: "",
   model: "",
+  photo: null,
 };
 
 export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
-  const [brand, setBrand] = useState("");
-  const [model, setModel] = useState("");
-  const [photo, setPhoto] = useState();
   const { user } = useContext(KompitrailContext);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCreateOneMotorbike((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    setCreateOneMotorbike((prevState) => ({
+      ...prevState,
+      photo: file,
+    }));
+  };
+
   const handleConfirm = () => {
-    console.log("Moto añadida:", { brand, model });
-
+    // We use this interface in order to pass data throught the HTTP protocol
     const newFormData = new FormData();
+    // The append methid add a new field to the interface
+    newFormData.append(
+      "createMotorbike",
+      JSON.stringify({
+        brand: createOneMotorbike.brand,
+        model: createOneMotorbike.model,
+        user_id: user.user_id,
+      })
+    );
 
-    let data = { ...createOneMotorbike, uder_id: user.user_id };
-    newFormData.append("createMotorbike", JSON.stringify(data));
+    if (createOneMotorbike.photo) {
+      newFormData.append("file", createOneMotorbike.photo);
+    }
 
     axios
       .post("http://localhost:3000/motorbikes/createmotorbike", newFormData)
@@ -37,17 +60,8 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
       .catch((err) => {
         console.log(err);
       });
-    setBrand("");
-    setModel("");
+    setCreateOneMotorbike(initialValue);
     handleCloseDialog();
-  };
-
-  //TODO: NOT SURE IT IS THE CORRECT WAY.
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPhoto(file);
-    }
   };
 
   return (
@@ -61,7 +75,9 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
           sx={{ marginTop: 2 }}
         >
           <FileUploadOutlinedIcon />
-          {photo ? `Foto: ${photo.name}` : "Foto"}
+          {createOneMotorbike.photo
+            ? `Foto: ${createOneMotorbike.photo.name}`
+            : "Foto"}
           <input
             type="file"
             accept="image/*"
@@ -74,15 +90,17 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
           label="Marca"
           fullWidth
           margin="normal"
-          value={brand}
-          onChange={(e) => setBrand(e.target.value)}
+          name="brand"
+          value={createOneMotorbike.brand}
+          onChange={handleChange}
         />
         <TextField
           label="Modelo"
           fullWidth
           margin="normal"
-          value={model}
-          onChange={(e) => setModel(e.target.value)}
+          name="model"
+          value={createOneMotorbike.model}
+          onChange={handleChange}
         />
       </DialogContent>
       <DialogActions>

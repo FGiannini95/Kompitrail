@@ -4,13 +4,10 @@ require("dotenv").config();
 
 class motorbikesControllers {
   createMotorbike = (req, res) => {
-    console.log("req.body", req.body);
-    const { user_id, motorbike_brand, motorbike_model } = JSON.parse(
-      req.body.createMotorbike
-    );
+    const { user_id, brand, model } = JSON.parse(req.body.createMotorbike);
     const img = req.file ? req.file.filename : "default.png";
     let sql = `INSERT INTO motorbike (user_id, motorbike_brand, motorbike_model, img, is_deleted)
-    VALUES ('${user_id}', '${motorbike_brand}', '${motorbike_model}', '${img}', false)`;
+    VALUES ('${user_id}', '${brand}', '${model}', '${img}', false)`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
