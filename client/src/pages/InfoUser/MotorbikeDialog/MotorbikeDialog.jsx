@@ -5,6 +5,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import axios from "axios";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
@@ -17,6 +18,7 @@ const initialValue = {
 
 export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
+  const [msgError, setMsgError] = useState("");
   const { user } = useContext(KompitrailContext);
 
   const handleChange = (e) => {
@@ -35,10 +37,22 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
     }));
   };
 
-  const handleConfirm = () => {
+  const cleanDialog = () => {
+    handleCloseDialog();
+    setCreateOneMotorbike(initialValue);
+  };
+
+  const handleConfirm = (e) => {
+    e.preventDefault();
+
+    if (!createOneMotorbike.brand) {
+      setMsgError("Tienes que insertar una marca");
+      return;
+    }
+    console.log(createOneMotorbike);
     // We use this interface in order to pass data throught the HTTP protocol
     const newFormData = new FormData();
-    // The append methid add a new field to the interface
+    // The append method add a new field to the interface
     newFormData.append(
       "createMotorbike",
       JSON.stringify({
@@ -61,11 +75,11 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
         console.log(err);
       });
     setCreateOneMotorbike(initialValue);
-    handleCloseDialog();
+    cleanDialog();
   };
 
   return (
-    <Dialog open={openDialog} onClose={handleCloseDialog}>
+    <Dialog open={openDialog} onClose={cleanDialog}>
       <DialogTitle>Añadir moto</DialogTitle>
       <DialogContent>
         <Button
@@ -76,7 +90,7 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
         >
           <FileUploadOutlinedIcon />
           {createOneMotorbike.photo
-            ? `Foto: ${createOneMotorbike.photo.name}`
+            ? `${createOneMotorbike.photo.name}`
             : "Foto"}
           <input
             type="file"
@@ -85,7 +99,6 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
             onChange={handlePhotoChange}
           />
         </Button>
-        {/* TODO: according to the database, the brand is mandatory while the model could be null */}
         <TextField
           label="Marca"
           fullWidth
@@ -93,6 +106,8 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
           name="brand"
           value={createOneMotorbike.brand}
           onChange={handleChange}
+          error={!!msgError}
+          helperText={msgError}
         />
         <TextField
           label="Modelo"
@@ -104,7 +119,7 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseDialog} color="primary">
+        <Button onClick={cleanDialog} color="primary">
           Cancelar
         </Button>
         <Button onClick={handleConfirm} color="secondary">
