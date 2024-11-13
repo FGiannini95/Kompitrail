@@ -11,45 +11,18 @@ import { MotorbikeDialog } from "./MotorbikeDialog/MotorbikeDialog";
 import axios from "axios";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
+import { MotorbikeDeleteDialog } from "./MotorbikeDeleteDialog/MotorbikeDeleteDialog";
+import { MotorbikeEditDialog } from "./MotorbikeEditDialog/MotorbikeEditDialog";
 
 export const Motorbike = () => {
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
   const [allMotorbikes, setAllMotorbikes] = useState([]);
+  const [selectedMotorbikeId, setSelectedMotorbikeId] = useState(null);
+
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  // // useEffect para cargar las motos del usuario
-  // useEffect(() => {
-  //   // Simulación de fetch de datos de motos del usuario
-  //   const fetchMotorbikes = async () => {
-  //     // Aquí podrías hacer una llamada a la API para obtener las motos
-  //     const mockMotorbikes = [
-  //       {
-  //         id: 1,
-  //         brand: "motorbike 1",
-  //         model: "model X",
-  //         img: ["default.png"],
-  //       },
-  //       {
-  //         id: 2,
-  //         brand: "motorbike 2",
-  //         model: "model Y",
-  //         img: ["url_foto3"],
-  //       },
-  //     ];
-  //     setAllMotorbikes(mockMotorbikes);
-  //   };
-
-  //   fetchMotorbikes();
-  // }, []);
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -63,6 +36,27 @@ export const Motorbike = () => {
         console.log(err);
       });
   }, []);
+  //TODO: implement the dependency array in order to avoid the refresh to see the update
+  // allmotorbikes generates an infinite loop in the back
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleOpenDeleteDialog = (motorbike_id) => {
+    setSelectedMotorbikeId(motorbike_id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleOpenEditDialog = () => {
+    setOpenEditDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setOpenDeleteDialog(false);
+    setOpenEditDialog(false);
+  };
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -90,10 +84,13 @@ export const Motorbike = () => {
             </Grid>
             <Grid item xs={3} container justifyContent="flex-end">
               <IconButton fontSize="large">
-                <EditOutlinedIcon />
+                <EditOutlinedIcon onClick={handleOpenEditDialog} />
               </IconButton>
               <IconButton>
-                <DeleteOutlineIcon fontSize="large" />
+                <DeleteOutlineIcon
+                  fontSize="large"
+                  onClick={handleOpenDeleteDialog}
+                />
               </IconButton>
             </Grid>
           </Grid>
@@ -112,6 +109,15 @@ export const Motorbike = () => {
       </Grid>
       <MotorbikeDialog
         openDialog={openDialog}
+        handleCloseDialog={handleCloseDialog}
+      />
+      <MotorbikeDeleteDialog
+        openDeleteDialog={openDeleteDialog}
+        handleCloseDialog={handleCloseDialog}
+        motorbike_id={selectedMotorbikeId}
+      />
+      <MotorbikeEditDialog
+        openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}
       />
     </Grid>
