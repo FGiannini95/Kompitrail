@@ -5,10 +5,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import axios from "axios";
-import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { KompitrailContext } from "../../../../../context/KompitrailContext";
 
 const initialValue = {
   brand: "",
@@ -44,12 +43,11 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
 
   const handleConfirm = (e) => {
     e.preventDefault();
-
+    // According to the ddbb, the brand is mandatory
     if (!createOneMotorbike.brand) {
       setMsgError("Tienes que insertar una marca");
       return;
     }
-    console.log(createOneMotorbike);
     // We use this interface in order to pass data throught the HTTP protocol
     const newFormData = new FormData();
     // The append method add a new field to the interface

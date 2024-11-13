@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import { MotorbikeDialog } from "../MotorbikeDialog/MotorbikeDialog";
+import { MotorbikeDialog } from "./MotorbikeDialog/MotorbikeDialog";
 
 export const Motorbike = () => {
   const [openDialog, setOpenDialog] = useState(false);
