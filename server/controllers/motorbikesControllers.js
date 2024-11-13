@@ -15,7 +15,7 @@ class motorbikesControllers {
 
   showAllMotorbikes = (req, res) => {
     const { id: user_id } = req.params;
-    let sql = `SELECT * FROM motorbike WHERE user_id = '${user_id}'`;
+    let sql = `SELECT * FROM motorbike WHERE user_id = '${user_id}' and is_deleted = 0`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
@@ -28,16 +28,13 @@ class motorbikesControllers {
     let sql = `UPDATE user SET motorbike_brand = "${motorbike_brand}", motorbike_model = "${motorbike_model}", img = "${img}" WHERE motorbike_id = ${motorbike_id}`;
   };
 
-  //no se si se necesita el ID (user o motorbike)
   deleteMotorbike = (req, res) => {
-    console.log("hola from deleteMotorbike");
-    const { motorbike_id } = req.params;
-    console.log(req.params);
-    let sql = `UPDATE motorbike SET is_deleted = 1 WHERE motorbike_id = "${motorbike_id}" and user_id ='${user_id}`;
+    const { id: motorbike_id } = req.params;
+    let sql = `UPDATE motorbike SET is_deleted = 1 WHERE motorbike_id = "${motorbike_id}"`;
     connection.query(sql, (err, result) => {
       err
         ? res.status(400).json({ err })
-        : res.status(200).json({ message: "Usuario eliminado", result });
+        : res.status(200).json({ message: "Moto eliminada", result });
     });
   };
 }

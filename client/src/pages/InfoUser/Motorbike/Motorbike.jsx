@@ -29,7 +29,7 @@ export const Motorbike = () => {
     axios
       .get(`http://localhost:3000/motorbikes/showallmotorbikes/${user_id}`)
       .then((res) => {
-        console.log("res.data in the Motorbike", res.data);
+        console.log(res.data);
         setAllMotorbikes(res.data);
       })
       .catch((err) => {
@@ -48,7 +48,8 @@ export const Motorbike = () => {
     console.log(motorbike_id);
   };
 
-  const handleOpenEditDialog = () => {
+  const handleOpenEditDialog = (motorbike_id) => {
+    setSelectedMotorbikeId(motorbike_id);
     setOpenEditDialog(true);
   };
 

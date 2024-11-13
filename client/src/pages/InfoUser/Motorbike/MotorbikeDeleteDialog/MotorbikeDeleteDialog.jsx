@@ -11,17 +11,16 @@ import { useNavigate } from "react-router-dom";
 export const MotorbikeDeleteDialog = ({
   openDeleteDialog,
   handleCloseDialog,
-  selectedMotorbikeId,
+  motorbike_id,
 }) => {
   const navigate = useNavigate();
 
-  const handleConfirm = ({ selectedMotorbikeId }) => {
+  const handleConfirm = () => {
     axios
-      .put(
-        `http://localhost:3000/motorbikes/deleteMotorbike/${selectedMotorbikeId}`
-      )
+      .put(`http://localhost:3000/motorbikes/deletemotorbike/${motorbike_id}`)
       .then((res) => {
         console.log(res.data);
+        handleCloseDialog();
         navigate(-1);
       })
       .catch((err) => {
