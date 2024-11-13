@@ -17,7 +17,7 @@ export const MotorbikeDeleteDialog = ({
 
   const handleConfirm = ({ selectedMotorbikeId }) => {
     axios
-      .delete(
+      .put(
         `http://localhost:3000/motorbikes/deleteMotorbike/${selectedMotorbikeId}`
       )
       .then((res) => {

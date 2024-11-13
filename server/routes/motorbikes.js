@@ -15,6 +15,6 @@ router.put(
   multerSingle("motorbikes"),
   motorbikesControllers.editMotorbike
 );
-router.delete("/deletemotorbike/:id", motorbikesControllers.deleteMotorbike);
+router.put("/deletemotorbike/:id", motorbikesControllers.deleteMotorbike);
 
 module.exports = router;
