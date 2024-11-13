@@ -72,7 +72,6 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
       .catch((err) => {
         console.log(err);
       });
-    setCreateOneMotorbike(initialValue);
     cleanDialog();
   };
 
