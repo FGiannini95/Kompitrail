@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import { MotorbikeDialog } from "./MotorbikeDialog/MotorbikeDialog";
+import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
 import axios from "axios";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
@@ -20,6 +20,7 @@ export const Motorbike = () => {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [allMotorbikes, setAllMotorbikes] = useState([]);
   const [selectedMotorbikeId, setSelectedMotorbikeId] = useState(null);
+  const [refresh, setRefresh] = useState(false);
 
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
@@ -35,8 +36,7 @@ export const Motorbike = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
-  //TODO: implement the dependency array in order to avoid the refresh to see the update
+  }, [refresh]);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -112,9 +112,10 @@ export const Motorbike = () => {
           + Añadir moto
         </Button>
       </Grid>
-      <MotorbikeDialog
+      <MotorbikeCreateDialog
         openDialog={openDialog}
         handleCloseDialog={handleCloseDialog}
+        setRefresh={setRefresh}
       />
       <MotorbikeDeleteDialog
         openDeleteDialog={openDeleteDialog}

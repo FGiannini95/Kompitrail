@@ -15,7 +15,11 @@ const initialValue = {
   photo: null,
 };
 
-export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
+export const MotorbikeCreateDialog = ({
+  openDialog,
+  handleCloseDialog,
+  setRefresh,
+}) => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
   const [msgError, setMsgError] = useState("");
   const { user } = useContext(KompitrailContext);
@@ -68,6 +72,7 @@ export const MotorbikeDialog = ({ openDialog, handleCloseDialog }) => {
       .post("http://localhost:3000/motorbikes/createmotorbike", newFormData)
       .then((res) => {
         console.log(res.data);
+        setRefresh((prev) => !prev);
       })
       .catch((err) => {
         console.log(err);
