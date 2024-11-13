@@ -32,8 +32,8 @@ class motorbikesControllers {
   deleteMotorbike = (req, res) => {
     console.log("hola from deleteMotorbike");
     const { motorbike_id } = req.params;
-    copnsole.log(req.params);
-    let sql = `DELETE FROM motorbike WHERE motorbike_id = "${motorbike_id}"`;
+    console.log(req.params);
+    let sql = `UPDATE motorbike SET is_deleted = 1 WHERE motorbike_id = "${motorbike_id}" and user_id ='${user_id}`;
     connection.query(sql, (err, result) => {
       err
         ? res.status(400).json({ err })
