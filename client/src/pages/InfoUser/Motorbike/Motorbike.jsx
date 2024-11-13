@@ -29,7 +29,7 @@ export const Motorbike = () => {
     axios
       .get(`http://localhost:3000/motorbikes/showallmotorbikes/${user_id}`)
       .then((res) => {
-        console.log("aaa", res.data);
+        console.log("res.data in the Motorbike", res.data);
         setAllMotorbikes(res.data);
       })
       .catch((err) => {
@@ -37,7 +37,6 @@ export const Motorbike = () => {
       });
   }, []);
   //TODO: implement the dependency array in order to avoid the refresh to see the update
-  // allmotorbikes generates an infinite loop in the back
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -46,6 +45,7 @@ export const Motorbike = () => {
   const handleOpenDeleteDialog = (motorbike_id) => {
     setSelectedMotorbikeId(motorbike_id);
     setOpenDeleteDialog(true);
+    console.log(motorbike_id);
   };
 
   const handleOpenEditDialog = () => {
@@ -57,6 +57,8 @@ export const Motorbike = () => {
     setOpenDeleteDialog(false);
     setOpenEditDialog(false);
   };
+
+  console.log("selectedMotorbikeId", selectedMotorbikeId);
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -83,14 +85,16 @@ export const Motorbike = () => {
               </Typography>
             </Grid>
             <Grid item xs={3} container justifyContent="flex-end">
-              <IconButton fontSize="large">
-                <EditOutlinedIcon onClick={handleOpenEditDialog} />
+              <IconButton
+                fontSize="large"
+                onClick={() => handleOpenEditDialog(motorbike.motorbike_id)}
+              >
+                <EditOutlinedIcon />
               </IconButton>
-              <IconButton>
-                <DeleteOutlineIcon
-                  fontSize="large"
-                  onClick={handleOpenDeleteDialog}
-                />
+              <IconButton
+                onClick={() => handleOpenDeleteDialog(motorbike.motorbike_id)}
+              >
+                <DeleteOutlineIcon fontSize="large" />
               </IconButton>
             </Grid>
           </Grid>
