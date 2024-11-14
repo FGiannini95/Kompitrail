@@ -38,6 +38,7 @@ export const Register = () => {
       navigate(RoutesString.login);
     } catch (error) {
       console.error("Error al crear el usuario:", error);
+      // Se tiene
       setError("root", {
         message: "Error al crear el usuario. Intenta nuevamente.",
       });
@@ -150,7 +151,11 @@ export const Register = () => {
             }}
           />
         </Grid>
-
+        {errors.root && (
+          <Grid item xs={12}>
+            <div className="text-red-500">{errors.root.message}</div>
+          </Grid>
+        )}
         <Grid item xs={12}>
           <Button
             disabled={isSubmitting}
@@ -183,12 +188,6 @@ export const Register = () => {
             !
           </Typography>
         </Grid>
-
-        {errors.root && (
-          <Grid item xs={12}>
-            <div className="text-red-500">{errors.root.message}</div>
-          </Grid>
-        )}
       </Grid>
     </form>
   );
