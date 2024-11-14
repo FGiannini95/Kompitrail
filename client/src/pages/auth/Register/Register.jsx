@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +8,12 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { RoutesString } from "../../../routes/routes";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 export const Register = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [, setIsPasswordSelected] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -46,6 +50,18 @@ export const Register = () => {
     navigate(RoutesString.landing);
   };
 
+  const displayPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleFocus = () => {
+    setIsPasswordSelected(true);
+  };
+
+  const handleBlur = () => {
+    setIsPasswordSelected(false);
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={2}>
@@ -71,8 +87,8 @@ export const Register = () => {
 
         <Grid item xs={12}>
           <TextField
-            {...register("lastname", {
-              required: "Los apellidos son obligatorio",
+            {...register("lastName", {
+              required: "Los apellidos son obligatorios",
               minLength: {
                 value: 2,
                 message: "Los apellidos deben tener al menos 2 caracteres",
@@ -108,17 +124,30 @@ export const Register = () => {
             {...register("password", {
               required: "La contraseña es obligatoria",
               pattern: {
-                // Password with 8 caracteres and on of the has to be a special one
+                // Password with 8 caracteres and one of them has to be a special one
                 value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
                 message: "La contraseña no es suficientemente fuerte",
               },
             })}
             label="Contraseña"
-            type="password"
+            type={showPassword ? "text" : "password"}
             variant="outlined"
             fullWidth
-            error={!!errors.password}
+            error={errors.password}
             helperText={errors.password?.message}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            InputProps={{
+              endAdornment: (
+                <Button onClick={displayPassword}>
+                  {showPassword ? (
+                    <VisibilityOffOutlinedIcon />
+                  ) : (
+                    <VisibilityOutlinedIcon />
+                  )}
+                </Button>
+              ),
+            }}
           />
         </Grid>
 

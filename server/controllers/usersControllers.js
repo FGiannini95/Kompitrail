@@ -50,7 +50,7 @@ class usersControllers {
       if (err) return res.status(500).json(err);
 
       if (!result || result.length == 0) {
-        res.status(401).json("El correo no existe");
+        res.status(401).json("Correo o contraseña incorrecta");
       } else {
         const user = result[0];
         const hash = user.password;
@@ -73,7 +73,6 @@ class usersControllers {
           } else {
             res.status(401).json("Correo o contraseña incorrecta");
           }
-          console.log("responseee", response);
         });
       }
     });
