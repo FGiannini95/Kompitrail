@@ -38,7 +38,6 @@ export const Register = () => {
       navigate(RoutesString.login);
     } catch (error) {
       console.error("Error al crear el usuario:", error);
-      // Se tiene
       setError("root", {
         message: "Error al crear el usuario. Intenta nuevamente.",
       });
@@ -89,7 +88,7 @@ export const Register = () => {
         <Grid item xs={12}>
           <TextField
             {...register("lastName", {
-              required: "Los apellidos son obligatorios",
+              required: "Los apellidos son obligatorio",
               minLength: {
                 value: 2,
                 message: "Los apellidos deben tener al menos 2 caracteres",
@@ -125,7 +124,7 @@ export const Register = () => {
             {...register("password", {
               required: "La contraseña es obligatoria",
               pattern: {
-                // Password with 8 caracteres and one of them has to be a special one
+                // Password with 8 caracteres and on of the has to be a special one
                 value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
                 message: "La contraseña no es suficientemente fuerte",
               },
@@ -134,7 +133,7 @@ export const Register = () => {
             type={showPassword ? "text" : "password"}
             variant="outlined"
             fullWidth
-            error={errors.password}
+            error={!!errors.password}
             helperText={errors.password?.message}
             onFocus={handleFocus}
             onBlur={handleBlur}
