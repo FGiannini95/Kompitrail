@@ -38,9 +38,16 @@ export const Register = () => {
       navigate(RoutesString.login);
     } catch (error) {
       console.error("Error al crear el usuario:", error);
-      setError("root", {
-        message: "Error al crear el usuario. Intenta nuevamente.",
-      });
+      // Mostrar un mensaje de error más claro si el correo ya está en uso
+      if (error.response && error.response.status === 400) {
+        setError("root", {
+          message: error.response.data.message || "Error desconocido.",
+        });
+      } else {
+        setError("root", {
+          message: "Ha ocurrido un error inesperado. Intenta nuevamente.",
+        });
+      }
     }
   };
 
@@ -87,7 +94,7 @@ export const Register = () => {
 
         <Grid item xs={12}>
           <TextField
-            {...register("lastName", {
+            {...register("lastname", {
               required: "Los apellidos son obligatorio",
               minLength: {
                 value: 2,
@@ -97,8 +104,8 @@ export const Register = () => {
             label="Apellidos"
             variant="outlined"
             fullWidth
-            error={!!errors.lastName}
-            helperText={errors.lastName?.message}
+            error={!!errors.lastname}
+            helperText={errors.lastname?.message}
           />
         </Grid>
 
@@ -152,7 +159,7 @@ export const Register = () => {
         </Grid>
         {errors.root && (
           <Grid item xs={12}>
-            <div className="text-red-500">{errors.root.message}</div>
+            <Typography color="error">{errors.root.message}</Typography>
           </Grid>
         )}
         <Grid item xs={12}>
