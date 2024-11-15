@@ -21,7 +21,11 @@ const initialValue = {
 export const Login = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [login, setLogin] = useState(initialValue);
-  const [msgError, setMsgError] = useState({ email: "", password: "" });
+  const [msgError, setMsgError] = useState({
+    email: "",
+    password: "",
+    global: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
   const navigate = useNavigate();
@@ -38,6 +42,7 @@ export const Login = () => {
       setMsgError({
         ...msgError,
         [name]: "",
+        global: "",
       });
     }
   };
@@ -74,7 +79,11 @@ export const Login = () => {
       })
       .catch((err) => {
         console.log(err);
-        setMsgError({ email: "", password: err.response.data });
+        setMsgError({
+          email: "",
+          password: "",
+          global: err.response?.data || "Error desconocido al iniciar sesión",
+        });
       });
   };
 
@@ -132,7 +141,13 @@ export const Login = () => {
             }}
           />
         </Grid>
-
+        {msgError.global && (
+          <Grid item xs={12}>
+            <Typography color="error" align="center">
+              {msgError.global}
+            </Typography>
+          </Grid>
+        )}
         <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary" fullWidth>
             ACEPTAR
