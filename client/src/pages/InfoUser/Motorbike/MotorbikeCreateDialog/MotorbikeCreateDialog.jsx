@@ -52,6 +52,10 @@ export const MotorbikeCreateDialog = ({
       setMsgError("Tienes que insertar una marca");
       return;
     }
+    if (!createOneMotorbike.model) {
+      setMsgError("Tienes que insertar un modelo");
+      return;
+    }
     // We use this interface in order to pass data throught the HTTP protocol
     const newFormData = new FormData();
     // The append method add a new field to the interface
@@ -118,6 +122,8 @@ export const MotorbikeCreateDialog = ({
           name="model"
           value={createOneMotorbike.model}
           onChange={handleChange}
+          error={!!msgError}
+          helperText={msgError}
         />
       </DialogContent>
       <DialogActions>
