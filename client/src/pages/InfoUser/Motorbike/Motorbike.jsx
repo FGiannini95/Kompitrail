@@ -30,7 +30,6 @@ export const Motorbike = () => {
     axios
       .get(`http://localhost:3000/motorbikes/showallmotorbikes/${user_id}`)
       .then((res) => {
-        console.log(res.data);
         setAllMotorbikes(res.data);
       })
       .catch((err) => {

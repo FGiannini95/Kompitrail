@@ -27,7 +27,6 @@ export const MotorbikeEditDialog = ({
       axios
         .get(`http://localhost:3000/motorbikes/onemotorbike/${motorbike_id}`)
         .then((res) => {
-          console.log("res.data in oneMotorbike", res.data);
           const {
             motorbike_brand: brand,
             motorbike_model: model,

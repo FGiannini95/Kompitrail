@@ -52,7 +52,6 @@ class motorbikesControllers {
   };
 
   showMotorbikesAnalytics = (req, res) => {
-    console.log("Hola desde analytics");
     const { id: user_id } = req.params;
     let sql = `SELECT (SELECT COUNT(*) FROM motorbike WHERE user_id = "${user_id}" AND is_deleted = 0)`;
     connection.query(sql, (error, result) => {

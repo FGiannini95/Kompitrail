@@ -12,7 +12,6 @@ export const Profile = () => {
     axios
       .get(`http://localhost:3000/motorbikes/motorbikes-analytics/${user_id}`)
       .then((res) => {
-        console.log("res.data in analytic", res.data);
         setMotorbikesAnalytics(res.data[0]);
       })
       .catch((err) => {
