@@ -27,8 +27,12 @@ export const MotorbikeEditDialog = ({
       axios
         .get(`http://localhost:3000/motorbikes/onemotorbike/${motorbike_id}`)
         .then((res) => {
-          console.log(res.data);
-          const { brand, model, img: photo } = res.data;
+          console.log("res.data in oneMotorbike", res.data);
+          const {
+            motorbike_brand: brand,
+            motorbike_model: model,
+            img: photo,
+          } = res.data;
           setEditMotorbike({ brand, model, photo });
         })
         .catch((err) => {
@@ -52,7 +56,11 @@ export const MotorbikeEditDialog = ({
 
   const handleConfirm = (e) => {
     e.preventDefault();
-    console.log("hola tu");
+
+    // ALl fields must be filled
+    if (!editMotorbike.brand.trim() || !editMotorbike.model.trim()) {
+      return;
+    }
 
     const newFormData = new FormData();
     newFormData.append(
@@ -69,7 +77,7 @@ export const MotorbikeEditDialog = ({
         newFormData
       )
       .then((res) => {
-        console.log(res);
+        console.log("res.data in editmotorbike", res.data);
         setRefresh((prev) => !prev);
         handleCloseDialog();
       })

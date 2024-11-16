@@ -45,7 +45,6 @@ export const Motorbike = () => {
   const handleOpenDeleteDialog = (motorbike_id) => {
     setSelectedMotorbikeId(motorbike_id);
     setOpenDeleteDialog(true);
-    console.log(motorbike_id);
   };
 
   const handleOpenEditDialog = (motorbike_id) => {
@@ -58,8 +57,6 @@ export const Motorbike = () => {
     setOpenDeleteDialog(false);
     setOpenEditDialog(false);
   };
-
-  console.log("selectedMotorbikeId", selectedMotorbikeId);
 
   return (
     <Grid container direction="column" spacing={2}>
