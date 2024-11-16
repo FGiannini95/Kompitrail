@@ -57,8 +57,6 @@ export const Motorbike = () => {
     setOpenEditDialog(false);
   };
 
-  console.log(allMotorbikes);
-
   return (
     <Grid container direction="column" spacing={2}>
       <Grid item container alignItems="center">
