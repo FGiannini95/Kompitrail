@@ -16,7 +16,7 @@ const initialValue = {
 };
 
 export const MotorbikeCreateDialog = ({
-  openDialog,
+  openCreateDialog,
   handleCloseDialog,
   setRefresh,
 }) => {
@@ -85,7 +85,7 @@ export const MotorbikeCreateDialog = ({
   };
 
   return (
-    <Dialog open={openDialog} onClose={cleanDialog}>
+    <Dialog open={openCreateDialog} onClose={cleanDialog}>
       <DialogTitle>Añadir moto</DialogTitle>
       <DialogContent>
         <Button

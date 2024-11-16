@@ -15,7 +15,7 @@ import { MotorbikeDeleteDialog } from "./MotorbikeDeleteDialog/MotorbikeDeleteDi
 import { MotorbikeEditDialog } from "./MotorbikeEditDialog/MotorbikeEditDialog";
 
 export const Motorbike = () => {
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [allMotorbikes, setAllMotorbikes] = useState([]);
@@ -37,8 +37,8 @@ export const Motorbike = () => {
       });
   }, [refresh]);
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
+  const handleOpenCreateDialog = () => {
+    setOpenCreateDialog(true);
   };
 
   const handleOpenDeleteDialog = (motorbike_id) => {
@@ -52,7 +52,7 @@ export const Motorbike = () => {
   };
 
   const handleCloseDialog = () => {
-    setOpenDialog(false);
+    setOpenCreateDialog(false);
     setOpenDeleteDialog(false);
     setOpenEditDialog(false);
   };
@@ -108,13 +108,13 @@ export const Motorbike = () => {
           variant="outlined"
           color="secondary"
           fullWidth
-          onClick={handleOpenDialog}
+          onClick={handleOpenCreateDialog}
         >
           + Añadir moto
         </Button>
       </Grid>
       <MotorbikeCreateDialog
-        openDialog={openDialog}
+        openCreateDialog={openCreateDialog}
         handleCloseDialog={handleCloseDialog}
         setRefresh={setRefresh}
       />
