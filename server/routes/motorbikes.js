@@ -17,5 +17,9 @@ router.put(
   motorbikesControllers.editMotorbike
 );
 router.put("/deletemotorbike/:id", motorbikesControllers.deleteMotorbike);
+router.get(
+  "/motorbikes-analytics/:id",
+  motorbikesControllers.showMotorbikesAnalytics
+);
 
 module.exports = router;
