@@ -57,6 +57,8 @@ export const Motorbike = () => {
     setOpenEditDialog(false);
   };
 
+  console.log(allMotorbikes);
+
   return (
     <Grid container direction="column" spacing={2}>
       <Grid item container alignItems="center">
@@ -76,7 +78,11 @@ export const Motorbike = () => {
             alignItems="center"
           >
             <Grid item xs={3}>
-              <img src={motorbike.img} alt={motorbike.brand} width="100%" />
+              <img
+                src={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
+                alt={motorbike.brand}
+                width="100%"
+              />
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1">
