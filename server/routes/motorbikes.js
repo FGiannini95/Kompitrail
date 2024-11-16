@@ -10,8 +10,9 @@ router.post(
   motorbikesControllers.createMotorbike
 );
 router.get("/showallmotorbikes/:id", motorbikesControllers.showAllMotorbikes);
+router.get("/onemotorbike/:id", motorbikesControllers.showOneMotorbike);
 router.put(
-  "/editmotorbike",
+  "/editmotorbike/:id",
   multerSingle("motorbikes"),
   motorbikesControllers.editMotorbike
 );

@@ -1,23 +1,111 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import axios from "axios";
 
-export const MotorbikeEditDialog = ({ openEditDialog, handleCloseDialog }) => {
+const initialValue = {
+  brand: "",
+  model: "",
+  photo: null,
+};
+
+export const MotorbikeEditDialog = ({
+  openEditDialog,
+  handleCloseDialog,
+  motorbike_id,
+  setRefresh,
+}) => {
+  const [editMotorbike, setEditMotorbike] = useState(initialValue);
+
+  useEffect(() => {
+    // We call the useEffect only if we open the dialog
+    if (openEditDialog && motorbike_id) {
+      axios
+        .get(`http://localhost:3000/motorbikes/onemotorbike/${motorbike_id}`)
+        .then((res) => {
+          console.log(res.data);
+          const { brand, model, img: photo } = res.data;
+          setEditMotorbike({ brand, model, photo });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [openEditDialog, motorbike_id]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditMotorbike((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const cleanDialog = () => {
+    handleCloseDialog();
+    setEditMotorbike(initialValue);
+  };
+
+  const handleConfirm = (e) => {
+    e.preventDefault();
+    console.log("hola tu");
+
+    const newFormData = new FormData();
+    newFormData.append(
+      "editMotorbike",
+      JSON.stringify({
+        brand: editMotorbike.brand,
+        model: editMotorbike.model,
+      })
+    );
+
+    axios
+      .put(
+        `http://localhost:3000/motorbikes/editmotorbike/${motorbike_id}`,
+        newFormData
+      )
+      .then((res) => {
+        console.log(res);
+        setRefresh((prev) => !prev);
+        handleCloseDialog();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <Dialog open={openEditDialog} onClose={handleCloseDialog}>
       <DialogTitle>Editar moto</DialogTitle>
       <DialogContent>
-        <Typography>¿Quieres eliminar la moto de tu perfil?</Typography>
+        <TextField
+          label="Marca"
+          fullWidth
+          margin="normal"
+          name="brand"
+          value={editMotorbike?.brand || ""}
+          onChange={handleChange}
+        />
+        <TextField
+          label="Modelo"
+          fullWidth
+          margin="normal"
+          name="model"
+          value={editMotorbike?.model || ""}
+          onChange={handleChange}
+        />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseDialog} color="primary">
+        <Button onClick={cleanDialog} color="primary">
           Cancelar
         </Button>
-        <Button color="secondary">Confirmar</Button>
+        <Button onClick={handleConfirm} color="secondary">
+          Confirmar
+        </Button>
       </DialogActions>
     </Dialog>
   );

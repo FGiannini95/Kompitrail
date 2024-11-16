@@ -15,17 +15,31 @@ class motorbikesControllers {
 
   showAllMotorbikes = (req, res) => {
     const { id: user_id } = req.params;
-    let sql = `SELECT * FROM motorbike WHERE user_id = '${user_id}' and is_deleted = 0`;
+    let sql = `SELECT * FROM motorbike WHERE user_id = '${user_id}' AND is_deleted = 0`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
   };
 
-  //no se si se necesita el ID (user o motorbike)
+  showOneMotorbike = (req, res) => {
+    console.log("hola desde one moto");
+    const { id: motorbike_id } = req.params;
+    let sql = `SELECT * FROM motorbike WHERE motorbike_id = "${motorbike_id}" and is_deleted = 0`;
+    connection.query(sql, (err, result) => {
+      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    });
+  };
+
   editMotorbike = (req, res) => {
-    console.log("Hola from edit");
-    //LEFT JOIN WITH USER TABLE
-    let sql = `UPDATE user SET motorbike_brand = "${motorbike_brand}", motorbike_model = "${motorbike_model}", img = "${img}" WHERE motorbike_id = ${motorbike_id}`;
+    const { brand, model } = JSON.parse(req.body.editMotorbike);
+    const { id: motorbike_id } = req.params;
+    const img = req.file ? req.file.filename : "default.png";
+    let sql = `UPDATE motorbike SET motorbike_brand = "${brand}", motorbike_model = "${model}", img = "${img}" WHERE motorbike_id = "${motorbike_id}" AND is_deleted = 0`;
+    connection.query(sql, (err, result) => {
+      err
+        ? res.status(400).json({ err })
+        : res.status(200).json({ message: "Moto modificada", result });
+    });
   };
 
   deleteMotorbike = (req, res) => {

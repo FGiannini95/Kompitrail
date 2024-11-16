@@ -125,6 +125,8 @@ export const Motorbike = () => {
       <MotorbikeEditDialog
         openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}
+        motorbike_id={selectedMotorbikeId}
+        setRefresh={setRefresh}
       />
     </Grid>
   );
