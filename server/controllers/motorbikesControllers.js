@@ -22,7 +22,6 @@ class motorbikesControllers {
   };
 
   showOneMotorbike = (req, res) => {
-    console.log("hola desde one moto");
     const { id: motorbike_id } = req.params;
     let sql = `SELECT * FROM motorbike WHERE motorbike_id = "${motorbike_id}" and is_deleted = 0`;
     connection.query(sql, (err, result) => {
