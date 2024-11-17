@@ -53,7 +53,7 @@ class motorbikesControllers {
 
   showMotorbikesAnalytics = (req, res) => {
     const { id: user_id } = req.params;
-    let sql = `SELECT (SELECT COUNT(*) FROM motorbike WHERE user_id = "${user_id}" AND is_deleted = 0)`;
+    let sql = `SELECT (SELECT COUNT(*) FROM motorbike WHERE user_id = "${user_id}" AND is_deleted = 0) AS total_motorbikes`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
