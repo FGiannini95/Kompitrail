@@ -6,6 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 
 const initialValue = {
   brand: "",
@@ -48,6 +49,14 @@ export const MotorbikeEditDialog = ({
     }));
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0]; // This is a File object
+    setEditMotorbike((prevState) => ({
+      ...prevState,
+      photo: file, // Photo now holds a File object
+    }));
+  };
+
   const cleanDialog = () => {
     handleCloseDialog();
     setEditMotorbike(initialValue);
@@ -70,6 +79,10 @@ export const MotorbikeEditDialog = ({
       })
     );
 
+    if (editMotorbike.photo) {
+      newFormData.append("file", editMotorbike.photo);
+    }
+
     axios
       .put(
         `http://localhost:3000/motorbikes/editmotorbike/${motorbike_id}`,
@@ -85,10 +98,36 @@ export const MotorbikeEditDialog = ({
       });
   };
 
+  console.log("editMotorbike", editMotorbike);
+
   return (
     <Dialog open={openEditDialog} onClose={handleCloseDialog}>
       <DialogTitle>Editar moto</DialogTitle>
       <DialogContent>
+        <Button
+          variant="text"
+          component="label"
+          fullWidth
+          sx={{ marginTop: 2 }}
+        >
+          <FileUploadOutlinedIcon />
+          {/* The photo property of editMotorbike can either be a string or a file */}
+          {
+            editMotorbike?.photo instanceof File
+              ? editMotorbike.photo.name // If it's a File, display the full file name
+              : editMotorbike.photo // If it's a string (like the default image)
+                ? editMotorbike.photo.includes("-")
+                  ? editMotorbike.photo.split("-").slice(2).join("-") // If it has an ID, extract the name from the second '-'
+                  : editMotorbike.photo // If it has no ID, display the full string
+                : "Photo" // Placeholder text if no photo exists
+          }
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={handlePhotoChange}
+          />
+        </Button>
         <TextField
           label="Marca"
           fullWidth
