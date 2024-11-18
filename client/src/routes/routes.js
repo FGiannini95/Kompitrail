@@ -8,4 +8,5 @@ export const RoutesString = {
   createtrip: "/trip",
   landing: "/",
   infouser: "/infouser",
+  motorbike: "/motorbike",
 };
