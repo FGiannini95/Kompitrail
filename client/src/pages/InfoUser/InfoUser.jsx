@@ -96,6 +96,8 @@ export const InfoUser = () => {
     navigate(RoutesString.home);
   };
 
+  console.log("hola");
+
   return (
     <Box
       style={{
