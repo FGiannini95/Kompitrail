@@ -1,5 +1,5 @@
 import React from "react";
 
 export const EditUser = () => {
-  return <div>EditUser</div>;
+  return <div><h1>Edit User</h1></div>;
 };
