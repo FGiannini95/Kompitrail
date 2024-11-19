@@ -73,7 +73,6 @@ class usersControllers {
           } else {
             res.status(401).json("Correo o contraseña incorrecta");
           }
-          console.log("responseee", response);
         });
       }
     });

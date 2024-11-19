@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
@@ -14,6 +14,12 @@ import { RoutesString } from "../../routes/routes";
 export const NavBarApp = ({ children }) => {
   const [activeButton, setActiveButton] = useState(RoutesString.home);
   const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const isInfoUser = location.pathname === RoutesString.infouser;
+
+  useEffect(() => {}, [location.pathname]);
 
   const handleButtonClick = (path) => {
     setActiveButton(path);
@@ -34,7 +40,15 @@ export const NavBarApp = ({ children }) => {
       >
         {children}
       </Box>
-      <AppBar position="fixed" color="primary" sx={{ top: "auto", bottom: 0 }}>
+      <AppBar
+        position="fixed"
+        color="primary"
+        sx={{
+          top: "auto",
+          bottom: 0,
+          display: isInfoUser ? "none" : "flex",
+        }}
+      >
         <Toolbar sx={{ display: "flex", justifyContent: "space-around" }}>
           <IconButton
             onClick={() => handleButtonClick(RoutesString.home)}

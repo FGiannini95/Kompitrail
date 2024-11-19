@@ -28,7 +28,6 @@ export const Login = () => {
       ...login,
       [name]: value,
     });
-    console.log(login);
   };
 
   const handleCancel = () => {
@@ -51,8 +50,6 @@ export const Login = () => {
         console.log(err);
         setMsgError(err.response.data);
       });
-
-    // console.log(login);
   };
 
   return (

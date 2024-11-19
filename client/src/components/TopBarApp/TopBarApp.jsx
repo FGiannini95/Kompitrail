@@ -15,6 +15,8 @@ const TopBar = () => {
 
   const [animateIcon, setAnimateIcon] = useState(false);
 
+  const isInfoUser = location.pathname === RoutesString.infouser;
+
   useEffect(() => {
     if (location.pathname === RoutesString.home) {
       setAnimateIcon(true);
@@ -37,7 +39,9 @@ const TopBar = () => {
       case `${RoutesString.home}`:
         return (
           <Box
-            display="flex"
+            sx={{
+              display: isInfoUser ? "none" : "flex",
+            }}
             flexDirection="row"
             alignItems="center"
             gap="10px"
@@ -67,6 +71,7 @@ const TopBar = () => {
   const rightSideComponent = () => {
     return (
       <IconButton
+        display="none"
         size="large"
         edge="end"
         color="inherit"
@@ -85,16 +90,18 @@ const TopBar = () => {
       style={{
         backgroundColor: "#1976d2",
         height: "64px",
-        display: "flex",
+        display: isInfoUser ? "none" : "flex",
         justifyContent: "center",
       }}
     >
       <Toolbar>
         <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          width="100%"
+          sx={{
+            display: isInfoUser ? "none" : "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
         >
           {leftSideComponent()}
           {rightSideComponent()}
