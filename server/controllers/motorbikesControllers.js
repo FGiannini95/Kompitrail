@@ -32,12 +32,23 @@ class motorbikesControllers {
   editMotorbike = (req, res) => {
     const { brand, model } = JSON.parse(req.body.editMotorbike);
     const { id: motorbike_id } = req.params;
-    const img = req.file ? req.file.filename : "default.png";
-    let sql = `UPDATE motorbike SET motorbike_brand = "${brand}", motorbike_model = "${model}", img = "${img}" WHERE motorbike_id = "${motorbike_id}" AND is_deleted = 0`;
-    connection.query(sql, (err, result) => {
-      err
-        ? res.status(400).json({ err })
-        : res.status(200).json({ message: "Moto modificada", result });
+
+    // We have to ensure that the img field is not overwritten with "default.png" if a new image is not uploaded
+    let sql = `SELECT img FROM motorbike WHERE motorbike_id = "${motorbike_id}" AND is_deleted = 0`;
+    connection.query(sql, (err, rows) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+
+      const currentImg = rows.length > 0 ? rows[0].img : "default.png";
+      const img = req.file ? req.file.filename : currentImg;
+
+      let sqlUpdate = `UPDATE motorbike SET motorbike_brand = "${brand}", motorbike_model = "${model}", img = "${img}" WHERE motorbike_id = "${motorbike_id}" AND is_deleted = 0`;
+      connection.query(sqlUpdate, (err, result) => {
+        err
+          ? res.status(400).json({ err })
+          : res.status(200).json({ message: "Moto modificada", result });
+      });
     });
   };
 
