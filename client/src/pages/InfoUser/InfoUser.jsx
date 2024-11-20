@@ -1,13 +1,11 @@
 import React, { useContext, useState } from "react";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Typography,
-} from "@mui/material";
 import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import axios from "axios";
 
@@ -132,19 +130,20 @@ export const InfoUser = () => {
               color="secondary"
               fullWidth
             >
-              {/* añadir icono de compartir */}
+              {/* TODO: añadir icono de compartir */}
               Compartir perfil
             </Button>
           </Grid>
         </Grid>
       </Grid>
-
+      {/* Empieza mi cuenta */}
       <Grid style={{ paddingTop: "40px" }}>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           Mi cuenta
         </Typography>
         <Grid>
           <Grid container spacing={3}>
+            {/* Epieza Modificar perfil */}
             <Grid
               item
               xs={2}
@@ -157,9 +156,7 @@ export const InfoUser = () => {
               <PersonIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography sx={{ fontWeight: "bold" }}>
-                Modificar perfil
-              </Typography>
+              <Typography>Modificar perfil</Typography>
             </Grid>
             <Grid
               item
@@ -173,6 +170,7 @@ export const InfoUser = () => {
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
+          {/* Empieza Mis motos */}
           <Grid container spacing={3}>
             <Grid
               item
@@ -196,10 +194,12 @@ export const InfoUser = () => {
               direction="column"
               alignItems="center"
               justifyContent="center"
+              onClick={() => navigate(RoutesString.motorbike)} //TODO: el onclik no se está ejecutando de la manera correcta, sino cuando pulso en Modificar perfil
             >
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
+          {/* Empieza Mis rutas */}
           <Grid container spacing={3}>
             <Grid
               item
@@ -228,6 +228,7 @@ export const InfoUser = () => {
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
+          {/* Empieza Ajustes */}
           <Grid container spacing={3}>
             <Grid
               item
@@ -257,6 +258,7 @@ export const InfoUser = () => {
           </Grid>
         </Grid>
       </Grid>
+      {/* Empieza ayuda y soporte */}
       <Grid style={{ paddingTop: "40px" }}>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           Ayuda y soporte
@@ -302,7 +304,7 @@ export const InfoUser = () => {
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Plitica de privacidad</Typography>
+              <Typography>Política de privacidad</Typography>
             </Grid>
             <Grid
               item
@@ -318,6 +320,7 @@ export const InfoUser = () => {
           </Grid>
         </Grid>
       </Grid>
+      {/* Empieza Log out */}
       <Grid
         style={{ paddingTop: "40px" }}
         onClick={() => handleOpenDialog("logout")}
@@ -355,6 +358,7 @@ export const InfoUser = () => {
           </Grid>
         </Grid>
       </Grid>
+      {/* EMpieza Eliminar perfil */}
       <Grid
         style={{ paddingTop: "40px" }}
         onClick={() => handleOpenDialog("delete")}
