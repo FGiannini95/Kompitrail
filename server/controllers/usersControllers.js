@@ -24,21 +24,30 @@ require("dotenv").config();
 class usersControllers {
   createUser = (req, res) => {
     const { name, lastname, email, password } = req.body;
-    //validación con libreria PTE
-    //encriptación de la contraseña
+    //password incriptation
     let saltRounds = 8;
     bcrypt.genSalt(saltRounds, function (err, saltRounds) {
       bcrypt.hash(password, saltRounds, function (err, hash) {
         if (err) {
-          console.log(err);
-        } else {
-          let sql = `INSERT INTO user (name, lastname, email, password) VALUES ('${name}', '${lastname}', '${email}', '${hash}')`;
-          connection.query(sql, (error, result) => {
-            error
-              ? res.status(500).json({ error }, console.log(error))
-              : res.status(200).json(result);
-          });
+          return res
+            .status(500)
+            .json({ message: "Error al encriptar la contraseña", error: err });
         }
+        let sql = `INSERT INTO user (name, lastname, email, password) VALUES ('${name}', '${lastname}', '${email}', '${hash}')`;
+        connection.query(sql, (error, result) => {
+          if (error) {
+            // Handle error messages
+            if (error.code === "ER_DUP_ENTRY") {
+              return res
+                .status(400)
+                .json({ message: "El correo ya está en uso." });
+            }
+            return res
+              .status(500)
+              .json({ message: "Error al crear el usuario", error });
+          }
+          res.status(200).json({ message: "Usuario creado con éxito", result });
+        });
       });
     });
   };
@@ -50,7 +59,7 @@ class usersControllers {
       if (err) return res.status(500).json(err);
 
       if (!result || result.length == 0) {
-        res.status(401).json("El correo no existe");
+        res.status(401).json("Correo o contraseña incorrecta");
       } else {
         const user = result[0];
         const hash = user.password;
@@ -88,7 +97,6 @@ class usersControllers {
 
   deleteUser = (req, res) => {
     const { id: user_id } = req.params;
-    console.log("User ID recibido:", user_id);
     let sql = `UPDATE user SET is_deleted = 1 WHERE user_id = "${user_id}"`;
     connection.query(sql, (err, result) => {
       err

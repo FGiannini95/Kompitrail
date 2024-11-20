@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import SportsMotorsportsIcon from "@mui/icons-material/SportsMotorsports";
+import SportsMotorsportsOutlinedIcon from "@mui/icons-material/SportsMotorsportsOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../../context/KompitrailContext";
@@ -47,7 +47,7 @@ const TopBar = () => {
             gap="10px"
           >
             <Typography variant="h6">{user.name}</Typography>
-            <SportsMotorsportsIcon
+            <SportsMotorsportsOutlinedIcon
               sx={{
                 transition: "transform 0.5s ease-in-out",
                 transform: animateIcon ? "rotate(360deg)" : "none",

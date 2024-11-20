@@ -9,4 +9,5 @@ export const RoutesString = {
   landing: "/",
   infouser: "/infouser",
   editUser: "/editUser",
+  motorbike: "/motorbike",
 };
