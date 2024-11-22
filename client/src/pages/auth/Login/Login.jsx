@@ -10,6 +10,8 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 import Link from "@mui/material/Link";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 const initialValue = {
   email: "",
@@ -19,7 +21,13 @@ const initialValue = {
 export const Login = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [login, setLogin] = useState(initialValue);
-  const [msgError, setMsgError] = useState("");
+  const [msgError, setMsgError] = useState({
+    email: "",
+    password: "",
+    global: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [, setIsPasswordSelected] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,7 +36,15 @@ export const Login = () => {
       ...login,
       [name]: value,
     });
-    console.log(login);
+
+    // Clean up only the specific field
+    if (msgError[name]) {
+      setMsgError({
+        ...msgError,
+        [name]: "",
+        global: "",
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -37,6 +53,20 @@ export const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validation before the submit
+    const errors = {};
+    if (login.email === "") {
+      errors.email = "El correo es obligatorio";
+    }
+    if (login.password === "") {
+      errors.password = "La contraseña es obligatoria";
+    }
+    // This method extracts all the keys from the errors object and returns them as an array
+    if (Object.keys(errors).length > 0) {
+      setMsgError(errors);
+      return;
+    }
 
     axios
       .post("http://localhost:3000/users/loginuser", login)
@@ -49,10 +79,24 @@ export const Login = () => {
       })
       .catch((err) => {
         console.log(err);
-        setMsgError(err.response.data);
+        setMsgError({
+          email: "",
+          password: "",
+          global: err.response?.data || "Error desconocido al iniciar sesión",
+        });
       });
+  };
 
-    // console.log(login);
+  const displayPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleFocus = () => {
+    setIsPasswordSelected(true);
+  };
+
+  const handleBlur = () => {
+    setIsPasswordSelected(false);
   };
 
   return (
@@ -68,6 +112,8 @@ export const Login = () => {
             name="email"
             fullWidth
             onChange={handleChange}
+            error={!!msgError.email}
+            helperText={msgError.email}
           />
         </Grid>
 
@@ -75,18 +121,33 @@ export const Login = () => {
           <TextField
             label="Contraseña"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             fullWidth
             onChange={handleChange}
+            error={!!msgError.password}
+            helperText={msgError.password}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            InputProps={{
+              endAdornment: (
+                <Button onClick={displayPassword}>
+                  {showPassword ? (
+                    <VisibilityOffOutlinedIcon />
+                  ) : (
+                    <VisibilityOutlinedIcon />
+                  )}
+                </Button>
+              ),
+            }}
           />
         </Grid>
-
-        <Grid item xs={12}>
-          <Typography variant="h6" sx={{ textAlign: "center", color: "red" }}>
-            {typeof msgError === "string" ? msgError : JSON.stringify(msgError)}
-          </Typography>
-        </Grid>
-
+        {msgError.global && (
+          <Grid item xs={12}>
+            <Typography color="error" align="center">
+              {msgError.global}
+            </Typography>
+          </Grid>
+        )}
         <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary" fullWidth>
             ACEPTAR

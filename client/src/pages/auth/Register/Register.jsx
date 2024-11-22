@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +8,12 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { RoutesString } from "../../../routes/routes";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 export const Register = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [, setIsPasswordSelected] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -34,9 +38,16 @@ export const Register = () => {
       navigate(RoutesString.login);
     } catch (error) {
       console.error("Error al crear el usuario:", error);
-      setError("root", {
-        message: "Error al crear el usuario. Intenta nuevamente.",
-      });
+      // Mostrar un mensaje de error más claro si el correo ya está en uso
+      if (error.response && error.response.status === 400) {
+        setError("root", {
+          message: error.response.data.message || "Error desconocido.",
+        });
+      } else {
+        setError("root", {
+          message: "Ha ocurrido un error inesperado. Intenta nuevamente.",
+        });
+      }
     }
   };
 
@@ -44,6 +55,18 @@ export const Register = () => {
   const handleCancel = () => {
     reset();
     navigate(RoutesString.landing);
+  };
+
+  const displayPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleFocus = () => {
+    setIsPasswordSelected(true);
+  };
+
+  const handleBlur = () => {
+    setIsPasswordSelected(false);
   };
 
   return (
@@ -81,8 +104,8 @@ export const Register = () => {
             label="Apellidos"
             variant="outlined"
             fullWidth
-            error={!!errors.lastName}
-            helperText={errors.lastName?.message}
+            error={!!errors.lastname}
+            helperText={errors.lastname?.message}
           />
         </Grid>
 
@@ -114,14 +137,31 @@ export const Register = () => {
               },
             })}
             label="Contraseña"
-            type="password"
+            type={showPassword ? "text" : "password"}
             variant="outlined"
             fullWidth
             error={!!errors.password}
             helperText={errors.password?.message}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            InputProps={{
+              endAdornment: (
+                <Button onClick={displayPassword}>
+                  {showPassword ? (
+                    <VisibilityOffOutlinedIcon />
+                  ) : (
+                    <VisibilityOutlinedIcon />
+                  )}
+                </Button>
+              ),
+            }}
           />
         </Grid>
-
+        {errors.root && (
+          <Grid item xs={12}>
+            <Typography color="error">{errors.root.message}</Typography>
+          </Grid>
+        )}
         <Grid item xs={12}>
           <Button
             disabled={isSubmitting}
@@ -154,12 +194,6 @@ export const Register = () => {
             !
           </Typography>
         </Grid>
-
-        {errors.root && (
-          <Grid item xs={12}>
-            <div className="text-red-500">{errors.root.message}</div>
-          </Grid>
-        )}
       </Grid>
     </form>
   );
