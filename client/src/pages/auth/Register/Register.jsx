@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -10,10 +10,12 @@ import Typography from "@mui/material/Typography";
 import { RoutesString } from "../../../routes/routes";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { jwtDecode } from "jwt-decode";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
+  const [googleUser, setGoogleUser] = useState({});
   const navigate = useNavigate();
 
   const {
@@ -68,6 +70,34 @@ export const Register = () => {
   const handleBlur = () => {
     setIsPasswordSelected(false);
   };
+
+  const handleGoogleSignInCallback = (response) => {
+    //It receives a response object from Google, which contains a JWT (JSON Web Token) credential.
+    var userObject = jwtDecode(response.credential);
+    console.log(userObject);
+    // The user data is stored in the googleUser state.
+    setGoogleUser(userObject);
+    document.getElementById("signInDiv").hidden = false;
+  };
+
+  const handleSignOut = () => {
+    setGoogleUser({});
+    document.getElementById("signInDiv").hidden = true;
+  };
+
+  useEffect(() => {
+    // global google object
+    const google = window.google;
+    google.accounts.id.initialize({
+      client_id:
+        "171268761879-g9dn1g2g0q78jn9q5vvs10eo643cu2s2.apps.googleusercontent.com",
+      callback: handleGoogleSignInCallback,
+    });
+    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+      them: "outline",
+      size: "large",
+    });
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -195,6 +225,15 @@ export const Register = () => {
           </Typography>
         </Grid>
       </Grid>
+      <div id="signInDiv"></div>
+      {Object.keys(googleUser).length != 0 && (
+        <button onClick={(e) => handleSignOut(e)}>Sign out</button>
+      )}
+      {googleUser && (
+        <div>
+          <h3>{googleUser.name}</h3>
+        </div>
+      )}
     </form>
   );
 };
