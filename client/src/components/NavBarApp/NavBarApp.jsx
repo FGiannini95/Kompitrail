@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -17,9 +17,11 @@ export const NavBarApp = ({ children }) => {
 
   const location = useLocation();
 
-  const isInfoUser = location.pathname === RoutesString.infouser;
-
-  useEffect(() => {}, [location.pathname]);
+  const noDesign = [
+    RoutesString.infouser,
+    RoutesString.editUser,
+    RoutesString.motorbike,
+  ].includes(location.pathname);
 
   const handleButtonClick = (path) => {
     setActiveButton(path);
@@ -27,6 +29,7 @@ export const NavBarApp = ({ children }) => {
   };
 
   const topBarHeight = 64;
+  const navBarHeight = 56;
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -34,8 +37,8 @@ export const NavBarApp = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          paddingTop: `${topBarHeight}px`,
-          paddingBottom: "56px",
+          paddingTop: noDesign ? "0px" : `${topBarHeight}px`,
+          paddingBottom: noDesign ? "0px" : `${navBarHeight}px`,
         }}
       >
         {children}
@@ -46,7 +49,7 @@ export const NavBarApp = ({ children }) => {
         sx={{
           top: "auto",
           bottom: 0,
-          display: isInfoUser ? "none" : "flex",
+          display: noDesign ? "none" : "flex",
         }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-around" }}>

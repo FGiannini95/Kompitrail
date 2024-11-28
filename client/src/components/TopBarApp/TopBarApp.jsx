@@ -15,7 +15,11 @@ const TopBar = () => {
 
   const [animateIcon, setAnimateIcon] = useState(false);
 
-  const isInfoUser = location.pathname === RoutesString.infouser;
+  const noDesign = [
+    RoutesString.infouser,
+    RoutesString.editUser,
+    RoutesString.motorbike,
+  ].includes(location.pathname);
 
   useEffect(() => {
     if (location.pathname === RoutesString.home) {
@@ -40,7 +44,7 @@ const TopBar = () => {
         return (
           <Box
             sx={{
-              display: isInfoUser ? "none" : "flex",
+              display: noDesign ? "none" : "flex",
             }}
             flexDirection="row"
             alignItems="center"
@@ -89,15 +93,15 @@ const TopBar = () => {
       position="fixed"
       style={{
         backgroundColor: "#1976d2",
-        height: "64px",
-        display: isInfoUser ? "none" : "flex",
+        height: noDesign ? "0px" : "64px",
+        display: noDesign ? "none" : "flex",
         justifyContent: "center",
       }}
     >
       <Toolbar>
         <Box
           sx={{
-            display: isInfoUser ? "none" : "flex",
+            display: noDesign ? "none" : "flex",
             justifyContent: "space-between",
             alignItems: "center",
             width: "100%",
