@@ -13,7 +13,7 @@ import { Chat } from "../pages/Chat/Chat";
 import { InfoUser } from "../pages/InfoUser/InfoUser";
 import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
 import { KompitrailContext } from "../../context/KompitrailContext";
-import { EditUser } from "../pages/EditUser/EditUser";
+import { EditUser } from "../pages/InfoUser/EditUser/EditUser";
 import { Motorbike } from "../pages/InfoUser/Motorbike/Motorbike";
 
 export const GlobalRouter = () => {
