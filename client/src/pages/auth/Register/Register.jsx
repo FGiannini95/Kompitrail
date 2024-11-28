@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -11,8 +11,11 @@ import { RoutesString } from "../../../routes/routes";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { jwtDecode } from "jwt-decode";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 
 export const Register = () => {
+  const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
   const [googleUser, setGoogleUser] = useState({});
@@ -72,9 +75,29 @@ export const Register = () => {
   };
 
   const handleGoogleSignInCallback = (response) => {
-    //It receives a response object from Google, which contains a JWT (JSON Web Token) credential.
+    //It receives a response object from Google, which contains a JWT credential.
     var userObject = jwtDecode(response.credential);
-    console.log(userObject);
+    const { email, given_name, family_name, picture } = userObject;
+
+    axios
+      .post("http://localhost:3000/users/googlelogin", {
+        email,
+        given_name,
+        family_name,
+        picture,
+      })
+      .then((res) => {
+        console.log(res.data);
+        setIsLogged(true);
+        setUser(res.data.user);
+        setToken(res.data.token);
+        saveLocalStorage("token", res.data.token);
+        navigate(RoutesString.home);
+      })
+      .catch((err) => {
+        console.error("Google Login Failed:", err.response?.data || err);
+      });
+
     // The user data is stored in the googleUser state.
     setGoogleUser(userObject);
     document.getElementById("signInDiv").hidden = false;
@@ -95,7 +118,7 @@ export const Register = () => {
     });
     google.accounts.id.renderButton(document.getElementById("signInDiv"), {
       them: "outline",
-      size: "large",
+      size: "medium",
     });
   }, []);
 

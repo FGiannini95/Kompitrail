@@ -6,19 +6,19 @@ require("dotenv").config();
 
 {
   /*
-    template example
-    action = (req, res) => {
-    #destructuring
-    const {here what you need} = req.body
-    #sql connection
-    let sql = `SELECT * FROM user WHERE email = '${email}'`;
-    connection.query(sql, (error, result) => {
-      error
-        ? res.status(500).json({ error });
-        : res.status(200).json(result);
-    });
-    }
-  */
+     template example
+     action = (req, res) => {
+     #destructuring
+     const {here what you need} = req.body
+     #sql connection
+     let sql = SELECT * FROM user WHERE email = '${email}';
+     connection.query(sql, (error, result) => {
+       error
+         ? res.status(500).json({ error });
+         : res.status(200).json(result);
+     });
+     }
+   */
 }
 
 class usersControllers {
@@ -102,6 +102,75 @@ class usersControllers {
       err
         ? res.status(400).json({ err })
         : res.status(200).json({ message: "Usuario eliminado", result });
+    });
+  };
+
+  googleLogin = (req, res) => {
+    const { email, given_name, family_name, picture } = req.body;
+
+    // Google object doesn't carry any value for the password, so we create a random one
+    const defaultPassword = bcrypt.hash("defaultPassword123", 10);
+
+    // Verify if any user is already registered with that email
+    let sql = `SELECT * FROM user WHERE email = "${email}" AND is_deleted = 0`;
+    connection.query(sql, (err, result) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Error al buscar el usuario", error: err });
+      }
+
+      // If user doesn't exist we create a new one.
+      if (result.length === 0) {
+        let sqlInsert = `INSERT INTO user (name, lastname, email, img, password) VALUES ('${given_name}', '${family_name}', '${email}', '${picture}', '${defaultPassword}')`;
+        connection.query(sqlInsert, (errInsert, resultInsert) => {
+          if (errInsert) {
+            return res.status(500).json({
+              message: "Error al insertar usuario",
+              error: errInsert,
+            });
+          }
+
+          // Generate a token for the new user
+          const token = jwt.sign(
+            { user: { user_id: resultInsert.insertId } },
+            process.env.SECRET,
+            { expiresIn: "1d" }
+          );
+
+          return res.status(200).json({
+            token,
+            user: {
+              user_id: resultInsert.insertId,
+              name: given_name,
+              lastname: family_name,
+              email: email,
+              img: picture,
+            },
+          });
+        });
+      } else {
+        // If user exists
+        const user = result[0];
+
+        // Generate a token for the exisiting user
+        const token = jwt.sign(
+          { user: { user_id: user.user_id } },
+          process.env.SECRET,
+          { expiresIn: "1d" }
+        );
+
+        return res.status(200).json({
+          token,
+          user: {
+            user_id: user.user_id,
+            name: user.name,
+            lastname: user.lastname,
+            email: user.email,
+            img: user.img,
+          },
+        });
+      }
     });
   };
 }
