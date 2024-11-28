@@ -91,15 +91,14 @@ export const InfoUser = () => {
   };
 
   const handleCancel = () => {
-    navigate(RoutesString.home);
+    navigate(-1);
   };
-
-  console.log("hola");
 
   return (
     <Box
       style={{
         backgroundColor: "#fafafa",
+        paddingTop: "25px",
       }}
     >
       <Grid>
@@ -147,7 +146,11 @@ export const InfoUser = () => {
           alignItems="center"
           justifyContent="center"
           spacing={2}
-          style={{ paddingTop: "25px", paddingLeft: "20px" }}
+          style={{
+            paddingTop: "25px",
+            paddingLeft: "20px",
+            marginBottom: "30px",
+          }}
         >
           <Grid style={{ paddingRight: "10px" }}>
             <Button type="button" variant="contained" color="primary" fullWidth>
@@ -176,8 +179,7 @@ export const InfoUser = () => {
           padding: "10px",
           paddingLeft: "20px",
           backgroundColor: "#eeeeee",
-        }}
-        sx={{
+          margin: "10px",
           borderRadius: "20px",
         }}
       >
@@ -203,7 +205,9 @@ export const InfoUser = () => {
               <PersonOutlineOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Modificar perfil</Typography>
+              <Typography style={{ margin: "10px" }}>
+                Modificar perfil
+              </Typography>
             </Grid>
             <Grid
               item
@@ -233,7 +237,7 @@ export const InfoUser = () => {
               <TwoWheelerOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Mis motos</Typography>
+              <Typography style={{ margin: "10px" }}>Mis motos</Typography>
             </Grid>
             <Grid
               item
@@ -243,9 +247,10 @@ export const InfoUser = () => {
               direction="column"
               alignItems="center"
               justifyContent="center"
-              onClick={() => navigate(RoutesString.motorbike)} //TODO: el onclik no se está ejecutando de la manera correcta, sino cuando pulso en Modificar perfil
             >
-              <ArrowForwardIosIcon />
+              <IconButton onClick={() => navigate(RoutesString.motorbike)}>
+                <ArrowForwardIosIcon style={{ color: "black" }} />
+              </IconButton>
             </Grid>
           </Grid>
           {/* Empieza Mis rutas */}
@@ -263,7 +268,7 @@ export const InfoUser = () => {
               <RouteOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Mis rutas</Typography>
+              <Typography style={{ margin: "10px" }}>Mis rutas</Typography>
             </Grid>
             <Grid
               item
@@ -291,7 +296,7 @@ export const InfoUser = () => {
               <SettingsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Ajustes</Typography>
+              <Typography style={{ margin: "10px" }}>Ajustes</Typography>
             </Grid>
             <Grid
               item
@@ -313,8 +318,7 @@ export const InfoUser = () => {
           padding: "10px",
           paddingLeft: "20px",
           backgroundColor: "#eeeeee",
-        }}
-        sx={{
+          margin: "10px",
           borderRadius: "20px",
         }}
       >
@@ -339,7 +343,7 @@ export const InfoUser = () => {
               <TextsmsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Chat bot</Typography>
+              <Typography style={{ margin: "10px" }}>Chat bot</Typography>
             </Grid>
             <Grid
               item
@@ -366,7 +370,9 @@ export const InfoUser = () => {
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Política de privacidad</Typography>
+              <Typography style={{ margin: "10px" }}>
+                Política de privacidad
+              </Typography>
             </Grid>
             <Grid
               item
@@ -389,8 +395,7 @@ export const InfoUser = () => {
           padding: "10px",
           paddingLeft: "20px",
           backgroundColor: "#eeeeee",
-        }}
-        sx={{
+          margin: "10px",
           borderRadius: "20px",
         }}
         onClick={() => handleOpenDialog("logout")}
@@ -416,7 +421,7 @@ export const InfoUser = () => {
               <LogoutIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Log Out</Typography>
+              <Typography style={{ margin: "10px" }}>Log Out</Typography>
             </Grid>
             <Grid
               item
@@ -439,8 +444,7 @@ export const InfoUser = () => {
           padding: "10px",
           paddingLeft: "20px",
           backgroundColor: "#eeeeee",
-        }}
-        sx={{
+          margin: "10px",
           borderRadius: "20px",
         }}
         onClick={() => handleOpenDialog("delete")}
@@ -466,7 +470,9 @@ export const InfoUser = () => {
               <DeleteOutlineIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Eliminar cuenta</Typography>
+              <Typography style={{ margin: "10px" }}>
+                Eliminar cuenta
+              </Typography>
             </Grid>
             <Grid
               item
