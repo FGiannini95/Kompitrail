@@ -6,18 +6,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import axios from "axios";
-
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import SettingsSharpIcon from "@mui/icons-material/SettingsSharp";
-import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
-import WalletIcon from "@mui/icons-material/Wallet";
-import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import LogoutIcon from "@mui/icons-material/Logout";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom";
 import {
   delLocalStorage,
@@ -26,8 +17,23 @@ import {
 import { jwtDecode } from "jwt-decode";
 import { RoutesString } from "../../routes/routes";
 
+// Icono para que los navigates funcionen
+import IconButton from "@mui/material/IconButton";
+// Iconos
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import TwoWheelerOutlinedIcon from "@mui/icons-material/TwoWheelerOutlined";
+import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
+import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import LogoutIcon from "@mui/icons-material/Logout";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+
 export const InfoUser = () => {
-  const { user, token, setUser, setToken, setIsLogged } =
+  const { user, setUser, setToken, setIsLogged } =
     useContext(KompitrailContext);
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
@@ -84,24 +90,41 @@ export const InfoUser = () => {
     setOpenDialog(false);
   };
 
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
   return (
-    <div style={{ paddingTop: "50px" }}>
+    <Box
+      style={{
+        backgroundColor: "#fafafa",
+        paddingTop: "25px",
+      }}
+    >
       <Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              {user.name} {user.lastname}
-            </Typography>
-          </Grid>
-          {/* <Grid
+        <CloseOutlinedIcon
+          style={{ paddingLeft: "20px" }}
+          onClick={handleCancel}
+        />
+      </Grid>
+      <Grid>
+        <Grid
+          container
+          spacing={1}
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Grid
             item
-            xs={3}
+            xs={1}
             container
             spacing={0}
             direction="column"
             alignItems="center"
             justifyContent="center"
             sx={{
+              width: 1 / 3,
               border: "1px solid black",
               borderRadius: "50%",
               aspectRatio: 1 / 1,
@@ -111,12 +134,23 @@ export const InfoUser = () => {
             <Typography sx={{}} variant="h4">
               {iniciales}
             </Typography>
-          </Grid> */}
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+              {user.name} {user.lastname}
+            </Typography>
+          </Grid>
         </Grid>
         <Grid
           container
+          alignItems="center"
+          justifyContent="center"
           spacing={2}
-          style={{ paddingTop: "25px", paddingLeft: "15px" }}
+          style={{
+            paddingTop: "25px",
+            paddingLeft: "20px",
+            marginBottom: "30px",
+          }}
         >
           <Grid style={{ paddingRight: "10px" }}>
             <Button type="button" variant="contained" color="primary" fullWidth>
@@ -130,15 +164,30 @@ export const InfoUser = () => {
               color="secondary"
               fullWidth
             >
-              {/* TODO: añadir icono de compartir */}
               Compartir perfil
+              <ShareOutlinedIcon
+                style={{ paddingLeft: "5px", width: "20px" }}
+              />
             </Button>
           </Grid>
         </Grid>
       </Grid>
-      {/* Empieza mi cuenta */}
-      <Grid style={{ paddingTop: "40px" }}>
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+
+      <Grid
+        style={{
+          marginTop: "30px",
+          padding: "10px",
+          paddingLeft: "20px",
+          backgroundColor: "#eeeeee",
+          margin: "10px",
+          borderRadius: "20px",
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: "bold" }}
+          style={{ paddingBottom: "10px" }}
+        >
           Mi cuenta
         </Typography>
         <Grid>
@@ -153,10 +202,12 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <PersonIcon fontSize="large" />
+              <PersonOutlineOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Modificar perfil</Typography>
+              <Typography style={{ margin: "10px" }}>
+                Modificar perfil
+              </Typography>
             </Grid>
             <Grid
               item
@@ -167,7 +218,9 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <ArrowForwardIosIcon />
+              <IconButton onClick={() => navigate(RoutesString.editUser)}>
+                <ArrowForwardIosIcon style={{ color: "black" }} />
+              </IconButton>
             </Grid>
           </Grid>
           {/* Empieza Mis motos */}
@@ -181,10 +234,10 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <DirectionsBikeIcon fontSize="large" />
+              <TwoWheelerOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Mis motos</Typography>
+              <Typography style={{ margin: "10px" }}>Mis motos</Typography>
             </Grid>
             <Grid
               item
@@ -194,9 +247,10 @@ export const InfoUser = () => {
               direction="column"
               alignItems="center"
               justifyContent="center"
-              onClick={() => navigate(RoutesString.motorbike)} //TODO: el onclik no se está ejecutando de la manera correcta, sino cuando pulso en Modificar perfil
             >
-              <ArrowForwardIosIcon />
+              <IconButton onClick={() => navigate(RoutesString.motorbike)}>
+                <ArrowForwardIosIcon style={{ color: "black" }} />
+              </IconButton>
             </Grid>
           </Grid>
           {/* Empieza Mis rutas */}
@@ -211,10 +265,10 @@ export const InfoUser = () => {
               justifyContent="center"
             >
               {/* Añadir icono de rutas */}
-              <WalletIcon fontSize="large" />
+              <RouteOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Mis rutas</Typography>
+              <Typography style={{ margin: "10px" }}>Mis rutas</Typography>
             </Grid>
             <Grid
               item
@@ -239,10 +293,10 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <SettingsSharpIcon fontSize="large" />
+              <SettingsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Ajustes</Typography>
+              <Typography style={{ margin: "10px" }}>Ajustes</Typography>
             </Grid>
             <Grid
               item
@@ -258,9 +312,21 @@ export const InfoUser = () => {
           </Grid>
         </Grid>
       </Grid>
-      {/* Empieza ayuda y soporte */}
-      <Grid style={{ paddingTop: "40px" }}>
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+      <Grid
+        style={{
+          marginTop: "30px",
+          padding: "10px",
+          paddingLeft: "20px",
+          backgroundColor: "#eeeeee",
+          margin: "10px",
+          borderRadius: "20px",
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: "bold" }}
+          style={{ paddingBottom: "10px" }}
+        >
           Ayuda y soporte
         </Typography>
         <Grid>
@@ -277,7 +343,7 @@ export const InfoUser = () => {
               <TextsmsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Chat bot</Typography>
+              <Typography style={{ margin: "10px" }}>Chat bot</Typography>
             </Grid>
             <Grid
               item
@@ -304,7 +370,9 @@ export const InfoUser = () => {
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Política de privacidad</Typography>
+              <Typography style={{ margin: "10px" }}>
+                Política de privacidad
+              </Typography>
             </Grid>
             <Grid
               item
@@ -322,10 +390,21 @@ export const InfoUser = () => {
       </Grid>
       {/* Empieza Log out */}
       <Grid
-        style={{ paddingTop: "40px" }}
+        style={{
+          marginTop: "30px",
+          padding: "10px",
+          paddingLeft: "20px",
+          backgroundColor: "#eeeeee",
+          margin: "10px",
+          borderRadius: "20px",
+        }}
         onClick={() => handleOpenDialog("logout")}
       >
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: "bold" }}
+          style={{ paddingBottom: "10px" }}
+        >
           Desconectar perfil
         </Typography>
         <Grid>
@@ -342,7 +421,7 @@ export const InfoUser = () => {
               <LogoutIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Log Out</Typography>
+              <Typography style={{ margin: "10px" }}>Log Out</Typography>
             </Grid>
             <Grid
               item
@@ -360,10 +439,21 @@ export const InfoUser = () => {
       </Grid>
       {/* EMpieza Eliminar perfil */}
       <Grid
-        style={{ paddingTop: "40px" }}
+        style={{
+          marginTop: "30px",
+          padding: "10px",
+          paddingLeft: "20px",
+          backgroundColor: "#eeeeee",
+          margin: "10px",
+          borderRadius: "20px",
+        }}
         onClick={() => handleOpenDialog("delete")}
       >
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: "bold" }}
+          style={{ paddingBottom: "10px" }}
+        >
           Eliminar perfil
         </Typography>
         <Grid>
@@ -380,7 +470,9 @@ export const InfoUser = () => {
               <DeleteOutlineIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
-              <Typography>Eliminar cuenta</Typography>
+              <Typography style={{ margin: "10px" }}>
+                Eliminar cuenta
+              </Typography>
             </Grid>
             <Grid
               item
@@ -416,6 +508,6 @@ export const InfoUser = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 };
