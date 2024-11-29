@@ -61,7 +61,7 @@ export const Motorbike = () => {
     <Grid container direction="column" spacing={2}>
       <Grid item container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon />
+          <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           Mis motos
@@ -95,12 +95,14 @@ export const Motorbike = () => {
                 fontSize="large"
                 onClick={() => handleOpenEditDialog(motorbike.motorbike_id)}
               >
-                <EditOutlinedIcon />
+                <EditOutlinedIcon style={{ color: "black" }} />
               </IconButton>
               <IconButton
                 onClick={() => handleOpenDeleteDialog(motorbike.motorbike_id)}
               >
-                <DeleteOutlineIcon fontSize="large" />
+                <DeleteOutlineIcon
+                  style={{ color: "black", fontSize: "large" }}
+                />
               </IconButton>
             </Grid>
           </Grid>
