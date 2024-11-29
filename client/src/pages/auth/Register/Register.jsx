@@ -18,7 +18,7 @@ export const Register = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
-  const [googleUser, setGoogleUser] = useState({});
+  const [, setGoogleUser] = useState({});
   const navigate = useNavigate();
 
   const {
@@ -101,11 +101,6 @@ export const Register = () => {
     // The user data is stored in the googleUser state.
     setGoogleUser(userObject);
     document.getElementById("signInDiv").hidden = false;
-  };
-
-  const handleSignOut = () => {
-    setGoogleUser({});
-    document.getElementById("signInDiv").hidden = true;
   };
 
   useEffect(() => {
@@ -249,14 +244,6 @@ export const Register = () => {
         </Grid>
       </Grid>
       <div id="signInDiv"></div>
-      {Object.keys(googleUser).length != 0 && (
-        <button onClick={(e) => handleSignOut(e)}>Sign out</button>
-      )}
-      {googleUser && (
-        <div>
-          <h3>{googleUser.name}</h3>
-        </div>
-      )}
     </form>
   );
 };
