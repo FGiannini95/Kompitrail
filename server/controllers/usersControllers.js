@@ -6,19 +6,19 @@ require("dotenv").config();
 
 {
   /*
-    template example
-    action = (req, res) => {
-    #destructuring
-    const {here what you need} = req.body
-    #sql connection
-    let sql = `SELECT * FROM user WHERE email = '${email}'`;
-    connection.query(sql, (error, result) => {
-      error
-        ? res.status(500).json({ error });
-        : res.status(200).json(result);
-    });
-    }
-  */
+     template example
+     action = (req, res) => {
+     #destructuring
+     const {here what you need} = req.body
+     #sql connection
+     let sql = SELECT * FROM user WHERE email = '${email}';
+     connection.query(sql, (error, result) => {
+       error
+         ? res.status(500).json({ error });
+         : res.status(200).json(result);
+     });
+     }
+   */
 }
 
 class usersControllers {
@@ -103,6 +103,89 @@ class usersControllers {
         ? res.status(400).json({ err })
         : res.status(200).json({ message: "Usuario eliminado", result });
     });
+  };
+
+  googleLogin = async (req, res) => {
+    const { email, given_name, family_name, picture } = req.body;
+
+    console.log("Google login request body:", req.body);
+
+    try {
+      // Generate a default password as Google login does not provide one
+      const defaultPassword = await bcrypt.hash("defaultPassword123", 10);
+
+      // Check if the user already exists in the database
+      const sqlSelect = `SELECT * FROM user WHERE email = "${email}" AND is_deleted = 0`;
+      connection.query(sqlSelect, (err, result) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ message: "Error searching for user", error: err });
+        }
+
+        // Helper function to generate response
+        const generateResponse = (user, token) => ({
+          token,
+          user: {
+            user_id: user.user_id,
+            name: user.name,
+            lastname: user.lastname,
+            email: user.email,
+            img: user.img,
+          },
+        });
+
+        if (result.length === 0) {
+          // If no user exists, insert a new user into the database
+          const sqlInsert = `
+            INSERT INTO user (name, lastname, email, img, password)
+            VALUES ("${given_name}", "${family_name}", "${email}", "${picture}", "${defaultPassword}")
+          `;
+          connection.query(sqlInsert, (errInsert, resultInsert) => {
+            if (errInsert) {
+              return res.status(500).json({
+                message: "Error inserting user",
+                error: errInsert,
+              });
+            }
+
+            // Generate token for the new user
+            const token = jwt.sign(
+              { user: { user_id: resultInsert.insertId } },
+              process.env.SECRET,
+              { expiresIn: "1d" }
+            );
+
+            // Respond with the token and user details
+            return res.status(200).json(
+              generateResponse(
+                {
+                  user_id: resultInsert.insertId,
+                  name: given_name,
+                  lastname: family_name,
+                  email,
+                  img: picture,
+                },
+                token
+              )
+            );
+          });
+        } else {
+          // If user already exists, generate a token for the existing user
+          const user = result[0];
+          const token = jwt.sign(
+            { user: { user_id: user.user_id } },
+            process.env.SECRET,
+            { expiresIn: "1d" }
+          );
+
+          // Respond with the token and user details
+          return res.status(200).json(generateResponse(user, token));
+        }
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Unexpected error", error });
+    }
   };
 }
 

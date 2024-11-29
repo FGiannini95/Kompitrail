@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -10,10 +10,15 @@ import Typography from "@mui/material/Typography";
 import { RoutesString } from "../../../routes/routes";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { jwtDecode } from "jwt-decode";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 
 export const Register = () => {
+  const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
+  const [, setGoogleUser] = useState({});
   const navigate = useNavigate();
 
   const {
@@ -68,6 +73,49 @@ export const Register = () => {
   const handleBlur = () => {
     setIsPasswordSelected(false);
   };
+
+  const handleGoogleSignInCallback = (response) => {
+    //It receives a response object from Google, which contains a JWT credential.
+    var userObject = jwtDecode(response.credential);
+    const { email, given_name, family_name, picture } = userObject;
+
+    axios
+      .post("http://localhost:3000/users/googlelogin", {
+        email,
+        given_name,
+        family_name,
+        picture,
+      })
+      .then((res) => {
+        console.log(res.data);
+        setIsLogged(true);
+        setUser(res.data.user);
+        setToken(res.data.token);
+        saveLocalStorage("token", res.data.token);
+        navigate(RoutesString.home);
+      })
+      .catch((err) => {
+        console.error("Google Login Failed:", err.response?.data || err);
+      });
+
+    // The user data is stored in the googleUser state.
+    setGoogleUser(userObject);
+    document.getElementById("signInDiv").hidden = false;
+  };
+
+  useEffect(() => {
+    // global google object
+    const google = window.google;
+    google.accounts.id.initialize({
+      client_id:
+        "171268761879-g9dn1g2g0q78jn9q5vvs10eo643cu2s2.apps.googleusercontent.com",
+      callback: handleGoogleSignInCallback,
+    });
+    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+      them: "outline",
+      size: "medium",
+    });
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -195,6 +243,7 @@ export const Register = () => {
           </Typography>
         </Grid>
       </Grid>
+      <div id="signInDiv"></div>
     </form>
   );
 };
