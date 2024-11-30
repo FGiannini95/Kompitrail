@@ -68,43 +68,72 @@ export const Motorbike = () => {
           Mis motos
         </Typography>
       </Grid>
-      <Grid item container direction="column" spacing={2}>
+      <Grid
+        container
+        spacing={2}
+        direction="row"
+        justifyContent="space-between"
+      >
+        {" "}
         {allMotorbikes.map((motorbike) => (
           <Grid
             key={motorbike?.motorbike_id}
+            item
+            xs={12}
+            sm={4}
+            md={3}
             container
             spacing={1}
+            direction="column"
+            textAlign="center"
             alignItems="center"
+            justifyContent="space-between"
+            marginTop="auto"
+            sx={{
+              marginTop: "30px",
+              padding: "10px",
+              paddingLeft: "20px",
+              backgroundColor: "#eeeeee",
+              margin: "10px",
+              borderRadius: "20px",
+            }}
           >
-            <Grid item xs={3}>
+            <Grid item>
               <img
                 src={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
                 alt={motorbike.brand}
-                width="100%"
+                style={{
+                  maxWidth: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
               />
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">
-                {motorbike.motorbike_brand}
-              </Typography>
-              <Typography variant="body2">
-                {motorbike.motorbike_model}
-              </Typography>
+            <Grid item>
+              <Typography variant="h6">{motorbike.motorbike_brand}</Typography>
+              <Typography variant="h6">{motorbike.motorbike_model}</Typography>
             </Grid>
-            <Grid item xs={3} container justifyContent="flex-end">
-              <IconButton
-                onClick={() => handleOpenEditDialog(motorbike.motorbike_id)}
-              >
-                <EditOutlinedIcon fontSize="large" style={{ color: "black" }} />
-              </IconButton>
-              <IconButton
-                onClick={() => handleOpenDeleteDialog(motorbike.motorbike_id)}
-              >
-                <DeleteOutlineIcon
-                  fontSize="large"
-                  style={{ color: "black" }}
-                />
-              </IconButton>
+            <Grid item container justifyContent="center" spacing={1}>
+              <Grid item>
+                <IconButton
+                  onClick={() => handleOpenEditDialog(motorbike.motorbike_id)}
+                >
+                  <EditOutlinedIcon
+                    fontSize="large"
+                    style={{ color: "black" }}
+                  />
+                </IconButton>
+              </Grid>
+              <Grid item>
+                <IconButton
+                  onClick={() => handleOpenDeleteDialog(motorbike.motorbike_id)}
+                >
+                  <DeleteOutlineIcon
+                    fontSize="large"
+                    style={{ color: "black" }}
+                  />
+                </IconButton>
+              </Grid>
             </Grid>
           </Grid>
         ))}
