@@ -68,72 +68,58 @@ export const Motorbike = () => {
           Mis motos
         </Typography>
       </Grid>
-      <Grid
-        container
-        spacing={2}
-        direction="row"
-        justifyContent="space-between"
-      >
-        {" "}
+      <Grid item container direction="column" spacing={2}>
         {allMotorbikes.map((motorbike) => (
           <Grid
             key={motorbike?.motorbike_id}
-            item
-            xs={12}
-            sm={4}
-            md={3}
             container
             spacing={1}
+            marginTop="10px"
+            marginLeft="20px"
+            alignItems="center"
             direction="column"
             textAlign="center"
-            alignItems="center"
-            justifyContent="space-between"
-            marginTop="auto"
-            sx={{
-              marginTop: "30px",
-              padding: "10px",
-              paddingLeft: "20px",
-              backgroundColor: "#eeeeee",
-              margin: "10px",
-              borderRadius: "20px",
+            borderRadius="20px"
+            backgroundColor="#eeeeee"
+            // Need to use it in a temporary way to align eith the style
+            style={{
+              width: "calc(100% - 22px)",
             }}
           >
-            <Grid item>
+            <Grid item xs={3}>
               <img
                 src={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
                 alt={motorbike.brand}
                 style={{
                   maxWidth: "100%",
-                  borderRadius: "50%",
+                  borderRadius: "20px",
                   objectFit: "cover",
                 }}
+                width="100%"
               />
             </Grid>
-            <Grid item>
-              <Typography variant="h6">{motorbike.motorbike_brand}</Typography>
-              <Typography variant="h6">{motorbike.motorbike_model}</Typography>
+            <Grid item xs={6}>
+              <Typography variant="body1">
+                {motorbike.motorbike_brand}
+              </Typography>
+              <Typography variant="body2">
+                {motorbike.motorbike_model}
+              </Typography>
             </Grid>
-            <Grid item container justifyContent="center" spacing={1}>
-              <Grid item>
-                <IconButton
-                  onClick={() => handleOpenEditDialog(motorbike.motorbike_id)}
-                >
-                  <EditOutlinedIcon
-                    fontSize="large"
-                    style={{ color: "black" }}
-                  />
-                </IconButton>
-              </Grid>
-              <Grid item>
-                <IconButton
-                  onClick={() => handleOpenDeleteDialog(motorbike.motorbike_id)}
-                >
-                  <DeleteOutlineIcon
-                    fontSize="large"
-                    style={{ color: "black" }}
-                  />
-                </IconButton>
-              </Grid>
+            <Grid item xs={3} container justifyContent="flex-end">
+              <IconButton
+                onClick={() => handleOpenEditDialog(motorbike.motorbike_id)}
+              >
+                <EditOutlinedIcon fontSize="large" style={{ color: "black" }} />
+              </IconButton>
+              <IconButton
+                onClick={() => handleOpenDeleteDialog(motorbike.motorbike_id)}
+              >
+                <DeleteOutlineIcon
+                  fontSize="large"
+                  style={{ color: "black" }}
+                />
+              </IconButton>
             </Grid>
           </Grid>
         ))}
