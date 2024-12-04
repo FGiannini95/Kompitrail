@@ -80,7 +80,7 @@ export const Settings = () => {
           paddingLeft: "20px",
           backgroundColor: "#eeeeee",
           borderRadius: "20px",
-          // Need to use it in a temporary way to align eith the style
+          // Need to use it in a temporary way to align with the style
           width: "calc(100% - 22px)",
         }}
         onClick={() => handleOpenDialog()}
