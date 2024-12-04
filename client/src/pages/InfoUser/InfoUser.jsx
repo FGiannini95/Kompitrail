@@ -27,6 +27,13 @@ import { useNavigate } from "react-router-dom";
 import { delLocalStorage } from "../../helpers/localStorageUtils";
 import { RoutesString } from "../../routes/routes";
 
+const gridStyles = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
     useContext(KompitrailContext);
@@ -166,15 +173,7 @@ export const InfoUser = () => {
         <Grid>
           <Grid container spacing={3}>
             {/* Epieza Modificar perfil */}
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <PersonOutlineOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -182,15 +181,7 @@ export const InfoUser = () => {
                 Modificar perfil
               </Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <IconButton onClick={() => navigate(RoutesString.editUser)}>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>
@@ -198,29 +189,13 @@ export const InfoUser = () => {
           </Grid>
           {/* Empieza Mis motos */}
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <TwoWheelerOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Mis motos</Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <IconButton onClick={() => navigate(RoutesString.motorbike)}>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>
@@ -228,58 +203,26 @@ export const InfoUser = () => {
           </Grid>
           {/* Empieza Mis rutas */}
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               {/* Añadir icono de rutas */}
               <RouteOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Mis rutas</Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
           {/* Empieza Ajustes */}
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <SettingsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Ajustes</Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <IconButton onClick={() => navigate(RoutesString.settings)}>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>{" "}
@@ -306,42 +249,18 @@ export const InfoUser = () => {
         </Typography>
         <Grid>
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <TextsmsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Chat bot</Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -349,15 +268,7 @@ export const InfoUser = () => {
                 Política de privacidad
               </Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
@@ -384,15 +295,7 @@ export const InfoUser = () => {
         </Typography>
         <Grid>
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <LogoutIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
