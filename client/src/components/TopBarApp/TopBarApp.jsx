@@ -19,6 +19,7 @@ const TopBar = () => {
     RoutesString.infouser,
     RoutesString.editUser,
     RoutesString.motorbike,
+    RoutesString.settings,
   ].includes(location.pathname);
 
   useEffect(() => {

@@ -307,7 +307,9 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <ArrowForwardIosIcon />
+              <IconButton onClick={() => navigate(RoutesString.settings)}>
+                <ArrowForwardIosIcon style={{ color: "black" }} />
+              </IconButton>{" "}
             </Grid>
           </Grid>
         </Grid>

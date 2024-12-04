@@ -10,4 +10,5 @@ export const RoutesString = {
   infouser: "/infouser",
   editUser: "/editUser",
   motorbike: "/motorbike",
+  settings: "/settings",
 };

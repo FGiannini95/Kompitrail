@@ -21,6 +21,7 @@ export const NavBarApp = ({ children }) => {
     RoutesString.infouser,
     RoutesString.editUser,
     RoutesString.motorbike,
+    RoutesString.settings,
   ].includes(location.pathname);
 
   const handleButtonClick = (path) => {
