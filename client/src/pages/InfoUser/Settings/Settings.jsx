@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+
 // MUI
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -24,6 +25,13 @@ import {
   getLocalStorage,
   delLocalStorage,
 } from "../../../helpers/localStorageUtils";
+
+const gridStyles = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+};
 
 export const Settings = () => {
   const navigate = useNavigate();
@@ -65,97 +73,66 @@ export const Settings = () => {
     setIsLogged(false);
     navigate(RoutesString.landing);
   };
+
   return (
     <Grid container direction="column" spacing={2}>
+      {/* Header */}
       <Grid item container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon sx={{ color: "black" }} />
         </IconButton>
       </Grid>
+
+      {/* Settings Card */}
       <Grid
-        style={{
-          marginTop: "10px",
-          marginLeft: "20px",
-          padding: "10px",
-          paddingLeft: "20px",
+        sx={{
+          marginTop: 2,
+          marginLeft: 2,
+          padding: 2,
+          paddingLeft: 3,
           backgroundColor: "#eeeeee",
-          borderRadius: "20px",
-          // Need to use it in a temporary way to align with the style
+          borderRadius: 2,
           width: "calc(100% - 22px)",
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{ fontWeight: "bold" }}
-          style={{ paddingBottom: "10px" }}
-        >
+        <Typography variant="h6" sx={{ fontWeight: "bold", paddingBottom: 1 }}>
           Ajustes
         </Typography>
-        <Grid>
-          <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <LockOutlinedIcon fontSize="large" />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }}>
-                Modificar contraseña
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <IconButton onClick={() => navigate(RoutesString.editPassword)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
-            </Grid>
+
+        {/* Change Password Option */}
+        <Grid container spacing={3}>
+          <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <LockOutlinedIcon fontSize="large" />
           </Grid>
-          <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <DeleteOutlineIcon fontSize="large" sx={{ color: "red" }} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }} color="red">
-                Eliminar cuenta
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <IconButton onClick={() => handleOpenDialog()}>
-                <ArrowForwardIosIcon style={{ color: "red" }} />
-              </IconButton>
-            </Grid>
+          <Grid item xs={8}>
+            <Typography sx={{ margin: 1 }}>Modificar contraseña</Typography>
+          </Grid>
+          <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <IconButton onClick={() => navigate(RoutesString.editPassword)}>
+              <ArrowForwardIosIcon sx={{ color: "black" }} />
+            </IconButton>
+          </Grid>
+        </Grid>
+
+        {/* Delete Account Option */}
+        <Grid container spacing={3}>
+          <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <DeleteOutlineIcon fontSize="large" sx={{ color: "red" }} />
+          </Grid>
+          <Grid item xs={8}>
+            <Typography sx={{ margin: 1, color: "red" }}>
+              Eliminar cuenta
+            </Typography>
+          </Grid>
+          <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <IconButton onClick={handleOpenDialog}>
+              <ArrowForwardIosIcon sx={{ color: "red" }} />
+            </IconButton>
           </Grid>
         </Grid>
       </Grid>
+
+      {/* Delete Account Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Eliminar cuenta</DialogTitle>
         <DialogContent>
