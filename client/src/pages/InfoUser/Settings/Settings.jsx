@@ -75,11 +75,13 @@ export const Settings = () => {
       <Grid
         style={{
           marginTop: "30px",
+          marginLeft: "20px",
           padding: "10px",
           paddingLeft: "20px",
           backgroundColor: "#eeeeee",
-          margin: "10px",
           borderRadius: "20px",
+          // Need to use it in a temporary way to align eith the style
+          width: "calc(100% - 22px)",
         }}
         onClick={() => handleOpenDialog()}
       >
