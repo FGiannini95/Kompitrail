@@ -74,7 +74,7 @@ export const Settings = () => {
       </Grid>
       <Grid
         style={{
-          marginTop: "30px",
+          marginTop: "10px",
           marginLeft: "20px",
           padding: "10px",
           paddingLeft: "20px",
@@ -83,7 +83,6 @@ export const Settings = () => {
           // Need to use it in a temporary way to align with the style
           width: "calc(100% - 22px)",
         }}
-        onClick={() => handleOpenDialog()}
       >
         <Typography
           variant="h6"
@@ -119,7 +118,9 @@ export const Settings = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <ArrowForwardIosIcon />
+              <IconButton onClick={() => navigate(RoutesString.editPassword)}>
+                <ArrowForwardIosIcon style={{ color: "black" }} />
+              </IconButton>
             </Grid>
           </Grid>
           <Grid container spacing={3}>
@@ -148,7 +149,7 @@ export const Settings = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <IconButton>
+              <IconButton onClick={() => handleOpenDialog()}>
                 <ArrowForwardIosIcon style={{ color: "red" }} />
               </IconButton>
             </Grid>

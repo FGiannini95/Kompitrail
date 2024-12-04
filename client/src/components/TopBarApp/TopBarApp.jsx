@@ -20,6 +20,7 @@ const TopBar = () => {
     RoutesString.editUser,
     RoutesString.motorbike,
     RoutesString.settings,
+    RoutesString.editPassword,
   ].includes(location.pathname);
 
   useEffect(() => {
