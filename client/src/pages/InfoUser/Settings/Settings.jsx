@@ -1,16 +1,70 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+//MUI
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+//MUI-ICONS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import {
+  getLocalStorage,
+  delLocalStorage,
+} from "../../../helpers/localStorageUtils";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { RoutesString } from "../../../routes/routes";
 
 export const Settings = () => {
   const navigate = useNavigate();
+  const { user, setUser, setToken, setIsLogged } =
+    useContext(KompitrailContext);
+  const [openDialog, setOpenDialog] = useState(false);
+  const tokenLocalStorage = getLocalStorage("token");
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleConfirmation = () => {
+    deleteUser();
+    logOut();
+    setOpenDialog(false);
+  };
+
+  const deleteUser = () => {
+    const { user_id } = jwtDecode(tokenLocalStorage).user;
+    axios
+      .put(`http://localhost:3000/users/deleteuser/${user_id}`)
+      .then((res) => {
+        console.log(res.data);
+        navigate(RoutesString.landing);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const logOut = () => {
+    delLocalStorage("token");
+    setUser();
+    setToken();
+    setIsLogged(false);
+    navigate(RoutesString.landing);
+  };
   return (
     <Grid container direction="column" spacing={2}>
       <Grid item container alignItems="center">
@@ -27,6 +81,7 @@ export const Settings = () => {
           margin: "10px",
           borderRadius: "20px",
         }}
+        onClick={() => handleOpenDialog()}
       >
         <Typography
           variant="h6"
@@ -91,11 +146,30 @@ export const Settings = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <ArrowForwardIosIcon sx={{ color: "red" }} />
+              <IconButton>
+                <ArrowForwardIosIcon style={{ color: "red" }} />
+              </IconButton>
             </Grid>
           </Grid>
         </Grid>
       </Grid>
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Eliminar cuenta</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Esta acción es irreversible. ¿Estás seguro de querer eliminar tu
+            cuenta?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmation} color="secondary">
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };
