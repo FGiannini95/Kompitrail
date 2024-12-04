@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-//MUI
+// MUI
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
@@ -8,7 +8,8 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-//MUI-ICONS
+
+// MUI-ICONS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -17,17 +18,16 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { RoutesString } from "../../../routes/routes";
 import {
   getLocalStorage,
   delLocalStorage,
 } from "../../../helpers/localStorageUtils";
-import { KompitrailContext } from "../../../../context/KompitrailContext";
-import { RoutesString } from "../../../routes/routes";
 
 export const Settings = () => {
   const navigate = useNavigate();
-  const { user, setUser, setToken, setIsLogged } =
-    useContext(KompitrailContext);
+  const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [openDialog, setOpenDialog] = useState(false);
   const tokenLocalStorage = getLocalStorage("token");
 
