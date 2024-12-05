@@ -58,39 +58,38 @@ export const EditPassword = () => {
     }
   };
 
+  const validatePasswords = (password, confirmPassword) => {
+    // It checks if the password matches the required pattern
+    if (!passwordPattern.test(password)) {
+      return {
+        isValid: false,
+        error: "La contraseña no es lo suficientemente fuerte",
+      };
+    }
+    // It checls if the password and confirm password match
+    if (confirmPassword && password !== confirmPassword) {
+      return { isValid: false, error: "Las contraseñas no coinciden" };
+    }
+
+    return { isValid: true, error: "" };
+  };
+
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
 
-    if (!passwordPattern.test(value)) {
-      setError("La contraseña no es lo suficientemente fuerte");
-      setIsValid(false);
-      return;
-    }
-
-    if (value && confirmPassword && value !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      setIsValid(false);
-    } else {
-      setError("");
-      setIsValid(!!value && value === confirmPassword);
-    }
+    const validation = validatePasswords(value, confirmPassword);
+    setError(validation.error);
+    setIsValid(validation.isValid);
   };
 
   const handleConfirmPassword = (e) => {
     const value = e.target.value;
     setConfirmPassword(value);
 
-    if (value && password && value !== password) {
-      setError("Las contraseñas no coinciden");
-      setIsValid(false);
-    } else if (!passwordPattern.test(password)) {
-      setError("La contraseña no es lo suficientemente fuerte");
-      setIsValid(false);
-    } else {
-      setError("");
-      setIsValid(!!value && value === password);
-    }
+    const validation = validatePasswords(password, value);
+    setError(validation.error);
+    setIsValid(validation.isValid);
   };
 
   const handleSave = () => {
