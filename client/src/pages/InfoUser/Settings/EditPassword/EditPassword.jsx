@@ -24,7 +24,12 @@ export const EditPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
+
+  // Regular expresion to validate the password
+  const passwordPattern = /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const displayPassword = () => {
     setShowPassword(!showPassword);
@@ -39,6 +44,9 @@ export const EditPassword = () => {
   };
 
   const handleBlur = () => {
+    if (password && confirmPassword && password !== confirmPassword) {
+      setError("Las contraseñas no coinciden");
+    }
     setIsPasswordSelected(false);
   };
 
@@ -101,6 +109,8 @@ export const EditPassword = () => {
           onChange={handlePasswordChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          error={!!error}
+          helperText={error}
           InputProps={{
             endAdornment: (
               <Button onClick={displayPassword}>
@@ -124,6 +134,8 @@ export const EditPassword = () => {
           onChange={handleConfirmPassword}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          error={!!error}
+          helperText={error}
           InputProps={{
             endAdornment: (
               <Button onClick={displayConfirmPassword}>
