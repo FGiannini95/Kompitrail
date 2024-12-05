@@ -80,6 +80,9 @@ export const Settings = () => {
       <Grid item container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
           <ArrowBackIosIcon sx={{ color: "black" }} />
+          <Typography variant="h6" sx={{ color: "black" }}>
+            Ajustes
+          </Typography>
         </IconButton>
       </Grid>
 
@@ -95,10 +98,6 @@ export const Settings = () => {
           width: "calc(100% - 22px)",
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: "bold", paddingBottom: 1 }}>
-          Ajustes
-        </Typography>
-
         {/* Change Password Option */}
         <Grid container spacing={3}>
           <Grid item xs={2} container spacing={0} sx={gridStyles}>

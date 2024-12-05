@@ -68,9 +68,7 @@ export const Motorbike = () => {
         <IconButton onClick={() => navigate(-1)}>
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Mis motos
-        </Typography>
+        <Typography variant="h6">Mis motos</Typography>
       </Grid>
       <Grid item container direction="column" spacing={2}>
         {allMotorbikes.map((motorbike) => (
