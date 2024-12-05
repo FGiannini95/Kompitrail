@@ -44,22 +44,53 @@ export const EditPassword = () => {
   };
 
   const handleBlur = () => {
+    // Both input are filled but with different value
     if (password && confirmPassword && password !== confirmPassword) {
       setError("Las contraseñas no coinciden");
     }
-    setIsPasswordSelected(false);
+    // The password doesn't pass the regex
+    else if (!passwordPattern.test(password)) {
+      setError("La contraseña no es lo suficientemente fuerte");
+    }
+    // We have the same value
+    else {
+      setError("");
+    }
   };
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
-    setIsValid(value && value === confirmPassword);
+
+    if (!passwordPattern.test(value)) {
+      setError("La contraseña no es lo suficientemente fuerte");
+      setIsValid(false);
+      return;
+    }
+
+    if (value && confirmPassword && value !== confirmPassword) {
+      setError("Las contraseñas no coinciden");
+      setIsValid(false);
+    } else {
+      setError("");
+      setIsValid(!!value && value === confirmPassword);
+    }
   };
 
   const handleConfirmPassword = (e) => {
     const value = e.target.value;
     setConfirmPassword(value);
-    setIsValid(value && value === password);
+
+    if (value && password && value !== password) {
+      setError("Las contraseñas no coinciden");
+      setIsValid(false);
+    } else if (!passwordPattern.test(password)) {
+      setError("La contraseña no es lo suficientemente fuerte");
+      setIsValid(false);
+    } else {
+      setError("");
+      setIsValid(!!value && value === password);
+    }
   };
 
   const handleSave = () => {
@@ -96,7 +127,8 @@ export const EditPassword = () => {
       </Grid>
       <Grid item xs={12}>
         <Typography>
-          La nueva contraseña tiene que incluir x carácteres y un seño especial.
+          La nueva contraseña debe tener al menos 8 caracteres y un carácter
+          especial.
         </Typography>
       </Grid>
       <Grid item xs={12}>
