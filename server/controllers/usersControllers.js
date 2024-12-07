@@ -140,8 +140,6 @@ class usersControllers {
         const sqlUpdate = `UPDATE user SET password = "${hash}" WHERE user_id = "${user_id}" AND is_deleted = 0`;
         const values = [hash, user_id];
 
-        console.log("Query ejecutado:", sqlUpdate, values);
-
         connection.query(sqlUpdate, values, (error, result) => {
           if (error) {
             return res

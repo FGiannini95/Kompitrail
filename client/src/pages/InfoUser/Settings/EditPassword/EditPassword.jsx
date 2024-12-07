@@ -68,7 +68,7 @@ export const EditPassword = () => {
         error: "La contraseña no es lo suficientemente fuerte",
       };
     }
-    // It checls if the password and confirm password match
+    // It checks if the password and confirm password match
     if (confirmPassword && password !== confirmPassword) {
       return { isValid: false, error: "Las contraseñas no coinciden" };
     }
