@@ -107,16 +107,16 @@ class usersControllers {
 
   editPassword = (req, res) => {
     console.log("Hola desde editPassword");
-    const { id, password } = req.body;
+    const { id: user_id, password } = req.body;
 
     // We avoid nullable or undefined value
-    if (!id || !password) {
+    if (!user_id || !password) {
       return res
         .status(400)
         .json({ message: "ID y contraseña son obligatorios" });
     }
 
-    if (isNaN(id)) {
+    if (isNaN(user_id)) {
       return res.status(400).json({ message: "ID inválido" });
     }
 
@@ -137,9 +137,10 @@ class usersControllers {
             .json({ message: "Error al encriptar la contraseña", error: err });
         }
 
-        // We use the "?"" in order to avoid sql injection
-        const sqlUpdate = `UPDATE user SET password = ? WHERE user_id = ? AND is_deleted = 0`;
-        const values = [hash, id];
+        const sqlUpdate = `UPDATE user SET password = "${hash}" WHERE user_id = "${user_id}" AND is_deleted = 0`;
+        const values = [hash, user_id];
+
+        console.log("Query ejecutado:", sqlUpdate, values);
 
         connection.query(sqlUpdate, values, (error, result) => {
           if (error) {
