@@ -15,6 +15,8 @@ import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
 import { KompitrailContext } from "../../context/KompitrailContext";
 import { EditUser } from "../pages/InfoUser/EditUser/EditUser";
 import { Motorbike } from "../pages/InfoUser/Motorbike/Motorbike";
+import { Settings } from "../pages/InfoUser/Settings/Settings";
+import { EditPassword } from "../pages/InfoUser/Settings/EditPassword/EditPassword";
 
 export const GlobalRouter = () => {
   const { user, token } = useContext(KompitrailContext);
@@ -33,6 +35,11 @@ export const GlobalRouter = () => {
             <Route path={RoutesString.infouser} element={<InfoUser />} />
             <Route path={RoutesString.editUser} element={<EditUser />} />
             <Route path={RoutesString.motorbike} element={<Motorbike />} />
+            <Route path={RoutesString.settings} element={<Settings />} />
+            <Route
+              path={RoutesString.editPassword}
+              element={<EditPassword />}
+            />
           </Routes>
         </NavBarApp>
       )}
