@@ -1,5 +1,11 @@
 import React from "react";
-import { Box, Backdrop, IconButton } from "@mui/material";
+
+// MUI
+import Box from "@mui/material/Box";
+import Backdrop from "@mui/material/Backdrop";
+
+// MUI-ICONS
+import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 
 export const FullScreenImg = ({ openImg, handleCloseImg, imgSelected }) => {
