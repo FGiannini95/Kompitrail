@@ -1,4 +1,6 @@
 import React, { useContext, useState } from "react";
+
+// MUI
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -7,19 +9,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { KompitrailContext } from "../../../context/KompitrailContext";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import {
-  delLocalStorage,
-  getLocalStorage,
-} from "../../helpers/localStorageUtils";
-import { jwtDecode } from "jwt-decode";
-import { RoutesString } from "../../routes/routes";
 
-// Icono para que los navigates funcionen
+// MUI-ICONS
 import IconButton from "@mui/material/IconButton";
-// Iconos
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -31,6 +23,16 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+
+import axios from "axios";
+import {
+  delLocalStorage,
+  getLocalStorage,
+} from "../../helpers/localStorageUtils";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { RoutesString } from "../../routes/routes";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
@@ -47,7 +49,7 @@ export const InfoUser = () => {
     return `${firstLetterName}${firstLetterLastName}`;
   };
 
-  const iniciales = getInitials(user.name, user.lastname);
+  const initials = getInitials(user.name, user.lastname);
 
   const logOut = () => {
     delLocalStorage("token");
@@ -132,7 +134,7 @@ export const InfoUser = () => {
             style={{ paddingTop: "0px", paddingLeft: "0px" }}
           >
             <Typography sx={{}} variant="h4">
-              {iniciales}
+              {initials}
             </Typography>
           </Grid>
           <Grid item xs={12}>
