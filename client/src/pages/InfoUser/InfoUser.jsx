@@ -9,9 +9,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 
 // MUI-ICONS
-import IconButton from "@mui/material/IconButton";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
