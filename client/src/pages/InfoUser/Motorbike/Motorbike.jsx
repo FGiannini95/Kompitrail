@@ -109,7 +109,7 @@ export const Motorbike = () => {
                 src={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
                 alt={motorbike.brand}
                 style={{
-                  maxWidth: "100%",
+                  maxWidth: "65%",
                   borderRadius: "20px",
                   objectFit: "cover",
                 }}
