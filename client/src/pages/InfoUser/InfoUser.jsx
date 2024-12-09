@@ -31,6 +31,11 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
+
+// TODO: Change to a real pdf
+const url =
+  "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
@@ -39,7 +44,8 @@ export const InfoUser = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogType, setDialogType] = useState("");
   const tokenLocalStorage = getLocalStorage("token");
-  const [showIframe, setShowIframe] = useState(false);
+  const [openIframe, setOpenIframe] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState("");
 
   const getInitials = (name, lastname) => {
     const firstLetterName = name?.charAt(0).toUpperCase() || "";
@@ -95,11 +101,13 @@ export const InfoUser = () => {
     navigate(-1);
   };
 
-  const handleOpenIframe = () => {
-    window.open(
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-      "_blank"
-    );
+  const handleOpenIframe = (url) => {
+    setIframeUrl(url);
+    setOpenIframe(true);
+  };
+
+  const handleCloseIframe = () => {
+    setOpenIframe(false);
   };
 
   return (
@@ -391,7 +399,7 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <IconButton onClick={handleOpenIframe}>
+              <IconButton onClick={() => handleOpenIframe(url)}>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>
             </Grid>
@@ -518,24 +526,11 @@ export const InfoUser = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      {/* {showIframe && (
-        <Box
-          sx={{
-            marginTop: "20px",
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            overflow: "hidden",
-            width: "100%",
-            height: "500px",
-          }}
-        >
-          <iframe
-            src="https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf" // Cambia esta URL por la URL deseada
-            style={{ width: "100%", height: "100%", border: "none" }}
-            title="Política de Privacidad"
-          />
-        </Box>
-      )} */}
+      <PrivacyDialog
+        openIframe={openIframe}
+        handleCloseIframe={handleCloseIframe}
+        iframeUrl={iframeUrl}
+      />
     </Box>
   );
 };
