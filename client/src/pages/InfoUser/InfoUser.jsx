@@ -39,6 +39,7 @@ export const InfoUser = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogType, setDialogType] = useState("");
   const tokenLocalStorage = getLocalStorage("token");
+  const [showIframe, setShowIframe] = useState(false);
 
   const getInitials = (name, lastname) => {
     const firstLetterName = name?.charAt(0).toUpperCase() || "";
@@ -92,6 +93,13 @@ export const InfoUser = () => {
 
   const handleCancel = () => {
     navigate(-1);
+  };
+
+  const handleOpenIframe = () => {
+    window.open(
+      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      "_blank"
+    );
   };
 
   return (
@@ -383,7 +391,9 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <ArrowForwardIosIcon />
+              <IconButton onClick={handleOpenIframe}>
+                <ArrowForwardIosIcon style={{ color: "black" }} />
+              </IconButton>
             </Grid>
           </Grid>
         </Grid>
@@ -508,6 +518,24 @@ export const InfoUser = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* {showIframe && (
+        <Box
+          sx={{
+            marginTop: "20px",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            overflow: "hidden",
+            width: "100%",
+            height: "500px",
+          }}
+        >
+          <iframe
+            src="https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf" // Cambia esta URL por la URL deseada
+            style={{ width: "100%", height: "100%", border: "none" }}
+            title="Política de Privacidad"
+          />
+        </Box>
+      )} */}
     </Box>
   );
 };
