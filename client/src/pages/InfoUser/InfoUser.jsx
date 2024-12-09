@@ -31,6 +31,11 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
+
+// TODO: Change to a real pdf
+const url =
+  "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
@@ -39,6 +44,8 @@ export const InfoUser = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogType, setDialogType] = useState("");
   const tokenLocalStorage = getLocalStorage("token");
+  const [openIframe, setOpenIframe] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState("");
 
   const getInitials = (name, lastname) => {
     const firstLetterName = name?.charAt(0).toUpperCase() || "";
@@ -92,6 +99,15 @@ export const InfoUser = () => {
 
   const handleCancel = () => {
     navigate(-1);
+  };
+
+  const handleOpenIframe = (url) => {
+    setIframeUrl(url);
+    setOpenIframe(true);
+  };
+
+  const handleCloseIframe = () => {
+    setOpenIframe(false);
   };
 
   return (
@@ -383,7 +399,9 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <ArrowForwardIosIcon />
+              <IconButton onClick={() => handleOpenIframe(url)}>
+                <ArrowForwardIosIcon style={{ color: "black" }} />
+              </IconButton>
             </Grid>
           </Grid>
         </Grid>
@@ -508,6 +526,11 @@ export const InfoUser = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <PrivacyDialog
+        openIframe={openIframe}
+        handleCloseIframe={handleCloseIframe}
+        iframeUrl={iframeUrl}
+      />
     </Box>
   );
 };
