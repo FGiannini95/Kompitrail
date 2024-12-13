@@ -24,7 +24,7 @@ require("dotenv").config();
 class usersControllers {
   createUser = (req, res) => {
     const { name, lastname, email, password } = req.body;
-    //password incriptation
+    // Password incriptation
     let saltRounds = 8;
     bcrypt.genSalt(saltRounds, function (err, saltRounds) {
       bcrypt.hash(password, saltRounds, function (err, hash) {
@@ -102,6 +102,61 @@ class usersControllers {
       err
         ? res.status(400).json({ err })
         : res.status(200).json({ message: "Usuario eliminado", result });
+    });
+  };
+
+  editPassword = (req, res) => {
+    console.log("Hola desde editPassword");
+    const { id: user_id, password } = req.body;
+
+    // We avoid nullable or undefined value
+    if (!user_id || !password) {
+      return res
+        .status(400)
+        .json({ message: "ID y contraseña son obligatorios" });
+    }
+
+    if (isNaN(user_id)) {
+      return res.status(400).json({ message: "ID inválido" });
+    }
+
+    // Password incriptation
+    const saltRounds = 8;
+
+    bcrypt.genSalt(saltRounds, (err, salt) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Error al generar el salt", error: err });
+      }
+
+      bcrypt.hash(password, salt, (err, hash) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ message: "Error al encriptar la contraseña", error: err });
+        }
+
+        const sqlUpdate = `UPDATE user SET password = "${hash}" WHERE user_id = "${user_id}" AND is_deleted = 0`;
+        const values = [hash, user_id];
+
+        connection.query(sqlUpdate, values, (error, result) => {
+          if (error) {
+            return res
+              .status(500)
+              .json({ message: "Error al actualizar la contraseña", error });
+          }
+
+          // affectedRows is a property of result object. We use it to verify how many row we have modified in our table
+          if (result.affectedRows === 0) {
+            return res
+              .status(404)
+              .json({ message: "Usuario no encontrado o ya eliminado" });
+          }
+
+          res.status(200).json({ message: "Contraseña actualizada con éxito" });
+        });
+      });
     });
   };
 }

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 
 // MUI
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+
+// MUI-ICONS
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import IconButton from "@mui/material/IconButton";
 
 // MUI-ICONS
@@ -82,9 +85,7 @@ export const Motorbike = () => {
         <IconButton onClick={() => navigate(-1)}>
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Mis motos
-        </Typography>
+        <Typography variant="h6">Mis motos</Typography>
       </Grid>
       <Grid item container direction="column" spacing={2}>
         {allMotorbikes.map((motorbike) => (
