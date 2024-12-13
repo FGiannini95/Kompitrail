@@ -1,21 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import { getLocalStorage } from "../../helpers/localStorageUtils";
-import { Box, Button, Grid, Typography } from "@mui/material";
-import { KompitrailContext } from "../../../context/KompitrailContext";
 
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import { useNavigate } from "react-router-dom";
-import { RoutesString } from "../../routes/routes";
-
-import { styled } from "@mui/material/styles";
+// MUI
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { styled } from "@mui/material/styles";
+
+// MUI-ICONS
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { getLocalStorage } from "../../helpers/localStorageUtils";
+import { KompitrailContext } from "../../../context/KompitrailContext";
+import { useNavigate } from "react-router-dom";
+import { RoutesString } from "../../routes/routes";
 
 export const Profile = () => {
   const { user } = useContext(KompitrailContext);
