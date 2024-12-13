@@ -13,7 +13,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import { useNavigate } from "react-router-dom";
 
-//TODO: @julia El input de nombre y apellido tiene que tener el mismo tamaño con en las demás vistas (creo que le sobra un container), el código de teléfono tiene que tener todas las opciones, a ver si existe una manera para hacerlo), hay que usar axios para traer los datos del usuario, que rellenen los campo, refactorizar el código como en infouser(gridStyles)
+//TODO: @julia El input de nombre y apellido tiene que tener el mismo tamaño con en las demás vistas (creo que le sobra un container), el código de teléfono tiene que tener todas las opciones, a ver si existe una manera para hacerlo), hay que usar axios para traer los datos del usuario, que rellenen los campo, refactorizar el código como en infouser(gridStyles). El button guardar se habilita sólo si cambia algún valor si vuelvo atrás reseteos los campos con el valor inicial. El button guardar ejecuta una sql de tipo update
 
 export const EditUser = () => {
   const navigate = useNavigate();
