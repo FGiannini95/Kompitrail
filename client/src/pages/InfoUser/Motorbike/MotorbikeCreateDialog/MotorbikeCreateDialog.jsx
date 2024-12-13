@@ -1,11 +1,16 @@
 import React, { useContext, useState } from "react";
+
+// MUI
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
+
+// MUI-ICONS
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+
 import axios from "axios";
 import { KompitrailContext } from "../../../../../context/KompitrailContext";
 

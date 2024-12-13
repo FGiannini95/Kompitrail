@@ -12,6 +12,7 @@ import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 import Link from "@mui/material/Link";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
 
 const initialValue = {
   email: "",
@@ -28,6 +29,8 @@ export const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
+  const [openRestorePasswordDialog, setOpenRestorePasswordDialog] =
+    useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -97,6 +100,10 @@ export const Login = () => {
 
   const handleBlur = () => {
     setIsPasswordSelected(false);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenRestorePasswordDialog(false);
   };
 
   return (
@@ -178,6 +185,23 @@ export const Login = () => {
             !
           </Typography>
         </Grid>
+        <Grid item xs={12}>
+          <Typography textAlign="center">
+            ¿Has olvidado tu contraseña? Pincha{" "}
+            <Link
+              onClick={() => setOpenRestorePasswordDialog(true)}
+              color="primary"
+              underline="hover"
+            >
+              aquí
+            </Link>
+            !
+          </Typography>
+        </Grid>
+        <RestorePasswordDialog
+          openRestorePasswordDialog={openRestorePasswordDialog}
+          handleCloseDialog={handleCloseDialog}
+        />
       </Grid>
     </form>
   );
