@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
 import axios from "axios";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
@@ -73,12 +74,27 @@ export const Motorbike = () => {
             key={motorbike?.motorbike_id}
             container
             spacing={1}
+            marginTop="10px"
+            marginLeft="20px"
             alignItems="center"
+            direction="column"
+            textAlign="center"
+            borderRadius="20px"
+            backgroundColor="#eeeeee"
+            // Need to use it in a temporary way to align eith the style
+            style={{
+              width: "calc(100% - 22px)",
+            }}
           >
             <Grid item xs={3}>
               <img
                 src={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
                 alt={motorbike.brand}
+                style={{
+                  maxWidth: "100%",
+                  borderRadius: "20px",
+                  objectFit: "cover",
+                }}
                 width="100%"
               />
             </Grid>
@@ -92,16 +108,16 @@ export const Motorbike = () => {
             </Grid>
             <Grid item xs={3} container justifyContent="flex-end">
               <IconButton
-                fontSize="large"
                 onClick={() => handleOpenEditDialog(motorbike.motorbike_id)}
               >
-                <EditOutlinedIcon style={{ color: "black" }} />
+                <EditOutlinedIcon fontSize="large" style={{ color: "black" }} />
               </IconButton>
               <IconButton
                 onClick={() => handleOpenDeleteDialog(motorbike.motorbike_id)}
               >
                 <DeleteOutlineIcon
-                  style={{ color: "black", fontSize: "large" }}
+                  fontSize="large"
+                  style={{ color: "black" }}
                 />
               </IconButton>
             </Grid>
@@ -116,7 +132,8 @@ export const Motorbike = () => {
           fullWidth
           onClick={handleOpenCreateDialog}
         >
-          + Añadir moto
+          Añadir moto
+          <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
         </Button>
       </Grid>
       <MotorbikeCreateDialog
