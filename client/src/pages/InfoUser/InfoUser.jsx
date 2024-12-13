@@ -28,13 +28,8 @@ import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
-import axios from "axios";
-import {
-  delLocalStorage,
-  getLocalStorage,
-} from "../../helpers/localStorageUtils";
+import { delLocalStorage } from "../../helpers/localStorageUtils";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 
@@ -50,8 +45,6 @@ export const InfoUser = () => {
     useContext(KompitrailContext);
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState("");
-  const tokenLocalStorage = getLocalStorage("token");
   const [openIframe, setOpenIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
 
