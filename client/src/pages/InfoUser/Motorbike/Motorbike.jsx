@@ -4,9 +4,6 @@ import React, { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-
-// MUI-ICONS
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import IconButton from "@mui/material/IconButton";
 
 // MUI-ICONS
