@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+// MUI
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -7,19 +8,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { KompitrailContext } from "../../../context/KompitrailContext";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import {
-  delLocalStorage,
-  getLocalStorage,
-} from "../../helpers/localStorageUtils";
-import { jwtDecode } from "jwt-decode";
-import { RoutesString } from "../../routes/routes";
 
-// Icono para que los navigates funcionen
+// MUI-ICONS
 import IconButton from "@mui/material/IconButton";
-// Iconos
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -29,16 +20,25 @@ import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+
+import { KompitrailContext } from "../../../context/KompitrailContext";
+import { useNavigate } from "react-router-dom";
+import { delLocalStorage } from "../../helpers/localStorageUtils";
+import { RoutesString } from "../../routes/routes";
+
+const gridStyles = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+};
 
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
     useContext(KompitrailContext);
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState("");
-  const tokenLocalStorage = getLocalStorage("token");
 
   const getInitials = (name, lastname) => {
     const firstLetterName = name?.charAt(0).toUpperCase() || "";
@@ -57,36 +57,16 @@ export const InfoUser = () => {
     navigate(RoutesString.landing);
   };
 
-  const handleOpenDialog = (type) => {
-    setDialogType(type);
+  const handleOpenDialog = () => {
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setDialogType("");
-  };
-
-  const deleteUser = () => {
-    const { user_id } = jwtDecode(tokenLocalStorage).user;
-    axios
-      .put(`http://localhost:3000/users/deleteuser/${user_id}`)
-      .then((res) => {
-        console.log(res.data);
-        navigate(RoutesString.landing);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const handleConfirmation = () => {
-    if (dialogType === "logout") {
-      logOut();
-    } else if (dialogType === "delete") {
-      deleteUser();
-      logOut();
-    }
+    logOut();
     setOpenDialog(false);
   };
 
@@ -193,15 +173,7 @@ export const InfoUser = () => {
         <Grid>
           <Grid container spacing={3}>
             {/* Epieza Modificar perfil */}
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <PersonOutlineOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -209,15 +181,7 @@ export const InfoUser = () => {
                 Modificar perfil
               </Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <IconButton onClick={() => navigate(RoutesString.editUser)}>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>
@@ -225,29 +189,13 @@ export const InfoUser = () => {
           </Grid>
           {/* Empieza Mis motos */}
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <TwoWheelerOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Mis motos</Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <IconButton onClick={() => navigate(RoutesString.motorbike)}>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>
@@ -255,59 +203,29 @@ export const InfoUser = () => {
           </Grid>
           {/* Empieza Mis rutas */}
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               {/* Añadir icono de rutas */}
               <RouteOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Mis rutas</Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
           {/* Empieza Ajustes */}
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <SettingsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Ajustes</Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <ArrowForwardIosIcon />
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+              <IconButton onClick={() => navigate(RoutesString.settings)}>
+                <ArrowForwardIosIcon style={{ color: "black" }} />
+              </IconButton>{" "}
             </Grid>
           </Grid>
         </Grid>
@@ -331,42 +249,18 @@ export const InfoUser = () => {
         </Typography>
         <Grid>
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <TextsmsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Chat bot</Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -374,15 +268,7 @@ export const InfoUser = () => {
                 Política de privacidad
               </Typography>
             </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
@@ -409,15 +295,7 @@ export const InfoUser = () => {
         </Typography>
         <Grid>
           <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <LogoutIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -437,67 +315,10 @@ export const InfoUser = () => {
           </Grid>
         </Grid>
       </Grid>
-      {/* EMpieza Eliminar perfil */}
-      <Grid
-        style={{
-          marginTop: "30px",
-          padding: "10px",
-          paddingLeft: "20px",
-          backgroundColor: "#eeeeee",
-          margin: "10px",
-          borderRadius: "20px",
-        }}
-        onClick={() => handleOpenDialog("delete")}
-      >
-        <Typography
-          variant="h6"
-          sx={{ fontWeight: "bold" }}
-          style={{ paddingBottom: "10px" }}
-        >
-          Eliminar perfil
-        </Typography>
-        <Grid>
-          <Grid container spacing={3}>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <DeleteOutlineIcon fontSize="large" />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }}>
-                Eliminar cuenta
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <ArrowForwardIosIcon />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>
-          {dialogType === "logout" ? "Cerrar sesión" : "Eliminar perfil"}
-        </DialogTitle>
+        <DialogTitle>Cerrar sesión</DialogTitle>
         <DialogContent>
-          <Typography>
-            {dialogType === "logout"
-              ? "¿Estás seguro de querer cerrar sesión?"
-              : "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?"}
-          </Typography>
+          <Typography>¿Estás seguro de querer cerrar sesión?</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">

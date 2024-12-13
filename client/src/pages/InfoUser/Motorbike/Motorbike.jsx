@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import Grid from "@mui/material/Grid";
+
+// MUI
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+
+// MUI-ICONS
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+
+import { useNavigate } from "react-router-dom";
 import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
 import axios from "axios";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
@@ -64,9 +69,7 @@ export const Motorbike = () => {
         <IconButton onClick={() => navigate(-1)}>
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Mis motos
-        </Typography>
+        <Typography variant="h6">Mis motos</Typography>
       </Grid>
       <Grid item container direction="column" spacing={2}>
         {allMotorbikes.map((motorbike) => (
