@@ -17,10 +17,10 @@ export const RestorePasswordDialog = ({
         <Typography>¿Quieres recuperar tu contraseña?</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseDialog} color="primary">
+        <Button onClick={handleCloseDialog} color="error">
           Cancelar
         </Button>
-        <Button color="secondary">Confirmar</Button>
+        <Button color="success">Confirmar</Button>
       </DialogActions>
     </Dialog>
   );

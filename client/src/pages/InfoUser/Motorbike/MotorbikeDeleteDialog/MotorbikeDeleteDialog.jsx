@@ -38,10 +38,10 @@ export const MotorbikeDeleteDialog = ({
         <Typography>¿Quieres eliminar la moto de tu perfil?</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseDialog} color="primary">
+        <Button onClick={handleCloseDialog} color="error">
           Cancelar
         </Button>
-        <Button color="secondary" onClick={handleConfirm}>
+        <Button color="success" onClick={handleConfirm}>
           Confirmar
         </Button>
       </DialogActions>
