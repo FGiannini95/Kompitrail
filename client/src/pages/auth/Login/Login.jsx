@@ -139,9 +139,9 @@ export const Login = () => {
               endAdornment: (
                 <Button onClick={displayPassword}>
                   {showPassword ? (
-                    <VisibilityOffOutlinedIcon />
+                    <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
                   ) : (
-                    <VisibilityOutlinedIcon />
+                    <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
                   )}
                 </Button>
               ),
@@ -156,7 +156,17 @@ export const Login = () => {
           </Grid>
         )}
         <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              color: "black",
+              boxShadow: "none",
+              backgroundColor: "#eeeeee",
+              "&:hover": { backgroundColor: "#dddddd" },
+            }}
+          >
             ACEPTAR
           </Button>
         </Grid>
@@ -165,7 +175,15 @@ export const Login = () => {
           <Button
             type="button"
             variant="outlined"
-            color="secondary"
+            sx={{
+              color: "black",
+              borderColor: "#eeeeee",
+              borderWidth: "2px",
+              "&:hover": {
+                borderColor: "#dddddd",
+                borderWidth: "2px",
+              },
+            }}
             fullWidth
             onClick={handleCancel}
           >
@@ -177,7 +195,7 @@ export const Login = () => {
             ¿Aún no tienes un perfil? ¡Regístrate{" "}
             <Link
               href={RoutesString.register}
-              color="primary"
+              color="#777777"
               underline="hover"
             >
               aquí
@@ -190,7 +208,7 @@ export const Login = () => {
             ¿Has olvidado tu contraseña? Pincha{" "}
             <Link
               onClick={() => setOpenRestorePasswordDialog(true)}
-              color="primary"
+              color="#777777"
               underline="hover"
             >
               aquí

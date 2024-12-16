@@ -141,10 +141,10 @@ export const Settings = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
+          <Button onClick={handleCloseDialog} color="error">
             Cancelar
           </Button>
-          <Button onClick={handleConfirmation} color="secondary">
+          <Button onClick={handleConfirmation} color="success">
             Confirmar
           </Button>
         </DialogActions>
