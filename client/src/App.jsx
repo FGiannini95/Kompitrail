@@ -5,6 +5,7 @@ import { KompitrailProvider } from "../context/KompitrailContext";
 import { GlobalRouter } from "./routes/GlobalRouter";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import { ThemeKompitrail } from "./ThemeKompitrail";
 
 export function App() {
   // The useTheme hook in Material-UI is used to access the overall theme of the application, which includes design settings such as breakpoints
@@ -21,9 +22,11 @@ export function App() {
 
   return (
     <>
-      <KompitrailProvider>
-        <GlobalRouter />
-      </KompitrailProvider>
+      <ThemeKompitrail>
+        <KompitrailProvider>
+          <GlobalRouter />
+        </KompitrailProvider>
+      </ThemeKompitrail>
     </>
   );
 }

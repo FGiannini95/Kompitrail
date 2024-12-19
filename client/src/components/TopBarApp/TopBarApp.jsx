@@ -94,7 +94,9 @@ const TopBar = () => {
     <AppBar
       position="fixed"
       style={{
-        backgroundColor: "#1976d2",
+        color: "black",
+        boxShadow: "none",
+        backgroundColor: "#eeeeee",
         height: noDesign ? "0px" : "64px",
         display: noDesign ? "none" : "flex",
         justifyContent: "center",

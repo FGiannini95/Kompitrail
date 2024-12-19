@@ -149,9 +149,17 @@ export const Motorbike = () => {
         <Button
           type="button"
           variant="outlined"
-          color="secondary"
           fullWidth
           onClick={handleOpenCreateDialog}
+          sx={{
+            color: "black",
+            borderColor: "#eeeeee",
+            borderWidth: "2px",
+            "&:hover": {
+              borderColor: "#dddddd",
+              borderWidth: "1px",
+            },
+          }}
         >
           Añadir moto
           <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />

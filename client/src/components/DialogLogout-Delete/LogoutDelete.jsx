@@ -1,15 +1,22 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
-import React, { useContext, useState } from 'react'
-import { KompitrailContext } from '../../../context/KompitrailContext';
-import { useNavigate } from 'react-router-dom';
-import { delLocalStorage } from '../../helpers/localStorageUtils';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
+import React, { useContext, useState } from "react";
+import { KompitrailContext } from "../../../context/KompitrailContext";
+import { useNavigate } from "react-router-dom";
+import { delLocalStorage } from "../../helpers/localStorageUtils";
 
 export const LogoutDelete = () => {
   const { user, token, setUser, setToken, setIsLogged } =
     useContext(KompitrailContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogType, setDialogType] = useState("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const logOut = () => {
     delLocalStorage("token");
@@ -55,13 +62,13 @@ export const LogoutDelete = () => {
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseDialog} color="primary">
+        <Button onClick={handleCloseDialog} color="error">
           Cancelar
         </Button>
-        <Button onClick={handleConfirmation} color="secondary">
+        <Button onClick={handleConfirmation} color="success">
           Confirmar
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};

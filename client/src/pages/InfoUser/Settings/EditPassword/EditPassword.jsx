@@ -148,9 +148,9 @@ export const EditPassword = () => {
             endAdornment: (
               <Button onClick={displayPassword}>
                 {showPassword ? (
-                  <VisibilityOffOutlinedIcon sx={{ color: "black" }} />
+                  <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
                 ) : (
-                  <VisibilityOutlinedIcon sx={{ color: "black" }} />
+                  <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
                 )}
               </Button>
             ),
@@ -173,9 +173,9 @@ export const EditPassword = () => {
             endAdornment: (
               <Button onClick={displayConfirmPassword}>
                 {showPassword ? (
-                  <VisibilityOffOutlinedIcon sx={{ color: "black" }} />
+                  <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
                 ) : (
-                  <VisibilityOutlinedIcon sx={{ color: "black" }} />
+                  <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
                 )}
               </Button>
             ),
