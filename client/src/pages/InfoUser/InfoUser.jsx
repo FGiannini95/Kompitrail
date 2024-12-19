@@ -33,6 +33,7 @@ import { delLocalStorage } from "../../helpers/localStorageUtils";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../../context/KompitrailContext";
+import { getInitials } from "../../helpers/Utils";
 
 const gridStyles = {
   display: "flex",
@@ -48,13 +49,6 @@ export const InfoUser = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openIframe, setOpenIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
-
-  const getInitials = (name, lastname) => {
-    const firstLetterName = name?.charAt(0).toUpperCase() || "";
-    const firstLetterLastName = lastname?.charAt(0).toUpperCase() || "";
-
-    return `${firstLetterName}${firstLetterLastName}`;
-  };
 
   const initials = getInitials(user.name, user.lastname);
 
