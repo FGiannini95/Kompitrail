@@ -85,7 +85,6 @@ export const Register = () => {
               },
             })}
             label="Nombre"
-            variant="outlined"
             fullWidth
             error={!!errors.name}
             helperText={errors.name?.message}
@@ -148,9 +147,9 @@ export const Register = () => {
               endAdornment: (
                 <Button onClick={displayPassword}>
                   {showPassword ? (
-                    <VisibilityOffOutlinedIcon />
+                    <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
                   ) : (
-                    <VisibilityOutlinedIcon />
+                    <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
                   )}
                 </Button>
               ),
@@ -167,7 +166,12 @@ export const Register = () => {
             disabled={isSubmitting}
             type="submit"
             variant="contained"
-            color="primary"
+            sx={{
+              color: "black",
+              boxShadow: "none",
+              backgroundColor: "#eeeeee",
+              "&:hover": { backgroundColor: "#dddddd" },
+            }}
             fullWidth
           >
             {isSubmitting ? "Cargando..." : "Crear"}
@@ -178,7 +182,15 @@ export const Register = () => {
           <Button
             type="button"
             variant="outlined"
-            color="secondary"
+            sx={{
+              color: "black",
+              borderColor: "#eeeeee",
+              borderWidth: "2px",
+              "&:hover": {
+                borderColor: "#dddddd",
+                borderWidth: "2px",
+              },
+            }}
             fullWidth
             onClick={handleCancel}
           >
@@ -188,7 +200,7 @@ export const Register = () => {
         <Grid item xs={12}>
           <Typography textAlign="center">
             ¿Ya tienes un perfil? ¡Haz el login{" "}
-            <Link href={RoutesString.login} color="primary" underline="hover">
+            <Link href={RoutesString.login} color="#777777" underline="hover">
               aquí
             </Link>
             !
