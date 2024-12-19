@@ -17,12 +17,13 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import axios from "axios";
+import { getInitials } from "../../../helpers/Utils";
 
 //TODO: @julia El input de nombre y apellido tiene que tener el mismo tamaño con en las demás vistas (creo que le sobra un container), el código de teléfono tiene que tener todas las opciones, a ver si existe una manera para hacerlo), hay que usar axios para traer los datos del usuario, que rellenen los campo, refactorizar el código como en infouser(gridStyles). El button guardar se habilita sólo si cambia algún valor si vuelvo atrás reseteos los campos con el valor inicial. El button guardar ejecuta una sql de tipo update
 
 const countries = defaultCountries;
 
-const initialValue = {
+const defaultValue = {
   name: "",
   lastname: "",
   phonenumber: null,
@@ -33,23 +34,86 @@ export const EditUser = () => {
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
   const [phone, setPhone] = useState("");
-  const [editUser, setEditUser] = useState(initialValue);
+  const [save, setSave] = useState(false);
+  const [editUser, setEditUser] = useState(defaultValue);
+  const [initialValues, setInitialValues] = useState(defaultValue);
 
+  const { user_id } = jwtDecode(tokenLocalStorage).user;
+
+  //Lógica en Utils.js
+  const initials = getInitials(editUser.name, editUser.lastname);
+
+  //Cargar información del usuario
   useEffect(() => {
-    const { user_id } = jwtDecode(tokenLocalStorage).user;
-
     if (user_id) {
       axios
         .get(`http://localhost:3000/users/oneuser/${user_id}`)
         .then((res) => {
           setEditUser(res.data);
+          setInitialValues(res.data);
           console.log(res.data);
         })
         .catch((err) => {
           console.log(err);
         });
     }
-  }, []);
+  }, [user_id]);
+
+  const handleChange = (e) => {
+    // Diferenciar si es un evento o un valor directo
+    if (e && e.target) {
+      // Caso de un evento estándar de React
+      const { name, value } = e.target;
+      setEditUser((prevState) => ({ ...prevState, [name]: value }));
+    } else {
+      // Caso de un valor directo (PhoneInput)
+      setEditUser((prevState) => ({ ...prevState, phonenumber: e }));
+    }
+  };
+
+  //Cambiar imagen
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    setEditUser((prevState) => ({
+      ...prevState,
+      photo: file,
+    }));
+  };
+
+  //Confirmar cambios
+  const handleConfirm = (e) => {
+    e.preventDefault();
+    console.log("cambios", editUser);
+
+    const newFormData = new FormData();
+    newFormData.append("editUser", JSON.stringify(editUser));
+
+    console.log(JSON.stringify(editUser));
+
+    if (editUser.photo) {
+      newFormData.append("file", editUser.photo);
+    }
+
+    axios
+      .put(`http://localhost:3000/users/edituser/${user_id}`, newFormData)
+      .then((res) => {
+        console.log("edituser", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  //Comprobar si ha habido cambios
+  useEffect(() => {
+    if (editUser !== defaultValue && initialValues !== defaultValue) {
+      setSave(JSON.stringify(editUser) !== JSON.stringify(initialValues));
+    }
+  }, [editUser, initialValues]);
+
+  useEffect(() => {
+    console.log("save:", save);
+  }, [save]);
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -58,7 +122,12 @@ export const EditUser = () => {
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
         <Typography variant="h6">Modificar perfil</Typography>
-        <Button variant="text" color="black" disabled>
+        <Button
+          variant="text"
+          color="black"
+          onClick={handleConfirm}
+          disabled={!save}
+        >
           Guardar
         </Button>
       </Grid>
@@ -85,25 +154,30 @@ export const EditUser = () => {
             aspectRatio: 1 / 1,
             backgroundColor: "green",
           }}
+          onChange={handlePhotoChange}
         >
           <Typography sx={{}} variant="h4">
-            Pic here
+            {initials}
           </Typography>
         </Grid>
         <Grid item xs={12}>
           <TextField
             label="Nombre"
+            name="name"
             variant="outlined"
             fullWidth
             value={editUser?.name || ""}
+            onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             label="Apellidos"
+            name="lastname"
             variant="outlined"
             fullWidth
             value={editUser?.lastname || ""}
+            onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12}>
@@ -112,7 +186,10 @@ export const EditUser = () => {
             <PhoneInput
               defaultCountry="es"
               phone={phone}
-              onChange={setPhone}
+              onChange={(value) => {
+                setPhone(value); // Actualiza el estado
+                handleChange(value); // Ejecuta el valor
+              }}
               countries={countries}
               value={editUser?.phonenumber || ""}
               style={{
