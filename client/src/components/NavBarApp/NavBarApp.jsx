@@ -47,8 +47,10 @@ export const NavBarApp = ({ children }) => {
       </Box>
       <AppBar
         position="fixed"
-        color="primary"
         sx={{
+          backgroundColor: "#eeeeee",
+          color: "black",
+          boxShadow: "none",
           top: "auto",
           bottom: 0,
           display: noDesign ? "none" : "flex",

@@ -151,10 +151,10 @@ export const MotorbikeEditDialog = ({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={cleanDialog} color="primary">
+        <Button onClick={cleanDialog} color="error">
           Cancelar
         </Button>
-        <Button onClick={handleConfirm} color="secondary">
+        <Button onClick={handleConfirm} color="success">
           Confirmar
         </Button>
       </DialogActions>

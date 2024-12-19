@@ -24,17 +24,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 
-// TODO: Change to a real pdf
+// TODO: Change to a real pdf now it is just random stuff
+
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
-import axios from "axios";
-import {
-  delLocalStorage,
-  getLocalStorage,
-} from "../../helpers/localStorageUtils";
+import { delLocalStorage } from "../../helpers/localStorageUtils";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 
@@ -50,8 +46,6 @@ export const InfoUser = () => {
     useContext(KompitrailContext);
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState("");
-  const tokenLocalStorage = getLocalStorage("token");
   const [openIframe, setOpenIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
 
@@ -129,7 +123,7 @@ export const InfoUser = () => {
             justifyContent="center"
             sx={{
               width: 1 / 3,
-              border: "1px solid black",
+              border: "2px solid black",
               borderRadius: "50%",
               aspectRatio: 1 / 1,
             }}
@@ -157,7 +151,17 @@ export const InfoUser = () => {
           }}
         >
           <Grid style={{ paddingRight: "10px" }}>
-            <Button type="button" variant="contained" color="primary" fullWidth>
+            <Button
+              type="button"
+              variant="contained"
+              sx={{
+                color: "black",
+                boxShadow: "none",
+                backgroundColor: "#eeeeee",
+                "&:hover": { backgroundColor: "#dddddd" },
+              }}
+              fullWidth
+            >
               Ir a premium
             </Button>
           </Grid>
@@ -167,6 +171,15 @@ export const InfoUser = () => {
               variant="outlined"
               color="secondary"
               fullWidth
+              sx={{
+                color: "black",
+                borderColor: "#eeeeee",
+                borderWidth: "2px",
+                "&:hover": {
+                  borderColor: "#dddddd",
+                  borderWidth: "2px",
+                },
+              }}
             >
               Compartir perfil
               <ShareOutlinedIcon

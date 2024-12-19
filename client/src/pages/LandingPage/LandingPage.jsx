@@ -31,16 +31,32 @@ export const LandingPage = () => {
       >
         <Button
           type="button"
-          variant="text"
+          variant="outlined"
           onClick={() => navigate(RoutesString.register)}
+          sx={{
+            color: "black",
+            borderColor: "#eeeeee",
+            borderWidth: "2px",
+            "&:hover": {
+              borderColor: "#dddddd",
+              borderWidth: "2px",
+            },
+          }}
         >
           Registro
         </Button>
         <Button
           type="button"
           variant="contained"
+          sx={{
+            color: "black",
+            boxShadow: "none",
+            backgroundColor: "#eeeeee",
+            "&:hover": { backgroundColor: "#dddddd" },
+          }}
           onClick={() => navigate(RoutesString.login)}
         >
+          {" "}
           Log in
         </Button>
       </Box>
