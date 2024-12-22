@@ -98,11 +98,7 @@ export const MotorbikeEditDialog = ({
         console.log("res.data in editmotorbike", res.data);
         setRefresh((prev) => !prev);
         handleOpenSnackbar("Moto añadida con éxito");
-
-        // Asegurarse de que el snackbar se muestra antes de cerrar el diálogo
-        setTimeout(() => {
-          handleCloseDialog();
-        }, 500); // Puedes ajustar este tiempo según sea necesario
+        handleCloseDialog();
       });
   };
 
