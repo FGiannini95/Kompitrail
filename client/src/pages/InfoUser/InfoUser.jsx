@@ -225,7 +225,11 @@ export const InfoUser = () => {
             </Grid>
           </Grid>
           {/* Empieza Mis motos */}
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.motorbike)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <TwoWheelerOutlinedIcon fontSize="large" />
             </Grid>
@@ -233,9 +237,7 @@ export const InfoUser = () => {
               <Typography style={{ margin: "10px" }}>Mis motos</Typography>
             </Grid>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton onClick={() => navigate(RoutesString.motorbike)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
+              <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
           {/* Empieza Mis rutas */}
