@@ -103,8 +103,6 @@ export const MotorbikeEditDialog = ({
       });
   };
 
-  console.log("editMotorbike", editMotorbike);
-
   return (
     <Dialog open={openEditDialog} onClose={handleCloseDialog}>
       <DialogTitle>Editar moto</DialogTitle>
