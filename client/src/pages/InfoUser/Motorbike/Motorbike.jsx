@@ -68,7 +68,6 @@ export const Motorbike = () => {
     setOpenCreateDialog(false);
     setOpenDeleteDialog(false);
     setOpenEditDialog(false);
-    setShowSnackbar(false);
   };
 
   const handleOpenImg = (imgUrl) => {
@@ -198,6 +197,7 @@ export const Motorbike = () => {
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
         setRefresh={setRefresh}
+        handleOpenSnackbar={handleOpenSnackbar}
       />
 
       <FullScreenImg

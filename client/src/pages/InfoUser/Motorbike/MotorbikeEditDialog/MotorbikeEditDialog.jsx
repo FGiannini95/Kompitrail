@@ -24,6 +24,7 @@ export const MotorbikeEditDialog = ({
   handleCloseDialog,
   motorbike_id,
   setRefresh,
+  handleOpenSnackbar,
 }) => {
   const [editMotorbike, setEditMotorbike] = useState(initialValue);
 
@@ -96,10 +97,12 @@ export const MotorbikeEditDialog = ({
       .then((res) => {
         console.log("res.data in editmotorbike", res.data);
         setRefresh((prev) => !prev);
-        handleCloseDialog();
-      })
-      .catch((err) => {
-        console.log(err);
+        handleOpenSnackbar("Moto añadida con éxito");
+
+        // Asegurarse de que el snackbar se muestra antes de cerrar el diálogo
+        setTimeout(() => {
+          handleCloseDialog();
+        }, 500); // Puedes ajustar este tiempo según sea necesario
       });
   };
 
