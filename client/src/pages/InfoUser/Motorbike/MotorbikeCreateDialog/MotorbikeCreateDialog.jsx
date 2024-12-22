@@ -24,6 +24,7 @@ export const MotorbikeCreateDialog = ({
   openCreateDialog,
   handleCloseDialog,
   setRefresh,
+  handleOpenSnackbar,
 }) => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
   const [msgError, setMsgError] = useState("");
@@ -82,9 +83,11 @@ export const MotorbikeCreateDialog = ({
       .then((res) => {
         console.log(res.data);
         setRefresh((prev) => !prev);
+        handleOpenSnackbar("Moto añadida con éxito");
       })
       .catch((err) => {
         console.log(err);
+        handleOpenSnackbar("Error al añadir la moto.", "error");
       });
     cleanDialog();
   };
