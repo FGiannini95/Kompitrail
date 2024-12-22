@@ -191,7 +191,6 @@ export const Motorbike = () => {
         openDeleteDialog={openDeleteDialog}
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
-        handleOpenSnackbar={handleOpenSnackbar}
       />
 
       <MotorbikeEditDialog
@@ -199,7 +198,6 @@ export const Motorbike = () => {
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
         setRefresh={setRefresh}
-        handleOpenSnackbar={handleOpenSnackbar}
       />
 
       <FullScreenImg
