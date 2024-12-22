@@ -190,6 +190,7 @@ export const Motorbike = () => {
         openDeleteDialog={openDeleteDialog}
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
+        handleOpenSnackbar={handleOpenSnackbar}
       />
 
       <MotorbikeEditDialog
