@@ -239,9 +239,12 @@ export const InfoUser = () => {
             </Grid>
           </Grid>
           {/* Empieza Mis rutas */}
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.home)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              {/* Añadir icono de rutas */}
               <RouteOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -252,7 +255,11 @@ export const InfoUser = () => {
             </Grid>
           </Grid>
           {/* Empieza Ajustes */}
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.settings)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <SettingsOutlinedIcon fontSize="large" />
             </Grid>
@@ -260,7 +267,7 @@ export const InfoUser = () => {
               <Typography style={{ margin: "10px" }}>Ajustes</Typography>
             </Grid>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton onClick={() => navigate(RoutesString.settings)}>
+              <IconButton>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>{" "}
             </Grid>
