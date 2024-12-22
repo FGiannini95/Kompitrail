@@ -25,7 +25,6 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 
 // TODO: Change to a real pdf now it is just random stuff
-
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
@@ -208,8 +207,12 @@ export const InfoUser = () => {
           Mi cuenta
         </Typography>
         <Grid>
-          <Grid container spacing={3}>
-            {/* Epieza Modificar perfil */}
+          {/* Empieza Modificar perfil */}
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.editUser)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <PersonOutlineOutlinedIcon fontSize="large" />
             </Grid>
@@ -219,9 +222,7 @@ export const InfoUser = () => {
               </Typography>
             </Grid>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton onClick={() => navigate(RoutesString.editUser)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
+              <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
           {/* Empieza Mis motos */}
