@@ -296,7 +296,7 @@ export const InfoUser = () => {
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} onClick={() => handleOpenIframe(url)}>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
@@ -314,9 +314,7 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <IconButton onClick={() => handleOpenIframe(url)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
+              <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
         </Grid>
