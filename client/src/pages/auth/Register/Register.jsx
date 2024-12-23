@@ -1,15 +1,20 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
+// MUI
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { RoutesString } from "../../../routes/routes";
+
+// MUI-ICONS
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { RoutesString } from "../../../routes/routes";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
