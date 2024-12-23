@@ -34,7 +34,7 @@ export const MotorbikeCard = ({
 
   return (
     <>
-      <Card sx={{ maxWidth: 345 }}>
+      <Card sx={{ maxWidth: 345, backgroundColor: "#eeeeee" }}>
         <CardMedia
           sx={{ height: 140 }}
           image={img}
