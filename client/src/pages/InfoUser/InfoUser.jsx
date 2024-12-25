@@ -25,7 +25,6 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 
 // TODO: Change to a real pdf now it is just random stuff
-
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
@@ -208,8 +207,12 @@ export const InfoUser = () => {
           Mi cuenta
         </Typography>
         <Grid>
-          <Grid container spacing={3}>
-            {/* Epieza Modificar perfil */}
+          {/* Empieza Modificar perfil */}
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.editUser)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <PersonOutlineOutlinedIcon fontSize="large" />
             </Grid>
@@ -219,13 +222,15 @@ export const InfoUser = () => {
               </Typography>
             </Grid>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton onClick={() => navigate(RoutesString.editUser)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
+              <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
           {/* Empieza Mis motos */}
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.motorbike)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <TwoWheelerOutlinedIcon fontSize="large" />
             </Grid>
@@ -233,15 +238,16 @@ export const InfoUser = () => {
               <Typography style={{ margin: "10px" }}>Mis motos</Typography>
             </Grid>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton onClick={() => navigate(RoutesString.motorbike)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
+              <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
           {/* Empieza Mis rutas */}
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.home)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              {/* Añadir icono de rutas */}
               <RouteOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -252,7 +258,11 @@ export const InfoUser = () => {
             </Grid>
           </Grid>
           {/* Empieza Ajustes */}
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.settings)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <SettingsOutlinedIcon fontSize="large" />
             </Grid>
@@ -260,7 +270,7 @@ export const InfoUser = () => {
               <Typography style={{ margin: "10px" }}>Ajustes</Typography>
             </Grid>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton onClick={() => navigate(RoutesString.settings)}>
+              <IconButton>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>{" "}
             </Grid>
@@ -296,7 +306,7 @@ export const InfoUser = () => {
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} onClick={() => handleOpenIframe(url)}>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
@@ -314,9 +324,7 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <IconButton onClick={() => handleOpenIframe(url)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
+              <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
         </Grid>
