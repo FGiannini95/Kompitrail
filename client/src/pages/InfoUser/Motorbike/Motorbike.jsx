@@ -18,6 +18,8 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MotorbikeCard } from "./MotorbikeCard/MotorbikeCard";
+import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
+import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
 
 export const Motorbike = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
@@ -26,6 +28,11 @@ export const Motorbike = () => {
   const [allMotorbikes, setAllMotorbikes] = useState([]);
   const [selectedMotorbikeId, setSelectedMotorbikeId] = useState(null);
   const [refresh, setRefresh] = useState(false);
+  const [openImg, setOpenImg] = useState(false);
+  const [imgSelected, setImgSelected] = useState();
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
@@ -60,6 +67,26 @@ export const Motorbike = () => {
     setOpenCreateDialog(false);
     setOpenDeleteDialog(false);
     setOpenEditDialog(false);
+  };
+
+  const handleOpenImg = (imgUrl) => {
+    setImgSelected(imgUrl);
+    setOpenImg(true);
+  };
+
+  const handleCloseImg = () => {
+    setImgSelected();
+    setOpenImg(false);
+  };
+
+  const handleOpenSnackbar = (message, severity = "success") => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setShowSnackbar(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setShowSnackbar(false);
   };
 
   return (
@@ -120,17 +147,35 @@ export const Motorbike = () => {
         openCreateDialog={openCreateDialog}
         handleCloseDialog={handleCloseDialog}
         setRefresh={setRefresh}
+        handleOpenSnackbar={handleOpenSnackbar}
       />
+
       <MotorbikeDeleteDialog
         openDeleteDialog={openDeleteDialog}
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
+        handleOpenSnackbar={handleOpenSnackbar}
       />
+
       <MotorbikeEditDialog
         openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
         setRefresh={setRefresh}
+        handleOpenSnackbar={handleOpenSnackbar}
+      />
+      
+      <FullScreenImg
+        openImg={openImg}
+        handleCloseImg={handleCloseImg}
+        imgSelected={imgSelected}
+      />
+
+      <SnackbarMessage
+        open={showSnackbar}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
+        handleClose={handleCloseSnackbar}
       />
     </Grid>
   );

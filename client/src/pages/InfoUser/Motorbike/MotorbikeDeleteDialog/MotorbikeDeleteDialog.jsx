@@ -15,6 +15,7 @@ export const MotorbikeDeleteDialog = ({
   openDeleteDialog,
   handleCloseDialog,
   motorbike_id,
+  handleOpenSnackbar,
 }) => {
   const navigate = useNavigate();
 
@@ -23,8 +24,12 @@ export const MotorbikeDeleteDialog = ({
       .put(`http://localhost:3000/motorbikes/deletemotorbike/${motorbike_id}`)
       .then((res) => {
         console.log(res.data);
-        handleCloseDialog();
-        navigate(-1);
+        handleOpenSnackbar("Moto eliminada con éxito");
+        // Delay the closing in order to see the snackbar
+        setTimeout(() => {
+          handleCloseDialog();
+          navigate(-1);
+        }, 2000);
       })
       .catch((err) => {
         console.log(err);

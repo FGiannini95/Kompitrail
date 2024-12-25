@@ -7,7 +7,24 @@ const themeKompitrail = createTheme({
       styleOverrides: {
         root: {
           "& .MuiInputLabel-root.Mui-focused": {
-            color: "#777777", // Change color when the label is focused
+            color: "#777777", // Change the color of the label when it is focused
+            "&.Mui-error": {
+              color: "red", // Change the color if thres is an error
+            },
+          },
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: "#aaaaaa",
+            },
+            "&:hover fieldset": {
+              borderColor: "#aaaaaa", // Change the borderColor on hover
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#aaaaaa", // Change the borderColor on focus
+            },
+            "&.Mui-error fieldset": {
+              borderColor: "red", // Change color when there is an error
+            },
           },
         },
       },

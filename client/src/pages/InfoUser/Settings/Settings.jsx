@@ -99,7 +99,11 @@ export const Settings = () => {
         }}
       >
         {/* Change Password Option */}
-        <Grid container spacing={3}>
+        <Grid
+          container
+          spacing={3}
+          onClick={() => navigate(RoutesString.editPassword)}
+        >
           <Grid item xs={2} container spacing={0} sx={gridStyles}>
             <LockOutlinedIcon fontSize="large" />
           </Grid>
@@ -107,14 +111,12 @@ export const Settings = () => {
             <Typography sx={{ margin: 1 }}>Modificar contraseña</Typography>
           </Grid>
           <Grid item xs={2} container spacing={0} sx={gridStyles}>
-            <IconButton onClick={() => navigate(RoutesString.editPassword)}>
-              <ArrowForwardIosIcon sx={{ color: "black" }} />
-            </IconButton>
+            <ArrowForwardIosIcon sx={{ color: "black" }} />
           </Grid>
         </Grid>
 
         {/* Delete Account Option */}
-        <Grid container spacing={3}>
+        <Grid container spacing={3} onClick={handleOpenDialog}>
           <Grid item xs={2} container spacing={0} sx={gridStyles}>
             <DeleteOutlineIcon fontSize="large" sx={{ color: "red" }} />
           </Grid>
@@ -124,9 +126,7 @@ export const Settings = () => {
             </Typography>
           </Grid>
           <Grid item xs={2} container spacing={0} sx={gridStyles}>
-            <IconButton onClick={handleOpenDialog}>
-              <ArrowForwardIosIcon sx={{ color: "red" }} />
-            </IconButton>
+            <ArrowForwardIosIcon sx={{ color: "red" }} />
           </Grid>
         </Grid>
       </Grid>

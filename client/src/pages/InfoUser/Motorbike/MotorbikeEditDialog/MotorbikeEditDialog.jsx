@@ -24,6 +24,7 @@ export const MotorbikeEditDialog = ({
   handleCloseDialog,
   motorbike_id,
   setRefresh,
+  handleOpenSnackbar,
 }) => {
   const [editMotorbike, setEditMotorbike] = useState(initialValue);
 
@@ -96,14 +97,10 @@ export const MotorbikeEditDialog = ({
       .then((res) => {
         console.log("res.data in editmotorbike", res.data);
         setRefresh((prev) => !prev);
+        handleOpenSnackbar("Moto añadida con éxito");
         handleCloseDialog();
-      })
-      .catch((err) => {
-        console.log(err);
       });
   };
-
-  console.log("editMotorbike", editMotorbike);
 
   return (
     <Dialog open={openEditDialog} onClose={handleCloseDialog}>
