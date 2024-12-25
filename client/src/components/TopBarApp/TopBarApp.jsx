@@ -6,6 +6,7 @@ import SportsMotorsportsOutlinedIcon from "@mui/icons-material/SportsMotorsports
 import MenuIcon from "@mui/icons-material/Menu";
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../../context/KompitrailContext";
+import { capitalizeFirstLetter } from "../../helpers/utils";
 
 const TopBar = () => {
   // We use this hook to acced to the current location
@@ -52,7 +53,9 @@ const TopBar = () => {
             alignItems="center"
             gap="10px"
           >
-            <Typography variant="h6">{user.name}</Typography>
+            <Typography variant="h6">
+              {capitalizeFirstLetter(user.name)}
+            </Typography>
             <SportsMotorsportsOutlinedIcon
               sx={{
                 transition: "transform 0.5s ease-in-out",

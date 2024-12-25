@@ -16,6 +16,7 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { capitalizeFullName, getInitials } from "../../helpers/utils";
 
 export const Profile = () => {
   const { user } = useContext(KompitrailContext);
@@ -34,13 +35,6 @@ export const Profile = () => {
         console.log(err);
       });
   }, []);
-
-  const getInitials = (name, lastname) => {
-    const firstLetterName = name?.charAt(0).toUpperCase() || "";
-    const firstLetterLastName = lastname?.charAt(0).toUpperCase() || "";
-
-    return `${firstLetterName}${firstLetterLastName}`;
-  };
 
   const iniciales = getInitials(user.name, user.lastname);
 
@@ -104,7 +98,7 @@ export const Profile = () => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              {user.name} {user.lastname}
+              {capitalizeFullName(user.name, user.lastname)}
             </Typography>
           </Grid>
         </Grid>
