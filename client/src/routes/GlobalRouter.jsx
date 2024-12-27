@@ -44,6 +44,8 @@ export const GlobalRouter = () => {
       {token && user && (
         <NavBarApp>
           <Routes>
+            {/* Redirect any unknown route to / */}
+            <Route path="*" element={<Navigate to={RoutesString.home} />} />
             <Route path={RoutesString.home} element={<Home />} />
             <Route path={RoutesString.search} element={<Search />} />
             <Route path={RoutesString.createtrip} element={<CreateTrip />} />
@@ -62,6 +64,8 @@ export const GlobalRouter = () => {
       )}
       {(!token || !user) && (
         <Routes>
+          {/* Redirect any unknown route to /landing */}
+          <Route path="*" element={<Navigate to={RoutesString.landing} />} />
           <Route path={RoutesString.landing} element={<LandingPage />} />
           <Route path={RoutesString.register} element={<Register />} />
           <Route path={RoutesString.login} element={<Login />} />
