@@ -25,12 +25,16 @@ export const KompitrailProvider = ({ children }) => {
         })
         .catch((err) => {
           console.error(err);
+          setUser(null);
+          setIsLogged(false);
         })
         .finally(() => {
           setIsLoading(false); // Pause loader if we get data
         });
     } else {
       setIsLoading(false); // Pause loader if we don't get any data
+      setUser(null);
+      setIsLogged(false);
     }
   }, []);
 
