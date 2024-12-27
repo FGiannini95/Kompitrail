@@ -8,7 +8,7 @@ import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { capitalizeFirstLetter } from "../../helpers/utils";
 
-const TopBar = () => {
+export const TopBar = () => {
   // We use this hook to acced to the current location
   const location = useLocation();
   const navigate = useNavigate();
@@ -121,5 +121,3 @@ const TopBar = () => {
     </AppBar>
   );
 };
-
-export default TopBar;
