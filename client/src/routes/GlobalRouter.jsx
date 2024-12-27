@@ -38,10 +38,6 @@ export const GlobalRouter = () => {
     );
   }
 
-  if (!token) {
-    return <Navigate to={RoutesString.landing} />;
-  }
-
   return (
     <BrowserRouter>
       {token && user && <TopBar />}
