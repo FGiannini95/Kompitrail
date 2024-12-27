@@ -16,7 +16,9 @@ import { EditUser } from "../pages/InfoUser/EditUser/EditUser";
 import { Motorbike } from "../pages/InfoUser/Motorbike/Motorbike";
 import { Settings } from "../pages/InfoUser/Settings/Settings";
 import { EditPassword } from "../pages/InfoUser/Settings/EditPassword/EditPassword";
-import { KompitrailContext } from "../../context/KompitrailContext";
+import { KompitrailContext } from "../context/KompitrailContext";
+
+// MUI
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 
