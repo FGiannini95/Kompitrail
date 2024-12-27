@@ -1,21 +1,21 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Typography,
-} from "@mui/material";
 import React, { useContext, useState } from "react";
+
+// MUI
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { useNavigate } from "react-router-dom";
 import { delLocalStorage } from "../../helpers/localStorageUtils";
+import { RoutesString } from "../../routes/routes";
 
-export const LogoutDelete = () => {
-  const { user, token, setUser, setToken, setIsLogged } =
-    useContext(KompitrailContext);
+export const Logout = () => {
+  const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState("");
   const navigate = useNavigate();
 
   const logOut = () => {
@@ -23,43 +23,23 @@ export const LogoutDelete = () => {
     setUser();
     setToken();
     setIsLogged(false);
-    navigate("/");
-  };
-
-  const deletePerfil = () => {
-    console.log("hola");
-  };
-
-  const handleOpenDialog = (type) => {
-    setDialogType(type);
-    setOpenDialog(true);
+    navigate(RoutesString.landing);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setDialogType("");
   };
 
   const handleConfirmation = () => {
-    if (dialogType === "logout") {
-      logOut();
-    } else if (dialogType === "delete") {
-      deletePerfil();
-    }
+    logOut();
     setOpenDialog(false);
   };
 
   return (
     <Dialog open={openDialog} onClose={handleCloseDialog}>
-      <DialogTitle>
-        {dialogType === "logout" ? "Cerrar sesión" : "Eliminar perfil"}
-      </DialogTitle>
+      <DialogTitle>Cerrar sesión</DialogTitle>
       <DialogContent>
-        <Typography>
-          {dialogType === "logout"
-            ? "¿Estás seguro de querer cerrar sesión?"
-            : "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?"}
-        </Typography>
+        <Typography>¿Estás seguro de querer cerrar sesión?</Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialog} color="error">
