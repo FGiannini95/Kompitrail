@@ -1,10 +1,12 @@
 import React from "react";
 
-import { useMediaQuery } from "@mui/material";
-import { KompitrailProvider } from "../context/KompitrailContext";
-import { GlobalRouter } from "./routes/GlobalRouter";
+// MUI
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import { KompitrailProvider } from "../context/KompitrailContext";
+import { GlobalRouter } from "./routes/GlobalRouter";
 import { ThemeKompitrail } from "./ThemeKompitrail";
 
 export function App() {
