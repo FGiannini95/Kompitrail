@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import SportsMotorsportsOutlinedIcon from "@mui/icons-material/SportsMotorsportsOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import { RoutesString } from "../../routes/routes";
-import { KompitrailContext } from "../../../context/KompitrailContext";
+import { KompitrailContext } from "../../context/KompitrailContext";
 import { capitalizeFirstLetter } from "../../helpers/utils";
 
 export const TopBar = () => {

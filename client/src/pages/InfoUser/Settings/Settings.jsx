@@ -19,7 +19,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 import { RoutesString } from "../../../routes/routes";
 import {
   getLocalStorage,

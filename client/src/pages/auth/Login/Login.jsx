@@ -14,7 +14,7 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { saveLocalStorage } from "../../../helpers/localStorageUtils";
-import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 import { RoutesString } from "../../../routes/routes";
 import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
 

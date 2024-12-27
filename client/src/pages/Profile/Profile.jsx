@@ -3,7 +3,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { getLocalStorage } from "../../helpers/localStorageUtils";
 import { Box, Button, Grid, Typography } from "@mui/material";
-import { KompitrailContext } from "../../../context/KompitrailContext";
+import { KompitrailContext } from "../../context/KompitrailContext";
 
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useNavigate } from "react-router-dom";

@@ -31,7 +31,7 @@ const url =
 import { delLocalStorage } from "../../helpers/localStorageUtils";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
-import { KompitrailContext } from "../../../context/KompitrailContext";
+import { KompitrailContext } from "../../context/KompitrailContext";
 import { capitalizeFullName, getInitials } from "../../helpers/utils";
 
 const gridStyles = {

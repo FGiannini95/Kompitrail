@@ -12,7 +12,7 @@ import TextField from "@mui/material/TextField";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 
 import axios from "axios";
-import { KompitrailContext } from "../../../../../context/KompitrailContext";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
 
 const initialValue = {
   brand: "",
