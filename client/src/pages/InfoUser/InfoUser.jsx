@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 // MUI-ICONS
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
@@ -48,6 +49,7 @@ export const InfoUser = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openIframe, setOpenIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
 
   const initials = getInitials(user.name, user.lastname);
 
@@ -83,6 +85,17 @@ export const InfoUser = () => {
 
   const handleCloseIframe = () => {
     setOpenIframe(false);
+  };
+
+  const handleShare = async () => {
+    try {
+      const url = window.location.href; // Obtain the url
+      await navigator.clipboard.writeText(url); // Copy the url
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (error) {
+      console.error("Error al copiar la URL:", error);
+    }
   };
 
   return (
@@ -159,26 +172,34 @@ export const InfoUser = () => {
             </Button>
           </Grid>
           <Grid>
-            <Button
-              type="button"
-              variant="outlined"
-              color="secondary"
-              fullWidth
-              sx={{
-                color: "black",
-                borderColor: "#eeeeee",
-                borderWidth: "2px",
-                "&:hover": {
-                  borderColor: "#dddddd",
-                  borderWidth: "2px",
-                },
-              }}
+            <Tooltip
+              title="URL copiada"
+              open={isCopied} // Display the tooltip only if isCopied is true
+              disableInteractive // It doesn't appear with the interaction of the mouse
+              arrow // Display the arrow
             >
-              Compartir perfil
-              <ShareOutlinedIcon
-                style={{ paddingLeft: "5px", width: "20px" }}
-              />
-            </Button>
+              <Button
+                type="button"
+                variant="outlined"
+                color="secondary"
+                fullWidth
+                sx={{
+                  color: "black",
+                  borderColor: "#eeeeee",
+                  borderWidth: "2px",
+                  "&:hover": {
+                    borderColor: "#dddddd",
+                    borderWidth: "2px",
+                  },
+                }}
+                onClick={handleShare}
+              >
+                Compartir perfil
+                <ShareOutlinedIcon
+                  style={{ paddingLeft: "5px", width: "20px" }}
+                />
+              </Button>
+            </Tooltip>
           </Grid>
         </Grid>
       </Grid>
