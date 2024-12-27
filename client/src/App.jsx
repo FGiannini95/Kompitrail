@@ -5,7 +5,7 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { KompitrailProvider } from "../context/KompitrailContext";
+import { KompitrailProvider } from "../src/context/KompitrailContext";
 import { GlobalRouter } from "./routes/GlobalRouter";
 import { ThemeKompitrail } from "./ThemeKompitrail";
 

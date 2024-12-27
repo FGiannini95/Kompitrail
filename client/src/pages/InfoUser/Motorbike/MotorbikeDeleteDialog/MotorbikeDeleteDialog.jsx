@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
 
 export const MotorbikeDeleteDialog = ({
   openDeleteDialog,
@@ -21,7 +22,7 @@ export const MotorbikeDeleteDialog = ({
 
   const handleConfirm = () => {
     axios
-      .put(`http://localhost:3000/motorbikes/deletemotorbike/${motorbike_id}`)
+      .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
       .then((res) => {
         console.log(res.data);
         handleOpenSnackbar("Moto eliminada con éxito");

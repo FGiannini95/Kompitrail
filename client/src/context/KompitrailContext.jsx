@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { getLocalStorage } from "../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { USERS_URL } from "../../../server/config/serverConfig";
 
 export const KompitrailContext = createContext();
 
@@ -18,7 +19,7 @@ export const KompitrailProvider = ({ children }) => {
     if (tokenLocalStorage) {
       const { user_id } = jwtDecode(tokenLocalStorage).user;
       axios
-        .get(`http://localhost:3000/users/oneuser/${user_id}`)
+        .get(`${USERS_URL}/oneuser/${user_id}`)
         .then((res) => {
           setUser(res.data);
           setIsLogged(true);

@@ -25,6 +25,7 @@ import {
   getLocalStorage,
   delLocalStorage,
 } from "../../../helpers/localStorageUtils";
+import { USERS_URL } from "../../../../../server/config/serverConfig";
 
 const gridStyles = {
   display: "flex",
@@ -56,7 +57,7 @@ export const Settings = () => {
   const deleteUser = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
-      .put(`http://localhost:3000/users/deleteuser/${user_id}`)
+      .put(`${USERS_URL}/deleteuser/${user_id}`)
       .then((res) => {
         console.log(res.data);
         navigate(RoutesString.landing);
