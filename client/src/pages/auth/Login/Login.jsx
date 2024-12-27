@@ -17,6 +17,7 @@ import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { RoutesString } from "../../../routes/routes";
 import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
+import { USERS_URL } from "../../../../../server/config/serverConfig";
 
 const initialValue = {
   email: "",
@@ -76,7 +77,7 @@ export const Login = () => {
     }
 
     axios
-      .post("http://localhost:3000/users/loginuser", login)
+      .post(`${USERS_URL}/loginuser`, login)
       .then((res) => {
         setIsLogged(true);
         setUser(res.data.user);
