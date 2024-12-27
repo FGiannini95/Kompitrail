@@ -17,6 +17,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { capitalizeFullName, getInitials } from "../../helpers/utils";
+import { MOTORBIKES_URL } from "../../../../server/config/serverConfig";
 
 export const Profile = () => {
   const { user } = useContext(KompitrailContext);
@@ -27,7 +28,7 @@ export const Profile = () => {
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
-      .get(`http://localhost:3000/motorbikes/motorbikes-analytics/${user_id}`)
+      .get(`${MOTORBIKES_URL}/motorbikes-analytics/${user_id}`)
       .then((res) => {
         setMotorbikesAnalytics(res.data[0]);
       })

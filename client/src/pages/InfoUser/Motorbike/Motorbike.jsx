@@ -20,6 +20,7 @@ import axios from "axios";
 import { MotorbikeCard } from "./MotorbikeCard/MotorbikeCard";
 import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
 import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
+import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
 
 export const Motorbike = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
@@ -40,7 +41,7 @@ export const Motorbike = () => {
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
-      .get(`http://localhost:3000/motorbikes/showallmotorbikes/${user_id}`)
+      .get(`${MOTORBIKES_URL}/showallmotorbikes/${user_id}`)
       .then((res) => {
         setAllMotorbikes(res.data);
       })
@@ -164,7 +165,7 @@ export const Motorbike = () => {
         setRefresh={setRefresh}
         handleOpenSnackbar={handleOpenSnackbar}
       />
-      
+
       <FullScreenImg
         openImg={openImg}
         handleCloseImg={handleCloseImg}
