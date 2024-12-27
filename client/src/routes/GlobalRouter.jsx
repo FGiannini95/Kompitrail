@@ -12,7 +12,7 @@ import TopBar from "../components/TopBarApp/TopBarApp";
 import { Chat } from "../pages/Chat/Chat";
 import { InfoUser } from "../pages/InfoUser/InfoUser";
 import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
-import { KompitrailContext } from "../../context/KompitrailContext";
+import { KompitrailContext } from "../context/KompitrailContext";
 import { EditUser } from "../pages/InfoUser/EditUser/EditUser";
 import { Motorbike } from "../pages/InfoUser/Motorbike/Motorbike";
 import { Settings } from "../pages/InfoUser/Settings/Settings";

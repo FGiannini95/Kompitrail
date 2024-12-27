@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useMediaQuery } from "@mui/material";
-import { KompitrailProvider } from "../context/KompitrailContext";
+import { KompitrailProvider } from "./context/KompitrailContext";
 import { GlobalRouter } from "./routes/GlobalRouter";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";

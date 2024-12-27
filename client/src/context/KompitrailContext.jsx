@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getLocalStorage } from "../src/helpers/localStorageUtils";
+import { getLocalStorage } from "../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
