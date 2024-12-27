@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { NavBarApp } from "../components/NavBarApp/NavBarApp";
 import { RoutesString } from "./routes";
 import { Home } from "../pages/Home/Home";
@@ -36,6 +36,10 @@ export const GlobalRouter = () => {
         <CircularProgress color="inherit" />
       </Box>
     );
+  }
+
+  if (!token) {
+    return <Navigate to={RoutesString.landing} />;
   }
 
   return (
