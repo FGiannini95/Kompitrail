@@ -9,6 +9,8 @@ export const KompitrailProvider = ({ children }) => {
   const [user, setUser] = useState("");
   const [token, setToken] = useState();
   const [isLogged, setIsLogged] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const tokenLocalStorage = getLocalStorage("token");
 
   useEffect(() => {
@@ -19,12 +21,18 @@ export const KompitrailProvider = ({ children }) => {
         .get(`http://localhost:3000/users/oneuser/${user_id}`)
         .then((res) => {
           setUser(res.data);
+          setIsLogged(true);
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
+        })
+        .finally(() => {
+          setIsLoading(false); // Pause loader if we get data
         });
+    } else {
+      setIsLoading(false); // Pause loader if we don't get any data
     }
-  }, [token]);
+  }, []);
 
   return (
     <KompitrailContext.Provider
@@ -35,6 +43,7 @@ export const KompitrailProvider = ({ children }) => {
         setToken,
         isLogged,
         setIsLogged,
+        isLoading,
       }}
     >
       {children}

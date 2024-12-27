@@ -8,18 +8,35 @@ import { Profile } from "../pages/Profile/Profile";
 import { Register } from "../pages/auth/Register/Register";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
 import { Login } from "../pages/auth/Login/Login";
-import TopBar from "../components/TopBarApp/TopBarApp";
+import { TopBar } from "../components/TopBarApp/TopBarApp";
 import { Chat } from "../pages/Chat/Chat";
 import { InfoUser } from "../pages/InfoUser/InfoUser";
 import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
-import { KompitrailContext } from "../../context/KompitrailContext";
 import { EditUser } from "../pages/InfoUser/EditUser/EditUser";
 import { Motorbike } from "../pages/InfoUser/Motorbike/Motorbike";
 import { Settings } from "../pages/InfoUser/Settings/Settings";
 import { EditPassword } from "../pages/InfoUser/Settings/EditPassword/EditPassword";
+import { KompitrailContext } from "../../context/KompitrailContext";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export const GlobalRouter = () => {
-  const { user, token } = useContext(KompitrailContext);
+  const { user, token, isLoading } = useContext(KompitrailContext);
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress color="inherit" />
+      </Box>
+    );
+  }
 
   return (
     <BrowserRouter>
