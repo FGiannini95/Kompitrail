@@ -50,6 +50,7 @@ export const Itinerary = () => {
         </IconButton>
         <Typography variant="h6">Mis rutas</Typography>
       </Grid>
+      {/* TODO: MAP for all the route created using allItineraries*/}
       <Grid item>
         <Button
           type="button"

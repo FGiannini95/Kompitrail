@@ -7,6 +7,8 @@ import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import Typography from "@mui/material/Typography";
 import Autocomplete from "@mui/material/Autocomplete";
+import Button from "@mui/material/Button";
+import { TextareaAutosize } from "@mui/material";
 
 // import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 // import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -108,6 +110,53 @@ export const ItineraryCreate = () => {
               <TextField {...params} label="Motos aptas" />
             )}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="Descripción"
+            name="description"
+            fullWidth
+            multiline
+            minRows={6}
+            InputProps={{
+              inputComponent: TextareaAutosize,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              color: "black",
+              boxShadow: "none",
+              backgroundColor: "#eeeeee",
+              "&:hover": { backgroundColor: "#dddddd" },
+            }}
+          >
+            ACEPTAR
+          </Button>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Button
+            type="button"
+            variant="outlined"
+            sx={{
+              color: "black",
+              borderColor: "#eeeeee",
+              borderWidth: "2px",
+              "&:hover": {
+                borderColor: "#dddddd",
+                borderWidth: "2px",
+              },
+            }}
+            fullWidth
+            onClick={handleCancel}
+          >
+            CANCELAR
+          </Button>
         </Grid>
       </Grid>
     </Box>
