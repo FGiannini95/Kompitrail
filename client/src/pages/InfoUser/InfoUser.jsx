@@ -23,12 +23,12 @@ import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 
 // TODO: Change to a real pdf now it is just random stuff
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
+import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 import { delLocalStorage } from "../../helpers/localStorageUtils";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
