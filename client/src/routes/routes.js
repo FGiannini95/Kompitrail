@@ -5,11 +5,12 @@ export const RoutesString = {
   register: "/register",
   login: "/login",
   chat: "/chat",
-  createtrip: "/trip",
   landing: "/landing",
   infouser: "/infouser",
   editUser: "/editUser",
   motorbike: "/motorbike",
   settings: "/settings",
   editPassword: "/editPassword",
+  itinerary: "/itinerary",
+  createitinerary: "/createitinerary",
 };

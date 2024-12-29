@@ -22,6 +22,8 @@ export const TopBar = () => {
     RoutesString.motorbike,
     RoutesString.settings,
     RoutesString.editPassword,
+    RoutesString.itinerary,
+    RoutesString.createitinerary,
   ].includes(location.pathname);
 
   useEffect(() => {
