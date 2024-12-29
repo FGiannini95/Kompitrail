@@ -111,6 +111,7 @@ export const ItineraryCreate = () => {
             )}
           />
         </Grid>
+        {/* TODO: Add a good and detailed placeholder */}
         <Grid item xs={12}>
           <TextField
             label="Descripción"
