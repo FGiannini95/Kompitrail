@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // MUI
 import Typography from "@mui/material/Typography";
@@ -7,13 +7,28 @@ import Button from "@mui/material/Button";
 
 // MUI-ICONS
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { useNavigate } from "react-router-dom";
-import { RoutesString } from "../../routes/routes";
+
+import { RouteCreateDialog } from "../InfoUser/Route/RouteCreateDialog/RouteCreateDialog";
 
 export const CreateTrip = () => {
-  const navigate = useNavigate();
-  const handleOpenCreate = () => {
-    navigate(RoutesString.createRoute);
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  // const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  // const [openEditDialog, setOpenEditDialog] = useState(false);
+  // const [allRoutes, setAllRoutes] = useState([]);
+  // const [selectedMotorbikeId, setSelectedMotorbikeId] = useState(null);
+  // const [refresh, setRefresh] = useState(false);
+  // const [showSnackbar, setShowSnackbar] = useState(false);
+  // const [snackbarMessage, setSnackbarMessage] = useState("");
+  // const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const handleOpenCreateDialog = () => {
+    setOpenCreateDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenCreateDialog(false);
+    //setOpenDeleteDialog(false);
+    //setOpenEditDialog(false);
   };
 
   return (
@@ -32,7 +47,7 @@ export const CreateTrip = () => {
             type="button"
             variant="outlined"
             fullWidth
-            onClick={handleOpenCreate}
+            onClick={handleOpenCreateDialog}
             sx={{
               color: "black",
               borderColor: "#eeeeee",
@@ -48,6 +63,10 @@ export const CreateTrip = () => {
           </Button>
         </Grid>
       </Grid>
+      <RouteCreateDialog
+        openCreateDialog={openCreateDialog}
+        handleCloseDialog={handleCloseDialog}
+      />
     </>
   );
 };

@@ -12,8 +12,4 @@ export const RoutesString = {
   motorbike: "/motorbike",
   settings: "/settings",
   editPassword: "/editPassword",
-  itinerary: "/itinerary",
-  createitinerary: "/createitinerary",
-  createRoute: "/createRoute",
-  editRoute: "/editRoute",
 };

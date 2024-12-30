@@ -16,15 +16,11 @@ import { Motorbike } from "../pages/InfoUser/Motorbike/Motorbike";
 import { Settings } from "../pages/InfoUser/Settings/Settings";
 import { EditPassword } from "../pages/InfoUser/Settings/EditPassword/EditPassword";
 import { KompitrailContext } from "../context/KompitrailContext";
-import { Itinerary } from "../pages/InfoUser/Itinerary/Itinerary";
+import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
 
 // MUI
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import { ItineraryCreate } from "../pages/InfoUser/Itinerary/ItineraryCreate/ItineraryCreate";
-import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
-import { CreateRoute } from "../pages/InfoUser/Route/CreateRoute/CreateRoute";
-import { EditRoute } from "../pages/InfoUser/Route/EditRoute.jsx/EditRoute";
 
 export const GlobalRouter = () => {
   const { user, token, isLoading } = useContext(KompitrailContext);
@@ -54,7 +50,6 @@ export const GlobalRouter = () => {
             <Route path="*" element={<Navigate to={RoutesString.home} />} />
             <Route path={RoutesString.home} element={<Home />} />
             <Route path={RoutesString.search} element={<Search />} />
-            <Route path={RoutesString.itinerary} element={<Itinerary />} />
             <Route path={RoutesString.chat} element={<Chat />} />
             <Route path={RoutesString.createTrip} element={<CreateTrip />} />
             <Route path={RoutesString.profile} element={<Profile />} />
@@ -62,12 +57,6 @@ export const GlobalRouter = () => {
             <Route path={RoutesString.editUser} element={<EditUser />} />
             <Route path={RoutesString.motorbike} element={<Motorbike />} />
             <Route path={RoutesString.settings} element={<Settings />} />
-            <Route path={RoutesString.createRoute} element={<CreateRoute />} />
-            <Route path={RoutesString.editRoute} element={<EditRoute />} />
-            <Route
-              path={RoutesString.createitinerary}
-              element={<ItineraryCreate />}
-            />
             <Route
               path={RoutesString.editPassword}
               element={<EditPassword />}
