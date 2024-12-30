@@ -260,7 +260,7 @@ export const InfoUser = () => {
           <Grid
             container
             spacing={3}
-            onClick={() => navigate(RoutesString.itinerary)}
+            onClick={() => navigate(RoutesString.route)}
           >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <RouteOutlinedIcon fontSize="large" />

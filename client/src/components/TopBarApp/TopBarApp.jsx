@@ -25,6 +25,7 @@ export const TopBar = () => {
     RoutesString.itinerary,
     RoutesString.createRoute,
     RoutesString.editRoute,
+    RoutesString.route,
   ].includes(location.pathname);
 
   useEffect(() => {

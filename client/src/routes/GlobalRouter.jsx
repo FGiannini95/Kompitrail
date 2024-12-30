@@ -17,6 +17,7 @@ import { Settings } from "../pages/InfoUser/Settings/Settings";
 import { EditPassword } from "../pages/InfoUser/Settings/EditPassword/EditPassword";
 import { KompitrailContext } from "../context/KompitrailContext";
 import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
+import { MyRoute } from "../pages/InfoUser/Route/MyRoute";
 
 // MUI
 import Box from "@mui/material/Box";
@@ -57,6 +58,7 @@ export const GlobalRouter = () => {
             <Route path={RoutesString.editUser} element={<EditUser />} />
             <Route path={RoutesString.motorbike} element={<Motorbike />} />
             <Route path={RoutesString.settings} element={<Settings />} />
+            <Route path={RoutesString.route} element={<MyRoute />} />
             <Route
               path={RoutesString.editPassword}
               element={<EditPassword />}
