@@ -7,8 +7,15 @@ import Button from "@mui/material/Button";
 
 // MUI-ICONS
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import { useNavigate } from "react-router-dom";
+import { RoutesString } from "../../routes/routes";
 
 export const CreateTrip = () => {
+  const navigate = useNavigate();
+  const handleOpenCreate = () => {
+    navigate(RoutesString.createRoute);
+  };
+
   return (
     <>
       <Typography>
@@ -25,7 +32,7 @@ export const CreateTrip = () => {
             type="button"
             variant="outlined"
             fullWidth
-            //onClick={handleOpenCreate}
+            onClick={handleOpenCreate}
             sx={{
               color: "black",
               borderColor: "#eeeeee",

@@ -23,7 +23,8 @@ export const TopBar = () => {
     RoutesString.settings,
     RoutesString.editPassword,
     RoutesString.itinerary,
-    RoutesString.createitinerary,
+    RoutesString.createRoute,
+    RoutesString.editRoute,
   ].includes(location.pathname);
 
   useEffect(() => {

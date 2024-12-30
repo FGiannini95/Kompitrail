@@ -14,4 +14,6 @@ export const RoutesString = {
   editPassword: "/editPassword",
   itinerary: "/itinerary",
   createitinerary: "/createitinerary",
+  createRoute: "/createRoute",
+  editRoute: "/editRoute",
 };

@@ -23,6 +23,8 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ItineraryCreate } from "../pages/InfoUser/Itinerary/ItineraryCreate/ItineraryCreate";
 import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
+import { CreateRoute } from "../pages/InfoUser/Route/CreateRoute/CreateRoute";
+import { EditRoute } from "../pages/InfoUser/Route/EditRoute.jsx/EditRoute";
 
 export const GlobalRouter = () => {
   const { user, token, isLoading } = useContext(KompitrailContext);
@@ -60,6 +62,8 @@ export const GlobalRouter = () => {
             <Route path={RoutesString.editUser} element={<EditUser />} />
             <Route path={RoutesString.motorbike} element={<Motorbike />} />
             <Route path={RoutesString.settings} element={<Settings />} />
+            <Route path={RoutesString.createRoute} element={<CreateRoute />} />
+            <Route path={RoutesString.editRoute} element={<EditRoute />} />
             <Route
               path={RoutesString.createitinerary}
               element={<ItineraryCreate />}
