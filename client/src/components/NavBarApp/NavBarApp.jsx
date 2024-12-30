@@ -72,8 +72,8 @@ export const NavBarApp = ({ children }) => {
             <SearchIcon />
           </IconButton>
           <IconButton
-            onClick={() => handleButtonClick(RoutesString.createtrip)}
-            color={activeButton === RoutesString.createtrip ? "" : "inherit"} //Change the path
+            onClick={() => handleButtonClick(RoutesString.createTrip)}
+            color={activeButton === RoutesString.createTrip ? "" : "inherit"} //Change the path
           >
             <AddIcon sx={{ fontSize: 50 }} />
           </IconButton>

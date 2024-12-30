@@ -68,7 +68,7 @@ export const TopBar = () => {
         );
       case `${RoutesString.search}`:
         return <Typography variant="h6">Buscar</Typography>;
-      case `${RoutesString.createtrip}`:
+      case `${RoutesString.createTrip}`:
         return <Typography variant="h6">Crear ruta</Typography>;
       case `${RoutesString.chat}`:
         return <Typography variant="h6">Chat</Typography>;
