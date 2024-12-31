@@ -16,11 +16,29 @@ import {
   DialogActions,
 } from "@mui/material";
 
-// MUI-ICONS
-import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+//principiante', 'medio', 'avanzado', 'experto'
+// ('Trail ', 'maxitrail', 'Minitrail', 'enduro', 'Supermoto', 'motocross', 'dual sport', 'cross country', 'adventure touring')
 
 export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   const [createOneRoute, setCreateOneRoute] = useState();
+
+  const level = [
+    { id: 1, name: "Principiante" },
+    { id: 2, name: "Medio" },
+    { id: 3, name: "Avanzado" },
+    { id: 4, name: "Experto" },
+  ];
+
+  const motorbikeType = [
+    { id: 1, name: "Trail" },
+    { id: 2, name: "Maxitrail" },
+    { id: 3, name: "Enduro" },
+    { id: 4, name: "Supermoto" },
+    { id: 5, name: "Motocross" },
+    { id: 6, name: "Dual sport" },
+    { id: 7, name: "Cross country" },
+    { id: 8, name: "Adventure" },
+  ];
 
   const cleanDialog = () => {
     handleCloseDialog();
@@ -53,40 +71,59 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
             <Grid item xs={12}>
               <TextField label="LLegada" name="email" fullWidth />
             </Grid>
+            {/* Move the onChange outside and verify that the type="numebr" displays the up and down arrows, change the name description to the correct one */}
             <Grid item xs={6}>
-              <TextField label="Km" name="email" fullWidth />
+              <TextField
+                label="Km"
+                name="km"
+                type="number"
+                fullWidth
+                onChange={(event) => {
+                  const value = event.target.value;
+                  console.log("Valor ingresado en KM:", value);
+                }}
+              />
             </Grid>
             <Grid item xs={6}>
-              <Autocomplete
-                disablePortal
-                options={[]}
-                renderInput={(params) => (
-                  <TextField {...params} label="Duración" />
-                )}
+              <TextField
+                label="Duración"
+                name="duración"
+                type="number"
+                fullWidth
+                onChange={(event) => {
+                  const value = event.target.value;
+                  console.log("valor ingresado en duración:", value);
+                }}
               />
             </Grid>
             <Grid item xs={6}>
               <Autocomplete
                 disablePortal
-                options={[]}
+                options={level}
+                getOptionLabel={(option) => option.name}
+                S
                 renderInput={(params) => (
                   <TextField {...params} label="Nivel" />
                 )}
               />
             </Grid>
             <Grid item xs={6}>
-              <Autocomplete
-                disablePortal
-                options={[]}
-                renderInput={(params) => (
-                  <TextField {...params} label="Pilotos" />
-                )}
+              <TextField
+                label="Pilotos"
+                name="pilotos"
+                type="number"
+                fullWidth
+                onChange={(event) => {
+                  const value = event.target.value;
+                  console.log("Valor ingresado en pilotos:", value);
+                }}
               />
             </Grid>
             <Grid item xs={12}>
               <Autocomplete
                 disablePortal
-                options={[]}
+                options={motorbikeType}
+                getOptionLabel={(option) => option.name}
                 renderInput={(params) => (
                   <TextField {...params} label="Motos aptas" />
                 )}
