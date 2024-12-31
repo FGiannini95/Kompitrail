@@ -101,7 +101,6 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 disablePortal
                 options={level}
                 getOptionLabel={(option) => option.name}
-                S
                 renderInput={(params) => (
                   <TextField {...params} label="Nivel" />
                 )}

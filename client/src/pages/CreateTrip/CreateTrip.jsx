@@ -32,15 +32,34 @@ export const CreateTrip = () => {
   };
 
   return (
-    <>
-      <Typography>
-        Personaliza tu ruta: define tu punto de salida y llegada, selecciona el
-        nivel de dificultad, y añade una descripción única. ¡Hazla más especial
-        indicando el tipo de moto adecuado y el número de participantes!
-        ¿Primera vez o ya conocida? Marca si tu ruta está verificada y establece
-        el tiempo estimado para completarla.
-      </Typography>
-      <Typography>¡Empieza a planificar tu próxima aventura ahora!</Typography>
+    <Grid>
+      <Grid
+        style={{
+          marginTop: "30px",
+          padding: "10px",
+          paddingLeft: "20px",
+          backgroundColor: "#eeeeee",
+          margin: "10px",
+          borderRadius: "20px",
+        }}
+      >
+        <Typography>Personaliza tu ruta: </Typography>
+        <Typography>
+          define tu punto de salida y llegada, selecciona el nivel de
+          dificultad, y añade una descripción única.
+        </Typography>
+        <Typography>
+          ¡Hazla más especial indicando el tipo de moto adecuado y el número de
+          participantes!
+        </Typography>
+        <Typography>
+          ¿Primera vez o ya conocida? Marca si tu ruta está verificada y
+          establece el tiempo estimado para completarla.
+        </Typography>
+        <Typography>
+          ¡Empieza a planificar tu próxima aventura ahora!
+        </Typography>
+      </Grid>
       <Grid container direction="column" spacing={2}>
         <Grid item>
           <Button
@@ -67,6 +86,6 @@ export const CreateTrip = () => {
         openCreateDialog={openCreateDialog}
         handleCloseDialog={handleCloseDialog}
       />
-    </>
+    </Grid>
   );
 };
