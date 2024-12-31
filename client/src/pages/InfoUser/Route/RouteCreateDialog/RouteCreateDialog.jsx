@@ -8,16 +8,11 @@ import Checkbox from "@mui/material/Checkbox";
 import Typography from "@mui/material/Typography";
 import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
-import {
-  TextareaAutosize,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogActions,
-} from "@mui/material";
-
-//principiante', 'medio', 'avanzado', 'experto'
-// ('Trail ', 'maxitrail', 'Minitrail', 'enduro', 'Supermoto', 'motocross', 'dual sport', 'cross country', 'adventure touring')
+import TextareaAutosize from "@mui/material/TextareaAutosize";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogActions from "@mui/material/DialogActions";
 
 export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   const [createOneRoute, setCreateOneRoute] = useState();
@@ -53,7 +48,6 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
       maxWidth="md"
     >
       <DialogTitle>Añadir ruta</DialogTitle>
-
       <DialogContent>
         <Box
           style={{
@@ -63,19 +57,19 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
         >
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField label="Nombre ruta" name="email" fullWidth />
+              <TextField label="Nombre ruta" name="route_name" fullWidth />
             </Grid>
             <Grid item xs={12}>
-              <TextField label="Salida" name="email" fullWidth />
+              <TextField label="Salida" name="starting_point" fullWidth />
             </Grid>
             <Grid item xs={12}>
-              <TextField label="LLegada" name="email" fullWidth />
+              <TextField label="LLegada" name="ending_point" fullWidth />
             </Grid>
             {/* Move the onChange outside and verify that the type="numebr" displays the up and down arrows, change the name description to the correct one */}
             <Grid item xs={6}>
               <TextField
                 label="Km"
-                name="km"
+                name="distance"
                 type="number"
                 fullWidth
                 onChange={(event) => {
@@ -102,14 +96,14 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 options={level}
                 getOptionLabel={(option) => option.name}
                 renderInput={(params) => (
-                  <TextField {...params} label="Nivel" />
+                  <TextField {...params} label="Nivel" name="level" />
                 )}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 label="Pilotos"
-                name="pilotos"
+                name="participants"
                 type="number"
                 fullWidth
                 onChange={(event) => {
@@ -124,7 +118,11 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 options={motorbikeType}
                 getOptionLabel={(option) => option.name}
                 renderInput={(params) => (
-                  <TextField {...params} label="Motos aptas" />
+                  <TextField
+                    {...params}
+                    label="Motos aptas"
+                    name="suitable_motorbike_type"
+                  />
                 )}
               />
             </Grid>
@@ -146,7 +144,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
             <Grid item xs={12}>
               <TextField
                 label="Descripción"
-                name="description"
+                name="route_description"
                 fullWidth
                 multiline
                 minRows={6}
