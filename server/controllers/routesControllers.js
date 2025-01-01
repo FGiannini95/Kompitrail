@@ -17,7 +17,7 @@ class routesControllers {
       participants,
       route_description,
     } = JSON.parse(req.body.createRoute);
-    console.log(req.body);
+    console.log(req.body.createRoute);
 
     if (
       !user_id ||
