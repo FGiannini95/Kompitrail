@@ -37,6 +37,8 @@ const initialValue = {
 
 export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   const [createOneRoute, setCreateOneRoute] = useState(initialValue);
+  const [msgError, setMsgError] = useState("");
+
   const { user } = useContext(KompitrailContext);
 
   const navigate = useNavigate();
@@ -74,6 +76,11 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
 
   const handleConfirm = (e) => {
     e.preventDefault();
+
+    if (!createOneRoute) {
+      setMsgError("Tienes que insertar una marca");
+      return;
+    }
 
     const newFormData = new FormData();
     newFormData.append(
@@ -130,6 +137,8 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 fullWidth
                 value={createOneRoute.route_name}
                 onChange={handleChange}
+                error={!!msgError}
+                helperText={msgError}
               />
             </Grid>
             <Grid item xs={12}>
@@ -145,6 +154,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
               <TextField
                 label="LLegada"
                 name="ending_point"
+                value={createOneRoute.ending_point}
                 fullWidth
                 onChange={handleChange}
               />
@@ -155,6 +165,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 label="Km"
                 name="distance"
                 type="number"
+                value={createOneRoute.distance}
                 fullWidth
                 onChange={handleChange}
               />
@@ -164,6 +175,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 label="Duración"
                 name="estimated_time"
                 type="number"
+                value={createOneRoute.estimated_time}
                 fullWidth
                 onChange={handleChange}
               />
@@ -178,6 +190,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                     {...params}
                     label="Nivel"
                     name="level"
+                    value={createOneRoute.level}
                     onChange={handleChange}
                   />
                 )}
@@ -189,6 +202,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 name="participants"
                 type="number"
                 fullWidth
+                value={createOneRoute.participants}
                 onChange={handleChange}
               />
             </Grid>
@@ -203,6 +217,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                     label="Motos aptas"
                     name="suitable_motorbike_type"
                     onChange={handleChange}
+                    value={createOneRoute.suitable_motorbike_type}
                   />
                 )}
               />
@@ -229,6 +244,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 fullWidth
                 multiline
                 minRows={6}
+                value={createOneRoute.route_description}
                 InputProps={{
                   inputComponent: TextareaAutosize,
                 }}
