@@ -32,6 +32,7 @@ const initialValue = {
   estimated_time: "",
   participants: "",
   route_description: "",
+  user_id: "",
 };
 
 export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
@@ -127,6 +128,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 label="Nombre ruta"
                 name="route_name"
                 fullWidth
+                value={createOneRoute.route_name}
                 onChange={handleChange}
               />
             </Grid>
@@ -134,6 +136,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
               <TextField
                 label="Salida"
                 name="starting_point"
+                value={createOneRoute.starting_point}
                 fullWidth
                 onChange={handleChange}
               />
@@ -239,7 +242,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
         <Button onClick={cleanDialog} color="error">
           Cancelar
         </Button>
-        <Button color="success" onClick={handleConfirm}>
+        <Button onClick={handleConfirm} color="success">
           Confirmar
         </Button>
       </DialogActions>
