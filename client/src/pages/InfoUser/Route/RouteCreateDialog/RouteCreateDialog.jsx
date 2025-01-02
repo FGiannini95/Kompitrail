@@ -27,7 +27,7 @@ const initialValue = {
   date: "",
   level: "",
   distance: "",
-  is_verified: "",
+  is_verified: false,
   suitable_motorbike_type: "",
   estimated_time: "",
   participants: "",
@@ -92,7 +92,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
         date: createOneRoute.date,
         level: createOneRoute.level,
         distance: createOneRoute.distance,
-        is_verified: createOneRoute.is_verified,
+        is_verified: createOneRoute.is_verified || false,
         suitable_motorbike_type: createOneRoute.suitable_motorbike_type,
         estimated_time: createOneRoute.estimated_time,
         participants: createOneRoute.participants,
@@ -135,7 +135,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 label="Nombre ruta"
                 name="route_name"
                 fullWidth
-                value={createOneRoute.route_name}
+                value={createOneRoute?.route_name}
                 onChange={handleChange}
                 error={!!msgError}
                 helperText={msgError}
@@ -145,7 +145,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
               <TextField
                 label="Salida"
                 name="starting_point"
-                value={createOneRoute.starting_point}
+                value={createOneRoute?.starting_point}
                 fullWidth
                 onChange={handleChange}
               />
@@ -154,7 +154,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
               <TextField
                 label="LLegada"
                 name="ending_point"
-                value={createOneRoute.ending_point}
+                value={createOneRoute?.ending_point}
                 fullWidth
                 onChange={handleChange}
               />
@@ -165,7 +165,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 label="Km"
                 name="distance"
                 type="number"
-                value={createOneRoute.distance}
+                value={createOneRoute?.distance}
                 fullWidth
                 onChange={handleChange}
               />
@@ -175,7 +175,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 label="Duración"
                 name="estimated_time"
                 type="number"
-                value={createOneRoute.estimated_time}
+                value={createOneRoute?.estimated_time}
                 fullWidth
                 onChange={handleChange}
               />
@@ -185,13 +185,25 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 disablePortal
                 options={level}
                 getOptionLabel={(option) => option.name}
+                onChange={(event, value) =>
+                  setCreateOneRoute((prevState) => ({
+                    ...prevState,
+                    level: value ? value.name : "",
+                  }))
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     label="Nivel"
                     name="level"
-                    value={createOneRoute.level}
-                    onChange={handleChange}
+                    // Avoid typing in the TextField
+                    InputProps={{
+                      ...params.InputProps,
+                      inputProps: {
+                        ...params.inputProps,
+                        readOnly: true,
+                      },
+                    }}
                   />
                 )}
               />
@@ -202,27 +214,40 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 name="participants"
                 type="number"
                 fullWidth
-                value={createOneRoute.participants}
+                value={createOneRoute?.participants}
                 onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>
               <Autocomplete
+                clearOnEscape
                 disablePortal
                 options={motorbikeType}
                 getOptionLabel={(option) => option.name}
+                onChange={(event, value) =>
+                  setCreateOneRoute((prevState) => ({
+                    ...prevState,
+                    suitable_motorbike_type: value ? value.name : "",
+                  }))
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     label="Motos aptas"
                     name="suitable_motorbike_type"
-                    onChange={handleChange}
-                    value={createOneRoute.suitable_motorbike_type}
+                    // Avoid typing in the TextField
+                    InputProps={{
+                      ...params.InputProps,
+                      inputProps: {
+                        ...params.inputProps,
+                        readOnly: true,
+                      },
+                    }}
                   />
                 )}
               />
             </Grid>
-            {/* <Grid
+            <Grid
               item
               xs={12}
               sx={{
@@ -235,8 +260,15 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
               <Checkbox
                 inputProps={{ "aria-label": "controlled" }}
                 color="default"
+                checked={createOneRoute?.is_verified}
+                onChange={(event) =>
+                  setCreateOneRoute((prevState) => ({
+                    ...prevState,
+                    is_verified: event.target.checked,
+                  }))
+                }
               />
-            </Grid> */}
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 label="Descripción"
