@@ -13,6 +13,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogActions from "@mui/material/DialogActions";
 import { TextareaAutosize } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
+import ClearIcon from "@mui/icons-material/Clear";
 
 import axios from "axios";
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
@@ -66,6 +68,13 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
     setCreateOneRoute((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+  };
+
+  const handleClearField = (name) => {
+    setCreateOneRoute((prevState) => ({
+      ...prevState,
+      [name]: "",
     }));
   };
 
@@ -139,6 +148,17 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 onChange={handleChange}
                 error={!!msgError}
                 helperText={msgError}
+                // Add close icon
+                InputProps={{
+                  endAdornment: createOneRoute?.route_name ? (
+                    <InputAdornment position="end">
+                      <ClearIcon
+                        onClick={() => handleClearField("route_name")}
+                        sx={{ cursor: "pointer" }}
+                      />
+                    </InputAdornment>
+                  ) : null,
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -148,6 +168,17 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 value={createOneRoute?.starting_point}
                 fullWidth
                 onChange={handleChange}
+                // Add close icon
+                InputProps={{
+                  endAdornment: createOneRoute?.starting_point ? (
+                    <InputAdornment position="end">
+                      <ClearIcon
+                        onClick={() => handleClearField("starting_point")}
+                        sx={{ cursor: "pointer" }}
+                      />
+                    </InputAdornment>
+                  ) : null,
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -157,6 +188,17 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 value={createOneRoute?.ending_point}
                 fullWidth
                 onChange={handleChange}
+                // Add close icon
+                InputProps={{
+                  endAdornment: createOneRoute?.ending_point ? (
+                    <InputAdornment position="end">
+                      <ClearIcon
+                        onClick={() => handleClearField("ending_point")}
+                        sx={{ cursor: "pointer" }}
+                      />
+                    </InputAdornment>
+                  ) : null,
+                }}
               />
             </Grid>
             {/* Move the onChange outside and verify that the type="numebr" displays the up and down arrows, change the name description to the correct one */}
@@ -179,6 +221,17 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                     e.preventDefault(); // Block these buttons
                   }
                 }}
+                // Add the close icon
+                InputProps={{
+                  endAdornment: createOneRoute?.distance ? (
+                    <InputAdornment position="end">
+                      <ClearIcon
+                        onClick={() => handleClearField("distance")}
+                        sx={{ cursor: "pointer" }}
+                      />
+                    </InputAdornment>
+                  ) : null,
+                }}
               />
             </Grid>
             <Grid item xs={6}>
@@ -200,9 +253,20 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                     e.preventDefault(); // Block these buttons
                   }
                 }}
+                // Add the close icon
+                InputProps={{
+                  endAdornment: createOneRoute?.estimated_time ? (
+                    <InputAdornment position="end">
+                      <ClearIcon
+                        onClick={() => handleClearField("estimated_time")}
+                        sx={{ cursor: "pointer" }}
+                      />
+                    </InputAdornment>
+                  ) : null,
+                }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={7}>
               <Autocomplete
                 disablePortal
                 options={level}
@@ -241,7 +305,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <TextField
                 label="Pilotos"
                 name="participants"
@@ -249,6 +313,28 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 fullWidth
                 value={createOneRoute?.participants}
                 onChange={handleChange}
+                // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "+" ||
+                    e.key === "-"
+                  ) {
+                    e.preventDefault(); // Block these buttons
+                  }
+                }}
+                // Add the close icon
+                InputProps={{
+                  endAdornment: createOneRoute?.participants ? (
+                    <InputAdornment position="end">
+                      <ClearIcon
+                        onClick={() => handleClearField("participants")}
+                        sx={{ cursor: "pointer" }}
+                      />
+                    </InputAdornment>
+                  ) : null,
+                }}
               />
             </Grid>
             <Grid item xs={12}>
