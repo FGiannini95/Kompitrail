@@ -168,6 +168,17 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 value={createOneRoute?.distance}
                 fullWidth
                 onChange={handleChange}
+                // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "+" ||
+                    e.key === "-"
+                  ) {
+                    e.preventDefault(); // Block these buttons
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={6}>
@@ -178,6 +189,17 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 value={createOneRoute?.estimated_time}
                 fullWidth
                 onChange={handleChange}
+                // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "+" ||
+                    e.key === "-"
+                  ) {
+                    e.preventDefault(); // Block these buttons
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={6}>
@@ -203,6 +225,17 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                         ...params.inputProps,
                         readOnly: true,
                       },
+                    }}
+                    // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
+                    onKeyDown={(e) => {
+                      if (
+                        e.key === "e" ||
+                        e.key === "E" ||
+                        e.key === "+" ||
+                        e.key === "-"
+                      ) {
+                        e.preventDefault(); // Block these buttons
+                      }
                     }}
                   />
                 )}
