@@ -21,6 +21,7 @@ import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../../../routes/routes";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { CreateRouteCostumeTextfield } from "../../../../components/CreateRouteCostumeTextfield/CreateRouteCostumeTextfield";
 
 const initialValue = {
   route_name: "",
@@ -140,45 +141,25 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
         >
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField
+              <CreateRouteCostumeTextfield
                 label="Nombre ruta"
                 name="route_name"
-                fullWidth
-                value={createOneRoute?.route_name}
+                value={createOneRoute.route_name}
                 onChange={handleChange}
+                onClear={() => handleClearField("route_name")}
                 error={!!msgError}
                 helperText={msgError}
-                // Add close icon
-                InputProps={{
-                  endAdornment: createOneRoute?.route_name ? (
-                    <InputAdornment position="end">
-                      <ClearIcon
-                        onClick={() => handleClearField("route_name")}
-                        sx={{ cursor: "pointer" }}
-                      />
-                    </InputAdornment>
-                  ) : null,
-                }}
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <CreateRouteCostumeTextfield
                 label="Salida"
                 name="starting_point"
-                value={createOneRoute?.starting_point}
-                fullWidth
+                value={createOneRoute.starting_point}
                 onChange={handleChange}
-                // Add close icon
-                InputProps={{
-                  endAdornment: createOneRoute?.starting_point ? (
-                    <InputAdornment position="end">
-                      <ClearIcon
-                        onClick={() => handleClearField("starting_point")}
-                        sx={{ cursor: "pointer" }}
-                      />
-                    </InputAdornment>
-                  ) : null,
-                }}
+                onClear={() => handleClearField("starting_point")}
+                error={!!msgError}
+                helperText={msgError}
               />
             </Grid>
             <Grid item xs={12}>
