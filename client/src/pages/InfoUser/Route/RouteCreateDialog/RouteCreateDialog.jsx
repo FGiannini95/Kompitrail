@@ -84,6 +84,13 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
     setCreateOneRoute(initialValue);
   };
 
+  // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
+  const preventInvalidkey = (e) => {
+    if (e.key === "e" || e.key === "E" || e.key === "+" || e.key === "-") {
+      e.preventDefault(); // Block these buttons
+    }
+  };
+
   const handleConfirm = (e) => {
     e.preventDefault();
 
@@ -163,45 +170,24 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <CreateRouteCostumeTextfield
                 label="LLegada"
                 name="ending_point"
                 value={createOneRoute?.ending_point}
-                fullWidth
                 onChange={handleChange}
-                // Add close icon
-                InputProps={{
-                  endAdornment: createOneRoute?.ending_point ? (
-                    <InputAdornment position="end">
-                      <ClearIcon
-                        onClick={() => handleClearField("ending_point")}
-                        sx={{ cursor: "pointer" }}
-                      />
-                    </InputAdornment>
-                  ) : null,
-                }}
+                onClear={() => handleClearField("ending_point")}
+                error={!!msgError}
+                helperText={msgError}
               />
             </Grid>
-            {/* Move the onChange outside and verify that the type="numebr" displays the up and down arrows, change the name description to the correct one */}
             <Grid item xs={6}>
               <TextField
                 label="Km"
                 name="distance"
                 type="number"
                 value={createOneRoute?.distance}
-                fullWidth
                 onChange={handleChange}
-                // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "e" ||
-                    e.key === "E" ||
-                    e.key === "+" ||
-                    e.key === "-"
-                  ) {
-                    e.preventDefault(); // Block these buttons
-                  }
-                }}
+                onKeyDown={preventInvalidkey}
                 // Add the close icon
                 InputProps={{
                   endAdornment: createOneRoute?.distance ? (
@@ -221,19 +207,8 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 name="estimated_time"
                 type="number"
                 value={createOneRoute?.estimated_time}
-                fullWidth
                 onChange={handleChange}
-                // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "e" ||
-                    e.key === "E" ||
-                    e.key === "+" ||
-                    e.key === "-"
-                  ) {
-                    e.preventDefault(); // Block these buttons
-                  }
-                }}
+                onKeyDown={preventInvalidkey}
                 // Add the close icon
                 InputProps={{
                   endAdornment: createOneRoute?.estimated_time ? (
@@ -271,17 +246,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                         readOnly: true,
                       },
                     }}
-                    // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
-                    onKeyDown={(e) => {
-                      if (
-                        e.key === "e" ||
-                        e.key === "E" ||
-                        e.key === "+" ||
-                        e.key === "-"
-                      ) {
-                        e.preventDefault(); // Block these buttons
-                      }
-                    }}
+                    onKeyDown={preventInvalidkey}
                   />
                 )}
               />
@@ -294,17 +259,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 fullWidth
                 value={createOneRoute?.participants}
                 onChange={handleChange}
-                // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "e" ||
-                    e.key === "E" ||
-                    e.key === "+" ||
-                    e.key === "-"
-                  ) {
-                    e.preventDefault(); // Block these buttons
-                  }
-                }}
+                onKeyDown={preventInvalidkey}
                 // Add the close icon
                 InputProps={{
                   endAdornment: createOneRoute?.participants ? (
