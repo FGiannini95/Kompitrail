@@ -82,6 +82,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   const cleanDialog = () => {
     handleCloseDialog();
     setCreateOneRoute(initialValue);
+    setMsgError("");
   };
 
   // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
