@@ -9,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import { useNavigate } from "react-router-dom";
+import { RoutesString } from "../../../routes/routes";
 
 export const MyRoute = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export const MyRoute = () => {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid item container alignItems="center">
-        <IconButton onClick={() => navigate(-1)}>
+        <IconButton onClick={() => navigate(RoutesString.infouser)}>
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
         <Typography variant="h6">Mis rutas</Typography>
