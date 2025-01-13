@@ -105,6 +105,13 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
     if (createOneRoute.ending_point === "") {
       newErrors.ending_point = "Tienes que establecer un punto de llegada";
     }
+    //Default value
+    if (!createOneRoute.date) {
+      createOneRoute.date = new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " "); // Fecha actual
+    }
     if (!createOneRoute.distance) {
       newErrors.distance = "Debes especificar la distancia en km";
     }
@@ -121,6 +128,10 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
     if (!createOneRoute.suitable_motorbike_type) {
       newErrors.suitable_motorbike_type =
         "Debes definir las motos aptas para las rutas";
+    }
+    if (createOneRoute.route_description === "") {
+      newErrors.route_description =
+        "Tienes que escribir una descripción más detallada";
     }
 
     setErrors(newErrors);
@@ -377,6 +388,8 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                   inputComponent: TextareaAutosize,
                 }}
                 onChange={handleChange}
+                error={!!errors.route_description}
+                helperText={errors.route_description}
               />
             </Grid>
           </Grid>

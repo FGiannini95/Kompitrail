@@ -50,7 +50,7 @@ VALUES (
  '${suitable_motorbike_type}', 
   '${estimated_time}',
   '${participants}', 
-'${route_description}',  '0',
+'${route_description}',  '0'
 );`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
