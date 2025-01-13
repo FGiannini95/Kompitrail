@@ -41,6 +41,7 @@ const initialValue = {
 export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   const [createOneRoute, setCreateOneRoute] = useState(initialValue);
   const [msgError, setMsgError] = useState("");
+  const [errors, setErrors] = useState({});
 
   const { user } = useContext(KompitrailContext);
 
@@ -83,6 +84,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
     handleCloseDialog();
     setCreateOneRoute(initialValue);
     setMsgError("");
+    setErrors("");
   };
 
   // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
@@ -95,8 +97,38 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   const handleConfirm = (e) => {
     e.preventDefault();
 
-    if (!createOneRoute) {
-      setMsgError("Tienes que insertar una marca");
+    const newErrors = {};
+    if (createOneRoute.route_name === "") {
+      newErrors.route_name = "Tienes que definir un nombre para la ruta";
+    }
+    if (createOneRoute.starting_point === "") {
+      newErrors.starting_point = "Tienes que establecer un punto de salida";
+    }
+    if (createOneRoute.ending_point === "") {
+      newErrors.ending_point = "Tienes que establecer un punto de llegada";
+    }
+    if (!createOneRoute.distance) {
+      newErrors.distance = "Debes especificar la distancia en km";
+    }
+    if (!createOneRoute.level) {
+      newErrors.level = "Debes selecionar el nivel requerido";
+    }
+    if (!createOneRoute.estimated_time) {
+      newErrors.estimated_time = "Debes establecer una duración";
+    }
+    if (!createOneRoute.participants) {
+      newErrors.participants = "Debes definir el nº máximo de pilótos";
+    }
+
+    if (!createOneRoute.suitable_motorbike_type) {
+      newErrors.suitable_motorbike_type =
+        "Debes definir las motos aptas para las rutas";
+    }
+
+    setErrors(newErrors);
+
+    // Si hay errores, detener la ejecución
+    if (Object.keys(newErrors).length > 0) {
       return;
     }
 
@@ -155,8 +187,8 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 value={createOneRoute.route_name}
                 onChange={handleChange}
                 onClear={() => handleClearField("route_name")}
-                error={!!msgError}
-                helperText={msgError}
+                error={!!errors.route_name}
+                helperText={errors.route_name}
               />
             </Grid>
             <Grid item xs={12}>
@@ -166,19 +198,19 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                 value={createOneRoute.starting_point}
                 onChange={handleChange}
                 onClear={() => handleClearField("starting_point")}
-                error={!!msgError}
-                helperText={msgError}
+                error={!!errors.starting_point}
+                helperText={errors.starting_point}
               />
             </Grid>
             <Grid item xs={12}>
               <CreateRouteCostumeTextfield
-                label="LLegada"
+                label="Llegada"
                 name="ending_point"
-                value={createOneRoute?.ending_point}
+                value={createOneRoute.ending_point}
                 onChange={handleChange}
                 onClear={() => handleClearField("ending_point")}
-                error={!!msgError}
-                helperText={msgError}
+                error={!!errors.ending_point}
+                helperText={errors.ending_point}
               />
             </Grid>
             <Grid item xs={6}>
@@ -200,6 +232,8 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                     </InputAdornment>
                   ) : null,
                 }}
+                error={!!errors.distance}
+                helperText={errors.distance}
               />
             </Grid>
             <Grid item xs={6}>
@@ -221,6 +255,8 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                     </InputAdornment>
                   ) : null,
                 }}
+                error={!!errors.estimated_time}
+                helperText={errors.estimated_time}
               />
             </Grid>
             <Grid item xs={7}>
@@ -248,6 +284,8 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                       },
                     }}
                     onKeyDown={preventInvalidkey}
+                    error={!!errors.level}
+                    helperText={errors.level}
                   />
                 )}
               />
@@ -272,6 +310,8 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                     </InputAdornment>
                   ) : null,
                 }}
+                error={!!errors.participants}
+                helperText={errors.participants}
               />
             </Grid>
             <Grid item xs={12}>
@@ -299,6 +339,8 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
                         readOnly: true,
                       },
                     }}
+                    error={!!errors.suitable_motorbike_type}
+                    helperText={errors.suitable_motorbike_type}
                   />
                 )}
               />
