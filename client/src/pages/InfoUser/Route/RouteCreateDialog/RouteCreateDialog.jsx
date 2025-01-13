@@ -40,7 +40,6 @@ const initialValue = {
 
 export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   const [createOneRoute, setCreateOneRoute] = useState(initialValue);
-  const [msgError, setMsgError] = useState("");
   const [errors, setErrors] = useState({});
 
   const { user } = useContext(KompitrailContext);
@@ -83,7 +82,6 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   const cleanDialog = () => {
     handleCloseDialog();
     setCreateOneRoute(initialValue);
-    setMsgError("");
     setErrors("");
   };
 
