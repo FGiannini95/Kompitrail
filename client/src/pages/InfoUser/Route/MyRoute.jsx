@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 // MUI
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 
 // MUI-ICONS
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../../routes/routes";
@@ -64,6 +66,25 @@ export const MyRoute = () => {
             </Grid>
           </Grid>
         ))}
+      </Grid>
+      <Grid item>
+        <Button
+          type="button"
+          variant="outlined"
+          fullWidth
+          sx={{
+            color: "black",
+            borderColor: "#eeeeee",
+            borderWidth: "2px",
+            "&:hover": {
+              borderColor: "#dddddd",
+              borderWidth: "1px",
+            },
+          }}
+        >
+          Crar Ruta
+          <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
+        </Button>
       </Grid>
     </Grid>
   );
