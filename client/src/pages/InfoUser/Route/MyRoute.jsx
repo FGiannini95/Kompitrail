@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // MUI
 import Typography from "@mui/material/Typography";
@@ -11,10 +11,30 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../../routes/routes";
 import { RouteCard } from "./RouteCard/RouteCard";
+import { getLocalStorage } from "../../../helpers/localStorageUtils";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
+import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 
 export const MyRoute = () => {
   const [allRoutes, setAllRoutes] = useState([]);
   const navigate = useNavigate();
+  const tokenLocalStorage = getLocalStorage("token");
+
+  //.post(`${ROUTES_URL}/createroute`, newFormData)
+
+  useEffect(() => {
+    const { user_id } = jwtDecode(tokenLocalStorage).user;
+    axios
+      .get(`${ROUTES_URL}/showallroutes/${user_id}`)
+      .then((res) => {
+        console.log("data", res.data);
+        setAllRoutes(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -26,7 +46,7 @@ export const MyRoute = () => {
       </Grid>
       {/* Map allRoute and display in a card, divide between active and old ones */}
       <Grid item container direction="column" spacing={2}>
-        {allRoutes.map((route) => {
+        {allRoutes.map((route) => (
           <Grid
             key={route?.routes_id}
             container
@@ -40,10 +60,10 @@ export const MyRoute = () => {
           >
             <Grid item xs={12}>
               {/* We have to pass down all the props */}
-              <RouteCard />
+              <RouteCard {...route} />
             </Grid>
-          </Grid>;
-        })}
+          </Grid>
+        ))}
       </Grid>
     </Grid>
   );
