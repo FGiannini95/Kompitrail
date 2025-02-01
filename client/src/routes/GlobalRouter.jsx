@@ -11,12 +11,13 @@ import { Login } from "../pages/auth/Login/Login";
 import { TopBar } from "../components/TopBarApp/TopBarApp";
 import { Chat } from "../pages/Chat/Chat";
 import { InfoUser } from "../pages/InfoUser/InfoUser";
-import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
 import { EditUser } from "../pages/InfoUser/EditUser/EditUser";
 import { Motorbike } from "../pages/InfoUser/Motorbike/Motorbike";
 import { Settings } from "../pages/InfoUser/Settings/Settings";
 import { EditPassword } from "../pages/InfoUser/Settings/EditPassword/EditPassword";
 import { KompitrailContext } from "../context/KompitrailContext";
+import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
+import { MyRoute } from "../pages/InfoUser/Route/MyRoute";
 
 // MUI
 import Box from "@mui/material/Box";
@@ -50,13 +51,14 @@ export const GlobalRouter = () => {
             <Route path="*" element={<Navigate to={RoutesString.home} />} />
             <Route path={RoutesString.home} element={<Home />} />
             <Route path={RoutesString.search} element={<Search />} />
-            <Route path={RoutesString.createtrip} element={<CreateTrip />} />
             <Route path={RoutesString.chat} element={<Chat />} />
+            <Route path={RoutesString.createTrip} element={<CreateTrip />} />
             <Route path={RoutesString.profile} element={<Profile />} />
             <Route path={RoutesString.infouser} element={<InfoUser />} />
             <Route path={RoutesString.editUser} element={<EditUser />} />
             <Route path={RoutesString.motorbike} element={<Motorbike />} />
             <Route path={RoutesString.settings} element={<Settings />} />
+            <Route path={RoutesString.route} element={<MyRoute />} />
             <Route
               path={RoutesString.editPassword}
               element={<EditPassword />}

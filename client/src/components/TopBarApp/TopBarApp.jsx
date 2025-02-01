@@ -22,6 +22,10 @@ export const TopBar = () => {
     RoutesString.motorbike,
     RoutesString.settings,
     RoutesString.editPassword,
+    RoutesString.itinerary,
+    RoutesString.createRoute,
+    RoutesString.editRoute,
+    RoutesString.route,
   ].includes(location.pathname);
 
   useEffect(() => {
@@ -66,7 +70,7 @@ export const TopBar = () => {
         );
       case `${RoutesString.search}`:
         return <Typography variant="h6">Buscar</Typography>;
-      case `${RoutesString.createtrip}`:
+      case `${RoutesString.createTrip}`:
         return <Typography variant="h6">Crear ruta</Typography>;
       case `${RoutesString.chat}`:
         return <Typography variant="h6">Chat</Typography>;

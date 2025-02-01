@@ -30,7 +30,7 @@ const url =
 
 import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 import { delLocalStorage } from "../../helpers/localStorageUtils";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../context/KompitrailContext";
 import { capitalizeFullName, getInitials } from "../../helpers/utils";
@@ -45,11 +45,13 @@ const gridStyles = {
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
     useContext(KompitrailContext);
-  const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [openIframe, setOpenIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
   const [isCopied, setIsCopied] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const initials = getInitials(user.name, user.lastname);
 
@@ -75,7 +77,7 @@ export const InfoUser = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    navigate(RoutesString.home);
   };
 
   const handleOpenIframe = (url) => {
@@ -260,7 +262,7 @@ export const InfoUser = () => {
           <Grid
             container
             spacing={3}
-            onClick={() => navigate(RoutesString.home)}
+            onClick={() => navigate(RoutesString.route)}
           >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <RouteOutlinedIcon fontSize="large" />
