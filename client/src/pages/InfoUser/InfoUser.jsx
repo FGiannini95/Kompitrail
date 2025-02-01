@@ -77,29 +77,7 @@ export const InfoUser = () => {
   };
 
   const handleCancel = () => {
-    const prevPath = [
-      "/home",
-      "/search",
-      "/createTrip",
-      "/chat",
-      "/profile",
-      "/infouser",
-    ];
-
-    if (
-      [
-        RoutesString.home,
-        RoutesString.search,
-        RoutesString.createTrip,
-        RoutesString.chat,
-        RoutesString.profile,
-        RoutesString.infouser,
-      ].includes(location.pathname)
-    ) {
-      navigate(-1);
-    } else {
-      navigate(RoutesString.home);
-    }
+    navigate(RoutesString.home);
   };
 
   const handleOpenIframe = (url) => {
