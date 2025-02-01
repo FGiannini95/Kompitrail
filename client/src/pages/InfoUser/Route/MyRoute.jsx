@@ -23,8 +23,6 @@ export const MyRoute = () => {
   const navigate = useNavigate();
   const tokenLocalStorage = getLocalStorage("token");
 
-  //.post(`${ROUTES_URL}/createroute`, newFormData)
-
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
@@ -37,6 +35,10 @@ export const MyRoute = () => {
         console.log(err);
       });
   }, []);
+
+  const handleOpenCreateRoute = () => {
+    navigate(RoutesString.createTrip);
+  };
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -61,7 +63,7 @@ export const MyRoute = () => {
             }}
           >
             <Grid item xs={12}>
-              {/* We have to pass down all the props */}
+              {/* We pass down all the props */}
               <RouteCard {...route} />
             </Grid>
           </Grid>
@@ -72,6 +74,7 @@ export const MyRoute = () => {
           type="button"
           variant="outlined"
           fullWidth
+          onClick={handleOpenCreateRoute}
           sx={{
             color: "black",
             borderColor: "#eeeeee",
