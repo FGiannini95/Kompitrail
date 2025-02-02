@@ -103,7 +103,6 @@ export const EditPassword = () => {
         password,
       })
       .then((res) => {
-        console.log(res.data);
         navigate(RoutesString.infouser);
       })
       .catch((err) => {

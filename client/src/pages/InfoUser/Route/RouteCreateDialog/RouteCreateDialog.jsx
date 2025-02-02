@@ -163,7 +163,6 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
     axios
       .post(`${ROUTES_URL}/createroute`, newFormData)
       .then((res) => {
-        console.log(res.data);
         setCreateOneRoute(res.data);
         navigate(RoutesString.route);
       })
