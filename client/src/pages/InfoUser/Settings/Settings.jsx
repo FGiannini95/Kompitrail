@@ -59,7 +59,6 @@ export const Settings = () => {
     axios
       .put(`${USERS_URL}/deleteuser/${user_id}`)
       .then((res) => {
-        console.log(res.data);
         navigate(RoutesString.landing);
       })
       .catch((err) => {

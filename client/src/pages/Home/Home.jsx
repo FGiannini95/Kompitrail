@@ -1,24 +1,61 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+
+// MUI
+import Grid from "@mui/material/Grid";
+
+import { ROUTES_URL } from "../../../../server/config/serverConfig";
+import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
+import { EmptyState } from "../../components/EmptyState/EmptyState";
 
 export const Home = () => {
-  const [first, setFirst] = useState();
-  const navigate = useNavigate();
+  const [allRoutes, setAllRoutes] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${ROUTES_URL}/showallroutes`)
+      .then((res) => {
+        setAllRoutes(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
-    <div>
-      <button onClick={() => navigate("/")}>Go to Landing</button>
-      <div>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque
-          repudiandae architecto minus pariatur laborum distinctio nostrum
-          deserunt! Aperiam, voluptates? Esse officiis cumque iste et deserunt.
-        </p>
-        <p>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Error, iure!
-        </p>
-        <button onClick={() => navigate("/")}>Go to Landing</button>
-      </div>
-    </div>
+    <Grid container spacing={2}>
+      {allRoutes.length > 0 ? (
+        allRoutes.map((route) => (
+          <Grid
+            key={route?.routes_id}
+            container
+            spacing={1}
+            sx={{
+              marginTop: "10px",
+              marginLeft: "45px",
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+            <Grid item xs={12}>
+              {/* We pass down all the props */}
+              <RouteCard {...route} />
+            </Grid>
+          </Grid>
+        ))
+      ) : (
+        <Grid
+          container
+          spacing={1}
+          sx={{
+            marginTop: "10px",
+            marginLeft: "75px",
+            textAlign: "center",
+          }}
+        >
+          <EmptyState />
+        </Grid>
+      )}
+    </Grid>
   );
 };

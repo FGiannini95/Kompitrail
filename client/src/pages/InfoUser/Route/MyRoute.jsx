@@ -17,19 +17,19 @@ import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { ROUTES_URL } from "../../../../../server/config/serverConfig";
+import { EmptyState } from "../../../components/EmptyState/EmptyState";
 
 export const MyRoute = () => {
-  const [allRoutes, setAllRoutes] = useState([]);
+  const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
   const navigate = useNavigate();
   const tokenLocalStorage = getLocalStorage("token");
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
-      .get(`${ROUTES_URL}/showallroutes/${user_id}`)
+      .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}`)
       .then((res) => {
-        console.log("data", res.data);
-        setAllRoutes(res.data);
+        setAllRoutesOneUser(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -50,24 +50,38 @@ export const MyRoute = () => {
       </Grid>
       {/* Map allRoute and display in a card, divide between active and old ones */}
       <Grid item container direction="column" spacing={2}>
-        {allRoutes.map((route) => (
+        {allRoutesOneUser.length > 0 ? (
+          allRoutesOneUser.map((route) => (
+            <Grid
+              key={route?.routes_id}
+              container
+              spacing={1}
+              sx={{
+                marginTop: "10px",
+                marginLeft: "45px",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              <Grid item xs={12}>
+                {/* We pass down all the props */}
+                <RouteCard {...route} />
+              </Grid>
+            </Grid>
+          ))
+        ) : (
           <Grid
-            key={route?.routes_id}
             container
             spacing={1}
             sx={{
               marginTop: "10px",
-              marginLeft: "45px",
-              width: "100%",
+              marginLeft: "75px",
               textAlign: "center",
             }}
           >
-            <Grid item xs={12}>
-              {/* We pass down all the props */}
-              <RouteCard {...route} />
-            </Grid>
+            <EmptyState />
           </Grid>
-        ))}
+        )}
       </Grid>
       <Grid item>
         <Button

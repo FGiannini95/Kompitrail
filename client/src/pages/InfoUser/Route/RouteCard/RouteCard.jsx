@@ -102,7 +102,7 @@ export const RouteCard = ({
           </Typography>
           <Grid container spacing={3} sx={{ textAlign: "center" }}>
             <InfoItem label="Distancia" value={`${distance} km`} />
-            <InfoItem label="Tiempo estimado" value={estimated_time} />
+            <InfoItem label="Tiempo estimado" value={`${estimated_time} h`} />
             <InfoItem label="Participantes" value={participants} />
             <InfoItem label="Nivel" value={level} />
             <InfoItem

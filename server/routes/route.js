@@ -8,6 +8,7 @@ router.post(
   multerSingle("routes"),
   routesControllers.createRoute
 );
-router.get("/showallroutes/:id", routesControllers.showAllRoutes);
+router.get("/showallroutesoneuser/:id", routesControllers.showAllRoutesOneUser);
+router.get("/showallroutes", routesControllers.showAllRoutes);
 
 module.exports = router;
