@@ -121,7 +121,17 @@ export const Motorbike = () => {
             </Grid>
           ))
         ) : (
-          <EmptyState />
+          <Grid
+            container
+            spacing={1}
+            sx={{
+              marginTop: "10px",
+              marginLeft: "75px",
+              textAlign: "center",
+            }}
+          >
+            <EmptyState />
+          </Grid>
         )}
       </Grid>
       <Grid item>
