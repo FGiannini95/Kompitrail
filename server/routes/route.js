@@ -10,5 +10,9 @@ router.post(
 );
 router.get("/showallroutesoneuser/:id", routesControllers.showAllRoutesOneUser);
 router.get("/showallroutes", routesControllers.showAllRoutes);
+router.get(
+  "/createdroutes-analytics/:id",
+  routesControllers.showCreatedRoutesAnalytics
+);
 
 module.exports = router;

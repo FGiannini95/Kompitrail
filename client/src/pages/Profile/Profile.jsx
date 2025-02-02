@@ -23,11 +23,15 @@ import { KompitrailContext } from "../../context/KompitrailContext";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
 import { capitalizeFullName, getInitials } from "../../helpers/utils";
-import { MOTORBIKES_URL } from "../../../../server/config/serverConfig";
+import {
+  MOTORBIKES_URL,
+  ROUTES_URL,
+} from "../../../../server/config/serverConfig";
 
 export const Profile = () => {
   const { user } = useContext(KompitrailContext);
   const [motorbikesAnalytics, setMotorbikesAnalytics] = useState();
+  const [createdRouteAnalytics, setCreatedRouteAnalytics] = useState();
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
 
@@ -37,6 +41,19 @@ export const Profile = () => {
       .get(`${MOTORBIKES_URL}/motorbikes-analytics/${user_id}`)
       .then((res) => {
         setMotorbikesAnalytics(res.data[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    const { user_id } = jwtDecode(tokenLocalStorage).user;
+    axios
+      .get(`${ROUTES_URL}/createdroutes-analytics/${user_id}`)
+      .then((res) => {
+        console.log(res.data);
+        setCreatedRouteAnalytics(res.data[0]);
       })
       .catch((err) => {
         console.log(err);
@@ -181,7 +198,9 @@ export const Profile = () => {
                 <StyledTableCell align="center">
                   {motorbikesAnalytics?.total_motorbikes}
                 </StyledTableCell>
-                <StyledTableCell align="center">0</StyledTableCell>
+                <StyledTableCell align="center">
+                  {createdRouteAnalytics?.total_createdroutes}
+                </StyledTableCell>
                 <StyledTableCell align="center">0</StyledTableCell>
               </StyledTableRow>
             </TableBody>
