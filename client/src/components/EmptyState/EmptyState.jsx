@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // MUI
 import Card from "@mui/material/Card";
@@ -8,8 +8,19 @@ import Typography from "@mui/material/Typography";
 
 // MUI-ICONS
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { useLocation } from "react-router-dom";
+import { RoutesString } from "../../routes/routes";
 
 export const EmptyState = () => {
+  const location = useLocation();
+
+  const message =
+    location.pathname === RoutesString.motorbike
+      ? "Aún no has añadido ninguna moto."
+      : location.pathname === RoutesString.route
+        ? "Aún no has creado ninguna ruta."
+        : "No hay datos disponibles.";
+
   return (
     <Card
       sx={{
@@ -23,9 +34,7 @@ export const EmptyState = () => {
       <CardContent>
         <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
           <ErrorOutlineIcon sx={{ fontSize: 100 }} />
-          <Typography variant="body2">
-            Aún no has añadido ninguna moto.
-          </Typography>
+          <Typography variant="body2">{message}</Typography>
         </Box>
       </CardContent>
     </Card>
