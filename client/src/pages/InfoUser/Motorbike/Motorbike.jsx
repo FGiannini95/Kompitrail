@@ -21,6 +21,7 @@ import { MotorbikeCard } from "./MotorbikeCard/MotorbikeCard";
 import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
 import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
 import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
+import { EmptyState } from "../../../components/EmptyState/EmptyState";
 
 export const Motorbike = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
@@ -70,11 +71,6 @@ export const Motorbike = () => {
     setOpenEditDialog(false);
   };
 
-  const handleOpenImg = (imgUrl) => {
-    setImgSelected(imgUrl);
-    setOpenImg(true);
-  };
-
   const handleCloseImg = () => {
     setImgSelected();
     setOpenImg(false);
@@ -99,30 +95,34 @@ export const Motorbike = () => {
         <Typography variant="h6">Mis motos</Typography>
       </Grid>
       <Grid item container direction="column" spacing={2}>
-        {allMotorbikes.map((motorbike) => (
-          <Grid
-            key={motorbike?.motorbike_id}
-            container
-            spacing={1}
-            sx={{
-              marginTop: "10px",
-              marginLeft: "45px",
-              width: "100%",
-              textAlign: "center",
-            }}
-          >
-            <Grid item xs={12}>
-              <MotorbikeCard
-                brand={motorbike.motorbike_brand}
-                model={motorbike.motorbike_model}
-                img={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
-                handleOpenEditDialog={handleOpenEditDialog}
-                handleOpenDeleteDialog={handleOpenDeleteDialog}
-                motorbike_id={motorbike.motorbike_id}
-              />
+        {allMotorbikes.length > 0 ? (
+          allMotorbikes.map((motorbike) => (
+            <Grid
+              key={motorbike?.motorbike_id}
+              container
+              spacing={1}
+              sx={{
+                marginTop: "10px",
+                marginLeft: "45px",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              <Grid item xs={12}>
+                <MotorbikeCard
+                  brand={motorbike.motorbike_brand}
+                  model={motorbike.motorbike_model}
+                  img={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
+                  handleOpenEditDialog={handleOpenEditDialog}
+                  handleOpenDeleteDialog={handleOpenDeleteDialog}
+                  motorbike_id={motorbike.motorbike_id}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        ))}
+          ))
+        ) : (
+          <EmptyState />
+        )}
       </Grid>
       <Grid item>
         <Button
