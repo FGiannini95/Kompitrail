@@ -10,6 +10,6 @@ router.get("/oneuser/:id", usersControllers.oneUser);
 router.put("/deleteuser/:id", usersControllers.deleteUser);
 router.put("/editpassword/:id", usersControllers.editPassword);
 router.get("/oneuser/:id", usersControllers.showOneUser);
-router.put("edituser/:id", multerSingle("users"), usersControllers.editUser);
+router.put("/edituser/:id", multerSingle("users"), usersControllers.editUser);
 
 module.exports = router;

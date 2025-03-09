@@ -98,6 +98,8 @@ export const EditUser = () => {
       .put(`http://localhost:3000/users/edituser/${user_id}`, newFormData)
       .then((res) => {
         console.log("edituser", res.data);
+        setEditUser(res.data);
+        setInitialValues(res.data);
       })
       .catch((err) => {
         console.log(err);
