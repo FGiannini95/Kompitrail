@@ -81,10 +81,10 @@ export const RouteCard = ({
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
-          <EditOutlinedIcon fontSize="large" style={{ color: "black" }} />
+          <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
         </IconButton>
         <IconButton aria-label="share">
-          <DeleteOutlineIcon fontSize="large" style={{ color: "black" }} />
+          <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
         </IconButton>
         <ExpandMore
           expand={expanded}

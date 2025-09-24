@@ -51,12 +51,15 @@ export const MotorbikeCard = ({
             {model}
           </Typography>
         </CardContent>
-        <CardActions>
+        <CardActions disableSpacing>
           <IconButton onClick={() => handleOpenEditDialog(motorbike_id)}>
-            <EditOutlinedIcon fontSize="large" style={{ color: "black" }} />
+            <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
           </IconButton>
           <IconButton onClick={() => handleOpenDeleteDialog(motorbike_id)}>
-            <DeleteOutlineIcon fontSize="large" style={{ color: "black" }} />
+            <DeleteOutlineIcon
+              fontSize="medium"
+              style={{ color: "black", ml: 0 }}
+            />
           </IconButton>
         </CardActions>
       </Card>
