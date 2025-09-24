@@ -21,7 +21,7 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 const ACTION_CONFIG = {
   changePassword: {
     label: "Modificar contraseña",
-    icon: <LockOutlinedIcon fontSize="large" />,
+    icon: <LockOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
   },
   deleteAccount: {
     label: "Eliminar cuenta",
@@ -29,31 +29,33 @@ const ACTION_CONFIG = {
   },
   editAccount: {
     label: "Modificar perfil",
-    icon: <PersonOutlineOutlinedIcon fontSize="large" />,
+    icon: (
+      <PersonOutlineOutlinedIcon fontSize="large" sx={{ color: "black" }} />
+    ),
   },
   addMotorbike: {
     label: "Mis motos",
-    icon: <TwoWheelerOutlinedIcon fontSize="large" />,
+    icon: <TwoWheelerOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
   },
   addRoute: {
     label: "Mis rutas",
-    icon: <RouteOutlinedIcon fontSize="large" />,
+    icon: <RouteOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
   },
-  changeSetting: {
+  changeSettings: {
     label: "Ajustes",
-    icon: <SettingsOutlinedIcon fontSize="large" />,
+    icon: <SettingsOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
   },
   chatbot: {
     label: "Chat bot",
-    icon: <TextsmsOutlinedIcon fontSize="large" />,
+    icon: <TextsmsOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
   },
   privacy: {
     label: "Política de privacidad",
-    icon: <InfoOutlinedIcon fontSize="large" />,
+    icon: <InfoOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
   },
   logout: {
     label: "Log out",
-    icon: <LogoutIcon fontSize="large" />,
+    icon: <LogoutIcon fontSize="large" sx={{ color: "black" }} />,
   },
 };
 
