@@ -12,7 +12,8 @@ import TextField from "@mui/material/TextField";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 
 import axios from "axios";
-import { KompitrailContext } from "../../../../../context/KompitrailContext";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
 
 const initialValue = {
   brand: "",
@@ -24,6 +25,7 @@ export const MotorbikeCreateDialog = ({
   openCreateDialog,
   handleCloseDialog,
   setRefresh,
+  handleOpenSnackbar,
 }) => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
   const [msgError, setMsgError] = useState("");
@@ -78,13 +80,14 @@ export const MotorbikeCreateDialog = ({
     }
 
     axios
-      .post("http://localhost:3000/motorbikes/createmotorbike", newFormData)
+      .post(`${MOTORBIKES_URL}/createmotorbike`, newFormData)
       .then((res) => {
-        console.log(res.data);
         setRefresh((prev) => !prev);
+        handleOpenSnackbar("Moto añadida con éxito");
       })
       .catch((err) => {
         console.log(err);
+        handleOpenSnackbar("Error al añadir la moto.", "error");
       });
     cleanDialog();
   };

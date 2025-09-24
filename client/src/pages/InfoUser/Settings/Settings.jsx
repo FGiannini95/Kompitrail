@@ -19,12 +19,13 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 import { RoutesString } from "../../../routes/routes";
 import {
   getLocalStorage,
   delLocalStorage,
 } from "../../../helpers/localStorageUtils";
+import { USERS_URL } from "../../../../../server/config/serverConfig";
 
 const gridStyles = {
   display: "flex",
@@ -56,9 +57,8 @@ export const Settings = () => {
   const deleteUser = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
-      .put(`http://localhost:3000/users/deleteuser/${user_id}`)
+      .put(`${USERS_URL}/deleteuser/${user_id}`)
       .then((res) => {
-        console.log(res.data);
         navigate(RoutesString.landing);
       })
       .catch((err) => {
@@ -99,7 +99,11 @@ export const Settings = () => {
         }}
       >
         {/* Change Password Option */}
-        <Grid container spacing={3}>
+        <Grid
+          container
+          spacing={3}
+          onClick={() => navigate(RoutesString.editPassword)}
+        >
           <Grid item xs={2} container spacing={0} sx={gridStyles}>
             <LockOutlinedIcon fontSize="large" />
           </Grid>
@@ -107,14 +111,12 @@ export const Settings = () => {
             <Typography sx={{ margin: 1 }}>Modificar contraseña</Typography>
           </Grid>
           <Grid item xs={2} container spacing={0} sx={gridStyles}>
-            <IconButton onClick={() => navigate(RoutesString.editPassword)}>
-              <ArrowForwardIosIcon sx={{ color: "black" }} />
-            </IconButton>
+            <ArrowForwardIosIcon sx={{ color: "black" }} />
           </Grid>
         </Grid>
 
         {/* Delete Account Option */}
-        <Grid container spacing={3}>
+        <Grid container spacing={3} onClick={handleOpenDialog}>
           <Grid item xs={2} container spacing={0} sx={gridStyles}>
             <DeleteOutlineIcon fontSize="large" sx={{ color: "red" }} />
           </Grid>
@@ -124,9 +126,7 @@ export const Settings = () => {
             </Typography>
           </Grid>
           <Grid item xs={2} container spacing={0} sx={gridStyles}>
-            <IconButton onClick={handleOpenDialog}>
-              <ArrowForwardIosIcon sx={{ color: "red" }} />
-            </IconButton>
+            <ArrowForwardIosIcon sx={{ color: "red" }} />
           </Grid>
         </Grid>
       </Grid>

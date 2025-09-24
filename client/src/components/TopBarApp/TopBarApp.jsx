@@ -5,9 +5,10 @@ import Box from "@mui/material/Box";
 import SportsMotorsportsOutlinedIcon from "@mui/icons-material/SportsMotorsportsOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import { RoutesString } from "../../routes/routes";
-import { KompitrailContext } from "../../../context/KompitrailContext";
+import { KompitrailContext } from "../../context/KompitrailContext";
+import { capitalizeFirstLetter } from "../../helpers/utils";
 
-const TopBar = () => {
+export const TopBar = () => {
   // We use this hook to acced to the current location
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,6 +22,10 @@ const TopBar = () => {
     RoutesString.motorbike,
     RoutesString.settings,
     RoutesString.editPassword,
+    RoutesString.itinerary,
+    RoutesString.createRoute,
+    RoutesString.editRoute,
+    RoutesString.route,
   ].includes(location.pathname);
 
   useEffect(() => {
@@ -52,7 +57,9 @@ const TopBar = () => {
             alignItems="center"
             gap="10px"
           >
-            <Typography variant="h6">{user.name}</Typography>
+            <Typography variant="h6">
+              {capitalizeFirstLetter(user.name)}
+            </Typography>
             <SportsMotorsportsOutlinedIcon
               sx={{
                 transition: "transform 0.5s ease-in-out",
@@ -63,7 +70,7 @@ const TopBar = () => {
         );
       case `${RoutesString.search}`:
         return <Typography variant="h6">Buscar</Typography>;
-      case `${RoutesString.createtrip}`:
+      case `${RoutesString.createTrip}`:
         return <Typography variant="h6">Crear ruta</Typography>;
       case `${RoutesString.chat}`:
         return <Typography variant="h6">Chat</Typography>;
@@ -118,5 +125,3 @@ const TopBar = () => {
     </AppBar>
   );
 };
-
-export default TopBar;

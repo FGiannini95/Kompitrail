@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 // MUI-ICONS
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
@@ -22,18 +23,17 @@ import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 
 // TODO: Change to a real pdf now it is just random stuff
-
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
+import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 import { delLocalStorage } from "../../helpers/localStorageUtils";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
-import { KompitrailContext } from "../../../context/KompitrailContext";
-import { getInitials } from "../../helpers/Utils";
+import { KompitrailContext } from "../../context/KompitrailContext";
+import { capitalizeFullName, getInitials } from "../../helpers/utils";
 
 const gridStyles = {
   display: "flex",
@@ -45,11 +45,14 @@ const gridStyles = {
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
     useContext(KompitrailContext);
-  const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [openIframe, setOpenIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
 
+
+  const navigate = useNavigate();
+  const location = useLocation();
   const initials = getInitials(user.name, user.lastname);
 
   const logOut = () => {
@@ -74,7 +77,7 @@ export const InfoUser = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    navigate(RoutesString.home);
   };
 
   const handleOpenIframe = (url) => {
@@ -84,6 +87,17 @@ export const InfoUser = () => {
 
   const handleCloseIframe = () => {
     setOpenIframe(false);
+  };
+
+  const handleShare = async () => {
+    try {
+      const url = window.location.href; // Obtain the url
+      await navigator.clipboard.writeText(url); // Copy the url
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (error) {
+      console.error("Error al copiar la URL:", error);
+    }
   };
 
   return (
@@ -129,7 +143,7 @@ export const InfoUser = () => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              {user.name} {user.lastname}
+              {capitalizeFullName(user.name, user.lastname)}
             </Typography>
           </Grid>
         </Grid>
@@ -160,26 +174,34 @@ export const InfoUser = () => {
             </Button>
           </Grid>
           <Grid>
-            <Button
-              type="button"
-              variant="outlined"
-              color="secondary"
-              fullWidth
-              sx={{
-                color: "black",
-                borderColor: "#eeeeee",
-                borderWidth: "2px",
-                "&:hover": {
-                  borderColor: "#dddddd",
-                  borderWidth: "2px",
-                },
-              }}
+            <Tooltip
+              title="URL copiada"
+              open={isCopied} // Display the tooltip only if isCopied is true
+              disableInteractive // It doesn't appear with the interaction of the mouse
+              arrow // Display the arrow
             >
-              Compartir perfil
-              <ShareOutlinedIcon
-                style={{ paddingLeft: "5px", width: "20px" }}
-              />
-            </Button>
+              <Button
+                type="button"
+                variant="outlined"
+                color="secondary"
+                fullWidth
+                sx={{
+                  color: "black",
+                  borderColor: "#eeeeee",
+                  borderWidth: "2px",
+                  "&:hover": {
+                    borderColor: "#dddddd",
+                    borderWidth: "2px",
+                  },
+                }}
+                onClick={handleShare}
+              >
+                Compartir perfil
+                <ShareOutlinedIcon
+                  style={{ paddingLeft: "5px", width: "20px" }}
+                />
+              </Button>
+            </Tooltip>
           </Grid>
         </Grid>
       </Grid>
@@ -202,8 +224,12 @@ export const InfoUser = () => {
           Mi cuenta
         </Typography>
         <Grid>
-          <Grid container spacing={3}>
-            {/* Epieza Modificar perfil */}
+          {/* Empieza Modificar perfil */}
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.editUser)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <PersonOutlineOutlinedIcon fontSize="large" />
             </Grid>
@@ -213,13 +239,15 @@ export const InfoUser = () => {
               </Typography>
             </Grid>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton onClick={() => navigate(RoutesString.editUser)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
+              <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
           {/* Empieza Mis motos */}
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.motorbike)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <TwoWheelerOutlinedIcon fontSize="large" />
             </Grid>
@@ -227,15 +255,16 @@ export const InfoUser = () => {
               <Typography style={{ margin: "10px" }}>Mis motos</Typography>
             </Grid>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton onClick={() => navigate(RoutesString.motorbike)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
+              <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
           {/* Empieza Mis rutas */}
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.route)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              {/* Añadir icono de rutas */}
               <RouteOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -246,7 +275,11 @@ export const InfoUser = () => {
             </Grid>
           </Grid>
           {/* Empieza Ajustes */}
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}
+            onClick={() => navigate(RoutesString.settings)}
+          >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <SettingsOutlinedIcon fontSize="large" />
             </Grid>
@@ -254,7 +287,7 @@ export const InfoUser = () => {
               <Typography style={{ margin: "10px" }}>Ajustes</Typography>
             </Grid>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton onClick={() => navigate(RoutesString.settings)}>
+              <IconButton>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>{" "}
             </Grid>
@@ -290,7 +323,7 @@ export const InfoUser = () => {
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} onClick={() => handleOpenIframe(url)}>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
@@ -308,9 +341,7 @@ export const InfoUser = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <IconButton onClick={() => handleOpenIframe(url)}>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>
+              <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
         </Grid>

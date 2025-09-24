@@ -17,6 +17,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { RoutesString } from "../../../../routes/routes";
 import { getLocalStorage } from "../../../../helpers/localStorageUtils";
+import { USERS_URL } from "../../../../../../server/config/serverConfig";
 
 export const EditPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -97,12 +98,11 @@ export const EditPassword = () => {
   const handleSave = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
-      .put(`http://localhost:3000/users/editpassword/${user_id}`, {
+      .put(`${USERS_URL}/editpassword/${user_id}`, {
         id: user_id,
         password,
       })
       .then((res) => {
-        console.log(res.data);
         navigate(RoutesString.infouser);
       })
       .catch((err) => {

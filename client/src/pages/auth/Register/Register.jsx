@@ -1,15 +1,21 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
+// MUI
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { RoutesString } from "../../../routes/routes";
+
+// MUI-ICONS
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { RoutesString } from "../../../routes/routes";
+import { USERS_URL } from "../../../../../server/config/serverConfig";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,12 +33,7 @@ export const Register = () => {
 
   const onSubmit = async (data) => {
     try {
-      console.log("Datos enviados:", data);
-
-      const response = await axios.post(
-        "http://localhost:3000/users/createuser",
-        data
-      );
+      const response = await axios.post(`${USERS_URL}/createuser`, data);
 
       console.log("Respuesta del servidor:", response.data);
       navigate(RoutesString.login);

@@ -106,7 +106,6 @@ class usersControllers {
   };
 
   editPassword = (req, res) => {
-    console.log("Hola desde editPassword");
     const { id: user_id, password } = req.body;
 
     // We avoid nullable or undefined value

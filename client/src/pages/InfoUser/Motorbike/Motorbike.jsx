@@ -8,8 +8,6 @@ import IconButton from "@mui/material/IconButton";
 
 // MUI-ICONS
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
@@ -19,7 +17,11 @@ import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { MotorbikeCard } from "./MotorbikeCard/MotorbikeCard";
 import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
+import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
+import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
+import { EmptyState } from "../../../components/EmptyState/EmptyState";
 
 export const Motorbike = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
@@ -30,6 +32,9 @@ export const Motorbike = () => {
   const [refresh, setRefresh] = useState(false);
   const [openImg, setOpenImg] = useState(false);
   const [imgSelected, setImgSelected] = useState();
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
@@ -37,7 +42,7 @@ export const Motorbike = () => {
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
-      .get(`http://localhost:3000/motorbikes/showallmotorbikes/${user_id}`)
+      .get(`${MOTORBIKES_URL}/showallmotorbikes/${user_id}`)
       .then((res) => {
         setAllMotorbikes(res.data);
       })
@@ -66,14 +71,19 @@ export const Motorbike = () => {
     setOpenEditDialog(false);
   };
 
-  const handleOpenImg = (imgUrl) => {
-    setImgSelected(imgUrl);
-    setOpenImg(true);
-  };
-
   const handleCloseImg = () => {
     setImgSelected();
     setOpenImg(false);
+  };
+
+  const handleOpenSnackbar = (message, severity = "success") => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setShowSnackbar(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setShowSnackbar(false);
   };
 
   return (
@@ -85,65 +95,44 @@ export const Motorbike = () => {
         <Typography variant="h6">Mis motos</Typography>
       </Grid>
       <Grid item container direction="column" spacing={2}>
-        {allMotorbikes.map((motorbike) => (
+        {allMotorbikes.length > 0 ? (
+          allMotorbikes.map((motorbike) => (
+            <Grid
+              key={motorbike?.motorbike_id}
+              container
+              spacing={1}
+              sx={{
+                marginTop: "10px",
+                marginLeft: "45px",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              <Grid item xs={12}>
+                <MotorbikeCard
+                  brand={motorbike.motorbike_brand}
+                  model={motorbike.motorbike_model}
+                  img={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
+                  handleOpenEditDialog={handleOpenEditDialog}
+                  handleOpenDeleteDialog={handleOpenDeleteDialog}
+                  motorbike_id={motorbike.motorbike_id}
+                />
+              </Grid>
+            </Grid>
+          ))
+        ) : (
           <Grid
-            key={motorbike?.motorbike_id}
             container
             spacing={1}
-            marginTop="10px"
-            marginLeft="20px"
-            alignItems="center"
-            direction="column"
-            textAlign="center"
-            borderRadius="20px"
-            backgroundColor="#eeeeee"
-            // Need to use it in a temporary way to align with the style
-            style={{
-              width: "calc(100% - 22px)",
+            sx={{
+              marginTop: "10px",
+              marginLeft: "75px",
+              textAlign: "center",
             }}
           >
-            <Grid item xs={3}>
-              <img
-                src={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
-                alt={motorbike.brand}
-                style={{
-                  maxWidth: "65%",
-                  borderRadius: "20px",
-                  objectFit: "cover",
-                }}
-                width="100%"
-                onClick={() =>
-                  handleOpenImg(
-                    `http://localhost:3000/images/motorbikes/${motorbike.img}`
-                  )
-                }
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">
-                {motorbike.motorbike_brand}
-              </Typography>
-              <Typography variant="body2">
-                {motorbike.motorbike_model}
-              </Typography>
-            </Grid>
-            <Grid item xs={3} container justifyContent="flex-end">
-              <IconButton
-                onClick={() => handleOpenEditDialog(motorbike.motorbike_id)}
-              >
-                <EditOutlinedIcon fontSize="large" style={{ color: "black" }} />
-              </IconButton>
-              <IconButton
-                onClick={() => handleOpenDeleteDialog(motorbike.motorbike_id)}
-              >
-                <DeleteOutlineIcon
-                  fontSize="large"
-                  style={{ color: "black" }}
-                />
-              </IconButton>
-            </Grid>
+            <EmptyState />
           </Grid>
-        ))}
+        )}
       </Grid>
       <Grid item>
         <Button
@@ -169,23 +158,35 @@ export const Motorbike = () => {
         openCreateDialog={openCreateDialog}
         handleCloseDialog={handleCloseDialog}
         setRefresh={setRefresh}
+        handleOpenSnackbar={handleOpenSnackbar}
       />
+
       <MotorbikeDeleteDialog
         openDeleteDialog={openDeleteDialog}
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
+        handleOpenSnackbar={handleOpenSnackbar}
       />
+
       <MotorbikeEditDialog
         openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
         setRefresh={setRefresh}
+        handleOpenSnackbar={handleOpenSnackbar}
       />
 
       <FullScreenImg
         openImg={openImg}
         handleCloseImg={handleCloseImg}
         imgSelected={imgSelected}
+      />
+
+      <SnackbarMessage
+        open={showSnackbar}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
+        handleClose={handleCloseSnackbar}
       />
     </Grid>
   );

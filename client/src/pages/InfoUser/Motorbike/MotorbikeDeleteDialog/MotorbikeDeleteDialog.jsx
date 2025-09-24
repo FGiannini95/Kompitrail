@@ -10,21 +10,26 @@ import Typography from "@mui/material/Typography";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
 
 export const MotorbikeDeleteDialog = ({
   openDeleteDialog,
   handleCloseDialog,
   motorbike_id,
+  handleOpenSnackbar,
 }) => {
   const navigate = useNavigate();
 
   const handleConfirm = () => {
     axios
-      .put(`http://localhost:3000/motorbikes/deletemotorbike/${motorbike_id}`)
+      .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
       .then((res) => {
-        console.log(res.data);
-        handleCloseDialog();
-        navigate(-1);
+        handleOpenSnackbar("Moto eliminada con éxito");
+        // Delay the closing in order to see the snackbar
+        setTimeout(() => {
+          handleCloseDialog();
+          navigate(-1);
+        }, 2000);
       })
       .catch((err) => {
         console.log(err);

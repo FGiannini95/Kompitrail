@@ -7,6 +7,7 @@ const cors = require("cors");
 
 const usersRouter = require("./routes/users");
 const motorbikesRouter = require("./routes/motorbikes");
+const routesRouter = require("./routes/route");
 
 var app = express();
 
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/users", usersRouter);
 app.use("/motorbikes", motorbikesRouter);
+app.use("/routes", routesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -19,20 +20,26 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { getLocalStorage } from "../../helpers/localStorageUtils";
-import { KompitrailContext } from "../../../context/KompitrailContext";
+import { KompitrailContext } from "../../context/KompitrailContext";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
+import { capitalizeFullName, getInitials } from "../../helpers/utils";
+import {
+  MOTORBIKES_URL,
+  ROUTES_URL,
+} from "../../../../server/config/serverConfig";
 
 export const Profile = () => {
   const { user } = useContext(KompitrailContext);
   const [motorbikesAnalytics, setMotorbikesAnalytics] = useState();
+  const [createdRouteAnalytics, setCreatedRouteAnalytics] = useState();
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
-      .get(`http://localhost:3000/motorbikes/motorbikes-analytics/${user_id}`)
+      .get(`${MOTORBIKES_URL}/motorbikes-analytics/${user_id}`)
       .then((res) => {
         setMotorbikesAnalytics(res.data[0]);
       })
@@ -41,12 +48,18 @@ export const Profile = () => {
       });
   }, []);
 
-  const getInitials = (name, lastname) => {
-    const firstLetterName = name?.charAt(0).toUpperCase() || "";
-    const firstLetterLastName = lastname?.charAt(0).toUpperCase() || "";
-
-    return `${firstLetterName}${firstLetterLastName}`;
-  };
+  useEffect(() => {
+    const { user_id } = jwtDecode(tokenLocalStorage).user;
+    axios
+      .get(`${ROUTES_URL}/createdroutes-analytics/${user_id}`)
+      .then((res) => {
+        console.log(res.data);
+        setCreatedRouteAnalytics(res.data[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const iniciales = getInitials(user.name, user.lastname);
 
@@ -110,7 +123,7 @@ export const Profile = () => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              {user.name} {user.lastname}
+              {capitalizeFullName(user.name, user.lastname)}
             </Typography>
           </Grid>
         </Grid>
@@ -186,7 +199,9 @@ export const Profile = () => {
                 <StyledTableCell align="center">
                   {motorbikesAnalytics?.total_motorbikes}
                 </StyledTableCell>
-                <StyledTableCell align="center">0</StyledTableCell>
+                <StyledTableCell align="center">
+                  {createdRouteAnalytics?.total_createdroutes}
+                </StyledTableCell>
                 <StyledTableCell align="center">0</StyledTableCell>
               </StyledTableRow>
             </TableBody>

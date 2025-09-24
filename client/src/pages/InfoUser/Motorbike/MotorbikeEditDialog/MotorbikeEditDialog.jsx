@@ -12,6 +12,7 @@ import TextField from "@mui/material/TextField";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 
 import axios from "axios";
+import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
 
 const initialValue = {
   brand: "",
@@ -24,6 +25,7 @@ export const MotorbikeEditDialog = ({
   handleCloseDialog,
   motorbike_id,
   setRefresh,
+  handleOpenSnackbar,
 }) => {
   const [editMotorbike, setEditMotorbike] = useState(initialValue);
 
@@ -31,7 +33,7 @@ export const MotorbikeEditDialog = ({
     // We call the useEffect only if we open the dialog
     if (openEditDialog && motorbike_id) {
       axios
-        .get(`http://localhost:3000/motorbikes/onemotorbike/${motorbike_id}`)
+        .get(`${MOTORBIKES_URL}/onemotorbike/${motorbike_id}`)
         .then((res) => {
           const {
             motorbike_brand: brand,
@@ -89,21 +91,13 @@ export const MotorbikeEditDialog = ({
     }
 
     axios
-      .put(
-        `http://localhost:3000/motorbikes/editmotorbike/${motorbike_id}`,
-        newFormData
-      )
+      .put(`${MOTORBIKES_URL}/editmotorbike/${motorbike_id}`, newFormData)
       .then((res) => {
-        console.log("res.data in editmotorbike", res.data);
         setRefresh((prev) => !prev);
+        handleOpenSnackbar("Moto añadida con éxito");
         handleCloseDialog();
-      })
-      .catch((err) => {
-        console.log(err);
       });
   };
-
-  console.log("editMotorbike", editMotorbike);
 
   return (
     <Dialog open={openEditDialog} onClose={handleCloseDialog}>
