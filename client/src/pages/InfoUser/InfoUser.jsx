@@ -225,10 +225,10 @@ export const InfoUser = () => {
           {/* Empieza Modificar perfil */}
           <Grid
             container
-            spacing={3}
             onClick={() => navigate(RoutesString.editUser)}
+            style={{ border: "1px solid red" }}
           >
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <Grid item xs={2} sx={gridStyles}>
               <PersonOutlineOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -236,31 +236,31 @@ export const InfoUser = () => {
                 Modificar perfil
               </Typography>
             </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <Grid item xs={2} sx={gridStyles}>
               <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
           {/* Empieza Mis motos */}
           <Grid
             container
-            spacing={3}
             onClick={() => navigate(RoutesString.motorbike)}
+            style={{ border: "1px solid green" }}
           >
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <Grid item xs={2} sx={gridStyles}>
               <TwoWheelerOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Mis motos</Typography>
             </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <Grid item xs={2} sx={gridStyles}>
               <ArrowForwardIosIcon style={{ color: "black" }} />
             </Grid>
           </Grid>
           {/* Empieza Mis rutas */}
           <Grid
             container
-            spacing={3}
             onClick={() => navigate(RoutesString.route)}
+            style={{ border: "1px solid blue" }}
           >
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <RouteOutlinedIcon fontSize="large" />
@@ -268,23 +268,23 @@ export const InfoUser = () => {
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Mis rutas</Typography>
             </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <Grid item xs={2} sx={gridStyles}>
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
           {/* Empieza Ajustes */}
           <Grid
             container
-            spacing={3}
             onClick={() => navigate(RoutesString.settings)}
+            style={{ border: "1px solid orange" }}
           >
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <Grid item xs={2} sx={gridStyles}>
               <SettingsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Ajustes</Typography>
             </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <Grid item xs={2} sx={gridStyles}>
               <IconButton>
                 <ArrowForwardIosIcon style={{ color: "black" }} />
               </IconButton>{" "}
@@ -310,19 +310,23 @@ export const InfoUser = () => {
           Ayuda y soporte
         </Typography>
         <Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+          <Grid container style={{ border: "1px solid red" }}>
+            <Grid item xs={2} sx={gridStyles}>
               <TextsmsOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
               <Typography style={{ margin: "10px" }}>Chat bot</Typography>
             </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+            <Grid item xs={2} sx={gridStyles}>
               <ArrowForwardIosIcon />
             </Grid>
           </Grid>
-          <Grid container spacing={3} onClick={() => handleOpenIframe(url)}>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
+          <Grid
+            container
+            onClick={() => handleOpenIframe(url)}
+            style={{ border: "1px solid blue" }}
+          >
+            <Grid item xs={2} sx={gridStyles}>
               <InfoOutlinedIcon fontSize="large" />
             </Grid>
             <Grid item xs={8}>
@@ -364,7 +368,7 @@ export const InfoUser = () => {
           Desconectar perfil
         </Typography>
         <Grid>
-          <Grid container spacing={3}>
+          <Grid container style={{ border: "1px solid blue" }}>
             <Grid item xs={2} container spacing={0} sx={gridStyles}>
               <LogoutIcon fontSize="large" />
             </Grid>
