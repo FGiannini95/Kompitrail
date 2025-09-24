@@ -30,7 +30,7 @@ const url =
 
 import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 import { delLocalStorage } from "../../helpers/localStorageUtils";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../context/KompitrailContext";
 import { capitalizeFullName, getInitials } from "../../helpers/utils";
@@ -51,7 +51,6 @@ export const InfoUser = () => {
   const [isCopied, setIsCopied] = useState(false);
 
   const navigate = useNavigate();
-  const location = useLocation();
   const initials = getInitials(user.name, user.lastname);
 
   const logOut = () => {
