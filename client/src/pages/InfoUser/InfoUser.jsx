@@ -50,7 +50,6 @@ export const InfoUser = () => {
   const [iframeUrl, setIframeUrl] = useState("");
   const [isCopied, setIsCopied] = useState(false);
 
-
   const navigate = useNavigate();
   const location = useLocation();
   const initials = getInitials(user.name, user.lastname);
@@ -77,7 +76,7 @@ export const InfoUser = () => {
   };
 
   const handleCancel = () => {
-    navigate(RoutesString.home);
+    navigate(-1);
   };
 
   const handleOpenIframe = (url) => {
