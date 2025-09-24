@@ -32,8 +32,8 @@ import { SettingsRow } from "./Settings/SettingsRow/SettingsRow";
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
     useContext(KompitrailContext);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [openIframe, setOpenIframe] = useState(false);
+  const [dialog, setDialog] = useState(false);
+  const [iframe, setiIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
   const [isCopied, setIsCopied] = useState(false);
 
@@ -48,30 +48,22 @@ export const InfoUser = () => {
     navigate(RoutesString.landing);
   };
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleToggleDialog = () => {
+    setDialog(!dialog);
   };
 
   const handleConfirmation = () => {
     logOut();
-    setOpenDialog(false);
+    setDialog(false);
   };
 
   const handleCancel = () => {
     navigate(-1);
   };
 
-  const handleOpenIframe = (url) => {
+  const handleToggleIframe = (url) => {
     setIframeUrl(url);
-    setOpenIframe(true);
-  };
-
-  const handleCloseIframe = () => {
-    setOpenIframe(false);
+    setiIframe(!iframe);
   };
 
   const handleShare = async () => {
@@ -257,7 +249,10 @@ export const InfoUser = () => {
             onClick={() => navigate(RoutesString.settings)}
           />
           {/* Privacy option */}
-          <SettingsRow action="privacy" onClick={() => handleOpenIframe(url)} />
+          <SettingsRow
+            action="privacy"
+            onClick={() => handleToggleIframe(url)}
+          />
         </List>
       </Grid>
       <Grid
@@ -281,17 +276,17 @@ export const InfoUser = () => {
           {/* Logout */}
           <SettingsRow
             action="logout"
-            onClick={() => handleOpenDialog("logout")}
+            onClick={() => handleToggleDialog("logout")}
           />
         </List>
       </Grid>
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
+      <Dialog open={dialog} onClose={handleToggleDialog}>
         <DialogTitle>Cerrar sesión</DialogTitle>
         <DialogContent>
           <Typography>¿Estás seguro de querer cerrar sesión?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
+          <Button onClick={handleToggleDialog} color="primary">
             Cancelar
           </Button>
           <Button onClick={handleConfirmation} color="secondary">
@@ -300,8 +295,8 @@ export const InfoUser = () => {
         </DialogActions>
       </Dialog>
       <PrivacyDialog
-        openIframe={openIframe}
-        handleCloseIframe={handleCloseIframe}
+        openIframe={iframe}
+        handleCloseIframe={handleToggleIframe}
         iframeUrl={iframeUrl}
       />
     </Box>
