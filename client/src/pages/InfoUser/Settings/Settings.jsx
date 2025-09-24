@@ -92,11 +92,11 @@ export const Settings = () => {
         <List disablePadding>
           {/* Change Password Option */}
           <SettingsRow
-            type="password"
-            onPasswordClick={() => navigate(RoutesString.editPassword)}
+            action="changePassword"
+            onClick={() => navigate(RoutesString.editPassword)}
           />
           {/* Delete Account Option */}
-          <SettingsRow type="delete" onDeleteClick={handleToggleDialog} />
+          <SettingsRow action="deleteAccount" onClick={handleToggleDialog} />
         </List>
         {/* Delete Account Dialog */}
         <Dialog open={dialog} onClose={handleToggleDialog}>
