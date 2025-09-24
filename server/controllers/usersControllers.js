@@ -158,6 +158,39 @@ class usersControllers {
       });
     });
   };
+
+  showOneUser = (req, res) => {
+    console.log("HOLA");
+    const { id: user_id } = req.params;
+
+    let sql = `SELECT * FROM user WHERE user_id = '${user_id}' AND is_deleted = 0`;
+
+    connection.query(sql, (err, result) => {
+      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    });
+  };
+
+  editUser = (req, res) => {
+    const { name, lastname, phonenumber } = JSON.parse(req.body.editUser);
+    const { id: user_id } = req.params;
+
+    let sql = `SELECT img FROM user WHERE user_id = "${user_id}" AND is_deleted = 0`;
+    connection.query(sql, (err, rows) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+
+      const currentImg = rows.length > 0 ? rows[0].img : "default.png";
+      const img = req.file ? req.file.filename : currentImg;
+
+      let sqlUpdate = `UPDATE user SET name = "${name}", lastname = "${lastname}", phonenumber = "${phonenumber}", img = "${img}" WHERE user_id = "${user_id}" AND is_deleted = 0`;
+      connection.query(sqlUpdate, (err, result) => {
+        err
+          ? res.status(400).json({ err })
+          : res.status(200).json({ message: "Usuario modificado", result });
+      });
+    });
+  };
 }
 
 module.exports = new usersControllers();
