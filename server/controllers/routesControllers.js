@@ -81,6 +81,39 @@ class routesControllers {
     });
   };
 
+  editRoute = (req, res) => {
+    const {
+      route_name,
+      starting_point,
+      ending_point,
+      level,
+      distance,
+      is_verified,
+      suitable_motorbike_type,
+      estimated_time,
+      participants,
+      route_description,
+    } = JSON.parse(req.body.editRoute);
+    const { id: route_id } = req.params;
+    let sql = `UPDATE route SET 
+      route_name = '${route_name}', 
+      starting_point = '${starting_point}', 
+      ending_point = '${ending_point}', 
+      level = '${level}', 
+      distance = '${distance}', 
+      is_verified='${is_verified}', 
+      suitable_motorbike_type='${suitable_motorbike_type}', 
+      estimated_time='${estimated_time}', 
+      participants='${participants}', 
+      route_description='${route_description}' 
+      WHERE route_id = '${route_id}' AND is_deleted = 0`;
+    connection.query(sql, (err, result) => {
+      err
+        ? res.status(400).json({ err })
+        : res.status(200).json({ message: "Ruta modificada", result });
+    });
+  };
+
   deleteRoute = (req, res) => {
     const { id: route_id } = req.params;
     let sql = `UPDATE route SET is_deleted = 1 where route_id = "${route_id}"`;
