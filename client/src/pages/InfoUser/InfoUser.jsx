@@ -58,7 +58,7 @@ export const InfoUser = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   const handleToggleIframe = (url) => {
