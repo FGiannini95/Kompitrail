@@ -81,7 +81,7 @@ export const MotorbikeCreateDialog = ({
 
     axios
       .post(`${MOTORBIKES_URL}/createmotorbike`, newFormData)
-      .then((res) => {
+      .then(() => {
         setRefresh((prev) => !prev);
         handleOpenSnackbar("Moto añadida con éxito");
       })

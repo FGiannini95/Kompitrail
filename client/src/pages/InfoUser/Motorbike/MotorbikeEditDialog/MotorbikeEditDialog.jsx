@@ -92,9 +92,9 @@ export const MotorbikeEditDialog = ({
 
     axios
       .put(`${MOTORBIKES_URL}/editmotorbike/${motorbike_id}`, newFormData)
-      .then((res) => {
+      .then(() => {
         setRefresh((prev) => !prev);
-        handleOpenSnackbar("Moto añadida con éxito");
+        handleOpenSnackbar("Moto actualizada con éxito");
         handleCloseDialog();
       });
   };
