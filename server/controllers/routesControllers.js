@@ -123,6 +123,14 @@ class routesControllers {
         : res.status(200).json({ message: "Ruta eliminada", result });
     });
   };
+
+  showOneRoute = (req, res) => {
+    const { id: route_id } = req.params;
+    let sql = `SELECT * FROM route WHERE route_id ='${route_id}' AND is_deleted = 0`;
+    connection.query(sql, (err, result) => {
+      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    });
+  };
 }
 
 module.exports = new routesControllers();

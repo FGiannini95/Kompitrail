@@ -20,14 +20,19 @@ import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
 import { RouteDeleteDialog } from "./RouteDeleteDialog/RouteDeleteDialog";
 import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
+import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
 
 export const MyRoute = () => {
   const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
+
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
   const [selectedRouteId, setSelectedRouteId] = useState(null);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [refresh, setRefresh] = useState(false);
+
   const navigate = useNavigate();
   const tokenLocalStorage = getLocalStorage("token");
 
@@ -41,7 +46,7 @@ export const MyRoute = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [refresh]);
 
   const handleOpenCreateRoute = () => {
     navigate(RoutesString.createTrip);
@@ -52,8 +57,14 @@ export const MyRoute = () => {
     setOpenDeleteDialog(true);
   };
 
+  const handleOpenEditDialog = (route_id) => {
+    setSelectedRouteId(route_id);
+    setOpenEditDialog(true);
+  };
+
   const handleCloseDialog = () => {
     setOpenDeleteDialog(false);
+    setOpenEditDialog(false);
   };
 
   const handleOpenSnackbar = (message, severity = "success") => {
@@ -94,6 +105,7 @@ export const MyRoute = () => {
                 <RouteCard
                   {...route}
                   handleOpenDeleteDialog={handleOpenDeleteDialog}
+                  handleOpenEditDialog={handleOpenEditDialog}
                 />
               </Grid>
             </Grid>
@@ -138,13 +150,13 @@ export const MyRoute = () => {
         route_id={selectedRouteId}
         handleOpenSnackbar={handleOpenSnackbar}
       />
-      {/* <RouteEditDialog
+      <RouteEditDialog
         openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}
         route_id={selectedRouteId}
         setRefresh={setRefresh}
         handleOpenSnackbar={handleOpenSnackbar}
-      /> */}
+      />
 
       <SnackbarMessage
         open={showSnackbar}

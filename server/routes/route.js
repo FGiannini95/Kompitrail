@@ -11,6 +11,7 @@ router.post(
 );
 router.get("/showallroutesoneuser/:id", routesControllers.showAllRoutesOneUser);
 router.get("/showallroutes", routesControllers.showAllRoutes);
+router.get("/oneroute/:id", routesControllers.showOneRoute);
 router.get(
   "/createdroutes-analytics/:id",
   routesControllers.showCreatedRoutesAnalytics

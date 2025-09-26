@@ -40,6 +40,7 @@ export const RouteCard = ({
   estimated_time,
   participants,
   route_description,
+  handleOpenEditDialog,
   handleOpenDeleteDialog,
 }) => {
   const [expanded, setExpanded] = useState(false);
@@ -82,7 +83,7 @@ export const RouteCard = ({
         <Typography>{date}</Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
+        <IconButton onClick={() => handleOpenEditDialog(route_id)}>
           <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
         </IconButton>
         <IconButton onClick={() => handleOpenDeleteDialog(route_id)}>
