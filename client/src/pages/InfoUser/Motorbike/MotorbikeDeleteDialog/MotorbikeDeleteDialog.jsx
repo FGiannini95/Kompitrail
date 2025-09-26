@@ -23,7 +23,7 @@ export const MotorbikeDeleteDialog = ({
   const handleConfirm = () => {
     axios
       .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
-      .then((res) => {
+      .then(() => {
         handleOpenSnackbar("Moto eliminada con éxito");
         // Delay the closing in order to see the snackbar
         setTimeout(() => {

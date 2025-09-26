@@ -1,4 +1,5 @@
 const connection = require("../config/db");
+const { connect } = require("../routes/motorbikes");
 require("dotenv").config();
 
 class routesControllers {
@@ -77,6 +78,16 @@ class routesControllers {
     let sql = `SELECT (SELECT COUNT(*) FROM route WHERE user_id ="${user_id}" and is_deleted = 0) AS total_createdroutes`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
+    });
+  };
+
+  deleteRoute = (req, res) => {
+    const { id: route_id } = req.params;
+    let sql = `UPDATE route SET is_deleted = 1 where route_id = "${route_id}"`;
+    connection.query(sql, (err, result) => {
+      err
+        ? res.status(400).json({ err })
+        : res.status(200).json({ message: "Ruta eliminada", result });
     });
   };
 }

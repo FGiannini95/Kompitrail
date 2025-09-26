@@ -14,5 +14,6 @@ router.get(
   "/createdroutes-analytics/:id",
   routesControllers.showCreatedRoutesAnalytics
 );
+router.put("/deleteroute/:id", routesControllers.deleteRoute);
 
 module.exports = router;
