@@ -3,7 +3,6 @@ require("dotenv").config();
 
 class routesControllers {
   createRoute = (req, res) => {
-    console.log("hola en create rutes"); //TODO: DELETE LATER
     const {
       user_id,
       route_name,
@@ -17,7 +16,6 @@ class routesControllers {
       participants,
       route_description,
     } = JSON.parse(req.body.createRoute);
-    console.log(req.body.createRoute);
 
     if (
       !user_id ||
