@@ -1,9 +1,8 @@
 import React, { useContext, useState } from "react";
 
-// MUI
 import {
   Box,
-  Grid,
+  Grid2 as Grid,
   Typography,
   Button,
   Dialog,
@@ -13,8 +12,6 @@ import {
   Tooltip,
   List,
 } from "@mui/material";
-
-// MUI-ICONS
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 
@@ -99,7 +96,6 @@ export const InfoUser = () => {
           justifyContent="center"
         >
           <Grid
-            item
             xs={1}
             container
             spacing={0}
@@ -118,7 +114,7 @@ export const InfoUser = () => {
               {initials}
             </Typography>
           </Grid>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               {capitalizeFullName(user.name, user.lastname)}
             </Typography>
