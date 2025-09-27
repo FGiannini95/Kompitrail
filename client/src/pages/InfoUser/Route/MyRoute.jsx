@@ -90,7 +90,7 @@ export const MyRoute = () => {
         {allRoutesOneUser.length > 0 ? (
           allRoutesOneUser.map((route) => (
             <Grid
-              key={route?.routes_id}
+              key={route.route_id}
               container
               spacing={1}
               sx={{
@@ -104,8 +104,8 @@ export const MyRoute = () => {
                 {/* We pass down all the props */}
                 <RouteCard
                   {...route}
-                  handleOpenDeleteDialog={handleOpenDeleteDialog}
-                  handleOpenEditDialog={handleOpenEditDialog}
+                  onEdit={handleOpenEditDialog}
+                  onDelete={handleOpenDeleteDialog}
                 />
               </Grid>
             </Grid>
