@@ -60,17 +60,32 @@ export const RouteCard = ({
 
   return (
     <Card
-      sx={{ maxWidth: 345, backgroundColor: "#eeeeee", borderRadius: "20px" }}
+      sx={{
+        width: "100%",
+        bgcolor: "#eeeeee",
+        borderRadius: 2,
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       <CardHeader
+        sx={{ ".MuiCardHeader-content": { minWidth: 0 } }}
         title={
-          <Typography sx={{ fontWeight: "bold" }}>{route_name}</Typography>
+          <Typography
+            sx={{
+              fontWeight: "bold",
+              wordBreak: "break-word",
+              overflowWrap: "anywhere",
+            }}
+          >
+            {route_name}
+          </Typography>
         }
       />
       <CardMedia
         component="img"
-        height="194"
-        image="https://via.placeholder.com/800x400.png?text=Ruta+de+Moto"
+        sx={{ height: 180, objectFit: "cover" }}
+        image=""
         alt="Route img"
       />
       <CardContent>
