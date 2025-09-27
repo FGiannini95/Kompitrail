@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // MUI
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";

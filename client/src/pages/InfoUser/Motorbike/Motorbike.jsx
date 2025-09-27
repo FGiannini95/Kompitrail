@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 // MUI
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import IconButton from "@mui/material/IconButton";
 
 // MUI-ICONS

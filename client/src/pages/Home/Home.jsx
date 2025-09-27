@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 
 // MUI
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 
 import { ROUTES_URL } from "../../../../server/config/serverConfig";
 import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
