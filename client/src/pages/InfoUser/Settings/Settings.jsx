@@ -1,20 +1,21 @@
 import React, { useContext, useState } from "react";
 
 // MUI
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
+import {
+  Box,
+  Grid,
+  Typography,
+  IconButton,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  List,
+} from "@mui/material";
 
 // MUI-ICONS
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -26,32 +27,22 @@ import {
   delLocalStorage,
 } from "../../../helpers/localStorageUtils";
 import { USERS_URL } from "../../../../../server/config/serverConfig";
-
-const gridStyles = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-};
+import { SettingsRow } from "./SettingsRow/SettingsRow";
 
 export const Settings = () => {
   const navigate = useNavigate();
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [dialog, setDialog] = useState(false);
   const tokenLocalStorage = getLocalStorage("token");
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleToggleDialog = () => {
+    setDialog(!dialog);
   };
 
   const handleConfirmation = () => {
     deleteUser();
     logOut();
-    setOpenDialog(false);
+    setDialog(false);
   };
 
   const deleteUser = () => {
@@ -85,70 +76,47 @@ export const Settings = () => {
           </Typography>
         </IconButton>
       </Grid>
-
       {/* Settings Card */}
-      <Grid
+      <Box
         sx={{
-          marginTop: 2,
-          marginLeft: 2,
-          padding: 2,
-          paddingLeft: 3,
-          backgroundColor: "#eeeeee",
+          mt: 2,
+          mx: 2,
+          p: 2,
+          pl: 3,
+          bgcolor: "#eeeeee",
           borderRadius: 2,
+          boxSizing: "border-box",
           width: "calc(100% - 22px)",
         }}
       >
-        {/* Change Password Option */}
-        <Grid
-          container
-          spacing={3}
-          onClick={() => navigate(RoutesString.editPassword)}
-        >
-          <Grid item xs={2} container spacing={0} sx={gridStyles}>
-            <LockOutlinedIcon fontSize="large" />
-          </Grid>
-          <Grid item xs={8}>
-            <Typography sx={{ margin: 1 }}>Modificar contraseña</Typography>
-          </Grid>
-          <Grid item xs={2} container spacing={0} sx={gridStyles}>
-            <ArrowForwardIosIcon sx={{ color: "black" }} />
-          </Grid>
-        </Grid>
-
-        {/* Delete Account Option */}
-        <Grid container spacing={3} onClick={handleOpenDialog}>
-          <Grid item xs={2} container spacing={0} sx={gridStyles}>
-            <DeleteOutlineIcon fontSize="large" sx={{ color: "red" }} />
-          </Grid>
-          <Grid item xs={8}>
-            <Typography sx={{ margin: 1, color: "red" }}>
-              Eliminar cuenta
+        <List disablePadding>
+          {/* Change Password Option */}
+          <SettingsRow
+            action="changePassword"
+            onClick={() => navigate(RoutesString.editPassword)}
+          />
+          {/* Delete Account Option */}
+          <SettingsRow action="deleteAccount" onClick={handleToggleDialog} />
+        </List>
+        {/* Delete Account Dialog */}
+        <Dialog open={dialog} onClose={handleToggleDialog}>
+          <DialogTitle>Eliminar cuenta</DialogTitle>
+          <DialogContent>
+            <Typography>
+              Esta acción es irreversible. ¿Estás seguro de querer eliminar tu
+              cuenta?
             </Typography>
-          </Grid>
-          <Grid item xs={2} container spacing={0} sx={gridStyles}>
-            <ArrowForwardIosIcon sx={{ color: "red" }} />
-          </Grid>
-        </Grid>
-      </Grid>
-
-      {/* Delete Account Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Eliminar cuenta</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Esta acción es irreversible. ¿Estás seguro de querer eliminar tu
-            cuenta?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="error">
-            Cancelar
-          </Button>
-          <Button onClick={handleConfirmation} color="success">
-            Confirmar
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleToggleDialog} color="error">
+              Cancelar
+            </Button>
+            <Button onClick={handleConfirmation} color="success">
+              Confirmar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
     </Grid>
   );
 };

@@ -1,58 +1,43 @@
 import React, { useContext, useState } from "react";
 
 // MUI
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
+import {
+  Box,
+  Grid,
+  Typography,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Tooltip,
+  List,
+} from "@mui/material";
 
 // MUI-ICONS
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import TwoWheelerOutlinedIcon from "@mui/icons-material/TwoWheelerOutlined";
-import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
-import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import LogoutIcon from "@mui/icons-material/Logout";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 
-// TODO: Change to a real pdf now it is just random stuff
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
 import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 import { delLocalStorage } from "../../helpers/localStorageUtils";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../context/KompitrailContext";
 import { capitalizeFullName, getInitials } from "../../helpers/utils";
-
-const gridStyles = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-};
+import { SettingsRow } from "./Settings/SettingsRow/SettingsRow";
 
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
     useContext(KompitrailContext);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [openIframe, setOpenIframe] = useState(false);
+  const [dialog, setDialog] = useState(false);
+  const [iframe, setiIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
   const [isCopied, setIsCopied] = useState(false);
 
-
   const navigate = useNavigate();
-  const location = useLocation();
   const initials = getInitials(user.name, user.lastname);
 
   const logOut = () => {
@@ -63,30 +48,22 @@ export const InfoUser = () => {
     navigate(RoutesString.landing);
   };
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleToggleDialog = () => {
+    setDialog(!dialog);
   };
 
   const handleConfirmation = () => {
     logOut();
-    setOpenDialog(false);
+    setDialog(false);
   };
 
   const handleCancel = () => {
-    navigate(RoutesString.home);
+    navigate("/");
   };
 
-  const handleOpenIframe = (url) => {
+  const handleToggleIframe = (url) => {
     setIframeUrl(url);
-    setOpenIframe(true);
-  };
-
-  const handleCloseIframe = () => {
-    setOpenIframe(false);
+    setiIframe(!iframe);
   };
 
   const handleShare = async () => {
@@ -224,74 +201,28 @@ export const InfoUser = () => {
           Mi cuenta
         </Typography>
         <Grid>
-          {/* Empieza Modificar perfil */}
-          <Grid
-            container
-            spacing={3}
-            onClick={() => navigate(RoutesString.editUser)}
-          >
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <PersonOutlineOutlinedIcon fontSize="large" />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }}>
-                Modificar perfil
-              </Typography>
-            </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <ArrowForwardIosIcon style={{ color: "black" }} />
-            </Grid>
-          </Grid>
-          {/* Empieza Mis motos */}
-          <Grid
-            container
-            spacing={3}
-            onClick={() => navigate(RoutesString.motorbike)}
-          >
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <TwoWheelerOutlinedIcon fontSize="large" />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }}>Mis motos</Typography>
-            </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <ArrowForwardIosIcon style={{ color: "black" }} />
-            </Grid>
-          </Grid>
-          {/* Empieza Mis rutas */}
-          <Grid
-            container
-            spacing={3}
-            onClick={() => navigate(RoutesString.route)}
-          >
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <RouteOutlinedIcon fontSize="large" />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }}>Mis rutas</Typography>
-            </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <ArrowForwardIosIcon />
-            </Grid>
-          </Grid>
-          {/* Empieza Ajustes */}
-          <Grid
-            container
-            spacing={3}
-            onClick={() => navigate(RoutesString.settings)}
-          >
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <SettingsOutlinedIcon fontSize="large" />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }}>Ajustes</Typography>
-            </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <IconButton>
-                <ArrowForwardIosIcon style={{ color: "black" }} />
-              </IconButton>{" "}
-            </Grid>
-          </Grid>
+          <List disablePadding>
+            {/* Edit profil option */}
+            <SettingsRow
+              action="editAccount"
+              onClick={() => navigate(RoutesString.editUser)}
+            />
+            {/* Add motorbike option */}
+            <SettingsRow
+              action="addMotorbike"
+              onClick={() => navigate(RoutesString.motorbike)}
+            />
+            {/* Add route option */}
+            <SettingsRow
+              action="addRoute"
+              onClick={() => navigate(RoutesString.route)}
+            />
+            {/* Settings option */}
+            <SettingsRow
+              action="changeSettings"
+              onClick={() => navigate(RoutesString.settings)}
+            />
+          </List>
         </Grid>
       </Grid>
       <Grid
@@ -311,42 +242,19 @@ export const InfoUser = () => {
         >
           Ayuda y soporte
         </Typography>
-        <Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <TextsmsOutlinedIcon fontSize="large" />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }}>Chat bot</Typography>
-            </Grid>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <ArrowForwardIosIcon />
-            </Grid>
-          </Grid>
-          <Grid container spacing={3} onClick={() => handleOpenIframe(url)}>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <InfoOutlinedIcon fontSize="large" />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }}>
-                Política de privacidad
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <ArrowForwardIosIcon style={{ color: "black" }} />
-            </Grid>
-          </Grid>
-        </Grid>
+        <List>
+          {/* Chatbot option */}
+          <SettingsRow
+            action="chatbot"
+            onClick={() => navigate(RoutesString.settings)}
+          />
+          {/* Privacy option */}
+          <SettingsRow
+            action="privacy"
+            onClick={() => handleToggleIframe(url)}
+          />
+        </List>
       </Grid>
-      {/* Empieza Log out */}
       <Grid
         style={{
           marginTop: "30px",
@@ -356,7 +264,6 @@ export const InfoUser = () => {
           margin: "10px",
           borderRadius: "20px",
         }}
-        onClick={() => handleOpenDialog("logout")}
       >
         <Typography
           variant="h6"
@@ -365,35 +272,21 @@ export const InfoUser = () => {
         >
           Desconectar perfil
         </Typography>
-        <Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={2} container spacing={0} sx={gridStyles}>
-              <LogoutIcon fontSize="large" />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography style={{ margin: "10px" }}>Log Out</Typography>
-            </Grid>
-            <Grid
-              item
-              xs={2}
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <ArrowForwardIosIcon />
-            </Grid>
-          </Grid>
-        </Grid>
+        <List>
+          {/* Logout */}
+          <SettingsRow
+            action="logout"
+            onClick={() => handleToggleDialog("logout")}
+          />
+        </List>
       </Grid>
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
+      <Dialog open={dialog} onClose={handleToggleDialog}>
         <DialogTitle>Cerrar sesión</DialogTitle>
         <DialogContent>
           <Typography>¿Estás seguro de querer cerrar sesión?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
+          <Button onClick={handleToggleDialog} color="primary">
             Cancelar
           </Button>
           <Button onClick={handleConfirmation} color="secondary">
@@ -402,8 +295,8 @@ export const InfoUser = () => {
         </DialogActions>
       </Dialog>
       <PrivacyDialog
-        openIframe={openIframe}
-        handleCloseIframe={handleCloseIframe}
+        openIframe={iframe}
+        handleCloseIframe={handleToggleIframe}
         iframeUrl={iframeUrl}
       />
     </Box>

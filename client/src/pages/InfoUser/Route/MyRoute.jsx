@@ -18,9 +18,21 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
+import { RouteDeleteDialog } from "./RouteDeleteDialog/RouteDeleteDialog";
+import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
+import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
 
 export const MyRoute = () => {
   const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [selectedRouteId, setSelectedRouteId] = useState(null);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [refresh, setRefresh] = useState(false);
+
   const navigate = useNavigate();
   const tokenLocalStorage = getLocalStorage("token");
 
@@ -34,10 +46,35 @@ export const MyRoute = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [refresh]);
 
   const handleOpenCreateRoute = () => {
     navigate(RoutesString.createTrip);
+  };
+
+  const handleOpenDeleteDialog = (route_id) => {
+    setSelectedRouteId(route_id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleOpenEditDialog = (route_id) => {
+    setSelectedRouteId(route_id);
+    setOpenEditDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDeleteDialog(false);
+    setOpenEditDialog(false);
+  };
+
+  const handleOpenSnackbar = (message, severity = "success") => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setShowSnackbar(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setShowSnackbar(false);
   };
 
   return (
@@ -65,7 +102,11 @@ export const MyRoute = () => {
             >
               <Grid item xs={12}>
                 {/* We pass down all the props */}
-                <RouteCard {...route} />
+                <RouteCard
+                  {...route}
+                  handleOpenDeleteDialog={handleOpenDeleteDialog}
+                  handleOpenEditDialog={handleOpenEditDialog}
+                />
               </Grid>
             </Grid>
           ))
@@ -103,6 +144,26 @@ export const MyRoute = () => {
           <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
         </Button>
       </Grid>
+      <RouteDeleteDialog
+        openDeleteDialog={openDeleteDialog}
+        handleCloseDialog={handleCloseDialog}
+        route_id={selectedRouteId}
+        handleOpenSnackbar={handleOpenSnackbar}
+      />
+      <RouteEditDialog
+        openEditDialog={openEditDialog}
+        handleCloseDialog={handleCloseDialog}
+        route_id={selectedRouteId}
+        setRefresh={setRefresh}
+        handleOpenSnackbar={handleOpenSnackbar}
+      />
+
+      <SnackbarMessage
+        open={showSnackbar}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
+        handleClose={handleCloseSnackbar}
+      />
     </Grid>
   );
 };

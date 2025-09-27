@@ -177,9 +177,9 @@ export const Motorbike = () => {
       />
 
       <FullScreenImg
-        openImg={openImg}
-        handleCloseImg={handleCloseImg}
-        imgSelected={imgSelected}
+        open={openImg}
+        onClose={handleCloseImg}
+        img={imgSelected}
       />
 
       <SnackbarMessage

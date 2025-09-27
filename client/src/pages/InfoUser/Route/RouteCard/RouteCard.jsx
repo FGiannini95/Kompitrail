@@ -30,6 +30,7 @@ const ExpandMore = styled(({ expand, ...other }) => {
 
 export const RouteCard = ({
   route_name,
+  route_id,
   starting_point,
   ending_point,
   date,
@@ -39,6 +40,8 @@ export const RouteCard = ({
   estimated_time,
   participants,
   route_description,
+  handleOpenEditDialog,
+  handleOpenDeleteDialog,
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -80,11 +83,11 @@ export const RouteCard = ({
         <Typography>{date}</Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <EditOutlinedIcon fontSize="large" style={{ color: "black" }} />
+        <IconButton onClick={() => handleOpenEditDialog(route_id)}>
+          <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
         </IconButton>
-        <IconButton aria-label="share">
-          <DeleteOutlineIcon fontSize="large" style={{ color: "black" }} />
+        <IconButton onClick={() => handleOpenDeleteDialog(route_id)}>
+          <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
         </IconButton>
         <ExpandMore
           expand={expanded}

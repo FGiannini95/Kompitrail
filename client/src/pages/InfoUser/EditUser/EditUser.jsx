@@ -149,12 +149,10 @@ export const EditUser = () => {
           alignItems="center"
           justifyContent="center"
           sx={{
-            marginTop: 2,
             width: 1 / 3,
-            border: "1px solid black",
+            border: "2px solid black",
             borderRadius: "50%",
             aspectRatio: 1 / 1,
-            backgroundColor: "green",
           }}
           onChange={handlePhotoChange}
         >
