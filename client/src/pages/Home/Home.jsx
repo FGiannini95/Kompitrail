@@ -1,8 +1,9 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 // MUI
 import Grid from "@mui/material/Grid2";
+import Box from "@mui/material/Box";
 
 import { ROUTES_URL } from "../../../../server/config/serverConfig";
 import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
@@ -23,39 +24,18 @@ export const Home = () => {
   }, []);
 
   return (
-    <Grid container spacing={2}>
+    <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 8 }}>
       {allRoutes.length > 0 ? (
         allRoutes.map((route) => (
-          <Grid
-            key={route?.routes_id}
-            container
-            spacing={1}
-            sx={{
-              marginTop: "10px",
-              marginLeft: "45px",
-              width: "100%",
-              textAlign: "center",
-            }}
-          >
-            <Grid item xs={12}>
-              {/* We pass down all the props */}
-              <RouteCard {...route} />
-            </Grid>
+          <Grid key={route?.routes_id} container justifyContent="center" mb={2}>
+            <RouteCard {...route} />
           </Grid>
         ))
       ) : (
-        <Grid
-          container
-          spacing={1}
-          sx={{
-            marginTop: "10px",
-            marginLeft: "75px",
-            textAlign: "center",
-          }}
-        >
+        <Grid container justifyContent="center" mb={2}>
           <EmptyState />
         </Grid>
       )}
-    </Grid>
+    </Box>
   );
 };
