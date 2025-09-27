@@ -21,13 +21,13 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 
-import { PrivacyDialog } from "./HelpAndSupport/Privacy/PrivacyDialog";
 import { delLocalStorage } from "../../helpers/localStorageUtils";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../context/KompitrailContext";
 import { capitalizeFullName, getInitials } from "../../helpers/utils";
 import { SettingsRow } from "./Settings/SettingsRow/SettingsRow";
+import { PrivacyDialog } from "./Privacy/PrivacyDialog";
 
 export const InfoUser = () => {
   const { user, setUser, setToken, setIsLogged } =
