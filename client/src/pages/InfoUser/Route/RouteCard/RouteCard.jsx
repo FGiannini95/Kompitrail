@@ -50,7 +50,7 @@ export const RouteCard = ({
   };
 
   const InfoItem = ({ label, value }) => (
-    <Grid item xs={6}>
+    <Grid xs={6}>
       <Typography variant="body2" sx={{ fontWeight: "bold" }}>
         {label}
       </Typography>
@@ -127,7 +127,7 @@ export const RouteCard = ({
               label="Motos aptas"
               value={<Typography>{suitable_motorbike_type}</Typography>}
             />
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 Descripción
               </Typography>

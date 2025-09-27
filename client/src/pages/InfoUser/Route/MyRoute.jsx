@@ -79,14 +79,14 @@ export const MyRoute = () => {
 
   return (
     <Grid container direction="column" spacing={2}>
-      <Grid item container alignItems="center">
+      <Grid container alignItems="center">
         <IconButton onClick={() => navigate(RoutesString.infouser)}>
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
         <Typography variant="h6">Mis rutas</Typography>
       </Grid>
       {/* Map allRoute and display in a card, divide between active and old ones */}
-      <Grid item container direction="column" spacing={2}>
+      <Grid container direction="column" spacing={2}>
         {allRoutesOneUser.length > 0 ? (
           allRoutesOneUser.map((route) => (
             <Grid
@@ -100,7 +100,7 @@ export const MyRoute = () => {
                 textAlign: "center",
               }}
             >
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 {/* We pass down all the props */}
                 <RouteCard
                   {...route}
@@ -124,7 +124,7 @@ export const MyRoute = () => {
           </Grid>
         )}
       </Grid>
-      <Grid item>
+      <Grid>
         <Button
           type="button"
           variant="outlined"
