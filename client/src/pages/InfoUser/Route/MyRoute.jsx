@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
 
-// MUI
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid2";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
+import {
+  Typography,
+  Grid2 as Grid,
+  Button,
+  IconButton,
+  Box,
+} from "@mui/material";
 
-// MUI-ICONS
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../../routes/routes";
 import { RouteCard } from "./RouteCard/RouteCard";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
 import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
 import { RouteDeleteDialog } from "./RouteDeleteDialog/RouteDeleteDialog";
 import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
 import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
-import { Box, Stack } from "@mui/material";
 
 export const MyRoute = () => {
   const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
@@ -108,7 +108,7 @@ export const MyRoute = () => {
           </Grid>
         )}
       </Box>
-      <Stack>
+      <Grid>
         <Button
           type="button"
           variant="outlined"
@@ -127,7 +127,7 @@ export const MyRoute = () => {
           Crar Ruta
           <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
         </Button>
-      </Stack>
+      </Grid>
       <RouteDeleteDialog
         openDeleteDialog={openDeleteDialog}
         handleCloseDialog={handleCloseDialog}
