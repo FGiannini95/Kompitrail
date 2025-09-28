@@ -20,7 +20,7 @@ export const Home = ({ handleOpenEditDialog, handleOpenDeleteDialog }) => {
   }, []);
 
   return (
-    <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 8 }}>
+    <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       {allRoutes.length > 0 ? (
         allRoutes.map((route) => (
           <Grid key={route?.route_id} container justifyContent="center" mb={2}>

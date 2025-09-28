@@ -81,12 +81,12 @@ export const MyRoute = () => {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid container alignItems="center">
-        <IconButton onClick={() => navigate(RoutesString.infouser)}>
+        <IconButton onClick={() => navigate(-1)}>
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
         <Typography variant="h6">Mis rutas</Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 8 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
         {allRoutesOneUser.length > 0 ? (
           allRoutesOneUser.map((route) => (
             <Grid
