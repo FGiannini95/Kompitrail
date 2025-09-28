@@ -21,6 +21,7 @@ import { EmptyState } from "../../../components/EmptyState/EmptyState";
 import { RouteDeleteDialog } from "./RouteDeleteDialog/RouteDeleteDialog";
 import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
 import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
+import { Box, Stack } from "@mui/material";
 
 export const MyRoute = () => {
   const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
@@ -85,46 +86,29 @@ export const MyRoute = () => {
         </IconButton>
         <Typography variant="h6">Mis rutas</Typography>
       </Grid>
-      {/* Map allRoute and display in a card, divide between active and old ones */}
-      <Grid container direction="column" spacing={2}>
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 8 }}>
         {allRoutesOneUser.length > 0 ? (
           allRoutesOneUser.map((route) => (
             <Grid
-              key={route.route_id}
+              key={route?.route_id}
               container
-              spacing={1}
-              sx={{
-                marginTop: "10px",
-                marginLeft: "45px",
-                width: "100%",
-                textAlign: "center",
-              }}
+              justifyContent="center"
+              mb={2}
             >
-              <Grid xs={12}>
-                {/* We pass down all the props */}
-                <RouteCard
-                  {...route}
-                  onEdit={handleOpenEditDialog}
-                  onDelete={handleOpenDeleteDialog}
-                />
-              </Grid>
+              <RouteCard
+                {...route}
+                onEdit={handleOpenEditDialog}
+                onDelete={handleOpenDeleteDialog}
+              />
             </Grid>
           ))
         ) : (
-          <Grid
-            container
-            spacing={1}
-            sx={{
-              marginTop: "10px",
-              marginLeft: "75px",
-              textAlign: "center",
-            }}
-          >
+          <Grid container justifyContent="center" mb={2}>
             <EmptyState />
           </Grid>
         )}
-      </Grid>
-      <Grid>
+      </Box>
+      <Stack>
         <Button
           type="button"
           variant="outlined"
@@ -143,7 +127,7 @@ export const MyRoute = () => {
           Crar Ruta
           <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
         </Button>
-      </Grid>
+      </Stack>
       <RouteDeleteDialog
         openDeleteDialog={openDeleteDialog}
         handleCloseDialog={handleCloseDialog}
