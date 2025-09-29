@@ -136,6 +136,7 @@ export const Profile = () => {
             width: "95%",
             borderRadius: "10px",
             marginLeft: "10px",
+            paddingTop: "10px",
           }}
         >
           <Table>
