@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 
-// MUI
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
+import {
+  Typography,
+  Grid2 as Grid,
+  Button,
+  IconButton,
+  Box,
+} from "@mui/material";
 
-// MUI-ICONS
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../../routes/routes";
 import { RouteCard } from "./RouteCard/RouteCard";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
 import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
 import { RouteDeleteDialog } from "./RouteDeleteDialog/RouteDeleteDialog";
@@ -79,52 +80,35 @@ export const MyRoute = () => {
 
   return (
     <Grid container direction="column" spacing={2}>
-      <Grid item container alignItems="center">
-        <IconButton onClick={() => navigate(RoutesString.infouser)}>
+      <Grid container alignItems="center">
+        <IconButton onClick={() => navigate(-1)}>
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
         <Typography variant="h6">Mis rutas</Typography>
       </Grid>
-      {/* Map allRoute and display in a card, divide between active and old ones */}
-      <Grid item container direction="column" spacing={2}>
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
         {allRoutesOneUser.length > 0 ? (
           allRoutesOneUser.map((route) => (
             <Grid
-              key={route?.routes_id}
+              key={route?.route_id}
               container
-              spacing={1}
-              sx={{
-                marginTop: "10px",
-                marginLeft: "45px",
-                width: "100%",
-                textAlign: "center",
-              }}
+              justifyContent="center"
+              mb={2}
             >
-              <Grid item xs={12}>
-                {/* We pass down all the props */}
-                <RouteCard
-                  {...route}
-                  handleOpenDeleteDialog={handleOpenDeleteDialog}
-                  handleOpenEditDialog={handleOpenEditDialog}
-                />
-              </Grid>
+              <RouteCard
+                {...route}
+                onEdit={handleOpenEditDialog}
+                onDelete={handleOpenDeleteDialog}
+              />
             </Grid>
           ))
         ) : (
-          <Grid
-            container
-            spacing={1}
-            sx={{
-              marginTop: "10px",
-              marginLeft: "75px",
-              textAlign: "center",
-            }}
-          >
+          <Grid container justifyContent="center" mb={2}>
             <EmptyState />
           </Grid>
         )}
-      </Grid>
-      <Grid item>
+      </Box>
+      <Grid>
         <Button
           type="button"
           variant="outlined"

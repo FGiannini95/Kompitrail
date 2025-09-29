@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 
-// MUI
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
+import {
+  Typography,
+  Grid2 as Grid,
+  Button,
+  IconButton,
+  Box,
+} from "@mui/material";
 
-// MUI-ICONS
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
+import axios from "axios";
 import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
 import { MotorbikeDeleteDialog } from "./MotorbikeDeleteDialog/MotorbikeDeleteDialog";
 import { MotorbikeEditDialog } from "./MotorbikeEditDialog/MotorbikeEditDialog";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { MotorbikeCard } from "./MotorbikeCard/MotorbikeCard";
 import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
 import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
@@ -88,53 +89,39 @@ export const Motorbike = () => {
 
   return (
     <Grid container direction="column" spacing={2}>
-      <Grid item container alignItems="center">
+      <Grid container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
         <Typography variant="h6">Mis motos</Typography>
       </Grid>
-      <Grid item container direction="column" spacing={2}>
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2, minWidth: 330 }}>
         {allMotorbikes.length > 0 ? (
           allMotorbikes.map((motorbike) => (
             <Grid
               key={motorbike?.motorbike_id}
               container
-              spacing={1}
-              sx={{
-                marginTop: "10px",
-                marginLeft: "45px",
-                width: "100%",
-                textAlign: "center",
-              }}
+              justifyContent="center"
+              mb={2}
             >
-              <Grid item xs={12}>
-                <MotorbikeCard
-                  brand={motorbike.motorbike_brand}
-                  model={motorbike.motorbike_model}
-                  img={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
-                  handleOpenEditDialog={handleOpenEditDialog}
-                  handleOpenDeleteDialog={handleOpenDeleteDialog}
-                  motorbike_id={motorbike.motorbike_id}
-                />
-              </Grid>
+              <MotorbikeCard
+                brand={motorbike.motorbike_brand}
+                model={motorbike.motorbike_model}
+                motorbike_id={motorbike.motorbike_id}
+                img={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
+                onEdit={handleOpenEditDialog}
+                onDelete={handleOpenDeleteDialog}
+              />
             </Grid>
           ))
         ) : (
-          <Grid
-            container
-            spacing={1}
-            sx={{
-              marginTop: "10px",
-              marginLeft: "75px",
-              textAlign: "center",
-            }}
-          >
+          <Grid container justifyContent="center" mb={2}>
             <EmptyState />
           </Grid>
         )}
-      </Grid>
-      <Grid item>
+      </Box>
+
+      <Grid>
         <Button
           type="button"
           variant="outlined"

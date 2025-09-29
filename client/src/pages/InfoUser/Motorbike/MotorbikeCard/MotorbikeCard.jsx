@@ -13,14 +13,15 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 import { FullScreenImg } from "../../../../components/FullScreenImg/FullScreenImg";
+import { CardHeader } from "@mui/material";
 
 export const MotorbikeCard = ({
   brand,
   model,
-  img,
-  handleOpenEditDialog,
-  handleOpenDeleteDialog,
   motorbike_id,
+  img,
+  onEdit,
+  onDelete,
 }) => {
   const [openImg, setOpenImg] = useState(false);
 
@@ -35,10 +36,17 @@ export const MotorbikeCard = ({
   return (
     <>
       <Card
-        sx={{ maxWidth: 345, backgroundColor: "#eeeeee", borderRadius: "20px" }}
+        sx={{
+          width: "100%",
+          bgcolor: "#eeeeee",
+          borderRadius: 2,
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
         <CardMedia
-          sx={{ height: 140 }}
+          component="img"
+          sx={{ height: 180, objectFit: "cover" }}
           image={img}
           title="motorbike"
           onClick={handleOpenImg}
@@ -52,10 +60,10 @@ export const MotorbikeCard = ({
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton onClick={() => handleOpenEditDialog(motorbike_id)}>
+          <IconButton onClick={() => onEdit?.(motorbike_id)}>
             <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
           </IconButton>
-          <IconButton onClick={() => handleOpenDeleteDialog(motorbike_id)}>
+          <IconButton onClick={() => onDelete?.(motorbike_id)}>
             <DeleteOutlineIcon
               fontSize="medium"
               style={{ color: "black", ml: 0 }}

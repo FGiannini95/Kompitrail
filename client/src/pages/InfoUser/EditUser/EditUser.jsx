@@ -4,7 +4,7 @@ import { PhoneInput, defaultCountries } from "react-international-phone";
 import "react-international-phone/style.css";
 
 //MUI
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";

@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 
 //MUI
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 

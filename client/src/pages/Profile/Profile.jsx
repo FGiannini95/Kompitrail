@@ -1,36 +1,36 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // MUI
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
+import {
+  Box,
+  Button,
+  Grid2 as Grid,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Stack,
+  TableCell,
+  tableCellClasses,
+} from "@mui/material";
 
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import { styled } from "@mui/material/styles";
 
-// MUI-ICONS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { getLocalStorage } from "../../helpers/localStorageUtils";
-import { KompitrailContext } from "../../context/KompitrailContext";
 import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
-import { capitalizeFullName, getInitials } from "../../helpers/utils";
 import {
   MOTORBIKES_URL,
   ROUTES_URL,
 } from "../../../../server/config/serverConfig";
+import { UserAvatar } from "../../components/UserAvatar/UserAvatar";
 
 export const Profile = () => {
-  const { user } = useContext(KompitrailContext);
   const [motorbikesAnalytics, setMotorbikesAnalytics] = useState();
   const [createdRouteAnalytics, setCreatedRouteAnalytics] = useState();
   const tokenLocalStorage = getLocalStorage("token");
@@ -60,8 +60,6 @@ export const Profile = () => {
         console.log(err);
       });
   }, []);
-
-  const iniciales = getInitials(user.name, user.lastname);
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -94,92 +92,51 @@ export const Profile = () => {
       }}
     >
       <Grid>
-        <Grid
-          container
-          spacing={1}
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Grid
-            item
-            xs={1}
-            container
-            spacing={0}
-            direction="column"
-            alignItems="center"
-            justifyContent="center"
-            sx={{
-              width: 1 / 3,
-              border: "2px solid black",
-              borderRadius: "50%",
-              aspectRatio: 1 / 1,
-            }}
-            style={{ paddingTop: "0px", paddingLeft: "0px" }}
-          >
-            <Typography sx={{}} variant="h4">
-              {iniciales}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              {capitalizeFullName(user.name, user.lastname)}
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          alignItems="center"
-          justifyContent="center"
+        <UserAvatar />
+        <Stack
+          direction="row"
           spacing={2}
-          style={{
-            paddingTop: "25px",
-            paddingLeft: "20px",
-            marginBottom: "30px",
-          }}
+          justifyContent="center"
+          sx={{ p: "10px" }}
         >
-          <Grid style={{ paddingRight: "10px" }}>
-            <Button
-              type="button"
-              variant="contained"
-              sx={{
-                color: "black",
-                boxShadow: "none",
-                backgroundColor: "#eeeeee",
-                "&:hover": { backgroundColor: "#dddddd" },
-              }}
-              fullWidth
-            >
-              Ir a premium
-            </Button>
-          </Grid>
-          <Grid>
-            <Button
-              type="button"
-              variant="outlined"
-              fullWidth
-              onClick={() => navigate(RoutesString.editUser)}
-              sx={{
-                color: "black",
-                borderColor: "#eeeeee",
+          <Button
+            type="button"
+            variant="contained"
+            sx={{
+              color: "black",
+              boxShadow: "none",
+              backgroundColor: "#eeeeee",
+              "&:hover": { backgroundColor: "#dddddd" },
+            }}
+            fullWidth
+          >
+            Ir a premium
+          </Button>
+          <Button
+            type="button"
+            variant="outlined"
+            fullWidth
+            onClick={() => navigate(RoutesString.editUser)}
+            sx={{
+              color: "black",
+              borderColor: "#eeeeee",
+              borderWidth: "2px",
+              "&:hover": {
+                borderColor: "#dddddd",
                 borderWidth: "2px",
-                "&:hover": {
-                  borderColor: "#dddddd",
-                  borderWidth: "2px",
-                },
-              }}
-            >
-              Modificar Perfil
-              <EditOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
-            </Button>
-          </Grid>
-        </Grid>
-
+              },
+            }}
+          >
+            Modificar Perfil
+            <EditOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
+          </Button>
+        </Stack>
         <TableContainer
           style={{
             width: "95%",
             borderRadius: "10px",
             marginLeft: "10px",
+            paddingTop: "10px",
           }}
         >
           <Table>

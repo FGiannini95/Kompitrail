@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // MUI
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -40,8 +40,8 @@ export const RouteCard = ({
   estimated_time,
   participants,
   route_description,
-  handleOpenEditDialog,
-  handleOpenDeleteDialog,
+  onEdit,
+  onDelete,
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -50,7 +50,7 @@ export const RouteCard = ({
   };
 
   const InfoItem = ({ label, value }) => (
-    <Grid item xs={6}>
+    <Grid xs={6}>
       <Typography variant="body2" sx={{ fontWeight: "bold" }}>
         {label}
       </Typography>
@@ -60,17 +60,32 @@ export const RouteCard = ({
 
   return (
     <Card
-      sx={{ maxWidth: 345, backgroundColor: "#eeeeee", borderRadius: "20px" }}
+      sx={{
+        width: "100%",
+        bgcolor: "#eeeeee",
+        borderRadius: 2,
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       <CardHeader
+        sx={{ ".MuiCardHeader-content": { minWidth: 0 } }}
         title={
-          <Typography sx={{ fontWeight: "bold" }}>{route_name}</Typography>
+          <Typography
+            sx={{
+              fontWeight: "bold",
+              wordBreak: "break-word",
+              overflowWrap: "anywhere",
+            }}
+          >
+            {route_name}
+          </Typography>
         }
       />
       <CardMedia
         component="img"
-        height="194"
-        image="https://via.placeholder.com/800x400.png?text=Ruta+de+Moto"
+        sx={{ height: 180, objectFit: "cover" }}
+        image=""
         alt="Route img"
       />
       <CardContent>
@@ -83,10 +98,10 @@ export const RouteCard = ({
         <Typography>{date}</Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton onClick={() => handleOpenEditDialog(route_id)}>
+        <IconButton onClick={() => onEdit?.(route_id)}>
           <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
         </IconButton>
-        <IconButton onClick={() => handleOpenDeleteDialog(route_id)}>
+        <IconButton onClick={() => onDelete?.(route_id)}>
           <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
         </IconButton>
         <ExpandMore
@@ -112,7 +127,7 @@ export const RouteCard = ({
               label="Motos aptas"
               value={<Typography>{suitable_motorbike_type}</Typography>}
             />
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 Descripción
               </Typography>

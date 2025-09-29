@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // MUI
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 
