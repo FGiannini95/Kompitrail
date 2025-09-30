@@ -5,10 +5,6 @@ import {
   Grid2 as Grid,
   Typography,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Tooltip,
   List,
   Stack,
@@ -27,6 +23,7 @@ import { KompitrailContext } from "../../context/KompitrailContext";
 import { SettingsRow } from "./Settings/SettingsRow/SettingsRow";
 import { PrivacyDialog } from "./Privacy/PrivacyDialog";
 import { UserAvatar } from "../../components/UserAvatar/UserAvatar";
+import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 
 function Section({ title, children }) {
   return (
@@ -49,12 +46,12 @@ function Section({ title, children }) {
 
 export const InfoUser = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
-  const [dialog, setDialog] = useState(false);
   const [iframe, setiIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
   const [isCopied, setIsCopied] = useState(false);
 
   const navigate = useNavigate();
+  const { openDialog } = useConfirmationDialog();
 
   const logOut = () => {
     delLocalStorage("token");
@@ -64,13 +61,12 @@ export const InfoUser = () => {
     navigate(RoutesString.landing);
   };
 
-  const handleToggleDialog = () => {
-    setDialog(!dialog);
-  };
-
-  const handleConfirmation = () => {
-    logOut();
-    setDialog(false);
+  const handleLogOut = () => {
+    openDialog({
+      title: "Cerrar sessión",
+      message: "¿estás seguro de querer cerrar sessión?",
+      onConfirm: () => logOut(),
+    });
   };
 
   const handleToggleIframe = (url) => {
@@ -181,27 +177,9 @@ export const InfoUser = () => {
       </Section>
 
       <Section title="Desconectar perfil">
-        <SettingsRow
-          action="logout"
-          onClick={() => handleToggleDialog("logout")}
-        />
+        <SettingsRow action="logout" onClick={handleLogOut} />
       </Section>
 
-      {/* Remove the Dialog once ConfirmDialogProvider in implemented*/}
-      <Dialog open={dialog} onClose={handleToggleDialog}>
-        <DialogTitle>Cerrar sesión</DialogTitle>
-        <DialogContent>
-          <Typography>¿Estás seguro de querer cerrar sesión?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleToggleDialog} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleConfirmation} color="secondary">
-            Confirmar
-          </Button>
-        </DialogActions>
-      </Dialog>
       <PrivacyDialog
         openIframe={iframe}
         handleCloseIframe={() => setiIframe(false)}

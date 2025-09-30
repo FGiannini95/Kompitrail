@@ -19,9 +19,9 @@ import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
 import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
-import { RouteDeleteDialog } from "./RouteDeleteDialog/RouteDeleteDialog";
 import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
 import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
+import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 
 export const MyRoute = () => {
   const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
@@ -36,6 +36,7 @@ export const MyRoute = () => {
 
   const navigate = useNavigate();
   const tokenLocalStorage = getLocalStorage("token");
+  const { openDialog } = useConfirmationDialog();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -53,9 +54,30 @@ export const MyRoute = () => {
     navigate(RoutesString.createTrip);
   };
 
+  const handleDeleteRoute = (route_id) => {
+    axios
+      .put(`${ROUTES_URL}/deleteroute/${route_id}`)
+      // Display result + navigation
+      .then(() => {
+        //showSnackbar("Ruta eliminada con éxito");
+        //triggerRefresh();
+        setTimeout(() => {
+          navigate(-1);
+        }, 2000)
+          // Errors
+          .catch((err) => {
+            console.log(err);
+            //showSnackbar("Error al eliminar la ruta", error);
+          });
+      });
+  };
+
   const handleOpenDeleteDialog = (route_id) => {
-    setSelectedRouteId(route_id);
-    setOpenDeleteDialog(true);
+    openDialog({
+      title: "Eliminar ruta",
+      message: "¿Quieres eliminar la ruta de tu perfil?",
+      onConfirm: () => handleDeleteRoute(route_id),
+    });
   };
 
   const handleOpenEditDialog = (route_id) => {
@@ -128,12 +150,6 @@ export const MyRoute = () => {
           <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
         </Button>
       </Grid>
-      <RouteDeleteDialog
-        openDeleteDialog={openDeleteDialog}
-        handleCloseDialog={handleCloseDialog}
-        route_id={selectedRouteId}
-        handleOpenSnackbar={handleOpenSnackbar}
-      />
       <RouteEditDialog
         openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}
