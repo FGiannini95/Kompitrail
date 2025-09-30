@@ -19,7 +19,6 @@ import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
 import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
-import { RouteDeleteDialog } from "./RouteDeleteDialog/RouteDeleteDialog";
 import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
 import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
