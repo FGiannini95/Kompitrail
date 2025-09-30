@@ -23,6 +23,7 @@ import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
 import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
 import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
+import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 
 export const Motorbike = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
@@ -39,6 +40,7 @@ export const Motorbike = () => {
 
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
+  const { openDialog } = useConfirmationDialog();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -52,14 +54,41 @@ export const Motorbike = () => {
       });
   }, [refresh]);
 
+  const handleDeleteMotorbike = (motorbike_id) => {
+    axios
+      // BE connection
+      .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
+      // Display result + navigation
+      .then(() => {
+        //showSnackbar("Moto eliminada con éxito");
+        //triggerRefresh();
+        setTimeout(() => {
+          navigate(-1);
+        }, 2000)
+          // Errors
+          .catch((err) => {
+            console.log(err);
+            //showSnackbar("Error al eliminar la moto", error);
+          });
+      });
+  };
+
+  const handleOpenDeleteDialog = (motorbike_id) => {
+    openDialog({
+      title: "Eliminar moto",
+      message: "¿Quieres eliminar la moto de tu perfil?",
+      onConfirm: () => handleDeleteMotorbike(motorbike_id),
+    });
+  };
+
   const handleOpenCreateDialog = () => {
     setOpenCreateDialog(true);
   };
 
-  const handleOpenDeleteDialog = (motorbike_id) => {
-    setSelectedMotorbikeId(motorbike_id);
-    setOpenDeleteDialog(true);
-  };
+  // const handleOpenDeleteDialog = (motorbike_id) => {
+  //   setSelectedMotorbikeId(motorbike_id);
+  //   setOpenDeleteDialog(true);
+  // };
 
   const handleOpenEditDialog = (motorbike_id) => {
     setSelectedMotorbikeId(motorbike_id);
@@ -145,13 +174,6 @@ export const Motorbike = () => {
         openCreateDialog={openCreateDialog}
         handleCloseDialog={handleCloseDialog}
         setRefresh={setRefresh}
-        handleOpenSnackbar={handleOpenSnackbar}
-      />
-
-      <MotorbikeDeleteDialog
-        openDeleteDialog={openDeleteDialog}
-        handleCloseDialog={handleCloseDialog}
-        motorbike_id={selectedMotorbikeId}
         handleOpenSnackbar={handleOpenSnackbar}
       />
 
