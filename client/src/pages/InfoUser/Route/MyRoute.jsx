@@ -151,7 +151,6 @@ export const MyRoute = () => {
           <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
         </Button>
       </Grid>
-      <RouteDeleteDialog />
       <RouteEditDialog
         openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}

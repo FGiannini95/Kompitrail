@@ -13,7 +13,6 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import axios from "axios";
 import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
-import { MotorbikeDeleteDialog } from "./MotorbikeDeleteDialog/MotorbikeDeleteDialog";
 import { MotorbikeEditDialog } from "./MotorbikeEditDialog/MotorbikeEditDialog";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
@@ -84,11 +83,6 @@ export const Motorbike = () => {
   const handleOpenCreateDialog = () => {
     setOpenCreateDialog(true);
   };
-
-  // const handleOpenDeleteDialog = (motorbike_id) => {
-  //   setSelectedMotorbikeId(motorbike_id);
-  //   setOpenDeleteDialog(true);
-  // };
 
   const handleOpenEditDialog = (motorbike_id) => {
     setSelectedMotorbikeId(motorbike_id);
