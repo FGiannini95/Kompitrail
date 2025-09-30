@@ -28,28 +28,20 @@ import {
 } from "../../../helpers/localStorageUtils";
 import { USERS_URL } from "../../../../../server/config/serverConfig";
 import { SettingsRow } from "./SettingsRow/SettingsRow";
+import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 
 export const Settings = () => {
   const navigate = useNavigate();
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
-  const [dialog, setDialog] = useState(false);
   const tokenLocalStorage = getLocalStorage("token");
+  const { openDialog } = useConfirmationDialog();
 
-  const handleToggleDialog = () => {
-    setDialog(!dialog);
-  };
-
-  const handleConfirmation = () => {
-    deleteUser();
-    logOut();
-    setDialog(false);
-  };
-
-  const deleteUser = () => {
+  const deleteProfile = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     axios
       .put(`${USERS_URL}/deleteuser/${user_id}`)
-      .then((res) => {
+      .then(() => {
+        logOut();
         navigate(RoutesString.landing);
       })
       .catch((err) => {
@@ -63,6 +55,15 @@ export const Settings = () => {
     setToken();
     setIsLogged(false);
     navigate(RoutesString.landing);
+  };
+
+  const handleDeleteProfile = () => {
+    openDialog({
+      title: "Eliminar cuenta",
+      message:
+        "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?",
+      onConfirm: () => deleteProfile(),
+    });
   };
 
   return (
@@ -96,26 +97,8 @@ export const Settings = () => {
             onClick={() => navigate(RoutesString.editPassword)}
           />
           {/* Delete Account Option */}
-          <SettingsRow action="deleteAccount" onClick={handleToggleDialog} />
+          <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
         </List>
-        {/* Delete Account Dialog */}
-        <Dialog open={dialog} onClose={handleToggleDialog}>
-          <DialogTitle>Eliminar cuenta</DialogTitle>
-          <DialogContent>
-            <Typography>
-              Esta acción es irreversible. ¿Estás seguro de querer eliminar tu
-              cuenta?
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleToggleDialog} color="error">
-              Cancelar
-            </Button>
-            <Button onClick={handleConfirmation} color="success">
-              Confirmar
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Box>
     </Grid>
   );
