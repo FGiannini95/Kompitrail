@@ -19,11 +19,10 @@ import { KompitrailContext } from "../context/KompitrailContext";
 import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
 import { MyRoute } from "../pages/InfoUser/Route/MyRoute";
 
-// MUI
-import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
-import { FormDialogProvider } from "../context/FormDialogContext/FormDialogContext";
+import { Box, CircularProgress } from "@mui/material";
+
 import { ConfirmationDialogProvider } from "../context/ConfirmationDialogContext/ConfirmationDialogContext";
+import { SnackbarProvider } from "../context/SnackbarContext/SnackbarContext";
 
 export const GlobalRouter = () => {
   const { user, token, isLoading } = useContext(KompitrailContext);
@@ -48,8 +47,8 @@ export const GlobalRouter = () => {
       {token && user && <TopBar />}
       {token && user && (
         <ConfirmationDialogProvider>
-          <NavBarApp>
-            <FormDialogProvider>
+          <SnackbarProvider>
+            <NavBarApp>
               <Routes>
                 {/* Redirect any unknown route to / */}
                 <Route path="*" element={<Navigate to={RoutesString.home} />} />
@@ -71,8 +70,8 @@ export const GlobalRouter = () => {
                   element={<EditPassword />}
                 />
               </Routes>
-            </FormDialogProvider>
-          </NavBarApp>
+            </NavBarApp>
+          </SnackbarProvider>
         </ConfirmationDialogProvider>
       )}
       {(!token || !user) && (
