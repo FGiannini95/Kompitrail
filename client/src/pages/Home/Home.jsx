@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 import { Box, Grid2 as Grid } from "@mui/material";
 
@@ -14,11 +13,6 @@ import { useSnackbar } from "../../context/SnackbarContext/SnackbarContext";
 
 export const Home = () => {
   const [allRoutes, setAllRoutes] = useState([]);
-  const [refresh, setRefresh] = useState(false);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [selectedRouteId, setSelectedRouteId] = useState(null);
-
-  const navigate = useNavigate();
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
 
@@ -35,11 +29,8 @@ export const Home = () => {
     axios
       .put(`${ROUTES_URL}/deleteroute/${route_id}`)
       .then(() => {
-        setRefresh((prev) => !prev);
+        setAllRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
         showSnackbar("Ruta eliminada con éxito");
-        setTimeout(() => {
-          navigate(-1);
-        }, 2000);
       })
       .catch((err) => {
         console.log(err);
@@ -54,9 +45,9 @@ export const Home = () => {
       onConfirm: () => handleDeleteRoute(route_id),
     });
   };
-  const handleOpenEditDialog = (route_id) => {
-    setSelectedRouteId(route_id);
-    setOpenEditDialog(true);
+
+  const handleOpenEditDialog = () => {
+    console.log("To implement later");
   };
 
   return (
