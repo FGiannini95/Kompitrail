@@ -5,7 +5,9 @@ import { ROUTES_URL } from "../../../../server/config/serverConfig";
 export const RoutesContext = createContext();
 
 export const RoutesProvider = ({ children }) => {
-  const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
+  const [allRoutes, setAllRoutes] = useState([]);
+  const [userRoutes, setUserRoutes] = useState([]);
+
   const [dialog, setDialog] = useState({
     isOpen: false,
     mode: null,
@@ -20,15 +22,17 @@ export const RoutesProvider = ({ children }) => {
     setDialog({ isOpen: false, mode: null, route_id: null });
   };
 
-  const loadRoutes = useCallback((user_id) => {
+  const loadAllRoutes = useCallback(() => {}, []);
+
+  const loadUserRoutes = useCallback((user_id) => {
     axios
       .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}`)
       .then((res) => {
-        setAllRoutesOneUser(res.data);
+        setUserRoutes(res.data);
       })
       .catch((err) => {
         console.log(err);
-        setAllRoutesOneUser([]);
+        setUserRoutes([]);
       });
   }, []);
 
@@ -37,10 +41,12 @@ export const RoutesProvider = ({ children }) => {
   const deleteRoute = useCallback((route_id) => {}, []);
 
   const value = {
-    allRoutesOneUser,
+    allRoutes,
+    userRoutes,
     openDialog,
     closeDialog,
-    loadRoutes,
+    loadAllRoutes,
+    loadUserRoutes,
     createRoute,
     editRoute,
     deleteRoute,
