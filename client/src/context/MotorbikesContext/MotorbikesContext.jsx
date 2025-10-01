@@ -7,6 +7,19 @@ export const MotorbikesContext = createContext();
 
 export const MotorbikesProvider = ({ children }) => {
   const [allMotorbikes, setAllMotorbikes] = useState([]);
+  const [dialog, setDialog] = useState({
+    isOpen: false,
+    mode: null,
+    selectedId: null,
+  });
+
+  const openDialog = ({ mode, motorbike_id = null }) => {
+    setDialog({ isOpen: true, mode, selectedId: motorbike_id });
+  };
+
+  const closeDialog = () => {
+    setDialog({ isOpen: false, mode: null, motorbike_id: null });
+  };
 
   const loadMotorbikes = useCallback((user_id) => {
     axios
@@ -46,6 +59,9 @@ export const MotorbikesProvider = ({ children }) => {
     createMotorbike,
     editMotorbike,
     deleteMotorbike,
+    dialog,
+    openDialog,
+    closeDialog,
   };
 
   return (

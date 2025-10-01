@@ -29,17 +29,20 @@ import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
 import { useMotorbikes } from "../../../context/MotorbikesContext/MotorbikesContext";
 
 export const Motorbike = () => {
-  const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [selectedMotorbikeId, setSelectedMotorbikeId] = useState(null);
   const [openImg, setOpenImg] = useState(false);
   const [imgSelected, setImgSelected] = useState();
 
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
+
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
-  const { allMotorbikes, loadMotorbikes, deleteMotorbike } = useMotorbikes();
+  const {
+    allMotorbikes,
+    loadMotorbikes,
+    deleteMotorbike,
+    openDialog: openCreateEditDialog,
+  } = useMotorbikes();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -67,19 +70,12 @@ export const Motorbike = () => {
     });
   };
 
-  const handleOpenCreateDialog = () => {
-    setOpenCreateDialog(true);
+  const openCreateDialog = () => {
+    openCreateEditDialog({ mode: "create" });
   };
 
-  const handleOpenEditDialog = (motorbike_id) => {
-    setSelectedMotorbikeId(motorbike_id);
-    setOpenEditDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenCreateDialog(false);
-    setOpenEditDialog(false);
-  };
+  const openEditMotorbike = (motorbike_id) =>
+    openCreateEditDialog({ mode: "edit", motorbike_id });
 
   const handleCloseImg = () => {
     setImgSelected();
@@ -108,7 +104,7 @@ export const Motorbike = () => {
                 model={motorbike.motorbike_model}
                 motorbike_id={motorbike.motorbike_id}
                 img={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
-                onEdit={handleOpenEditDialog}
+                onEdit={openEditMotorbike}
                 onDelete={handleOpenDeleteDialog}
               />
             </Grid>
@@ -119,13 +115,12 @@ export const Motorbike = () => {
           </Grid>
         )}
       </Box>
-
       <Grid>
         <Button
           type="button"
           variant="outlined"
           fullWidth
-          onClick={handleOpenCreateDialog}
+          onClick={openCreateDialog}
           sx={{
             color: "black",
             borderColor: "#eeeeee",
@@ -140,17 +135,8 @@ export const Motorbike = () => {
           <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
         </Button>
       </Grid>
-      <MotorbikeCreateDialog
-        openCreateDialog={openCreateDialog}
-        handleCloseDialog={handleCloseDialog}
-      />
-
-      <MotorbikeEditDialog
-        openEditDialog={openEditDialog}
-        handleCloseDialog={handleCloseDialog}
-        motorbike_id={selectedMotorbikeId}
-      />
-
+      <MotorbikeCreateDialog />
+      <MotorbikeEditDialog />
       <FullScreenImg
         open={openImg}
         onClose={handleCloseImg}

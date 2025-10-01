@@ -22,15 +22,14 @@ const initialValue = {
   photo: null,
 };
 
-export const MotorbikeCreateDialog = ({
-  openCreateDialog,
-  handleCloseDialog,
-}) => {
+export const MotorbikeCreateDialog = () => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
   const [msgError, setMsgError] = useState("");
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
-  const { createMotorbike } = useMotorbikes();
+  const { createMotorbike, dialog, closeDialog } = useMotorbikes();
+
+  const isOpen = dialog.isOpen && dialog.mode === "create";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,8 +48,9 @@ export const MotorbikeCreateDialog = ({
   };
 
   const cleanDialog = () => {
-    handleCloseDialog();
+    closeDialog();
     setCreateOneMotorbike(initialValue);
+    setMsgError("");
   };
 
   const handleConfirm = (e) => {
@@ -94,7 +94,7 @@ export const MotorbikeCreateDialog = ({
   };
 
   return (
-    <Dialog open={openCreateDialog} onClose={cleanDialog}>
+    <Dialog open={isOpen} onClose={cleanDialog}>
       <DialogTitle>Añadir moto</DialogTitle>
       <DialogContent>
         <Button

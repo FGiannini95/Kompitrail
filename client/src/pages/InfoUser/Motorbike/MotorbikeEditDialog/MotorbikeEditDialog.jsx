@@ -21,18 +21,21 @@ const initialValue = {
   photo: null,
 };
 
-export const MotorbikeEditDialog = ({
-  openEditDialog,
-  handleCloseDialog,
-  motorbike_id,
-}) => {
+export const MotorbikeEditDialog = () => {
   const [editMotorbike, setEditMotorbike] = useState(initialValue);
   const { showSnackbar } = useSnackbar();
-  const { editMotorbike: updateMotorbike } = useMotorbikes();
+  const {
+    editMotorbike: updateMotorbike,
+    dialog,
+    closeDialog,
+  } = useMotorbikes();
+
+  const isOpen = dialog.isOpen && dialog.mode === "edit";
+  const motorbike_id = dialog.selectedId;
 
   useEffect(() => {
     // We call the useEffect only if we open the dialog
-    if (openEditDialog && motorbike_id) {
+    if (isOpen && motorbike_id) {
       axios
         .get(`${MOTORBIKES_URL}/onemotorbike/${motorbike_id}`)
         .then((res) => {
@@ -47,7 +50,7 @@ export const MotorbikeEditDialog = ({
           console.log(err);
         });
     }
-  }, [openEditDialog, motorbike_id]);
+  }, [isOpen, motorbike_id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,7 +69,7 @@ export const MotorbikeEditDialog = ({
   };
 
   const cleanDialog = () => {
-    handleCloseDialog();
+    closeDialog();
     setEditMotorbike(initialValue);
   };
 
@@ -98,7 +101,7 @@ export const MotorbikeEditDialog = ({
         const update = Array.isArray(data) ? data[0] : data;
         updateMotorbike(update);
         showSnackbar("Moto actualizada con éxito");
-        handleCloseDialog();
+        closeDialog();
       })
       .catch((err) => {
         console.log(err);
@@ -107,7 +110,7 @@ export const MotorbikeEditDialog = ({
   };
 
   return (
-    <Dialog open={openEditDialog} onClose={handleCloseDialog}>
+    <Dialog open={isOpen} onClose={cleanDialog}>
       <DialogTitle>Editar moto</DialogTitle>
       <DialogContent>
         <Button
