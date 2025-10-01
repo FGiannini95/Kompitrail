@@ -26,13 +26,12 @@ import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
 // Providers
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
+import { useMotorbikes } from "../../../context/MotorbikesContext/MotorbikesContext";
 
 export const Motorbike = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [allMotorbikes, setAllMotorbikes] = useState([]);
   const [selectedMotorbikeId, setSelectedMotorbikeId] = useState(null);
-  const [refresh, setRefresh] = useState(false);
   const [openImg, setOpenImg] = useState(false);
   const [imgSelected, setImgSelected] = useState();
 
@@ -40,28 +39,19 @@ export const Motorbike = () => {
   const navigate = useNavigate();
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
+  const { allMotorbikes, loadMotorbikes, deleteMotorbike } = useMotorbikes();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
-    axios
-      .get(`${MOTORBIKES_URL}/showallmotorbikes/${user_id}`)
-      .then((res) => {
-        setAllMotorbikes(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [refresh]);
+    loadMotorbikes(user_id);
+  }, [tokenLocalStorage, loadMotorbikes]);
 
   const handleDeleteMotorbike = (motorbike_id) => {
     axios
       .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
       .then(() => {
-        setRefresh((prev) => !prev);
+        deleteMotorbike(motorbike_id);
         showSnackbar("Moto eliminada con éxito");
-        setTimeout(() => {
-          navigate(-1);
-        }, 2000);
       })
       .catch((err) => {
         console.log(err);
@@ -153,14 +143,12 @@ export const Motorbike = () => {
       <MotorbikeCreateDialog
         openCreateDialog={openCreateDialog}
         handleCloseDialog={handleCloseDialog}
-        setRefresh={setRefresh}
       />
 
       <MotorbikeEditDialog
         openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
-        setRefresh={setRefresh}
       />
 
       <FullScreenImg
