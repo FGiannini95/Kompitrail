@@ -13,6 +13,7 @@ import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
 // Providers
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
+import { useMotorbikes } from "../../../../context/MotorbikesContext/MotorbikesContext";
 
 const initialValue = {
   brand: "",
@@ -27,6 +28,7 @@ export const MotorbikeEditDialog = ({
 }) => {
   const [editMotorbike, setEditMotorbike] = useState(initialValue);
   const { showSnackbar } = useSnackbar();
+  const { editMotorbike: updateMotorbike } = useMotorbikes();
 
   useEffect(() => {
     // We call the useEffect only if we open the dialog
@@ -91,8 +93,10 @@ export const MotorbikeEditDialog = ({
 
     axios
       .put(`${MOTORBIKES_URL}/editmotorbike/${motorbike_id}`, newFormData)
-      .then(() => {
-        setEditMotorbike(editMotorbike);
+      .then(() => axios.get(`${MOTORBIKES_URL}/onemotorbike/${motorbike_id}`))
+      .then(({ data }) => {
+        const update = Array.isArray(data) ? data[0] : data;
+        updateMotorbike(update);
         showSnackbar("Moto actualizada con éxito");
         handleCloseDialog();
       })
