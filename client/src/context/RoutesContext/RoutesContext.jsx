@@ -1,0 +1,60 @@
+import axios from "axios";
+import React, { createContext, useCallback, useContext, useState } from "react";
+import { ROUTES_URL } from "../../../../server/config/serverConfig";
+
+export const RoutesContext = createContext();
+
+export const RoutesProvider = ({ children }) => {
+  const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
+  const [dialog, setDialog] = useState({
+    isOpen: false,
+    mode: null,
+    selectedId: null,
+  });
+
+  const openDialog = ({ mode, route_id = null }) => {
+    setDialog({ isOpen: true, mode, selectedId: route_id });
+  };
+
+  const closeDialog = () => {
+    setDialog({ isOpen: false, mode: null, route_id: null });
+  };
+
+  const loadRoutes = useCallback((user_id) => {
+    axios
+      .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}`)
+      .then((res) => {
+        setAllRoutesOneUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setAllRoutesOneUser([]);
+      });
+  }, []);
+
+  const createRoute = useCallback((route) => {}, []);
+  const editRoute = useCallback((updateRoute) => {}, []);
+  const deleteRoute = useCallback((route_id) => {}, []);
+
+  const value = {
+    allRoutesOneUser,
+    openDialog,
+    closeDialog,
+    loadRoutes,
+    createRoute,
+    editRoute,
+    deleteRoute,
+  };
+
+  return (
+    <RoutesContext.Provider value={value}>{children}</RoutesContext.Provider>
+  );
+};
+
+export const useRoutes = () => {
+  const ctx = useContext(RoutesContext);
+  if (!ctx) {
+    throw new Error("useRoutes must be used within RoutesProvider");
+  }
+  return ctx;
+};
