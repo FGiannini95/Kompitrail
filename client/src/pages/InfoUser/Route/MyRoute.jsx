@@ -27,11 +27,8 @@ import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
 
 export const MyRoute = () => {
   const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
-
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [selectedRouteId, setSelectedRouteId] = useState(null);
-  const [refresh, setRefresh] = useState(false);
 
   const navigate = useNavigate();
   const tokenLocalStorage = getLocalStorage("token");
@@ -48,7 +45,7 @@ export const MyRoute = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [refresh]);
+  }, []);
 
   const handleOpenCreateRoute = () => {
     navigate(RoutesString.createTrip);
@@ -58,11 +55,10 @@ export const MyRoute = () => {
     axios
       .put(`${ROUTES_URL}/deleteroute/${route_id}`)
       .then(() => {
-        setRefresh((prev) => !prev);
+        setAllRoutesOneUser((prev) =>
+          prev.filter((r) => r.route_id !== route_id)
+        );
         showSnackbar("Ruta eliminada con éxito");
-        setTimeout(() => {
-          navigate(-1);
-        }, 2000);
       })
       .catch((err) => {
         console.log(err);
@@ -84,7 +80,6 @@ export const MyRoute = () => {
   };
 
   const handleCloseDialog = () => {
-    setOpenDeleteDialog(false);
     setOpenEditDialog(false);
   };
 
@@ -142,7 +137,6 @@ export const MyRoute = () => {
         openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}
         route_id={selectedRouteId}
-        setRefresh={setRefresh}
       />
     </Grid>
   );

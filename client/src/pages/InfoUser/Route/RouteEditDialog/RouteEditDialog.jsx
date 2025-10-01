@@ -41,7 +41,6 @@ export const RouteEditDialog = ({
   openEditDialog,
   handleCloseDialog,
   route_id,
-  setRefresh,
 }) => {
   const [editRoute, setEditRoute] = useState(initialValue);
   const [errors, setErrors] = useState({});
@@ -136,7 +135,6 @@ export const RouteEditDialog = ({
     axios
       .put(`${ROUTES_URL}/editroute/${route_id}`, newFormData)
       .then(() => {
-        setRefresh((prev) => !prev);
         showSnackbar("Ruta actualizada con éxito");
         handleCloseDialog();
         setErrors({});
