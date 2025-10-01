@@ -24,7 +24,6 @@ export const MotorbikeEditDialog = ({
   openEditDialog,
   handleCloseDialog,
   motorbike_id,
-  setRefresh,
 }) => {
   const [editMotorbike, setEditMotorbike] = useState(initialValue);
   const { showSnackbar } = useSnackbar();
@@ -93,7 +92,7 @@ export const MotorbikeEditDialog = ({
     axios
       .put(`${MOTORBIKES_URL}/editmotorbike/${motorbike_id}`, newFormData)
       .then(() => {
-        setRefresh((prev) => !prev);
+        setEditMotorbike(editMotorbike);
         showSnackbar("Moto actualizada con éxito");
         handleCloseDialog();
       })

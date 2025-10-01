@@ -14,6 +14,7 @@ import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
 //Providers
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
+import { useMotorbikes } from "../../../../context/MotorbikesContext/MotorbikesContext";
 
 const initialValue = {
   brand: "",
@@ -24,12 +25,12 @@ const initialValue = {
 export const MotorbikeCreateDialog = ({
   openCreateDialog,
   handleCloseDialog,
-  setRefresh,
 }) => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
   const [msgError, setMsgError] = useState("");
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
+  const { createMotorbike, loadMotorbikes } = useMotorbikes();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -82,14 +83,16 @@ export const MotorbikeCreateDialog = ({
     axios
       .post(`${MOTORBIKES_URL}/createmotorbike`, newFormData)
       .then(() => {
-        setRefresh((prev) => !prev);
+        return loadMotorbikes(user.user_id);
+      })
+      .then(() => {
         showSnackbar("Moto añadida con éxito");
+        cleanDialog();
       })
       .catch((err) => {
         console.log(err);
         showSnackbar("Error al añadir la moto", "error");
       });
-    cleanDialog();
   };
 
   return (
