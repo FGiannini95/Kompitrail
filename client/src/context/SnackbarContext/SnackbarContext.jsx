@@ -8,10 +8,10 @@ export const SnackbarProvider = ({ children }) => {
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("success");
 
-  const showShanckbar = () => {
+  const showSnackbar = (message, severity = "success") => {
     setMessage(message);
     setSeverity(severity);
-    setOpen(open);
+    setOpen(true);
   };
 
   const closeSnackbar = () => {
@@ -19,7 +19,7 @@ export const SnackbarProvider = ({ children }) => {
   };
 
   const value = {
-    showShanckbar,
+    showSnackbar,
     closeSnackbar,
   };
 

@@ -12,34 +12,34 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import axios from "axios";
-import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
-import { MotorbikeEditDialog } from "./MotorbikeEditDialog/MotorbikeEditDialog";
-import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+// Components
+import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
+import { MotorbikeEditDialog } from "./MotorbikeEditDialog/MotorbikeEditDialog";
 import { MotorbikeCard } from "./MotorbikeCard/MotorbikeCard";
 import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
-import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
-import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
+// Utils
+import { getLocalStorage } from "../../../helpers/localStorageUtils";
+import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
+// Providers
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
+import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
 
 export const Motorbike = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [allMotorbikes, setAllMotorbikes] = useState([]);
   const [selectedMotorbikeId, setSelectedMotorbikeId] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const [openImg, setOpenImg] = useState(false);
   const [imgSelected, setImgSelected] = useState();
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
   const { openDialog } = useConfirmationDialog();
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -59,15 +59,15 @@ export const Motorbike = () => {
       .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
       // Display result + navigation
       .then(() => {
-        //showSnackbar("Moto eliminada con éxito");
-        //triggerRefresh();
+        setRefresh((prev) => !prev);
+        showSnackbar("Moto eliminada con éxito");
         setTimeout(() => {
           navigate(-1);
         }, 2000)
           // Errors
           .catch((err) => {
             console.log(err);
-            //showSnackbar("Error al eliminar la moto", error);
+            showSnackbar("Error al eliminar la moto", "error");
           });
       });
   };
@@ -91,23 +91,12 @@ export const Motorbike = () => {
 
   const handleCloseDialog = () => {
     setOpenCreateDialog(false);
-    setOpenDeleteDialog(false);
     setOpenEditDialog(false);
   };
 
   const handleCloseImg = () => {
     setImgSelected();
     setOpenImg(false);
-  };
-
-  const handleOpenSnackbar = (message, severity = "success") => {
-    setSnackbarMessage(message);
-    setSnackbarSeverity(severity);
-    setShowSnackbar(true);
-  };
-
-  const handleCloseSnackbar = () => {
-    setShowSnackbar(false);
   };
 
   return (
@@ -168,7 +157,6 @@ export const Motorbike = () => {
         openCreateDialog={openCreateDialog}
         handleCloseDialog={handleCloseDialog}
         setRefresh={setRefresh}
-        handleOpenSnackbar={handleOpenSnackbar}
       />
 
       <MotorbikeEditDialog
@@ -176,20 +164,12 @@ export const Motorbike = () => {
         handleCloseDialog={handleCloseDialog}
         motorbike_id={selectedMotorbikeId}
         setRefresh={setRefresh}
-        handleOpenSnackbar={handleOpenSnackbar}
       />
 
       <FullScreenImg
         open={openImg}
         onClose={handleCloseImg}
         img={imgSelected}
-      />
-
-      <SnackbarMessage
-        open={showSnackbar}
-        message={snackbarMessage}
-        severity={snackbarSeverity}
-        handleClose={handleCloseSnackbar}
       />
     </Grid>
   );

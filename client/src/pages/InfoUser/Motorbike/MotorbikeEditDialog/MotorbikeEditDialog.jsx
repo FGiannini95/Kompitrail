@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-// MUI
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -8,11 +8,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 
-// MUI-ICONS
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-
-import axios from "axios";
+// Utils
 import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
+// Providers
+import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 
 const initialValue = {
   brand: "",
@@ -25,9 +25,9 @@ export const MotorbikeEditDialog = ({
   handleCloseDialog,
   motorbike_id,
   setRefresh,
-  handleOpenSnackbar,
 }) => {
   const [editMotorbike, setEditMotorbike] = useState(initialValue);
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     // We call the useEffect only if we open the dialog
@@ -94,8 +94,12 @@ export const MotorbikeEditDialog = ({
       .put(`${MOTORBIKES_URL}/editmotorbike/${motorbike_id}`, newFormData)
       .then(() => {
         setRefresh((prev) => !prev);
-        handleOpenSnackbar("Moto actualizada con éxito");
+        showSnackbar("Moto actualizada con éxito");
         handleCloseDialog();
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error al actualizar la moto", "error");
       });
   };
 

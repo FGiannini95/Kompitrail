@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
+import axios from "axios";
 
-// MUI
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -8,12 +8,12 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 
-// MUI-ICONS
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-
-import axios from "axios";
-import { KompitrailContext } from "../../../../context/KompitrailContext";
+// Utils
 import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
+//Providers
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 
 const initialValue = {
   brand: "",
@@ -25,11 +25,11 @@ export const MotorbikeCreateDialog = ({
   openCreateDialog,
   handleCloseDialog,
   setRefresh,
-  handleOpenSnackbar,
 }) => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
   const [msgError, setMsgError] = useState("");
   const { user } = useContext(KompitrailContext);
+  const { showSnackbar } = useSnackbar();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,11 +83,11 @@ export const MotorbikeCreateDialog = ({
       .post(`${MOTORBIKES_URL}/createmotorbike`, newFormData)
       .then(() => {
         setRefresh((prev) => !prev);
-        handleOpenSnackbar("Moto añadida con éxito");
+        showSnackbar("Moto añadida con éxito");
       })
       .catch((err) => {
         console.log(err);
-        handleOpenSnackbar("Error al añadir la moto.", "error");
+        showSnackbar("Error al añadir la moto", "error");
       });
     cleanDialog();
   };
