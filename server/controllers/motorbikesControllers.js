@@ -8,8 +8,25 @@ class motorbikesControllers {
     const img = req.file ? req.file.filename : "default.png";
     let sql = `INSERT INTO motorbike (user_id, motorbike_brand, motorbike_model, img, is_deleted)
     VALUES ('${user_id}', '${brand}', '${model}', '${img}', false)`;
-    connection.query(sql, (error, result) => {
-      error ? res.status(500).json({ error }) : res.status(200).json(result);
+
+    const insertArgs = [user_id, brand, model, img];
+
+    connection.query(sql, insertArgs, (error, result) => {
+      if (error) {
+        return res.status(500).json({ error });
+      }
+
+      let sqlSelect = `SELECT motorbike_id, user_id, motorbike_brand, motorbike_model, img FROM motorbike where motorbike_id = ?`;
+
+      connection.query(sqlSelect, [result.insertId], (error2, result2) => {
+        if (error2) {
+          return res.status(500).json({ error2 });
+        }
+        if (!result2 || result2.length === 0) {
+          return res.status(404).json({ error: "Moto no encontrada" });
+        }
+        return res.status(200).json(result2[0]);
+      });
     });
   };
 

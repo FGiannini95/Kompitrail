@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 import {
   Typography,
@@ -10,33 +13,27 @@ import {
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { RoutesString } from "../../../routes/routes";
+// Components
 import { RouteCard } from "./RouteCard/RouteCard";
-import { getLocalStorage } from "../../../helpers/localStorageUtils";
-import { jwtDecode } from "jwt-decode";
-import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
-import { SnackbarMessage } from "../../../components/SnackbarMessage/SnackbarMessage";
 import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
+// Utils
+import { RoutesString } from "../../../routes/routes";
+import { getLocalStorage } from "../../../helpers/localStorageUtils";
+import { ROUTES_URL } from "../../../../../server/config/serverConfig";
+// Providers
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
+import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
 
 export const MyRoute = () => {
   const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
-
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [selectedRouteId, setSelectedRouteId] = useState(null);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const [refresh, setRefresh] = useState(false);
 
   const navigate = useNavigate();
   const tokenLocalStorage = getLocalStorage("token");
   const { openDialog } = useConfirmationDialog();
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -48,7 +45,7 @@ export const MyRoute = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [refresh]);
+  }, []);
 
   const handleOpenCreateRoute = () => {
     navigate(RoutesString.createTrip);
@@ -57,18 +54,15 @@ export const MyRoute = () => {
   const handleDeleteRoute = (route_id) => {
     axios
       .put(`${ROUTES_URL}/deleteroute/${route_id}`)
-      // Display result + navigation
       .then(() => {
-        //showSnackbar("Ruta eliminada con éxito");
-        //triggerRefresh();
-        setTimeout(() => {
-          navigate(-1);
-        }, 2000)
-          // Errors
-          .catch((err) => {
-            console.log(err);
-            //showSnackbar("Error al eliminar la ruta", error);
-          });
+        setAllRoutesOneUser((prev) =>
+          prev.filter((r) => r.route_id !== route_id)
+        );
+        showSnackbar("Ruta eliminada con éxito");
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error al eliminar la ruta", "error");
       });
   };
 
@@ -86,18 +80,7 @@ export const MyRoute = () => {
   };
 
   const handleCloseDialog = () => {
-    setOpenDeleteDialog(false);
     setOpenEditDialog(false);
-  };
-
-  const handleOpenSnackbar = (message, severity = "success") => {
-    setSnackbarMessage(message);
-    setSnackbarSeverity(severity);
-    setShowSnackbar(true);
-  };
-
-  const handleCloseSnackbar = () => {
-    setShowSnackbar(false);
   };
 
   return (
@@ -154,15 +137,6 @@ export const MyRoute = () => {
         openEditDialog={openEditDialog}
         handleCloseDialog={handleCloseDialog}
         route_id={selectedRouteId}
-        setRefresh={setRefresh}
-        handleOpenSnackbar={handleOpenSnackbar}
-      />
-
-      <SnackbarMessage
-        open={showSnackbar}
-        message={snackbarMessage}
-        severity={snackbarSeverity}
-        handleClose={handleCloseSnackbar}
       />
     </Grid>
   );

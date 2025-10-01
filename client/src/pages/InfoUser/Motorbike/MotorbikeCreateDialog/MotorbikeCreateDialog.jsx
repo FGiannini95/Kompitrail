@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
+import axios from "axios";
 
-// MUI
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -8,12 +8,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 
-// MUI-ICONS
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-
-import axios from "axios";
-import { KompitrailContext } from "../../../../context/KompitrailContext";
+// Utils
 import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
+//Providers
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
+import { useMotorbikes } from "../../../../context/MotorbikesContext/MotorbikesContext";
 
 const initialValue = {
   brand: "",
@@ -21,15 +22,14 @@ const initialValue = {
   photo: null,
 };
 
-export const MotorbikeCreateDialog = ({
-  openCreateDialog,
-  handleCloseDialog,
-  setRefresh,
-  handleOpenSnackbar,
-}) => {
+export const MotorbikeCreateDialog = () => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
   const [msgError, setMsgError] = useState("");
   const { user } = useContext(KompitrailContext);
+  const { showSnackbar } = useSnackbar();
+  const { createMotorbike, dialog, closeDialog } = useMotorbikes();
+
+  const isOpen = dialog.isOpen && dialog.mode === "create";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,8 +48,9 @@ export const MotorbikeCreateDialog = ({
   };
 
   const cleanDialog = () => {
-    handleCloseDialog();
+    closeDialog();
     setCreateOneMotorbike(initialValue);
+    setMsgError("");
   };
 
   const handleConfirm = (e) => {
@@ -81,19 +82,19 @@ export const MotorbikeCreateDialog = ({
 
     axios
       .post(`${MOTORBIKES_URL}/createmotorbike`, newFormData)
-      .then(() => {
-        setRefresh((prev) => !prev);
-        handleOpenSnackbar("Moto añadida con éxito");
+      .then(({ data }) => {
+        createMotorbike(data);
+        showSnackbar("Moto añadida con éxito");
+        cleanDialog();
       })
       .catch((err) => {
         console.log(err);
-        handleOpenSnackbar("Error al añadir la moto.", "error");
+        showSnackbar("Error al añadir la moto", "error");
       });
-    cleanDialog();
   };
 
   return (
-    <Dialog open={openCreateDialog} onClose={cleanDialog}>
+    <Dialog open={isOpen} onClose={cleanDialog}>
       <DialogTitle>Añadir moto</DialogTitle>
       <DialogContent>
         <Button

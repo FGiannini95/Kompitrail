@@ -1,25 +1,13 @@
 import React, { useState } from "react";
 
-// MUI
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid2";
-import Button from "@mui/material/Button";
+import { Typography, Grid2 as Grid, Button } from "@mui/material";
 
-// MUI-ICONS
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import { RouteCreateDialog } from "../InfoUser/Route/RouteCreateDialog/RouteCreateDialog";
 
 export const CreateTrip = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  // const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  // const [openEditDialog, setOpenEditDialog] = useState(false);
-  // const [allRoutes, setAllRoutes] = useState([]);
-  // const [selectedMotorbikeId, setSelectedMotorbikeId] = useState(null);
-  // const [refresh, setRefresh] = useState(false);
-  // const [showSnackbar, setShowSnackbar] = useState(false);
-  // const [snackbarMessage, setSnackbarMessage] = useState("");
-  // const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const handleOpenCreateDialog = () => {
     setOpenCreateDialog(true);
@@ -27,8 +15,6 @@ export const CreateTrip = () => {
 
   const handleCloseDialog = () => {
     setOpenCreateDialog(false);
-    //setOpenDeleteDialog(false);
-    //setOpenEditDialog(false);
   };
 
   return (
