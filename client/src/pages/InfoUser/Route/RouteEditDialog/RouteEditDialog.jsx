@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+
 import {
   Autocomplete,
   Box,
@@ -8,17 +10,19 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
+  Grid2 as Grid,
   InputAdornment,
   TextareaAutosize,
   TextField,
   Typography,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
-
+// Components
 import { CreateRouteCostumeTextfield } from "../../../../components/CreateRouteCostumeTextfield/CreateRouteCostumeTextfield";
-import axios from "axios";
+// Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
+// Providers
+import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 
 const initialValue = {
   route_name: "",
@@ -38,10 +42,11 @@ export const RouteEditDialog = ({
   handleCloseDialog,
   route_id,
   setRefresh,
-  handleOpenSnackbar,
 }) => {
   const [editRoute, setEditRoute] = useState(initialValue);
   const [errors, setErrors] = useState({});
+
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (openEditDialog && route_id) {
@@ -132,12 +137,13 @@ export const RouteEditDialog = ({
       .put(`${ROUTES_URL}/editroute/${route_id}`, newFormData)
       .then(() => {
         setRefresh((prev) => !prev);
-        handleOpenSnackbar("Ruta actualizada con éxito");
+        showSnackbar("Ruta actualizada con éxito");
         handleCloseDialog();
         setErrors({});
       })
       .catch((err) => {
         console.log(err);
+        showSnackbar("Error al actualizar la ruta", "error");
       });
   };
 

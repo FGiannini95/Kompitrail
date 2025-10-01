@@ -1,27 +1,32 @@
 import React, { useContext, useState } from "react";
-
-// MUI
-import Grid from "@mui/material/Grid2";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Checkbox from "@mui/material/Checkbox";
-import Typography from "@mui/material/Typography";
-import Autocomplete from "@mui/material/Autocomplete";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogActions from "@mui/material/DialogActions";
-import { TextareaAutosize } from "@mui/material";
-import InputAdornment from "@mui/material/InputAdornment";
-import ClearIcon from "@mui/icons-material/Clear";
-
 import axios from "axios";
-import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { useNavigate } from "react-router-dom";
-import { RoutesString } from "../../../../routes/routes";
-import { KompitrailContext } from "../../../../context/KompitrailContext";
+
+import {
+  Box,
+  TextField,
+  Checkbox,
+  Typography,
+  Autocomplete,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  InputAdornment,
+  TextareaAutosize,
+  Grid2 as Grid,
+} from "@mui/material";
+
+import ClearIcon from "@mui/icons-material/Clear";
+// Components
 import { CreateRouteCostumeTextfield } from "../../../../components/CreateRouteCostumeTextfield/CreateRouteCostumeTextfield";
+// Utils
+import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
+import { RoutesString } from "../../../../routes/routes";
+// Providers
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 
 const initialValue = {
   route_name: "",
@@ -43,6 +48,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   const [errors, setErrors] = useState({});
 
   const { user } = useContext(KompitrailContext);
+  const { showSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
 
@@ -164,10 +170,12 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
       .post(`${ROUTES_URL}/createroute`, newFormData)
       .then((res) => {
         setCreateOneRoute(res.data);
+        showSnackbar("Ruata añadida con éxito");
         navigate(RoutesString.route);
       })
       .catch((err) => {
         console.log(err);
+        showSnackbar("Error al añadir la ruta", "error");
       });
     cleanDialog();
   };
