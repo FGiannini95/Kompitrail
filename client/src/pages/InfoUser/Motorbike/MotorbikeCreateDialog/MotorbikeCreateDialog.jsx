@@ -83,10 +83,7 @@ export const MotorbikeCreateDialog = ({
     axios
       .post(`${MOTORBIKES_URL}/createmotorbike`, newFormData)
       .then(({ data }) => {
-        return axios.get(`${MOTORBIKES_URL}/onemotorbike/${data.insertId}`);
-      })
-      .then(({ data: newMotorbike }) => {
-        createMotorbike(newMotorbike);
+        createMotorbike(data);
         showSnackbar("Moto añadida con éxito");
         cleanDialog();
       })
