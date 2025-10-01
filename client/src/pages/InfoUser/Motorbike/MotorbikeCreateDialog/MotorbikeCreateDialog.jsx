@@ -30,7 +30,7 @@ export const MotorbikeCreateDialog = ({
   const [msgError, setMsgError] = useState("");
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
-  const { createMotorbike, loadMotorbikes } = useMotorbikes();
+  const { createMotorbike } = useMotorbikes();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -82,10 +82,11 @@ export const MotorbikeCreateDialog = ({
 
     axios
       .post(`${MOTORBIKES_URL}/createmotorbike`, newFormData)
-      .then(() => {
-        return loadMotorbikes(user.user_id);
+      .then(({ data }) => {
+        return axios.get(`${MOTORBIKES_URL}/onemotorbike/${data.insertId}`);
       })
-      .then(() => {
+      .then(({ data: newMotorbike }) => {
+        createMotorbike(newMotorbike);
         showSnackbar("Moto añadida con éxito");
         cleanDialog();
       })
