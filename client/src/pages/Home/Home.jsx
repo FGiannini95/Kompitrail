@@ -3,9 +3,9 @@ import axios from "axios";
 
 import { Box, Grid2 as Grid } from "@mui/material";
 
-import { ROUTES_URL } from "../../../../server/config/serverConfig";
 import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
 import { EmptyState } from "../../components/EmptyState/EmptyState";
+import { ROUTES_URL } from "../../../../server/config/serverConfig";
 
 export const Home = ({ handleOpenEditDialog, handleOpenDeleteDialog }) => {
   const [allRoutes, setAllRoutes] = useState([]);

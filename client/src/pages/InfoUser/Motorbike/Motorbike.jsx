@@ -55,20 +55,17 @@ export const Motorbike = () => {
 
   const handleDeleteMotorbike = (motorbike_id) => {
     axios
-      // BE connection
       .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
-      // Display result + navigation
       .then(() => {
         setRefresh((prev) => !prev);
         showSnackbar("Moto eliminada con éxito");
         setTimeout(() => {
           navigate(-1);
-        }, 2000)
-          // Errors
-          .catch((err) => {
-            console.log(err);
-            showSnackbar("Error al eliminar la moto", "error");
-          });
+        }, 2000);
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error al eliminar la moto", "error");
       });
   };
 
