@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Typography, Grid2 as Grid, Button } from "@mui/material";
 
@@ -8,7 +8,7 @@ import { RouteCreateDialog } from "../InfoUser/Route/RouteCreateDialog/RouteCrea
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 
 export const CreateTrip = () => {
-  const { openCreateEditDialog } = useRoutes();
+  const { openDialog: openCreateEditDialog } = useRoutes();
 
   const openCreateDialog = () => {
     openCreateEditDialog({ mode: "create" });
