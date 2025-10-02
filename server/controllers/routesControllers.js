@@ -34,38 +34,64 @@ class routesControllers {
       return res.status(400).json({ error: "Faltan campos requeridos." });
     }
 
-    let sql = `INSERT INTO route (
-      user_id, route_name, date, starting_point, ending_point, level, distance, is_verified, suitable_motorbike_type, estimated_time, participants, route_description, is_deleted
-      ) 
-      VALUES (
-        '${user_id}', 
-        '${route_name}',
-        '${date}',
-        '${starting_point}', 
-        '${ending_point}',
-        '${level}',
-        '${distance}', 
-        '1',
-        '${suitable_motorbike_type}', 
-        '${estimated_time}',
-        '${participants}', 
-        '${route_description}',  '0'
-      );`;
+    const sql = `
+    INSERT INTO route (
+      user_id, route_name, date, starting_point, ending_point, level, distance,
+      is_verified, suitable_motorbike_type, estimated_time, participants,
+      route_description, is_deleted
+    )
+    VALUES (
+      '${user_id}',
+      '${route_name}',
+      '${date}',
+      '${starting_point}',
+      '${ending_point}',
+      '${level}',
+      '${distance}',
+      '1',
+      '${suitable_motorbike_type}',
+      '${estimated_time}',
+      '${participants}',
+      '${route_description}',
+      '0'
+    );
+  `;
+
     connection.query(sql, (error, result) => {
-      error ? res.status(500).json({ error }) : res.status(200).json(result);
+      if (error) {
+        return res.status(500).json({ error });
+      }
+
+      const sqlSelect = `
+      SELECT route_id, user_id, route_name, \`date\`, starting_point, ending_point,
+             level, distance, is_verified, suitable_motorbike_type,
+             estimated_time, participants, route_description, is_deleted
+      FROM route
+      WHERE route_id = ?
+    `;
+
+      connection.query(sqlSelect, [result.insertId], (error2, result2) => {
+        if (error2) {
+          return res.status(500).json({ error: error2 });
+        }
+        if (!result2 || result2.length === 0) {
+          return res.status(404).json({ error: "Ruta no encontrada" });
+        }
+        return res.status(200).json(result2[0]);
+      });
     });
   };
 
   showAllRoutesOneUser = (req, res) => {
     const { id: user_id } = req.params;
-    let sql = `SELECT * FROM route WHERE user_id = '${user_id}' AND is_deleted = 0`;
+    let sql = `SELECT * FROM route WHERE user_id = '${user_id}' AND is_deleted = 0 ORDER BY route_id DESC`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
   };
 
   showAllRoutes = (req, res) => {
-    let sql = `SELECT * FROM route WHERE is_deleted = 0`;
+    let sql = `SELECT * FROM route WHERE is_deleted = 0 ORDER BY route_id DESC`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });

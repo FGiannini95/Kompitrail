@@ -24,6 +24,7 @@ import { Box, CircularProgress } from "@mui/material";
 import { ConfirmationDialogProvider } from "../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { SnackbarProvider } from "../context/SnackbarContext/SnackbarContext";
 import { MotorbikesProvider } from "../context/MotorbikesContext/MotorbikesContext";
+import { RoutesProvider } from "../context/RoutesContext/RoutesContext";
 
 export const GlobalRouter = () => {
   const { user, token, isLoading } = useContext(KompitrailContext);
@@ -50,35 +51,46 @@ export const GlobalRouter = () => {
         <ConfirmationDialogProvider>
           <SnackbarProvider>
             <MotorbikesProvider>
-              <NavBarApp>
-                <Routes>
-                  {/* Redirect any unknown route to / */}
-                  <Route
-                    path="*"
-                    element={<Navigate to={RoutesString.home} />}
-                  />
-                  <Route path={RoutesString.home} element={<Home />} />
-                  <Route path={RoutesString.search} element={<Search />} />
-                  <Route path={RoutesString.chat} element={<Chat />} />
-                  <Route
-                    path={RoutesString.createTrip}
-                    element={<CreateTrip />}
-                  />
-                  <Route path={RoutesString.profile} element={<Profile />} />
-                  <Route path={RoutesString.infouser} element={<InfoUser />} />
-                  <Route path={RoutesString.editUser} element={<EditUser />} />
-                  <Route
-                    path={RoutesString.motorbike}
-                    element={<Motorbike />}
-                  />
-                  <Route path={RoutesString.settings} element={<Settings />} />
-                  <Route path={RoutesString.route} element={<MyRoute />} />
-                  <Route
-                    path={RoutesString.editPassword}
-                    element={<EditPassword />}
-                  />
-                </Routes>
-              </NavBarApp>
+              <RoutesProvider>
+                <NavBarApp>
+                  <Routes>
+                    {/* Redirect any unknown route to / */}
+                    <Route
+                      path="*"
+                      element={<Navigate to={RoutesString.home} />}
+                    />
+                    <Route path={RoutesString.home} element={<Home />} />
+                    <Route path={RoutesString.search} element={<Search />} />
+                    <Route path={RoutesString.chat} element={<Chat />} />
+                    <Route
+                      path={RoutesString.createTrip}
+                      element={<CreateTrip />}
+                    />
+                    <Route path={RoutesString.profile} element={<Profile />} />
+                    <Route
+                      path={RoutesString.infouser}
+                      element={<InfoUser />}
+                    />
+                    <Route
+                      path={RoutesString.editUser}
+                      element={<EditUser />}
+                    />
+                    <Route
+                      path={RoutesString.motorbike}
+                      element={<Motorbike />}
+                    />
+                    <Route
+                      path={RoutesString.settings}
+                      element={<Settings />}
+                    />
+                    <Route path={RoutesString.route} element={<MyRoute />} />
+                    <Route
+                      path={RoutesString.editPassword}
+                      element={<EditPassword />}
+                    />
+                  </Routes>
+                </NavBarApp>
+              </RoutesProvider>
             </MotorbikesProvider>
           </SnackbarProvider>
         </ConfirmationDialogProvider>

@@ -27,6 +27,7 @@ import { RoutesString } from "../../../../routes/routes";
 // Providers
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
+import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 
 const initialValue = {
   route_name: "",
@@ -43,14 +44,16 @@ const initialValue = {
   user_id: "",
 };
 
-export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
+export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(initialValue);
   const [errors, setErrors] = useState({});
 
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
+  const { createRoute, dialog, closeDialog } = useRoutes();
 
   const navigate = useNavigate();
+  const isOpen = dialog.isOpen && dialog.mode === "create";
 
   const level = [
     { id: 1, name: "Principiante" },
@@ -86,7 +89,7 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
   };
 
   const cleanDialog = () => {
-    handleCloseDialog();
+    closeDialog();
     setCreateOneRoute(initialValue);
     setErrors("");
   };
@@ -168,25 +171,20 @@ export const RouteCreateDialog = ({ openCreateDialog, handleCloseDialog }) => {
 
     axios
       .post(`${ROUTES_URL}/createroute`, newFormData)
-      .then((res) => {
-        setCreateOneRoute(res.data);
+      .then(({ data }) => {
+        createRoute(data);
         showSnackbar("Ruata añadida con éxito");
         navigate(RoutesString.route);
+        cleanDialog();
       })
       .catch((err) => {
         console.log(err);
         showSnackbar("Error al añadir la ruta", "error");
       });
-    cleanDialog();
   };
 
   return (
-    <Dialog
-      open={openCreateDialog}
-      onClose={cleanDialog}
-      fullWidth
-      maxWidth="md"
-    >
+    <Dialog open={isOpen} onClose={cleanDialog} fullWidth maxWidth="md">
       <DialogTitle>Añadir ruta</DialogTitle>
       <DialogContent>
         <Box

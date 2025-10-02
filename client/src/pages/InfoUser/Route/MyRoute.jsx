@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -24,28 +24,24 @@ import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 // Providers
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
+import { useRoutes } from "../../../context/RoutesContext/RoutesContext";
 
 export const MyRoute = () => {
-  const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [selectedRouteId, setSelectedRouteId] = useState(null);
-
   const navigate = useNavigate();
   const tokenLocalStorage = getLocalStorage("token");
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
+  const {
+    deleteRoute,
+    loadUserRoutes,
+    userRoutes,
+    openDialog: openCreateEditDialog,
+  } = useRoutes();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
-    axios
-      .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}`)
-      .then((res) => {
-        setAllRoutesOneUser(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    loadUserRoutes(user_id);
+  }, [tokenLocalStorage, loadUserRoutes]);
 
   const handleOpenCreateRoute = () => {
     navigate(RoutesString.createTrip);
@@ -55,9 +51,7 @@ export const MyRoute = () => {
     axios
       .put(`${ROUTES_URL}/deleteroute/${route_id}`)
       .then(() => {
-        setAllRoutesOneUser((prev) =>
-          prev.filter((r) => r.route_id !== route_id)
-        );
+        deleteRoute(route_id);
         showSnackbar("Ruta eliminada con éxito");
       })
       .catch((err) => {
@@ -74,13 +68,8 @@ export const MyRoute = () => {
     });
   };
 
-  const handleOpenEditDialog = (route_id) => {
-    setSelectedRouteId(route_id);
-    setOpenEditDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenEditDialog(false);
+  const openEditDialog = (route_id) => {
+    openCreateEditDialog({ mode: "edit", route_id });
   };
 
   return (
@@ -91,9 +80,9 @@ export const MyRoute = () => {
         </IconButton>
         <Typography variant="h6">Mis rutas</Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
-        {allRoutesOneUser.length > 0 ? (
-          allRoutesOneUser.map((route) => (
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2, minWidth: 330 }}>
+        {userRoutes.length > 0 ? (
+          userRoutes.map((route) => (
             <Grid
               key={route?.route_id}
               container
@@ -102,7 +91,7 @@ export const MyRoute = () => {
             >
               <RouteCard
                 {...route}
-                onEdit={handleOpenEditDialog}
+                onEdit={openEditDialog}
                 onDelete={handleOpenDeleteDialog}
               />
             </Grid>
@@ -133,11 +122,7 @@ export const MyRoute = () => {
           <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
         </Button>
       </Grid>
-      <RouteEditDialog
-        openEditDialog={openEditDialog}
-        handleCloseDialog={handleCloseDialog}
-        route_id={selectedRouteId}
-      />
+      <RouteEditDialog />
     </Grid>
   );
 };

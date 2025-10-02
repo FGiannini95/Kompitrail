@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 
 import { Box, Grid2 as Grid } from "@mui/material";
@@ -10,26 +10,28 @@ import { ROUTES_URL } from "../../../../server/config/serverConfig";
 // Providers
 import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../context/SnackbarContext/SnackbarContext";
+import { useRoutes } from "../../context/RoutesContext/RoutesContext";
+import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 
 export const Home = () => {
-  const [allRoutes, setAllRoutes] = useState([]);
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
+  const {
+    deleteRoute,
+    loadAllRoutes,
+    allRoutes,
+    openDialog: openCreateEditDialog,
+  } = useRoutes();
 
   useEffect(() => {
-    axios
-      .get(`${ROUTES_URL}/showallroutes`)
-      .then((res) => setAllRoutes(res.data))
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    loadAllRoutes();
+  }, [loadAllRoutes]);
 
   const handleDeleteRoute = (route_id) => {
     axios
       .put(`${ROUTES_URL}/deleteroute/${route_id}`)
       .then(() => {
-        setAllRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
+        deleteRoute(route_id);
         showSnackbar("Ruta eliminada con éxito");
       })
       .catch((err) => {
@@ -46,8 +48,8 @@ export const Home = () => {
     });
   };
 
-  const handleOpenEditDialog = () => {
-    console.log("To implement later");
+  const openEditDialog = (route_id) => {
+    openCreateEditDialog({ mode: "edit", route_id });
   };
 
   return (
@@ -57,7 +59,7 @@ export const Home = () => {
           <Grid key={route?.route_id} container justifyContent="center" mb={2}>
             <RouteCard
               {...route}
-              onEdit={handleOpenEditDialog}
+              onEdit={openEditDialog}
               onDelete={handleOpenDeleteDialog}
             />
           </Grid>
@@ -67,6 +69,7 @@ export const Home = () => {
           <EmptyState />
         </Grid>
       )}
+      <RouteEditDialog />
     </Box>
   );
 };

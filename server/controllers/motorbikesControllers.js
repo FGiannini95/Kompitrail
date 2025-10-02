@@ -9,9 +9,7 @@ class motorbikesControllers {
     let sql = `INSERT INTO motorbike (user_id, motorbike_brand, motorbike_model, img, is_deleted)
     VALUES ('${user_id}', '${brand}', '${model}', '${img}', false)`;
 
-    const insertArgs = [user_id, brand, model, img];
-
-    connection.query(sql, insertArgs, (error, result) => {
+    connection.query(sql, (error, result) => {
       if (error) {
         return res.status(500).json({ error });
       }
