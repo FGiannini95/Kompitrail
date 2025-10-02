@@ -102,7 +102,7 @@ export const EditPassword = () => {
         id: user_id,
         password,
       })
-      .then((res) => {
+      .then(() => {
         navigate(RoutesString.infouser);
       })
       .catch((err) => {

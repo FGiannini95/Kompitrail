@@ -34,7 +34,6 @@ export const Register = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(`${USERS_URL}/createuser`, data);
-
       console.log("Respuesta del servidor:", response.data);
       navigate(RoutesString.login);
     } catch (error) {

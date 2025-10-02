@@ -51,7 +51,6 @@ export const EditUser = () => {
         .then((res) => {
           setEditUser(res.data);
           setInitialValues(res.data);
-          console.log(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -83,12 +82,9 @@ export const EditUser = () => {
   //Confirmar cambios
   const handleConfirm = (e) => {
     e.preventDefault();
-    console.log("cambios", editUser);
 
     const newFormData = new FormData();
     newFormData.append("editUser", JSON.stringify(editUser));
-
-    console.log(JSON.stringify(editUser));
 
     if (editUser.photo) {
       newFormData.append("file", editUser.photo);
@@ -97,7 +93,6 @@ export const EditUser = () => {
     axios
       .put(`http://localhost:3000/users/edituser/${user_id}`, newFormData)
       .then((res) => {
-        console.log("edituser", res.data);
         setEditUser(res.data);
         setInitialValues(res.data);
       })
@@ -112,10 +107,6 @@ export const EditUser = () => {
       setSave(JSON.stringify(editUser) !== JSON.stringify(initialValues));
     }
   }, [editUser, initialValues]);
-
-  useEffect(() => {
-    console.log("save:", save);
-  }, [save]);
 
   return (
     <Grid container direction="column" spacing={2}>
