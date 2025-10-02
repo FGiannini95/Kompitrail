@@ -15,7 +15,12 @@ import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 export const Home = () => {
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
-  const { deleteRoute, loadAllRoutes, allRoutes } = useRoutes();
+  const {
+    deleteRoute,
+    loadAllRoutes,
+    allRoutes,
+    openDialog: openCreateEditDialog,
+  } = useRoutes();
 
   useEffect(() => {
     loadAllRoutes();
@@ -42,8 +47,8 @@ export const Home = () => {
     });
   };
 
-  const handleOpenEditDialog = () => {
-    console.log("To implement later");
+  const openEditDialog = (route_id) => {
+    openCreateEditDialog({ mode: "edit", route_id });
   };
 
   return (
@@ -53,7 +58,7 @@ export const Home = () => {
           <Grid key={route?.route_id} container justifyContent="center" mb={2}>
             <RouteCard
               {...route}
-              onEdit={handleOpenEditDialog}
+              onEdit={openEditDialog}
               onDelete={handleOpenDeleteDialog}
             />
           </Grid>

@@ -48,7 +48,15 @@ export const RoutesProvider = ({ children }) => {
     setAllRoutes((prev) => [route, ...prev]);
   }, []);
 
-  const editRoute = useCallback((updateRoute) => {}, []);
+  const editRoute = useCallback((updateRoute) => {
+    const apply = (array) =>
+      array.map((a) =>
+        a.route_id === updateRoute.route_id ? { ...a, ...updateRoute } : a
+      );
+
+    setUserRoutes(apply);
+    setAllRoutes(apply);
+  }, []);
 
   const deleteRoute = useCallback((route_id) => {
     setAllRoutes((prev) => prev.filter((r) => r.route_id !== route_id));

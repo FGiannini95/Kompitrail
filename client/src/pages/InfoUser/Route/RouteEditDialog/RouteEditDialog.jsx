@@ -23,6 +23,7 @@ import { CreateRouteCostumeTextfield } from "../../../../components/CreateRouteC
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 // Providers
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
+import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 
 const initialValue = {
   route_name: "",
@@ -37,18 +38,18 @@ const initialValue = {
   route_description: "",
 };
 
-export const RouteEditDialog = ({
-  openEditDialog,
-  handleCloseDialog,
-  route_id,
-}) => {
+export const RouteEditDialog = () => {
   const [editRoute, setEditRoute] = useState(initialValue);
   const [errors, setErrors] = useState({});
 
   const { showSnackbar } = useSnackbar();
+  const { editRoute: updateRoute, dialog, closeDialog } = useRoutes();
+
+  const isOpen = dialog.isOpen && dialog.mode === "edit";
+  const route_id = dialog.selectedId;
 
   useEffect(() => {
-    if (openEditDialog && route_id) {
+    if (isOpen && route_id) {
       axios
         .get(`${ROUTES_URL}/oneroute/${route_id}`)
         .then((res) => {
@@ -58,7 +59,7 @@ export const RouteEditDialog = ({
           console.log(err);
         });
     }
-  }, [openEditDialog, route_id]);
+  }, [isOpen, route_id]);
 
   const handleClearField = (name) => {
     setEditRoute((prevState) => ({
@@ -81,6 +82,11 @@ export const RouteEditDialog = ({
     if (e.key === "e" || e.key === "E" || e.key === "+" || e.key === "-") {
       e.preventDefault(); // Block these buttons
     }
+  };
+
+  const cleanDialog = () => {
+    closeDialog();
+    setEditRoute(initialValue);
   };
 
   const handleConfirm = (e) => {
@@ -134,9 +140,12 @@ export const RouteEditDialog = ({
 
     axios
       .put(`${ROUTES_URL}/editroute/${route_id}`, newFormData)
-      .then(() => {
+      .then(() => axios.get(`${ROUTES_URL}/oneroute/${route_id}`))
+      .then(({ data }) => {
+        const update = Array.isArray(data) ? data[0] : data;
+        updateRoute(update);
         showSnackbar("Ruta actualizada con éxito");
-        handleCloseDialog();
+        closeDialog();
         setErrors({});
       })
       .catch((err) => {
@@ -146,12 +155,7 @@ export const RouteEditDialog = ({
   };
 
   return (
-    <Dialog
-      open={openEditDialog}
-      onClose={handleCloseDialog}
-      fullWidth
-      maxWidth="md"
-    >
+    <Dialog open={isOpen} onClose={cleanDialog} fullWidth maxWidth="md">
       <DialogTitle>Editar ruta</DialogTitle>
       <DialogContent>
         <Box
@@ -368,7 +372,7 @@ export const RouteEditDialog = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseDialog} color="error">
+        <Button onClick={cleanDialog} color="error">
           Cancelar
         </Button>
         <Button onClick={handleConfirm} color="success">
