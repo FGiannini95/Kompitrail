@@ -54,8 +54,6 @@ export const Home = () => {
     openCreateEditDialog({ mode: "edit", route_id });
   };
 
-  console.log(allRoutes);
-
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       {allRoutes.length > 0 ? (
