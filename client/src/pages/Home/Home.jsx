@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import axios from "axios";
 
 import { Box, Grid2 as Grid } from "@mui/material";
@@ -12,6 +12,7 @@ import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/C
 import { useSnackbar } from "../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
+import { KompitrailContext } from "../../context/KompitrailContext";
 
 export const Home = () => {
   const { openDialog } = useConfirmationDialog();
@@ -22,6 +23,7 @@ export const Home = () => {
     allRoutes,
     openDialog: openCreateEditDialog,
   } = useRoutes();
+  const { user } = useContext(KompitrailContext);
 
   useEffect(() => {
     loadAllRoutes();
@@ -52,6 +54,8 @@ export const Home = () => {
     openCreateEditDialog({ mode: "edit", route_id });
   };
 
+  console.log(allRoutes);
+
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       {allRoutes.length > 0 ? (
@@ -61,6 +65,7 @@ export const Home = () => {
               {...route}
               onEdit={openEditDialog}
               onDelete={handleOpenDeleteDialog}
+              isOwner={route.user_id === user.user_id}
             />
           </Grid>
         ))

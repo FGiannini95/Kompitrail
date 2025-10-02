@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 
-// MUI
-import { styled } from "@mui/material/styles";
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid2";
+import {
+  styled,
+  Grid2 as Grid,
+  Card,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Collapse,
+  IconButton,
+  Typography,
+} from "@mui/material";
 
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-
-// MUI-ICONS
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 
 const ExpandMore = styled(({ expand, ...other }) => {
   return <IconButton {...other} />;
@@ -29,6 +29,7 @@ const ExpandMore = styled(({ expand, ...other }) => {
 }));
 
 export const RouteCard = ({
+  user_id,
   route_name,
   route_id,
   starting_point,
@@ -42,6 +43,7 @@ export const RouteCard = ({
   route_description,
   onEdit,
   onDelete,
+  isOwner,
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -78,7 +80,7 @@ export const RouteCard = ({
               overflowWrap: "anywhere",
             }}
           >
-            {route_name}
+            {route_name} {user_id}
           </Typography>
         }
       />
@@ -98,12 +100,23 @@ export const RouteCard = ({
         <Typography>{date}</Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton onClick={() => onEdit?.(route_id)}>
-          <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
-        </IconButton>
-        <IconButton onClick={() => onDelete?.(route_id)}>
-          <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
-        </IconButton>
+        {isOwner ? (
+          <>
+            <IconButton onClick={() => onEdit?.(route_id)}>
+              <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
+            </IconButton>
+            <IconButton onClick={() => onDelete?.(route_id)}>
+              <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
+            </IconButton>
+          </>
+        ) : (
+          <IconButton onClick={() => onEdit?.(route_id)}>
+            <FavoriteBorderOutlinedIcon
+              fontSize="medium"
+              style={{ color: "black" }}
+            />
+          </IconButton>
+        )}
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
