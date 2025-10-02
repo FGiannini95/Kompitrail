@@ -237,14 +237,19 @@ export const RouteCreateDialog = () => {
                 onKeyDown={preventInvalidkey}
                 // Add the close icon
                 InputProps={{
-                  endAdornment: createOneRoute?.distance ? (
+                  endAdornment: (
                     <InputAdornment position="end">
                       <ClearIcon
                         onClick={() => handleClearField("distance")}
-                        sx={{ cursor: "pointer" }}
+                        sx={{
+                          cursor: "pointer",
+                          visibility: createOneRoute.distance
+                            ? "visible"
+                            : "hidden",
+                        }}
                       />
                     </InputAdornment>
-                  ) : null,
+                  ),
                 }}
                 error={!!errors.distance}
                 helperText={errors.distance}
@@ -260,20 +265,25 @@ export const RouteCreateDialog = () => {
                 onKeyDown={preventInvalidkey}
                 // Add the close icon
                 InputProps={{
-                  endAdornment: createOneRoute?.estimated_time ? (
+                  endAdornment: (
                     <InputAdornment position="end">
                       <ClearIcon
                         onClick={() => handleClearField("estimated_time")}
-                        sx={{ cursor: "pointer" }}
+                        sx={{
+                          cursor: "pointer",
+                          visibility: createOneRoute.estimated_time
+                            ? "visible"
+                            : "hidden",
+                        }}
                       />
                     </InputAdornment>
-                  ) : null,
+                  ),
                 }}
                 error={!!errors.estimated_time}
                 helperText={errors.estimated_time}
               />
             </Grid>
-            <Grid xs={7}>
+            <Grid xs={6}>
               <Autocomplete
                 disablePortal
                 options={level}
@@ -315,14 +325,19 @@ export const RouteCreateDialog = () => {
                 onKeyDown={preventInvalidkey}
                 // Add the close icon
                 InputProps={{
-                  endAdornment: createOneRoute?.participants ? (
+                  endAdornment: (
                     <InputAdornment position="end">
                       <ClearIcon
                         onClick={() => handleClearField("participants")}
-                        sx={{ cursor: "pointer" }}
+                        sx={{
+                          cursor: "pointer",
+                          visibility: createOneRoute.participants
+                            ? "visible"
+                            : "hidden",
+                        }}
                       />
                     </InputAdornment>
-                  ) : null,
+                  ),
                 }}
                 error={!!errors.participants}
                 helperText={errors.participants}
