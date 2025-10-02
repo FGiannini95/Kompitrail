@@ -194,7 +194,7 @@ export const RouteCreateDialog = () => {
           }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <CreateRouteCostumeTextfield
                 label="Nombre ruta"
                 name="route_name"
@@ -205,7 +205,7 @@ export const RouteCreateDialog = () => {
                 helperText={errors.route_name}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <CreateRouteCostumeTextfield
                 label="Salida"
                 name="starting_point"
@@ -216,7 +216,7 @@ export const RouteCreateDialog = () => {
                 helperText={errors.starting_point}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <CreateRouteCostumeTextfield
                 label="Llegada"
                 name="ending_point"
@@ -227,7 +227,7 @@ export const RouteCreateDialog = () => {
                 helperText={errors.ending_point}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid xs={6}>
               <TextField
                 label="Km"
                 name="distance"
@@ -250,7 +250,7 @@ export const RouteCreateDialog = () => {
                 helperText={errors.distance}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid xs={6}>
               <TextField
                 label="Duración"
                 name="estimated_time"
@@ -273,7 +273,7 @@ export const RouteCreateDialog = () => {
                 helperText={errors.estimated_time}
               />
             </Grid>
-            <Grid item xs={7}>
+            <Grid xs={7}>
               <Autocomplete
                 disablePortal
                 options={level}
@@ -304,7 +304,7 @@ export const RouteCreateDialog = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={5}>
+            <Grid xs={5}>
               <TextField
                 label="Pilotos"
                 name="participants"
@@ -328,7 +328,7 @@ export const RouteCreateDialog = () => {
                 helperText={errors.participants}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Autocomplete
                 clearOnEscape
                 disablePortal
@@ -360,7 +360,6 @@ export const RouteCreateDialog = () => {
               />
             </Grid>
             <Grid
-              item
               xs={12}
               sx={{
                 display: "flex",
@@ -381,7 +380,7 @@ export const RouteCreateDialog = () => {
                 }
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 label="Descripción"
                 name="route_description"

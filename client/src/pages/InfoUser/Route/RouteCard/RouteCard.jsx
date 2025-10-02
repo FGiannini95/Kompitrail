@@ -29,7 +29,6 @@ const ExpandMore = styled(({ expand, ...other }) => {
 }));
 
 export const RouteCard = ({
-  user_id,
   route_name,
   route_id,
   starting_point,
