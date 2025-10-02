@@ -51,8 +51,31 @@ class routesControllers {
         '${participants}', 
         '${route_description}',  '0'
       );`;
+
     connection.query(sql, (error, result) => {
-      error ? res.status(500).json({ error }) : res.status(200).json(result);
+      if (error) {
+        return res.status(500).json({ error });
+      }
+
+      const sqlSelect = `
+        SELECT route_id, user_id, route_name, \`date\`, starting_point, ending_point,
+           level, distance, is_verified, suitable_motorbike_type,
+           estimated_time, participants, route_description, is_deleted
+        FROM route
+        WHERE route_id = ?`;
+
+      console.log("insertId", insertId);
+      console.log("error", error2);
+
+      connection.query(sqlSelect, [result.insertId], (error2, result2) => {
+        if (error2) {
+          return res.status(500).json({ error: error2 });
+        }
+        if (!result2 || result2.length === 0) {
+          return res.status(404).json({ error: "Ruta no encontrada" });
+        }
+        return res.status(200).json(result2[0]);
+      });
     });
   };
 

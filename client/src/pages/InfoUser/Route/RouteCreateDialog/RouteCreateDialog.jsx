@@ -171,9 +171,8 @@ export const RouteCreateDialog = () => {
 
     axios
       .post(`${ROUTES_URL}/createroute`, newFormData)
-      .then((res) => {
-        console.log("res.data in create rute", res.data);
-        createRoute(res.data);
+      .then(({ data }) => {
+        createRoute(data);
         showSnackbar("Ruata añadida con éxito");
         navigate(RoutesString.route);
         cleanDialog();
