@@ -31,7 +31,7 @@ const initialValue = {
   ending_point: "",
   level: "",
   distance: "",
-  is_verified: "",
+  is_verified: false,
   suitable_motorbike_type: "",
   estimated_time: "",
   participants: "",
@@ -343,7 +343,7 @@ export const RouteEditDialog = () => {
               <Checkbox
                 inputProps={{ "aria-label": "controlled" }}
                 color="default"
-                checked={editRoute?.is_verified}
+                checked={!!editRoute?.is_verified}
                 onChange={(event) =>
                   setEditRoute((prevState) => ({
                     ...prevState,
