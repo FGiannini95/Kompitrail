@@ -80,7 +80,7 @@ export const MyRoute = () => {
         </IconButton>
         <Typography variant="h6">Mis rutas</Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2, minWidth: 330 }}>
         {userRoutes.length > 0 ? (
           userRoutes.map((route) => (
             <Grid

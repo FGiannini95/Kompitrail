@@ -115,9 +115,6 @@ export const RouteCard = ({
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={{ padding: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-            Información de la Ruta
-          </Typography>
           <Grid container spacing={3} sx={{ textAlign: "center" }}>
             <InfoItem label="Distancia" value={`${distance} km`} />
             <InfoItem label="Tiempo estimado" value={`${estimated_time} h`} />
