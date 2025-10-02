@@ -24,9 +24,9 @@ import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 // Providers
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
+import { useRoutes } from "../../../context/RoutesContext/RoutesContext";
 
 export const MyRoute = () => {
-  const [allRoutesOneUser, setAllRoutesOneUser] = useState([]);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [selectedRouteId, setSelectedRouteId] = useState(null);
 
@@ -34,18 +34,12 @@ export const MyRoute = () => {
   const tokenLocalStorage = getLocalStorage("token");
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
+  const { deleteRoute, loadUserRoutes, userRoutes } = useRoutes();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
-    axios
-      .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}`)
-      .then((res) => {
-        setAllRoutesOneUser(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    loadUserRoutes(user_id);
+  }, [tokenLocalStorage, loadUserRoutes]);
 
   const handleOpenCreateRoute = () => {
     navigate(RoutesString.createTrip);
@@ -55,9 +49,7 @@ export const MyRoute = () => {
     axios
       .put(`${ROUTES_URL}/deleteroute/${route_id}`)
       .then(() => {
-        setAllRoutesOneUser((prev) =>
-          prev.filter((r) => r.route_id !== route_id)
-        );
+        deleteRoute(route_id);
         showSnackbar("Ruta eliminada con éxito");
       })
       .catch((err) => {
@@ -92,8 +84,8 @@ export const MyRoute = () => {
         <Typography variant="h6">Mis rutas</Typography>
       </Grid>
       <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
-        {allRoutesOneUser.length > 0 ? (
-          allRoutesOneUser.map((route) => (
+        {userRoutes.length > 0 ? (
+          userRoutes.map((route) => (
             <Grid
               key={route?.route_id}
               container

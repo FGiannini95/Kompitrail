@@ -10,26 +10,22 @@ import { ROUTES_URL } from "../../../../server/config/serverConfig";
 // Providers
 import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../context/SnackbarContext/SnackbarContext";
+import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 
 export const Home = () => {
-  const [allRoutes, setAllRoutes] = useState([]);
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
+  const { deleteRoute, loadAllRoutes, allRoutes } = useRoutes();
 
   useEffect(() => {
-    axios
-      .get(`${ROUTES_URL}/showallroutes`)
-      .then((res) => setAllRoutes(res.data))
-      .catch((err) => {
-        console.log(err);
-      });
+    loadAllRoutes();
   }, []);
 
   const handleDeleteRoute = (route_id) => {
     axios
       .put(`${ROUTES_URL}/deleteroute/${route_id}`)
       .then(() => {
-        setAllRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
+        deleteRoute(route_id);
         showSnackbar("Ruta eliminada con éxito");
       })
       .catch((err) => {

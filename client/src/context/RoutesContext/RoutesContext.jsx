@@ -22,7 +22,14 @@ export const RoutesProvider = ({ children }) => {
     setDialog({ isOpen: false, mode: null, route_id: null });
   };
 
-  const loadAllRoutes = useCallback(() => {}, []);
+  const loadAllRoutes = useCallback(() => {
+    axios
+      .get(`${ROUTES_URL}/showallroutes`)
+      .then((res) => setAllRoutes(res.data))
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const loadUserRoutes = useCallback((user_id) => {
     axios
@@ -38,7 +45,11 @@ export const RoutesProvider = ({ children }) => {
 
   const createRoute = useCallback((route) => {}, []);
   const editRoute = useCallback((updateRoute) => {}, []);
-  const deleteRoute = useCallback((route_id) => {}, []);
+
+  const deleteRoute = useCallback((route_id) => {
+    setAllRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
+    setUserRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
+  }, []);
 
   const value = {
     allRoutes,
