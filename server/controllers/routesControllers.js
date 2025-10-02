@@ -34,23 +34,28 @@ class routesControllers {
       return res.status(400).json({ error: "Faltan campos requeridos." });
     }
 
-    let sql = `INSERT INTO route (
-      user_id, route_name, date, starting_point, ending_point, level, distance, is_verified, suitable_motorbike_type, estimated_time, participants, route_description, is_deleted
-      ) 
-      VALUES (
-        '${user_id}', 
-        '${route_name}',
-        '${date}',
-        '${starting_point}', 
-        '${ending_point}',
-        '${level}',
-        '${distance}', 
-        '1',
-        '${suitable_motorbike_type}', 
-        '${estimated_time}',
-        '${participants}', 
-        '${route_description}',  '0'
-      );`;
+    const sql = `
+    INSERT INTO route (
+      user_id, route_name, date, starting_point, ending_point, level, distance,
+      is_verified, suitable_motorbike_type, estimated_time, participants,
+      route_description, is_deleted
+    )
+    VALUES (
+      '${user_id}',
+      '${route_name}',
+      '${date}',
+      '${starting_point}',
+      '${ending_point}',
+      '${level}',
+      '${distance}',
+      '1',
+      '${suitable_motorbike_type}',
+      '${estimated_time}',
+      '${participants}',
+      '${route_description}',
+      '0'
+    );
+  `;
 
     connection.query(sql, (error, result) => {
       if (error) {
@@ -58,14 +63,12 @@ class routesControllers {
       }
 
       const sqlSelect = `
-        SELECT route_id, user_id, route_name, \`date\`, starting_point, ending_point,
-           level, distance, is_verified, suitable_motorbike_type,
-           estimated_time, participants, route_description, is_deleted
-        FROM route
-        WHERE route_id = ?`;
-
-      console.log("insertId", insertId);
-      console.log("error", error2);
+      SELECT route_id, user_id, route_name, \`date\`, starting_point, ending_point,
+             level, distance, is_verified, suitable_motorbike_type,
+             estimated_time, participants, route_description, is_deleted
+      FROM route
+      WHERE route_id = ?
+    `;
 
       connection.query(sqlSelect, [result.insertId], (error2, result2) => {
         if (error2) {
@@ -81,14 +84,14 @@ class routesControllers {
 
   showAllRoutesOneUser = (req, res) => {
     const { id: user_id } = req.params;
-    let sql = `SELECT * FROM route WHERE user_id = '${user_id}' AND is_deleted = 0`;
+    let sql = `SELECT * FROM route WHERE user_id = '${user_id}' AND is_deleted = 0 ORDER BY route_id DESC`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
   };
 
   showAllRoutes = (req, res) => {
-    let sql = `SELECT * FROM route WHERE is_deleted = 0`;
+    let sql = `SELECT * FROM route WHERE is_deleted = 0 ORDER BY route_id DESC`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
