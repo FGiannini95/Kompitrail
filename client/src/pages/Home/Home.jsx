@@ -19,7 +19,7 @@ export const Home = () => {
 
   useEffect(() => {
     loadAllRoutes();
-  }, []);
+  }, [loadAllRoutes]);
 
   const handleDeleteRoute = (route_id) => {
     axios
