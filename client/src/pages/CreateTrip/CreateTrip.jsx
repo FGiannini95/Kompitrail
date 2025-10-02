@@ -5,16 +5,13 @@ import { Typography, Grid2 as Grid, Button } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import { RouteCreateDialog } from "../InfoUser/Route/RouteCreateDialog/RouteCreateDialog";
+import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 
 export const CreateTrip = () => {
-  const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const { openCreateEditDialog } = useRoutes();
 
-  const handleOpenCreateDialog = () => {
-    setOpenCreateDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenCreateDialog(false);
+  const openCreateDialog = () => {
+    openCreateEditDialog({ mode: "create" });
   };
 
   return (
@@ -51,7 +48,7 @@ export const CreateTrip = () => {
             type="button"
             variant="outlined"
             fullWidth
-            onClick={handleOpenCreateDialog}
+            onClick={openCreateDialog}
             sx={{
               color: "black",
               borderColor: "#eeeeee",
@@ -67,10 +64,7 @@ export const CreateTrip = () => {
           </Button>
         </Grid>
       </Grid>
-      <RouteCreateDialog
-        openCreateDialog={openCreateDialog}
-        handleCloseDialog={handleCloseDialog}
-      />
+      <RouteCreateDialog />
     </Grid>
   );
 };

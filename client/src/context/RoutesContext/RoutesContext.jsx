@@ -43,7 +43,11 @@ export const RoutesProvider = ({ children }) => {
       });
   }, []);
 
-  const createRoute = useCallback((route) => {}, []);
+  const createRoute = useCallback((route) => {
+    setUserRoutes((prev) => [route, ...prev]);
+    setAllRoutes((prev) => [route, ...prev]);
+  }, []);
+
   const editRoute = useCallback((updateRoute) => {}, []);
 
   const deleteRoute = useCallback((route_id) => {
@@ -54,6 +58,7 @@ export const RoutesProvider = ({ children }) => {
   const value = {
     allRoutes,
     userRoutes,
+    dialog,
     openDialog,
     closeDialog,
     loadAllRoutes,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -27,14 +27,16 @@ import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../context/RoutesContext/RoutesContext";
 
 export const MyRoute = () => {
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [selectedRouteId, setSelectedRouteId] = useState(null);
-
   const navigate = useNavigate();
   const tokenLocalStorage = getLocalStorage("token");
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
-  const { deleteRoute, loadUserRoutes, userRoutes } = useRoutes();
+  const {
+    deleteRoute,
+    loadUserRoutes,
+    userRoutes,
+    openDialog: openCreateEditDialog,
+  } = useRoutes();
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -66,13 +68,8 @@ export const MyRoute = () => {
     });
   };
 
-  const handleOpenEditDialog = (route_id) => {
-    setSelectedRouteId(route_id);
-    setOpenEditDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenEditDialog(false);
+  const openEditDialog = (route_id) => {
+    openCreateEditDialog({ mode: "edit", route_id });
   };
 
   return (
@@ -94,7 +91,7 @@ export const MyRoute = () => {
             >
               <RouteCard
                 {...route}
-                onEdit={handleOpenEditDialog}
+                onEdit={openEditDialog}
                 onDelete={handleOpenDeleteDialog}
               />
             </Grid>
@@ -125,11 +122,7 @@ export const MyRoute = () => {
           <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
         </Button>
       </Grid>
-      <RouteEditDialog
-        openEditDialog={openEditDialog}
-        handleCloseDialog={handleCloseDialog}
-        route_id={selectedRouteId}
-      />
+      <RouteEditDialog />
     </Grid>
   );
 };
