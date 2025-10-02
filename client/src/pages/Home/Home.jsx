@@ -11,6 +11,7 @@ import { ROUTES_URL } from "../../../../server/config/serverConfig";
 import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
+import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 
 export const Home = () => {
   const { openDialog } = useConfirmationDialog();
@@ -68,6 +69,7 @@ export const Home = () => {
           <EmptyState />
         </Grid>
       )}
+      <RouteEditDialog />
     </Box>
   );
 };
