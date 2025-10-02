@@ -80,7 +80,7 @@ export const RouteCard = ({
               overflowWrap: "anywhere",
             }}
           >
-            {route_name} {user_id}
+            {route_name}
           </Typography>
         }
       />
