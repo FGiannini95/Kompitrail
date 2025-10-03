@@ -15,8 +15,8 @@ import {
   DialogActions,
   InputAdornment,
   TextareaAutosize,
-  Grid2 as Grid,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 import ClearIcon from "@mui/icons-material/Clear";
 // Components
@@ -229,6 +229,7 @@ export const RouteCreateDialog = () => {
             </Grid>
             <Grid xs={6}>
               <TextField
+                fullWidth
                 label="Km"
                 name="distance"
                 type="number"
