@@ -4,17 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 import {
   Box,
-  TextField,
   Checkbox,
   Typography,
-  Autocomplete,
   Button,
   Dialog,
   DialogContent,
   DialogTitle,
   DialogActions,
-  InputAdornment,
-  TextareaAutosize,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -29,24 +25,15 @@ import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
-
-const initialValue = {
-  route_name: "",
-  starting_point: "",
-  ending_point: "",
-  date: "",
-  level: "",
-  distance: "",
-  is_verified: false,
-  suitable_motorbike_type: "",
-  estimated_time: "",
-  participants: "",
-  route_description: "",
-  user_id: "",
-};
+// Constants
+import {
+  MOTORBIKE_TYPES,
+  ROUTE_INITIAL_VALUE,
+  ROUTE_LEVELS,
+} from "../../../../constants/routeConstants";
 
 export const RouteCreateDialog = () => {
-  const [createOneRoute, setCreateOneRoute] = useState(initialValue);
+  const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
   const [errors, setErrors] = useState({});
 
   const { user } = useContext(KompitrailContext);
@@ -56,27 +43,9 @@ export const RouteCreateDialog = () => {
   const navigate = useNavigate();
   const isOpen = dialog.isOpen && dialog.mode === "create";
 
-  const level = [
-    { id: 1, name: "Principiante" },
-    { id: 2, name: "Medio" },
-    { id: 3, name: "Avanzado" },
-    { id: 4, name: "Experto" },
-  ];
-
-  const motorbikeType = [
-    { id: 1, name: "Trail" },
-    { id: 2, name: "Maxitrail" },
-    { id: 3, name: "Enduro" },
-    { id: 4, name: "Supermoto" },
-    { id: 5, name: "Motocross" },
-    { id: 6, name: "Dual sport" },
-    { id: 7, name: "Cross country" },
-    { id: 8, name: "Adventure" },
-  ];
-
   const cleanDialog = () => {
     closeDialog();
-    setCreateOneRoute(initialValue);
+    setCreateOneRoute(ROUTE_INITIAL_VALUE);
     setErrors("");
   };
 
@@ -189,7 +158,7 @@ export const RouteCreateDialog = () => {
                 errors={errors}
                 name="level"
                 label="Nivel"
-                options={level}
+                options={ROUTE_LEVELS}
                 optionLabelKey="name"
                 optionValueKey="name"
                 readOnly
@@ -213,7 +182,7 @@ export const RouteCreateDialog = () => {
                 errors={errors}
                 name="suitable_motorbike_type"
                 label="Motos aptas"
-                options={motorbikeType}
+                options={MOTORBIKE_TYPES}
                 optionLabelKey="name"
                 optionValueKey="name"
                 multiple
