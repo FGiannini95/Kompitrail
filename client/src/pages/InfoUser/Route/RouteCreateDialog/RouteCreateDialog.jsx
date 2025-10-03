@@ -18,9 +18,9 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-import ClearIcon from "@mui/icons-material/Clear";
 // Components
-import { CreateRouteCostumeTextfield } from "../../../../components/CreateRouteCostumeTextfield/CreateRouteCostumeTextfield";
+import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
+import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 // Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { RoutesString } from "../../../../routes/routes";
@@ -73,32 +73,10 @@ export const RouteCreateDialog = () => {
     { id: 8, name: "Adventure" },
   ];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCreateOneRoute((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleClearField = (name) => {
-    setCreateOneRoute((prevState) => ({
-      ...prevState,
-      [name]: "",
-    }));
-  };
-
   const cleanDialog = () => {
     closeDialog();
     setCreateOneRoute(initialValue);
     setErrors("");
-  };
-
-  // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
-  const preventInvalidkey = (e) => {
-    if (e.key === "e" || e.key === "E" || e.key === "+" || e.key === "-") {
-      e.preventDefault(); // Block these buttons
-    }
   };
 
   const handleConfirm = (e) => {
@@ -195,184 +173,90 @@ export const RouteCreateDialog = () => {
         >
           <Grid container spacing={2}>
             <Grid xs={12}>
-              <CreateRouteCostumeTextfield
+              <FormTextfield
                 label="Nombre ruta"
                 name="route_name"
-                value={createOneRoute.route_name}
-                onChange={handleChange}
-                onClear={() => handleClearField("route_name")}
-                error={!!errors.route_name}
-                helperText={errors.route_name}
+                errors={errors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
               />
             </Grid>
             <Grid xs={12}>
-              <CreateRouteCostumeTextfield
+              <FormTextfield
                 label="Salida"
                 name="starting_point"
-                value={createOneRoute.starting_point}
-                onChange={handleChange}
-                onClear={() => handleClearField("starting_point")}
-                error={!!errors.starting_point}
-                helperText={errors.starting_point}
+                errors={errors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
               />
             </Grid>
             <Grid xs={12}>
-              <CreateRouteCostumeTextfield
+              <FormTextfield
                 label="Llegada"
                 name="ending_point"
-                value={createOneRoute.ending_point}
-                onChange={handleChange}
-                onClear={() => handleClearField("ending_point")}
-                error={!!errors.ending_point}
-                helperText={errors.ending_point}
+                errors={errors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
               />
             </Grid>
-            <Grid xs={6}>
-              <TextField
-                fullWidth
+            <Grid xs={12}>
+              <FormTextfield
                 label="Km"
                 name="distance"
                 type="number"
-                value={createOneRoute?.distance}
-                onChange={handleChange}
-                onKeyDown={preventInvalidkey}
-                // Add the close icon
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <ClearIcon
-                        onClick={() => handleClearField("distance")}
-                        sx={{
-                          cursor: "pointer",
-                          visibility: createOneRoute.distance
-                            ? "visible"
-                            : "hidden",
-                        }}
-                      />
-                    </InputAdornment>
-                  ),
-                }}
-                error={!!errors.distance}
-                helperText={errors.distance}
+                preventInvalidkey
+                errors={errors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
               />
             </Grid>
             <Grid xs={6}>
-              <TextField
+              <FormTextfield
                 label="Duración"
                 name="estimated_time"
                 type="number"
-                value={createOneRoute?.estimated_time}
-                onChange={handleChange}
-                onKeyDown={preventInvalidkey}
-                // Add the close icon
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <ClearIcon
-                        onClick={() => handleClearField("estimated_time")}
-                        sx={{
-                          cursor: "pointer",
-                          visibility: createOneRoute.estimated_time
-                            ? "visible"
-                            : "hidden",
-                        }}
-                      />
-                    </InputAdornment>
-                  ),
-                }}
-                error={!!errors.estimated_time}
-                helperText={errors.estimated_time}
-              />
-            </Grid>
-            <Grid xs={6}>
-              <Autocomplete
-                disablePortal
-                options={level}
-                getOptionLabel={(option) => option.name}
-                onChange={(event, value) =>
-                  setCreateOneRoute((prevState) => ({
-                    ...prevState,
-                    level: value ? value.name : "",
-                  }))
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Nivel"
-                    name="level"
-                    // Avoid typing in the TextField
-                    InputProps={{
-                      ...params.InputProps,
-                      inputProps: {
-                        ...params.inputProps,
-                        readOnly: true,
-                      },
-                    }}
-                    onKeyDown={preventInvalidkey}
-                    error={!!errors.level}
-                    helperText={errors.level}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid xs={5}>
-              <TextField
-                label="Pilotos"
-                name="participants"
-                type="number"
-                fullWidth
-                value={createOneRoute?.participants}
-                onChange={handleChange}
-                onKeyDown={preventInvalidkey}
-                // Add the close icon
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <ClearIcon
-                        onClick={() => handleClearField("participants")}
-                        sx={{
-                          cursor: "pointer",
-                          visibility: createOneRoute.participants
-                            ? "visible"
-                            : "hidden",
-                        }}
-                      />
-                    </InputAdornment>
-                  ),
-                }}
-                error={!!errors.participants}
-                helperText={errors.participants}
+                errors={errors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
               />
             </Grid>
             <Grid xs={12}>
-              <Autocomplete
-                clearOnEscape
+              <FormAutocomplete
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+                errors={errors}
+                name="level"
+                label="Nivel"
+                options={level}
+                optionLabelKey="name"
+                optionValueKey="name"
+                readOnly
                 disablePortal
+              />
+            </Grid>
+            <Grid xs={12}>
+              <FormTextfield
+                label="Pilotos"
+                name="participants"
+                type="number"
+                errors={errors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+              />
+            </Grid>
+            <Grid xs={12}>
+              <FormAutocomplete
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+                errors={errors}
+                name="suitable_motorbike_type"
+                label="Motos aptas"
                 options={motorbikeType}
-                getOptionLabel={(option) => option.name}
-                onChange={(event, value) =>
-                  setCreateOneRoute((prevState) => ({
-                    ...prevState,
-                    suitable_motorbike_type: value ? value.name : "",
-                  }))
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Motos aptas"
-                    name="suitable_motorbike_type"
-                    // Avoid typing in the TextField
-                    InputProps={{
-                      ...params.InputProps,
-                      inputProps: {
-                        ...params.inputProps,
-                        readOnly: true,
-                      },
-                    }}
-                    error={!!errors.suitable_motorbike_type}
-                    helperText={errors.suitable_motorbike_type}
-                  />
-                )}
+                optionLabelKey="name"
+                optionValueKey="name"
+                multiple
+                readOnly
+                disablePortal
               />
             </Grid>
             <Grid
@@ -397,19 +281,14 @@ export const RouteCreateDialog = () => {
               />
             </Grid>
             <Grid xs={12}>
-              <TextField
+              <FormTextfield
                 label="Descripción"
                 name="route_description"
-                fullWidth
                 multiline
                 minRows={6}
-                value={createOneRoute.route_description}
-                InputProps={{
-                  inputComponent: TextareaAutosize,
-                }}
-                onChange={handleChange}
-                error={!!errors.route_description}
-                helperText={errors.route_description}
+                errors={errors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
               />
             </Grid>
           </Grid>
