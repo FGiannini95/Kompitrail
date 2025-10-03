@@ -28,6 +28,7 @@ import { RoutesString } from "../../../../routes/routes";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
+import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 
 const initialValue = {
   route_name: "",
@@ -82,48 +83,9 @@ export const RouteCreateDialog = () => {
   const handleConfirm = (e) => {
     e.preventDefault();
 
-    const newErrors = {};
-    if (createOneRoute.route_name === "") {
-      newErrors.route_name = "Tienes que definir un nombre para la ruta";
-    }
-    if (createOneRoute.starting_point === "") {
-      newErrors.starting_point = "Tienes que establecer un punto de salida";
-    }
-    if (createOneRoute.ending_point === "") {
-      newErrors.ending_point = "Tienes que establecer un punto de llegada";
-    }
-    //Default value
-    if (!createOneRoute.date) {
-      createOneRoute.date = new Date()
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " "); // Fecha actual
-    }
-    if (!createOneRoute.distance) {
-      newErrors.distance = "Debes especificar la distancia en km";
-    }
-    if (!createOneRoute.level) {
-      newErrors.level = "Debes selecionar el nivel requerido";
-    }
-    if (!createOneRoute.estimated_time) {
-      newErrors.estimated_time = "Debes establecer una duración";
-    }
-    if (!createOneRoute.participants) {
-      newErrors.participants = "Debes definir el nº máximo de pilótos";
-    }
-
-    if (!createOneRoute.suitable_motorbike_type) {
-      newErrors.suitable_motorbike_type =
-        "Debes definir las motos aptas para las rutas";
-    }
-    if (createOneRoute.route_description === "") {
-      newErrors.route_description =
-        "Tienes que escribir una descripción más detallada";
-    }
-
+    const newErrors = validateRouteForm(createOneRoute);
     setErrors(newErrors);
 
-    // Si hay errores, detener la ejecución
     if (Object.keys(newErrors).length > 0) {
       return;
     }
