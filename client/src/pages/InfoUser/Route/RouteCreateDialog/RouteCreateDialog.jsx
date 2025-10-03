@@ -103,7 +103,7 @@ export const RouteCreateDialog = () => {
           }}
         >
           <Grid container spacing={2}>
-            <Grid xs={12}>
+            <Grid size={12}>
               <FormTextfield
                 label="Nombre ruta"
                 name="route_name"
@@ -112,7 +112,7 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={12}>
               <FormTextfield
                 label="Salida"
                 name="starting_point"
@@ -121,7 +121,7 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={12}>
               <FormTextfield
                 label="Llegada"
                 name="ending_point"
@@ -130,7 +130,7 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={6}>
               <FormTextfield
                 label="Km"
                 name="distance"
@@ -141,7 +141,7 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={6}>
               <FormTextfield
                 label="Duración"
                 name="estimated_time"
@@ -151,7 +151,7 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={6}>
               <FormAutocomplete
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
@@ -164,7 +164,7 @@ export const RouteCreateDialog = () => {
                 disablePortal
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={6}>
               <FormTextfield
                 label="Pilotos"
                 name="participants"
@@ -174,7 +174,7 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={12}>
               <FormAutocomplete
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
@@ -190,7 +190,7 @@ export const RouteCreateDialog = () => {
               />
             </Grid>
             <Grid
-              xs={12}
+              size={12}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -210,7 +210,7 @@ export const RouteCreateDialog = () => {
                 }
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={12}>
               <FormTextfield
                 label="Descripción"
                 name="route_description"
