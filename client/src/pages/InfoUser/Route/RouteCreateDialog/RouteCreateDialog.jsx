@@ -141,7 +141,7 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-            <Grid xs={6}>
+            <Grid xs={12}>
               <FormTextfield
                 label="Duración"
                 name="estimated_time"
@@ -162,7 +162,6 @@ export const RouteCreateDialog = () => {
                 optionLabelKey="name"
                 optionValueKey="name"
                 disablePortal
-                fullWidth
               />
             </Grid>
             <Grid xs={12}>
