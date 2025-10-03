@@ -10,36 +10,27 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid2 as Grid,
   InputAdornment,
   TextareaAutosize,
   TextField,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+
 import ClearIcon from "@mui/icons-material/Clear";
 // Components
 import { CreateRouteCostumeTextfield } from "../../../../components/CreateRouteCostumeTextfield/CreateRouteCostumeTextfield";
 // Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
+import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 // Providers
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
-
-const initialValue = {
-  route_name: "",
-  starting_point: "",
-  ending_point: "",
-  level: "",
-  distance: "",
-  is_verified: false,
-  suitable_motorbike_type: "",
-  estimated_time: "",
-  participants: "",
-  route_description: "",
-};
+// Constants
+import { ROUTE_INITIAL_VALUE } from "../../../../constants/routeConstants";
 
 export const RouteEditDialog = () => {
-  const [editRoute, setEditRoute] = useState(initialValue);
+  const [editRoute, setEditRoute] = useState(ROUTE_INITIAL_VALUE);
   const [errors, setErrors] = useState({});
 
   const { showSnackbar } = useSnackbar();
@@ -86,48 +77,13 @@ export const RouteEditDialog = () => {
 
   const cleanDialog = () => {
     closeDialog();
-    setEditRoute(initialValue);
+    setEditRoute(ROUTE_INITIAL_VALUE);
   };
 
   const handleConfirm = (e) => {
     e.preventDefault();
 
-    const newErrors = {};
-    if (editRoute.route_name === "") {
-      newErrors.route_name = "Tienes que definir un nombre para la ruta";
-    }
-    if (editRoute.starting_point === "") {
-      newErrors.starting_point = "Tienes que establecer un punto de salida";
-    }
-    if (editRoute.ending_point === "") {
-      newErrors.ending_point = "Tienes que establecer un punto de llegada";
-    }
-    //Default value
-    if (!editRoute.date) {
-      editRoute.date = new Date().toISOString().slice(0, 19).replace("T", " "); // Fecha actual
-    }
-    if (!editRoute.distance) {
-      newErrors.distance = "Debes especificar la distancia en km";
-    }
-    if (!editRoute.level) {
-      newErrors.level = "Debes selecionar el nivel requerido";
-    }
-    if (!editRoute.estimated_time) {
-      newErrors.estimated_time = "Debes establecer una duración";
-    }
-    if (!editRoute.participants) {
-      newErrors.participants = "Debes definir el nº máximo de pilótos";
-    }
-
-    if (!editRoute.suitable_motorbike_type) {
-      newErrors.suitable_motorbike_type =
-        "Debes definir las motos aptas para las rutas";
-    }
-    if (editRoute.route_description === "") {
-      newErrors.route_description =
-        "Tienes que escribir una descripción más detallada";
-    }
-
+    const newErrors = validateRouteForm(editRoute);
     setErrors(newErrors);
 
     // Si hay errores, detener la ejecución
