@@ -1,6 +1,6 @@
 import React from "react";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
+import { TextField, InputAdornment } from "@mui/material";
+
 import ClearIcon from "@mui/icons-material/Clear";
 
 export const CreateRouteCostumeTextfield = ({
@@ -23,11 +23,17 @@ export const CreateRouteCostumeTextfield = ({
     error={error}
     helperText={helperText}
     InputProps={{
-      endAdornment: value ? (
+      endAdornment: (
         <InputAdornment position="end">
-          <ClearIcon onClick={onClear} sx={{ cursor: "pointer" }} />
+          <ClearIcon
+            onClick={onClear}
+            sx={{
+              cursor: "pointer",
+              visibility: value ? "visible" : "hidden",
+            }}
+          />
         </InputAdornment>
-      ) : null,
+      ),
     }}
   />
 );

@@ -53,7 +53,6 @@ export const Profile = () => {
     axios
       .get(`${ROUTES_URL}/createdroutes-analytics/${user_id}`)
       .then((res) => {
-        console.log(res.data);
         setCreatedRouteAnalytics(res.data[0]);
       })
       .catch((err) => {

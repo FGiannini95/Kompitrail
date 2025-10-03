@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -25,6 +25,7 @@ import { ROUTES_URL } from "../../../../../server/config/serverConfig";
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../context/RoutesContext/RoutesContext";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 
 export const MyRoute = () => {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ export const MyRoute = () => {
     userRoutes,
     openDialog: openCreateEditDialog,
   } = useRoutes();
+  const { user } = useContext(KompitrailContext);
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -93,6 +95,7 @@ export const MyRoute = () => {
                 {...route}
                 onEdit={openEditDialog}
                 onDelete={handleOpenDeleteDialog}
+                isOwner={route.user_id === user.user_id}
               />
             </Grid>
           ))

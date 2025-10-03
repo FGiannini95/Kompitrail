@@ -99,8 +99,6 @@ class routesControllers {
 
   showCreatedRoutesAnalytics = (req, res) => {
     const { id: user_id } = req.params;
-    console.log("hola desde analytics in created route");
-    console.log(user_id.id);
     let sql = `SELECT (SELECT COUNT(*) FROM route WHERE user_id ="${user_id}" and is_deleted = 0) AS total_createdroutes`;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
