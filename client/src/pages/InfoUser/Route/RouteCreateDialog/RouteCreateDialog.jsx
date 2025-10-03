@@ -185,7 +185,6 @@ export const RouteCreateDialog = () => {
                 optionLabelKey="name"
                 optionValueKey="name"
                 multiple
-                readOnly
                 disablePortal
               />
             </Grid>
