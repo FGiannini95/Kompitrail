@@ -26,10 +26,7 @@ export const FormAutocomplete = ({
 
   const getLabel = (opt) => opt?.[optionLabelKey] ?? "";
 
-  const isEQual = (a, b) => {
-    if (!a || !b) return false;
-    return a[optionValueKey] - b[optionValueKey];
-  };
+  const isEqual = (a, b) => a?.[optionValueKey] === b?.[optionValueKey];
 
   // In Autocomplete, the value is not a string or boolean (except when freeSolo)
   // If multiple = false => {}
@@ -40,7 +37,7 @@ export const FormAutocomplete = ({
 
   const handleChange = (_, selected, reason) => {
     if (reason === "clear") {
-      setForm((prev) => ({ ...prev, [name]: "" }));
+      setForm((prev) => ({ ...prev, [name]: multiple ? [] : "" }));
       return;
     }
 
@@ -62,9 +59,12 @@ export const FormAutocomplete = ({
       onChange={handleChange}
       disablePortal={disablePortal}
       disableClearable={!clearable}
+      readOnly={readOnly}
+      disabled={readOnly}
       filterSelectedOptions
-      isOptionEqualToValue={isEQual}
+      isOptionEqualToValue={isEqual}
       getOptionLabel={getLabel}
+      openOnFocus
       {...autocompleteProps}
       renderInput={(params) => (
         <TextField
@@ -72,10 +72,7 @@ export const FormAutocomplete = ({
           label={label}
           error={!!errors?.[name]}
           helperText={errors?.[name] ?? ""}
-          inputProps={{
-            ...params.inputProps,
-            readOnly,
-          }}
+          inputProps={{ ...params.inputProps, readOnly: readOnly }}
         />
       )}
     />

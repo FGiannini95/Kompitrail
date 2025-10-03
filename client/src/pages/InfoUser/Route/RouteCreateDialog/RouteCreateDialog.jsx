@@ -20,11 +20,11 @@ import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAu
 // Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { RoutesString } from "../../../../routes/routes";
+import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 // Providers
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
-import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 // Constants
 import {
   MOTORBIKE_TYPES,
@@ -161,8 +161,8 @@ export const RouteCreateDialog = () => {
                 options={ROUTE_LEVELS}
                 optionLabelKey="name"
                 optionValueKey="name"
-                readOnly
                 disablePortal
+                fullWidth
               />
             </Grid>
             <Grid xs={12}>
