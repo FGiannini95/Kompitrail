@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import {
-  Autocomplete,
   Box,
   Button,
   Checkbox,
@@ -10,16 +9,14 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  InputAdornment,
-  TextareaAutosize,
   TextField,
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-import ClearIcon from "@mui/icons-material/Clear";
 // Components
-import { CreateRouteCostumeTextfield } from "../../../../components/CreateRouteCostumeTextfield/CreateRouteCostumeTextfield";
+import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
+import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 // Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
@@ -27,7 +24,11 @@ import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 // Constants
-import { ROUTE_INITIAL_VALUE } from "../../../../constants/routeConstants";
+import {
+  MOTORBIKE_TYPES,
+  ROUTE_INITIAL_VALUE,
+  ROUTE_LEVELS,
+} from "../../../../constants/routeConstants";
 
 export const RouteEditDialog = () => {
   const [editRoute, setEditRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -51,29 +52,6 @@ export const RouteEditDialog = () => {
         });
     }
   }, [isOpen, route_id]);
-
-  const handleClearField = (name) => {
-    setEditRoute((prevState) => ({
-      ...prevState,
-      [name]: "",
-    }));
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditRoute((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  // We need this to avoid HTML default behavior. The letter "e" is used for scientific notation, such as 1e5 (equivalent to 100000).
-  const preventInvalidkey = (e) => {
-    if (e.key === "e" || e.key === "E" || e.key === "+" || e.key === "-") {
-      e.preventDefault(); // Block these buttons
-    }
-  };
 
   const cleanDialog = () => {
     closeDialog();
@@ -121,171 +99,99 @@ export const RouteEditDialog = () => {
           }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <CreateRouteCostumeTextfield
+            <Grid size={12}>
+              <FormTextfield
                 label="Nombre ruta"
                 name="route_name"
-                value={editRoute?.route_name || ""}
-                onChange={handleChange}
-                onClear={() => handleClearField("route_name")}
-                error={!!errors.route_name}
-                helperText={errors.route_name}
+                errors={errors}
+                setErrors={setErrors}
+                form={editRoute}
+                setForm={setEditRoute}
               />
             </Grid>
-            <Grid item xs={12}>
-              <CreateRouteCostumeTextfield
+            <Grid size={12}>
+              <FormTextfield
                 label="Salida"
                 name="starting_point"
-                value={editRoute?.starting_point || ""}
-                onChange={handleChange}
-                onClear={() => handleClearField("starting_point")}
-                error={!!errors.starting_point}
-                helperText={errors.starting_point}
+                errors={errors}
+                setErrors={setErrors}
+                form={editRoute}
+                setForm={setEditRoute}
               />
             </Grid>
-            <Grid item xs={12}>
-              <CreateRouteCostumeTextfield
+            <Grid size={12}>
+              <FormTextfield
                 label="Llegada"
                 name="ending_point"
-                value={editRoute?.ending_point || ""}
-                onChange={handleChange}
-                onClear={() => handleClearField("ending_point")}
-                error={!!errors.ending_point}
-                helperText={errors.ending_point}
+                errors={errors}
+                setErrors={setErrors}
+                form={editRoute}
+                setForm={setEditRoute}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Km"
                 name="distance"
                 type="number"
-                value={editRoute?.distance || ""}
-                onChange={handleChange}
-                onKeyDown={preventInvalidkey}
-                // Add the close icon
-                InputProps={{
-                  endAdornment: editRoute?.distance ? (
-                    <InputAdornment position="end">
-                      <ClearIcon
-                        onClick={() => handleClearField("distance")}
-                        sx={{ cursor: "pointer" }}
-                      />
-                    </InputAdornment>
-                  ) : null,
-                }}
-                error={!!errors.distance}
-                helperText={errors.distance}
+                preventInvalidkey
+                errors={errors}
+                setErrors={setErrors}
+                form={editRoute}
+                setForm={setEditRoute}
               />
             </Grid>
-            <Grid item xs={6}>
-              <TextField
+            <Grid size={6}>
+              <FormTextfield
                 label="Duración"
                 name="estimated_time"
                 type="number"
-                value={editRoute?.estimated_time || ""}
-                onChange={handleChange}
-                onKeyDown={preventInvalidkey}
-                // Add the close icon
-                InputProps={{
-                  endAdornment: editRoute?.estimated_time ? (
-                    <InputAdornment position="end">
-                      <ClearIcon
-                        onClick={() => handleClearField("estimated_time")}
-                        sx={{ cursor: "pointer" }}
-                      />
-                    </InputAdornment>
-                  ) : null,
-                }}
-                error={!!errors.estimated_time}
-                helperText={errors.estimated_time}
+                errors={errors}
+                setErrors={setErrors}
+                form={editRoute}
+                setForm={setEditRoute}
               />
             </Grid>
-            {/* <Grid item xs={7}>
-              <Autocomplete
+            <Grid size={6}>
+              <FormAutocomplete
+                form={editRoute}
+                setForm={setEditRoute}
+                errors={errors}
+                setErrors={setErrors}
+                name="level"
+                label="Nivel"
+                options={ROUTE_LEVELS}
+                optionLabelKey="name"
+                optionValueKey="name"
                 disablePortal
-                options={editRoute?.level || []}
-                getOptionLabel={(option) => option.name}
-                onChange={(event, value) =>
-                  setEditRoute((prevState) => ({
-                    ...prevState,
-                    level: value ? value.name : "",
-                  }))
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Nivel"
-                    name="level"
-                    // Avoid typing in the TextField
-                    InputProps={{
-                      ...params.InputProps,
-                      inputProps: {
-                        ...params.inputProps,
-                        readOnly: true,
-                      },
-                    }}
-                    onKeyDown={preventInvalidkey}
-                    error={!!errors.level}
-                    helperText={errors.level}
-                  />
-                )}
               />
-            </Grid> */}
-            <Grid item xs={5}>
-              <TextField
+            </Grid>
+            <Grid size={6}>
+              <FormTextfield
                 label="Pilotos"
                 name="participants"
                 type="number"
-                fullWidth
-                value={editRoute?.participants || ""}
-                onChange={handleChange}
-                onKeyDown={preventInvalidkey}
-                // Add the close icon
-                InputProps={{
-                  endAdornment: editRoute?.participants ? (
-                    <InputAdornment position="end">
-                      <ClearIcon
-                        onClick={() => handleClearField("participants")}
-                        sx={{ cursor: "pointer" }}
-                      />
-                    </InputAdornment>
-                  ) : null,
-                }}
-                error={!!errors.participants}
-                helperText={errors.participants}
+                errors={errors}
+                setErrors={setErrors}
+                form={editRoute}
+                setForm={setEditRoute}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <Autocomplete
-                clearOnEscape
+            <Grid size={12}>
+              <FormAutocomplete
+                form={editRoute}
+                setForm={setEditRoute}
+                errors={errors}
+                setErrors={setErrors}
+                name="suitable_motorbike_type"
+                label="Motos aptas"
+                options={MOTORBIKE_TYPES}
+                optionLabelKey="name"
+                optionValueKey="name"
+                multiple
                 disablePortal
-                options={editRoute?.motorbikeType || ""}
-                getOptionLabel={(option) => option.name}
-                onChange={(event, value) =>
-                  setEditRoute((prevState) => ({
-                    ...prevState,
-                    suitable_motorbike_type: value ? value.name : "",
-                  }))
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Motos aptas"
-                    name="suitable_motorbike_type"
-                    // Avoid typing in the TextField
-                    InputProps={{
-                      ...params.InputProps,
-                      inputProps: {
-                        ...params.inputProps,
-                        readOnly: true,
-                      },
-                    }}
-                    error={!!errors.suitable_motorbike_type}
-                    helperText={errors.suitable_motorbike_type}
-                  />
-                )}
               />
-            </Grid> */}
+            </Grid>
             <Grid
               item
               xs={12}
@@ -308,20 +214,16 @@ export const RouteEditDialog = () => {
                 }
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
+            <Grid size={12}>
+              <FormTextfield
                 label="Descripción"
                 name="route_description"
-                fullWidth
                 multiline
-                minRows={6}
-                value={editRoute?.route_description || ""}
-                InputProps={{
-                  inputComponent: TextareaAutosize,
-                }}
-                onChange={handleChange}
-                error={!!errors.route_description}
-                helperText={errors.route_description}
+                maxLength={250}
+                errors={errors}
+                setErrors={setErrors}
+                form={editRoute}
+                setForm={setEditRoute}
               />
             </Grid>
           </Grid>
