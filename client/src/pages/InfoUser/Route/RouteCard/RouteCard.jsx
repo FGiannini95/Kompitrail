@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import {
   styled,
-  Grid2 as Grid,
   Card,
   CardHeader,
   CardMedia,
@@ -12,6 +11,7 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -77,6 +77,7 @@ export const RouteCard = ({
               fontWeight: "bold",
               wordBreak: "break-word",
               overflowWrap: "anywhere",
+              textAlign: "center",
             }}
           >
             {route_name}
@@ -127,7 +128,11 @@ export const RouteCard = ({
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={{ padding: 3 }}>
-          <Grid container spacing={3} sx={{ textAlign: "center" }}>
+          <Grid
+            container
+            spacing={2}
+            sx={{ textAlign: "center", justifyContent: "center" }}
+          >
             <InfoItem label="Distancia" value={`${distance} km`} />
             <InfoItem label="Tiempo estimado" value={`${estimated_time} h`} />
             <InfoItem label="Participantes" value={participants} />
