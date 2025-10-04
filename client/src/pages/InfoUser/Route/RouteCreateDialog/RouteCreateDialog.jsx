@@ -222,7 +222,7 @@ export const RouteCreateDialog = () => {
                 label="Descripción"
                 name="route_description"
                 multiline
-                minRows={6}
+                maxLength={250}
                 errors={errors}
                 setErrors={setErrors}
                 form={createOneRoute}
