@@ -108,6 +108,7 @@ export const RouteCreateDialog = () => {
                 label="Nombre ruta"
                 name="route_name"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -117,6 +118,7 @@ export const RouteCreateDialog = () => {
                 label="Salida"
                 name="starting_point"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -126,6 +128,7 @@ export const RouteCreateDialog = () => {
                 label="Llegada"
                 name="ending_point"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -137,6 +140,7 @@ export const RouteCreateDialog = () => {
                 type="number"
                 preventInvalidkey
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -147,6 +151,7 @@ export const RouteCreateDialog = () => {
                 name="estimated_time"
                 type="number"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -156,6 +161,7 @@ export const RouteCreateDialog = () => {
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
                 errors={errors}
+                setErrors={setErrors}
                 name="level"
                 label="Nivel"
                 options={ROUTE_LEVELS}
@@ -170,6 +176,7 @@ export const RouteCreateDialog = () => {
                 name="participants"
                 type="number"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -179,6 +186,7 @@ export const RouteCreateDialog = () => {
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
                 errors={errors}
+                setErrors={setErrors}
                 name="suitable_motorbike_type"
                 label="Motos aptas"
                 options={MOTORBIKE_TYPES}
@@ -214,8 +222,9 @@ export const RouteCreateDialog = () => {
                 label="Descripción"
                 name="route_description"
                 multiline
-                minRows={6}
+                maxLength={250}
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />

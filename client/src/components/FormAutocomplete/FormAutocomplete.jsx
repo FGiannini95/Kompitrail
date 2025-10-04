@@ -11,6 +11,7 @@ export const FormAutocomplete = ({
   form,
   setForm,
   errors,
+  setErrors,
   name,
   label,
   options = [],
@@ -49,6 +50,14 @@ export const FormAutocomplete = ({
         ? selected?.[optionValueKey]
         : "";
     setForm((prev) => ({ ...prev, [name]: next }));
+
+    if (setErrors && errors?.[name]) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   return (
