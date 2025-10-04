@@ -6,6 +6,7 @@ export const FormTextfield = ({
   form,
   setForm,
   errors,
+  setErrors,
   name,
   label,
   type = "text",
@@ -26,6 +27,15 @@ export const FormTextfield = ({
     else if (type === "number") next = value;
 
     setForm((prev) => ({ ...prev, [name]: next }));
+
+    // Remove errors
+    if (setErrors && errors?.[name]) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleClear = () => {

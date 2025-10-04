@@ -108,6 +108,7 @@ export const RouteCreateDialog = () => {
                 label="Nombre ruta"
                 name="route_name"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -117,6 +118,7 @@ export const RouteCreateDialog = () => {
                 label="Salida"
                 name="starting_point"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -126,6 +128,7 @@ export const RouteCreateDialog = () => {
                 label="Llegada"
                 name="ending_point"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -137,6 +140,7 @@ export const RouteCreateDialog = () => {
                 type="number"
                 preventInvalidkey
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -147,6 +151,7 @@ export const RouteCreateDialog = () => {
                 name="estimated_time"
                 type="number"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -170,6 +175,7 @@ export const RouteCreateDialog = () => {
                 name="participants"
                 type="number"
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
@@ -216,6 +222,7 @@ export const RouteCreateDialog = () => {
                 multiline
                 minRows={6}
                 errors={errors}
+                setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
               />
