@@ -161,6 +161,7 @@ export const RouteCreateDialog = () => {
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
                 errors={errors}
+                setErrors={setErrors}
                 name="level"
                 label="Nivel"
                 options={ROUTE_LEVELS}
@@ -185,6 +186,7 @@ export const RouteCreateDialog = () => {
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
                 errors={errors}
+                setErrors={setErrors}
                 name="suitable_motorbike_type"
                 label="Motos aptas"
                 options={MOTORBIKE_TYPES}
