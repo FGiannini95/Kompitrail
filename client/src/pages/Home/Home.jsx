@@ -77,7 +77,7 @@ export const Home = () => {
           <EmptyState />
         </Grid>
       )}
-      <RouteEditDialog />
+      <Loading />
     </Box>
   );
 };
