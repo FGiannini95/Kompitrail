@@ -7,6 +7,7 @@ export const MotorbikesContext = createContext();
 
 export const MotorbikesProvider = ({ children }) => {
   const [allMotorbikes, setAllMotorbikes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [dialog, setDialog] = useState({
     isOpen: false,
     mode: null,
@@ -22,6 +23,7 @@ export const MotorbikesProvider = ({ children }) => {
   };
 
   const loadMotorbikes = useCallback((user_id) => {
+    setLoading(true);
     axios
       .get(`${MOTORBIKES_URL}/showallmotorbikes/${user_id}`)
       .then((res) => {
@@ -30,6 +32,9 @@ export const MotorbikesProvider = ({ children }) => {
       .catch((err) => {
         console.log(err);
         setAllMotorbikes([]);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -62,6 +67,7 @@ export const MotorbikesProvider = ({ children }) => {
     dialog,
     openDialog,
     closeDialog,
+    loading,
   };
 
   return (

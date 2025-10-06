@@ -1,12 +1,31 @@
 import axios from "axios";
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
 import { ROUTES_URL } from "../../../../server/config/serverConfig";
+import { useLocation } from "react-router-dom";
 
 export const RoutesContext = createContext();
 
 export const RoutesProvider = ({ children }) => {
   const [allRoutes, setAllRoutes] = useState([]);
   const [userRoutes, setUserRoutes] = useState([]);
+  const [expandedRouteId, setExpandedRouteId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+
+  const handleExpandToggle = (route_id) => {
+    setExpandedRouteId((prev) => (prev == route_id ? null : route_id));
+  };
+
+  // Reset the value when there is a navigation
+  useEffect(() => {
+    setExpandedRouteId(null);
+  }, [location.pathname]);
 
   const [dialog, setDialog] = useState({
     isOpen: false,
@@ -23,15 +42,20 @@ export const RoutesProvider = ({ children }) => {
   };
 
   const loadAllRoutes = useCallback(() => {
+    setLoading(true);
     axios
       .get(`${ROUTES_URL}/showallroutes`)
       .then((res) => setAllRoutes(res.data))
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
   const loadUserRoutes = useCallback((user_id) => {
+    setLoading(true);
     axios
       .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}`)
       .then((res) => {
@@ -40,6 +64,9 @@ export const RoutesProvider = ({ children }) => {
       .catch((err) => {
         console.log(err);
         setUserRoutes([]);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -74,6 +101,9 @@ export const RoutesProvider = ({ children }) => {
     createRoute,
     editRoute,
     deleteRoute,
+    expandedRouteId,
+    handleExpandToggle,
+    loading,
   };
 
   return (

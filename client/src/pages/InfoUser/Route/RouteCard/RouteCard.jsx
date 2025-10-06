@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import {
   styled,
@@ -10,6 +10,7 @@ import {
   Collapse,
   IconButton,
   Typography,
+  Box,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -17,15 +18,12 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 
-const ExpandMore = styled(({ expand, ...other }) => {
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
+const ExpandMore = styled(IconButton)(({ expand }) => ({
   marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
   transform: expand ? "rotate(180deg)" : "rotate(0deg)",
+  transition: "transform 0.3s",
 }));
 
 export const RouteCard = ({
@@ -39,16 +37,13 @@ export const RouteCard = ({
   suitable_motorbike_type,
   estimated_time,
   participants,
+  is_verified,
   route_description,
   onEdit,
   onDelete,
   isOwner,
 }) => {
-  const [expanded, setExpanded] = useState(false);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  const { expandedRouteId, handleExpandToggle } = useRoutes();
 
   const InfoItem = ({ label, value }) => (
     <Grid xs={6}>
@@ -118,16 +113,20 @@ export const RouteCard = ({
           </IconButton>
         )}
         <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
+          expand={expandedRouteId === route_id ? 1 : 0}
+          onClick={() => handleExpandToggle(route_id)}
+          aria-expanded={expandedRouteId === route_id}
           aria-label="show more"
         >
           <ExpandMoreIcon fontSize="large" style={{ color: "black" }} />
         </ExpandMore>
       </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
+      <Collapse in={expandedRouteId === route_id} timeout="auto" unmountOnExit>
         <CardContent sx={{ padding: 3 }}>
+          <Box sx={{ textAlign: "center", mb: 2, fontWeight: "bold" }}>
+            <Box component="span">Ruta {""}</Box>
+            {is_verified === 0 ? "conocida" : "nueva"}
+          </Box>
           <Grid
             container
             spacing={2}

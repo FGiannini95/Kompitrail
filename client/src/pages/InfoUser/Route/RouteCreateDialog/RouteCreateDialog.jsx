@@ -69,7 +69,7 @@ export const RouteCreateDialog = () => {
         date: createOneRoute.date,
         level: createOneRoute.level,
         distance: createOneRoute.distance,
-        is_verified: createOneRoute.is_verified || false,
+        is_verified: createOneRoute.is_verified,
         suitable_motorbike_type: createOneRoute.suitable_motorbike_type,
         estimated_time: createOneRoute.estimated_time,
         participants: createOneRoute.participants,
@@ -208,11 +208,11 @@ export const RouteCreateDialog = () => {
               <Checkbox
                 inputProps={{ "aria-label": "controlled" }}
                 color="default"
-                checked={createOneRoute?.is_verified}
+                checked={createOneRoute?.is_verified === 1}
                 onChange={(event) =>
                   setCreateOneRoute((prevState) => ({
                     ...prevState,
-                    is_verified: event.target.checked,
+                    is_verified: event.target.checked ? 1 : 0,
                   }))
                 }
               />

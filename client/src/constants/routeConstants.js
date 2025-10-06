@@ -5,7 +5,7 @@ export const ROUTE_INITIAL_VALUE = {
   date: "",
   level: "",
   distance: "",
-  is_verified: false,
+  is_verified: 0,
   suitable_motorbike_type: "",
   estimated_time: "",
   participants: "",

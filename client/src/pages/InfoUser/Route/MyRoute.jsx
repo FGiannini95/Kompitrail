@@ -17,6 +17,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { RouteCard } from "./RouteCard/RouteCard";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
 import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
+import { Loading } from "../../../components/Loading/Loading";
 // Utils
 import { RoutesString } from "../../../routes/routes";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
@@ -37,6 +38,7 @@ export const MyRoute = () => {
     loadUserRoutes,
     userRoutes,
     openDialog: openCreateEditDialog,
+    loading,
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
 
@@ -73,6 +75,10 @@ export const MyRoute = () => {
   const openEditDialog = (route_id) => {
     openCreateEditDialog({ mode: "edit", route_id });
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Grid container direction="column" spacing={2}>
