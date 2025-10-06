@@ -15,6 +15,7 @@ export const RoutesProvider = ({ children }) => {
   const [allRoutes, setAllRoutes] = useState([]);
   const [userRoutes, setUserRoutes] = useState([]);
   const [expandedRouteId, setExpandedRouteId] = useState(null);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
 
   const handleExpandToggle = (route_id) => {
@@ -41,15 +42,20 @@ export const RoutesProvider = ({ children }) => {
   };
 
   const loadAllRoutes = useCallback(() => {
+    setLoading(true);
     axios
       .get(`${ROUTES_URL}/showallroutes`)
       .then((res) => setAllRoutes(res.data))
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
   const loadUserRoutes = useCallback((user_id) => {
+    setLoading(true);
     axios
       .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}`)
       .then((res) => {
@@ -58,6 +64,9 @@ export const RoutesProvider = ({ children }) => {
       .catch((err) => {
         console.log(err);
         setUserRoutes([]);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -94,6 +103,7 @@ export const RoutesProvider = ({ children }) => {
     deleteRoute,
     expandedRouteId,
     handleExpandToggle,
+    loading,
   };
 
   return (

@@ -2,16 +2,17 @@ import React, { useContext, useEffect } from "react";
 import axios from "axios";
 
 import { Box, Grid2 as Grid } from "@mui/material";
-
+// Components
 import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
 import { EmptyState } from "../../components/EmptyState/EmptyState";
+import { Loading } from "../../components/Loading/Loading";
+import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 // Utils
 import { ROUTES_URL } from "../../../../server/config/serverConfig";
 // Providers
 import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
-import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 import { KompitrailContext } from "../../context/KompitrailContext";
 
 export const Home = () => {
@@ -22,6 +23,7 @@ export const Home = () => {
     loadAllRoutes,
     allRoutes,
     openDialog: openCreateEditDialog,
+    loading,
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
 
@@ -54,6 +56,9 @@ export const Home = () => {
     openCreateEditDialog({ mode: "edit", route_id });
   };
 
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       {allRoutes.length > 0 ? (

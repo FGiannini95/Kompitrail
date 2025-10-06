@@ -20,6 +20,7 @@ import { MotorbikeEditDialog } from "./MotorbikeEditDialog/MotorbikeEditDialog";
 import { MotorbikeCard } from "./MotorbikeCard/MotorbikeCard";
 import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
+import { Loading } from "../../../components/Loading/Loading";
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
@@ -42,6 +43,7 @@ export const Motorbike = () => {
     loadMotorbikes,
     deleteMotorbike,
     openDialog: openCreateEditDialog,
+    loading,
   } = useMotorbikes();
 
   useEffect(() => {
@@ -81,6 +83,10 @@ export const Motorbike = () => {
     setImgSelected();
     setOpenImg(false);
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Grid container direction="column" spacing={2}>
