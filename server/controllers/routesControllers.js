@@ -16,6 +16,7 @@ class routesControllers {
       estimated_time,
       participants,
       route_description,
+      is_verified,
     } = JSON.parse(req.body.createRoute);
 
     if (
@@ -48,7 +49,7 @@ class routesControllers {
       '${ending_point}',
       '${level}',
       '${distance}',
-      '1',
+      '${is_verified}',
       '${suitable_motorbike_type}',
       '${estimated_time}',
       '${participants}',

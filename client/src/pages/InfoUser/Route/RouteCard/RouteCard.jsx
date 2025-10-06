@@ -113,7 +113,7 @@ export const RouteCard = ({
           </IconButton>
         )}
         <ExpandMore
-          expand={expandedRouteId === route_id}
+          expand={expandedRouteId === route_id ? 1 : 0}
           onClick={() => handleExpandToggle(route_id)}
           aria-expanded={expandedRouteId === route_id}
           aria-label="show more"
