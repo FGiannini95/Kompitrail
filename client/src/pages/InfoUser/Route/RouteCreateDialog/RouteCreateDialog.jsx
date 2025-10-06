@@ -208,7 +208,7 @@ export const RouteCreateDialog = () => {
               <Checkbox
                 inputProps={{ "aria-label": "controlled" }}
                 color="default"
-                checked={createOneRoute?.is_verified}
+                checked={createOneRoute?.is_verified === 0}
                 onChange={(event) =>
                   setCreateOneRoute((prevState) => ({
                     ...prevState,

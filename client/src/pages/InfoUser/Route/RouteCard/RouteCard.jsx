@@ -10,6 +10,7 @@ import {
   Collapse,
   IconButton,
   Typography,
+  Box,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -36,6 +37,7 @@ export const RouteCard = ({
   suitable_motorbike_type,
   estimated_time,
   participants,
+  is_verified,
   route_description,
   onEdit,
   onDelete,
@@ -121,6 +123,10 @@ export const RouteCard = ({
       </CardActions>
       <Collapse in={expandedRouteId === route_id} timeout="auto" unmountOnExit>
         <CardContent sx={{ padding: 3 }}>
+          <Box sx={{ textAlign: "center", mb: 2, fontWeight: "bold" }}>
+            <Box component="span">Ruta {""}</Box>
+            {is_verified === 0 ? "conocida" : "nueva"}
+          </Box>
           <Grid
             container
             spacing={2}
