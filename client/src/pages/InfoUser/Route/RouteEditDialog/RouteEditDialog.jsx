@@ -205,11 +205,11 @@ export const RouteEditDialog = () => {
               <Checkbox
                 inputProps={{ "aria-label": "controlled" }}
                 color="default"
-                checked={!!editRoute?.is_verified}
+                checked={editRoute?.is_verified === 1}
                 onChange={(event) =>
                   setEditRoute((prevState) => ({
                     ...prevState,
-                    is_verified: event.target.checked,
+                    is_verified: event.target.checked ? 1 : 0,
                   }))
                 }
               />
