@@ -1,19 +1,14 @@
 import React, { useState } from "react";
-
-// MUI
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid2";
-import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography";
-
-// MUI-ICONS
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+
+import { TextField, Button, Link, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+// Utils
 import { RoutesString } from "../../../routes/routes";
 import { USERS_URL } from "../../../../../server/config/serverConfig";
 
@@ -71,11 +66,11 @@ export const Register = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} align="center">
+      <Grid container spacing={2} justifyContent="center">
+        <Grid size={12} align="center">
           <Typography variant="h4">Registro</Typography>
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <TextField
             {...register("name", {
               required: "El nombre es obligatorio",
@@ -90,8 +85,7 @@ export const Register = () => {
             helperText={errors.name?.message}
           />
         </Grid>
-
-        <Grid item xs={12}>
+        <Grid size={12}>
           <TextField
             {...register("lastname", {
               required: "Los apellidos son obligatorio",
@@ -107,8 +101,7 @@ export const Register = () => {
             helperText={errors.lastname?.message}
           />
         </Grid>
-
-        <Grid item xs={12}>
+        <Grid size={12}>
           <TextField
             {...register("email", {
               required: "El correo es obligatorio",
@@ -124,8 +117,7 @@ export const Register = () => {
             helperText={errors.email?.message}
           />
         </Grid>
-
-        <Grid item xs={12}>
+        <Grid size={12}>
           <TextField
             {...register("password", {
               required: "La contraseña es obligatoria",
@@ -157,11 +149,11 @@ export const Register = () => {
           />
         </Grid>
         {errors.root && (
-          <Grid item xs={12}>
+          <Grid size xs={12}>
             <Typography color="error">{errors.root.message}</Typography>
           </Grid>
         )}
-        <Grid item xs={12}>
+        <Grid size xs={12}>
           <Button
             disabled={isSubmitting}
             type="submit"
@@ -177,8 +169,7 @@ export const Register = () => {
             {isSubmitting ? "Cargando..." : "Crear"}
           </Button>
         </Grid>
-
-        <Grid item xs={12}>
+        <Grid size xs={12}>
           <Button
             type="button"
             variant="outlined"
@@ -197,7 +188,7 @@ export const Register = () => {
             Cancelar
           </Button>
         </Grid>
-        <Grid item xs={12}>
+        <Grid size xs={12}>
           <Typography textAlign="center">
             ¿Ya tienes un perfil? ¡Haz el login{" "}
             <Link href={RoutesString.login} color="#777777" underline="hover">
