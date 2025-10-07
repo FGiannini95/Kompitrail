@@ -1,14 +1,10 @@
-import React, { useState } from "react";
-
-// MUI
-import Card from "@mui/material/Card";
-import Box from "@mui/material/Box";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-
-// MUI-ICONS
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import React from "react";
 import { useLocation } from "react-router-dom";
+
+import { Box, Card, CardContent, Typography } from "@mui/material";
+
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+// Utils
 import { RoutesString } from "../../routes/routes";
 
 export const EmptyState = () => {
@@ -24,7 +20,7 @@ export const EmptyState = () => {
   return (
     <Card
       sx={{
-        maxWidth: 345,
+        width: "100%",
         backgroundColor: "#eeeeee",
         borderRadius: "20px",
         p: 3,
