@@ -6,7 +6,6 @@ import { Box, Grid2 as Grid } from "@mui/material";
 import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
 import { EmptyState } from "../../components/EmptyState/EmptyState";
 import { Loading } from "../../components/Loading/Loading";
-import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 // Utils
 import { ROUTES_URL } from "../../../../server/config/serverConfig";
 // Providers
@@ -77,7 +76,6 @@ export const Home = () => {
           <EmptyState />
         </Grid>
       )}
-      <Loading />
     </Box>
   );
 };
