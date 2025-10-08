@@ -14,6 +14,11 @@ import {
   Stack,
   TableCell,
   tableCellClasses,
+  Typography,
+  CardContent,
+  CardHeader,
+  Card,
+  CardMedia,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -62,8 +67,8 @@ export const Profile = () => {
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.common.white,
+      backgroundColor: "#eeeeee",
+      color: "inherit",
       fontSize: 16,
       padding: "8px",
     },
@@ -75,7 +80,8 @@ export const Profile = () => {
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: "transparent",
+      border: "2px solid #eeeeee",
     },
     // hide last border
     // "&:last-child td, &:last-child th": {
@@ -141,9 +147,7 @@ export const Profile = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <StyledTableCell align="center">
-                  Número de motos
-                </StyledTableCell>
+                <StyledTableCell align="center">Nº de motos</StyledTableCell>
                 <StyledTableCell align="center">Rutas creadas</StyledTableCell>
                 <StyledTableCell align="center">
                   Rutas participantes
@@ -165,12 +169,60 @@ export const Profile = () => {
         </TableContainer>
       </Grid>
 
-      <p>
-        la opción de elegir entre rutas creadas y ruta participadas (habrá un
-        pequeñoi resumen con la info más importante)
-      </p>
-      <p>el listado de las mismas. Si no hay ruta, icono más mensaje</p>
-      {/* import ReportOutlinedIcon from '@mui/icons-material/ReportOutlined'; */}
+      <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
+        <Typography>Tus rutas</Typography>
+        {/* Si dovrebbe fare un carrusel per vedere tutte. non permette vedere piú informazione */}
+        <Card
+          sx={{
+            bgcolor: "#eeeeee",
+            borderRadius: 2,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <CardHeader
+            sx={{ ".MuiCardHeader-content": { minWidth: 0 } }}
+            title={
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  wordBreak: "break-word",
+                  overflowWrap: "anywhere",
+                  textAlign: "center",
+                }}
+              >
+                {"Nome"}
+              </Typography>
+            }
+          />
+          <CardContent>
+            <Typography>{"Partenza e arrivo"}</Typography>
+            <Typography>{"Data"}</Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
+        <Typography>Personas con las que viajas más</Typography>
+        <Card
+          sx={{
+            bgcolor: "#eeeeee",
+            borderRadius: 2,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <CardMedia
+            component="img"
+            sx={{ height: 180, objectFit: "cover" }}
+            image=""
+            alt="Route img"
+          />
+          <CardContent>
+            <Typography>{"Nome"}</Typography>
+            <Typography>{"# rutas en común"}</Typography>
+          </CardContent>
+        </Card>
+      </Grid>
     </Box>
   );
 };
