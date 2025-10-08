@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
 import { PhoneInput, defaultCountries } from "react-international-phone";
 import "react-international-phone/style.css";
 
@@ -14,6 +14,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { getInitials } from "../../../helpers/Utils";
 import { RoutesString } from "../../../routes/routes";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 
 const countries = defaultCountries;
 
@@ -31,6 +32,7 @@ export const EditUser = () => {
   const [save, setSave] = useState(false);
   const [editUser, setEditUser] = useState(defaultValue);
   const [initialValues, setInitialValues] = useState(defaultValue);
+  const { setUser } = useContext(KompitrailContext);
 
   const { user_id } = jwtDecode(tokenLocalStorage).user;
 
@@ -76,6 +78,11 @@ export const EditUser = () => {
 
   const handleConfirm = (e) => {
     e.preventDefault();
+    setUser((prev) =>
+      prev
+        ? { ...prev, name: editUser.name, lastname: editUser.lastname }
+        : prev
+    );
 
     const newFormData = new FormData();
     newFormData.append("editUser", JSON.stringify(editUser));
@@ -89,7 +96,8 @@ export const EditUser = () => {
       .then((res) => {
         setEditUser(res.data);
         setInitialValues(res.data);
-        navigate(RoutesString.profile);
+        setUser(res.data);
+        window.location.replace(RoutesString.profile);
       })
       .catch((err) => {
         console.log(err);

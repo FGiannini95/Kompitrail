@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import {
-  AppBar,
-  Box,
-  MenuIcon,
-  Toolbar,
-  Typography,
-  IconButton,
-} from "@mui/material";
+import { AppBar, Box, Toolbar, Typography, IconButton } from "@mui/material";
 
 import SportsMotorsportsOutlinedIcon from "@mui/icons-material/SportsMotorsportsOutlined";
 
