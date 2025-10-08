@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AppBar, Box, Toolbar, Typography, IconButton } from "@mui/material";
 
 import SportsMotorsportsOutlinedIcon from "@mui/icons-material/SportsMotorsportsOutlined";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../context/KompitrailContext";
