@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { AppBar, Box, Toolbar, IconButton } from "@mui/material";
@@ -12,7 +12,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import { RoutesString } from "../../routes/routes";
 
 export const NavBarApp = ({ children }) => {
-  //const [activeButton, setActiveButton] = useState(RoutesString.home);
   const navigate = useNavigate();
 
   const isActive = (route) =>
