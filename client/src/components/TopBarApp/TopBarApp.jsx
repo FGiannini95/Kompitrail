@@ -1,12 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
-import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import Box from "@mui/material/Box";
+
+import {
+  AppBar,
+  Box,
+  MenuIcon,
+  Toolbar,
+  Typography,
+  IconButton,
+} from "@mui/material";
+
 import SportsMotorsportsOutlinedIcon from "@mui/icons-material/SportsMotorsportsOutlined";
-import MenuIcon from "@mui/icons-material/Menu";
+
 import { RoutesString } from "../../routes/routes";
 import { KompitrailContext } from "../../context/KompitrailContext";
-import { capitalizeFirstLetter } from "../../helpers/utils";
+
+const RETURN_KEY = "infoUser:returnTo";
 
 export const TopBar = () => {
   // We use this hook to acced to the current location
@@ -42,6 +51,8 @@ export const TopBar = () => {
   }, [location.pathname]);
 
   const handleIconMenuClick = () => {
+    const from = location.pathname + location.search + location.hash;
+    sessionStorage.setItem(RETURN_KEY, from);
     navigate(RoutesString.infouser);
   };
 
@@ -57,9 +68,7 @@ export const TopBar = () => {
             alignItems="center"
             gap="10px"
           >
-            <Typography variant="h6">
-              {capitalizeFirstLetter(user.name)}
-            </Typography>
+            <Typography variant="h6">{user.name}</Typography>
             <SportsMotorsportsOutlinedIcon
               sx={{
                 transition: "transform 0.5s ease-in-out",

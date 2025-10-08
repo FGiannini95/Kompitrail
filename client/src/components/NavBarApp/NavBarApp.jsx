@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
+
+import { AppBar, Box, Toolbar, IconButton } from "@mui/material/AppBar";
+
 import HomeIcon from "@mui/icons-material/Home";
-import SearchIcon from "@mui/icons-material/Search";
-import AddIcon from "@mui/icons-material/Add";
 import ChatIcon from "@mui/icons-material/Chat";
 import PersonIcon from "@mui/icons-material/Person";
-import Box from "@mui/material/Box";
+// import SearchIcon from "@mui/icons-material/Search";
+// import AddIcon from "@mui/icons-material/Add";
+
 import { RoutesString } from "../../routes/routes";
 
 export const NavBarApp = ({ children }) => {
@@ -67,18 +67,18 @@ export const NavBarApp = ({ children }) => {
           >
             <HomeIcon />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             onClick={() => handleButtonClick(RoutesString.search)}
             color={activeButton === RoutesString.search ? "" : "inherit"}
           >
             <SearchIcon />
-          </IconButton>
-          <IconButton
+          </IconButton> */}
+          {/* <IconButton
             onClick={() => handleButtonClick(RoutesString.createTrip)}
-            color={activeButton === RoutesString.createTrip ? "" : "inherit"} //Change the path
+            color={activeButton === RoutesString.createTrip ? "" : "inherit"}
           >
             <AddIcon sx={{ fontSize: 50 }} />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             onClick={() => handleButtonClick(RoutesString.chat)}
             color={activeButton === RoutesString.chat ? "" : "inherit"}

@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getLocalStorage } from "../helpers/localStorageUtils";
-import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+// Utils
+import { getLocalStorage } from "../helpers/localStorageUtils";
 import { USERS_URL } from "../../../server/config/serverConfig";
 
 export const KompitrailContext = createContext();
@@ -30,10 +31,10 @@ export const KompitrailProvider = ({ children }) => {
           setIsLogged(false);
         })
         .finally(() => {
-          setIsLoading(false); // Pause loader if we get data
+          setIsLoading(false);
         });
     } else {
-      setIsLoading(false); // Pause loader if we don't get any data
+      setIsLoading(false);
       setUser(null);
       setIsLogged(false);
     }

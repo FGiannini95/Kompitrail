@@ -43,6 +43,7 @@ function Section({ title, children }) {
     </Box>
   );
 }
+const RETURN_KEY = "infoUser:returnTo";
 
 export const InfoUser = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
@@ -85,6 +86,12 @@ export const InfoUser = () => {
     }
   };
 
+  const handleClose = () => {
+    const target = sessionStorage.getItem(RETURN_KEY) || "/";
+    sessionStorage.removeItem(RETURN_KEY);
+    navigate(target, { replace: true });
+  };
+
   return (
     <Box
       sx={{
@@ -96,7 +103,7 @@ export const InfoUser = () => {
       <Grid>
         <CloseOutlinedIcon
           sx={{ paddingLeft: "20px", cursor: "pointer" }}
-          onClick={() => navigate("/")}
+          onClick={handleClose}
         />
       </Grid>
       {/* User header */}

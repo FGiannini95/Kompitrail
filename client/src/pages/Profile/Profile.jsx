@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
-// MUI
 import {
   Box,
   Button,
-  Grid2 as Grid,
   Table,
   TableBody,
   TableContainer,
@@ -14,20 +15,19 @@ import {
   TableCell,
   tableCellClasses,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 import { styled } from "@mui/material/styles";
 
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+// Utils
 import { getLocalStorage } from "../../helpers/localStorageUtils";
-import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
 import {
   MOTORBIKES_URL,
   ROUTES_URL,
 } from "../../../../server/config/serverConfig";
+// Components
 import { UserAvatar } from "../../components/UserAvatar/UserAvatar";
 
 export const Profile = () => {
