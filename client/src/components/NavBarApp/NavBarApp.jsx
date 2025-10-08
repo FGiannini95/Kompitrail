@@ -12,8 +12,11 @@ import PersonIcon from "@mui/icons-material/Person";
 import { RoutesString } from "../../routes/routes";
 
 export const NavBarApp = ({ children }) => {
-  const [activeButton, setActiveButton] = useState(RoutesString.home);
+  //const [activeButton, setActiveButton] = useState(RoutesString.home);
   const navigate = useNavigate();
+
+  const isActive = (route) =>
+    location.pathname === route || location.pathname.startsWith(route + "/");
 
   const location = useLocation();
 
@@ -28,11 +31,6 @@ export const NavBarApp = ({ children }) => {
     RoutesString.editRoute,
     RoutesString.route,
   ].includes(location.pathname);
-
-  const handleButtonClick = (path) => {
-    setActiveButton(path);
-    navigate(path);
-  };
 
   const topBarHeight = 64;
   const navBarHeight = 56;
@@ -62,8 +60,8 @@ export const NavBarApp = ({ children }) => {
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-around" }}>
           <IconButton
-            onClick={() => handleButtonClick(RoutesString.home)}
-            color={activeButton === RoutesString.home ? "" : "inherit"}
+            onClick={() => navigate(RoutesString.home)}
+            color={isActive(RoutesString.home) ? "" : "inherit"}
           >
             <HomeIcon />
           </IconButton>
@@ -80,14 +78,14 @@ export const NavBarApp = ({ children }) => {
             <AddIcon sx={{ fontSize: 50 }} />
           </IconButton> */}
           <IconButton
-            onClick={() => handleButtonClick(RoutesString.chat)}
-            color={activeButton === RoutesString.chat ? "" : "inherit"}
+            onClick={() => navigate(RoutesString.chat)}
+            color={isActive(RoutesString.chat) ? "" : "inherit"}
           >
             <ChatIcon />
           </IconButton>
           <IconButton
-            onClick={() => handleButtonClick(RoutesString.profile)}
-            color={activeButton === RoutesString.profile ? "" : "inherit"}
+            onClick={() => navigate(RoutesString.profile)}
+            color={isActive(RoutesString.profile) ? "" : "inherit"}
           >
             <PersonIcon />
           </IconButton>

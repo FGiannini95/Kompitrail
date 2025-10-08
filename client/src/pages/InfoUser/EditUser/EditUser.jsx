@@ -97,6 +97,7 @@ export const EditUser = () => {
         setEditUser(res.data);
         setInitialValues(res.data);
         setUser(res.data);
+        // Hard refresh to display the proper data
         window.location.replace(RoutesString.profile);
       })
       .catch((err) => {
