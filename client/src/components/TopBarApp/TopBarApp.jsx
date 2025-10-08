@@ -12,12 +12,10 @@ import { KompitrailContext } from "../../context/KompitrailContext";
 const RETURN_KEY = "infoUser:returnTo";
 
 export const TopBar = () => {
-  // We use this hook to acced to the current location
+  const [animateIcon, setAnimateIcon] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(KompitrailContext);
-
-  const [animateIcon, setAnimateIcon] = useState(false);
 
   const noDesign = [
     RoutesString.infouser,
