@@ -1,25 +1,20 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import { PhoneInput, defaultCountries } from "react-international-phone";
 import "react-international-phone/style.css";
 
-//MUI
+import { Button, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 
-//MUI-ICONS
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-
-import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+// Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
-import axios from "axios";
 import { getInitials } from "../../../helpers/Utils";
-
-//TODO: @julia El input de nombre y apellido tiene que tener el mismo tamaño con en las demás vistas (creo que le sobra un container), el código de teléfono tiene que tener todas las opciones, a ver si existe una manera para hacerlo), hay que usar axios para traer los datos del usuario, que rellenen los campo, refactorizar el código como en infouser(gridStyles). El button guardar se habilita sólo si cambia algún valor si vuelvo atrás reseteos los campos con el valor inicial. El button guardar ejecuta una sql de tipo update
+import { RoutesString } from "../../../routes/routes";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 
 const countries = defaultCountries;
 
@@ -37,13 +32,12 @@ export const EditUser = () => {
   const [save, setSave] = useState(false);
   const [editUser, setEditUser] = useState(defaultValue);
   const [initialValues, setInitialValues] = useState(defaultValue);
+  const { setUser } = useContext(KompitrailContext);
 
   const { user_id } = jwtDecode(tokenLocalStorage).user;
 
-  //Lógica en Utils.js
   const initials = getInitials(editUser.name, editUser.lastname);
 
-  //Cargar información del usuario
   useEffect(() => {
     if (user_id) {
       axios
@@ -59,18 +53,21 @@ export const EditUser = () => {
   }, [user_id]);
 
   const handleChange = (e) => {
-    // Diferenciar si es un evento o un valor directo
     if (e && e.target) {
-      // Caso de un evento estándar de React
+      // React event
       const { name, value } = e.target;
-      setEditUser((prevState) => ({ ...prevState, [name]: value }));
+
+      const nextValue =
+        typeof value === "string" && value.length > 0 && name !== "phonenumber"
+          ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+          : value;
+      setEditUser((prevState) => ({ ...prevState, [name]: nextValue }));
     } else {
-      // Caso de un valor directo (PhoneInput)
+      // Direct value - PhoneInput
       setEditUser((prevState) => ({ ...prevState, phonenumber: e }));
     }
   };
 
-  //Cambiar imagen
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     setEditUser((prevState) => ({
@@ -79,9 +76,13 @@ export const EditUser = () => {
     }));
   };
 
-  //Confirmar cambios
   const handleConfirm = (e) => {
     e.preventDefault();
+    setUser((prev) =>
+      prev
+        ? { ...prev, name: editUser.name, lastname: editUser.lastname }
+        : prev
+    );
 
     const newFormData = new FormData();
     newFormData.append("editUser", JSON.stringify(editUser));
@@ -95,13 +96,20 @@ export const EditUser = () => {
       .then((res) => {
         setEditUser(res.data);
         setInitialValues(res.data);
+        setUser(res.data);
+        // Hard refresh to display the proper data
+        window.location.replace(RoutesString.profile);
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  //Comprobar si ha habido cambios
+  const handleCancel = () => {
+    setEditUser(initialValues);
+    navigate(-1);
+  };
+
   useEffect(() => {
     if (editUser !== defaultValue && initialValues !== defaultValue) {
       setSave(JSON.stringify(editUser) !== JSON.stringify(initialValues));
@@ -109,9 +117,14 @@ export const EditUser = () => {
   }, [editUser, initialValues]);
 
   return (
-    <Grid container direction="column" spacing={2}>
-      <Grid item container alignItems="center" justifyContent="space-between">
-        <IconButton onClick={() => navigate(-1)}>
+    <Grid
+      container
+      direction="column"
+      spacing={2}
+      sx={{ px: 2, overflow: "hidden" }}
+    >
+      <Grid container alignItems="center" justifyContent="space-between">
+        <IconButton onClick={handleCancel}>
           <ArrowBackIosIcon style={{ color: "black" }} />
         </IconButton>
         <Typography variant="h6">Modificar perfil</Typography>
@@ -126,32 +139,28 @@ export const EditUser = () => {
       </Grid>
       <Grid
         container
-        spacing={1}
+        spacing={2}
         direction="column"
         alignItems="center"
-        justifyContent="center"
+        sx={{ width: "100%", maxWidth: "100%" }}
       >
-        <Grid
-          item
-          xs={1}
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          sx={{
-            width: 1 / 3,
-            border: "2px solid black",
-            borderRadius: "50%",
-            aspectRatio: 1 / 1,
-          }}
-          onChange={handlePhotoChange}
-        >
-          <Typography sx={{}} variant="h4">
-            {initials}
-          </Typography>
+        <Grid size={12} sx={{ display: "flex", justifyContent: "center" }}>
+          <Grid
+            sx={{
+              width: 120,
+              height: 120,
+              border: "2px solid black",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onChange={handlePhotoChange}
+          >
+            <Typography variant="h4">{initials}</Typography>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
           <TextField
             label="Nombre"
             name="name"
@@ -161,7 +170,7 @@ export const EditUser = () => {
             onChange={handleChange}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
           <TextField
             label="Apellidos"
             name="lastname"
@@ -171,31 +180,33 @@ export const EditUser = () => {
             onChange={handleChange}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Grid container spacing={0} item xs={12} alignItems="center">
-            {/* Select para el código de país */}
-            <PhoneInput
-              defaultCountry="es"
-              phone={phone}
-              onChange={(value) => {
-                setPhone(value); // Actualiza el estado
-                handleChange(value); // Ejecuta el valor
-              }}
-              countries={countries}
-              value={editUser?.phonenumber || ""}
-              style={{
-                backgroundColor: "#f5f4f4",
-                border: "1px solid rgba(0, 0, 0, 0.3)",
-                borderRadius: "5px",
-                fontFamily: "Arial, sans-serif",
-                fontSize: "18px",
-              }}
-              inputStyle={{
-                width: "178px",
-                fontSize: "16px",
-              }}
-            />
-          </Grid>
+        <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
+          <PhoneInput
+            defaultCountry="es"
+            value={editUser?.phonenumber || ""}
+            onChange={(value) => {
+              setPhone(value);
+              handleChange(value);
+            }}
+            countries={countries}
+            style={{
+              width: "100%",
+              backgroundColor: "#f5f4f4",
+              border: "1px solid rgba(0, 0, 0, 0.3)",
+              borderRadius: "5px",
+              fontFamily: "Arial, sans-serif",
+              fontSize: "18px",
+            }}
+            inputStyle={{
+              height: "56px",
+              flex: "1",
+            }}
+            countrySelectorStyleProps={{
+              buttonStyle: {
+                height: "56px",
+              },
+            }}
+          />
         </Grid>
       </Grid>
     </Grid>

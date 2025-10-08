@@ -136,11 +136,10 @@ export const RouteCard = ({
             <InfoItem label="Tiempo estimado" value={`${estimated_time} h`} />
             <InfoItem label="Participantes" value={participants} />
             <InfoItem label="Nivel" value={level} />
-            <InfoItem
-              label="Motos aptas"
-              value={<Typography>{suitable_motorbike_type}</Typography>}
-            />
-            <Grid xs={12}>
+            <Grid size={12}>
+              <InfoItem label="Motos aptas" value={suitable_motorbike_type} />
+            </Grid>
+            <Grid size={12}>
               <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 Descripción
               </Typography>
