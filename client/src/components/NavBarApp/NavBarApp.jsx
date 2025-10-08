@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { AppBar, Box, Toolbar, IconButton } from "@mui/material/AppBar";
+import { AppBar, Box, Toolbar, IconButton } from "@mui/material";
 
 import HomeIcon from "@mui/icons-material/Home";
 import ChatIcon from "@mui/icons-material/Chat";
