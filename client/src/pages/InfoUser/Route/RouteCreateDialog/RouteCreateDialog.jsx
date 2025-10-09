@@ -17,6 +17,7 @@ import Grid from "@mui/material/Grid2";
 // Components
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
+import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 // Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { RoutesString } from "../../../../routes/routes";
@@ -127,6 +128,16 @@ export const RouteCreateDialog = () => {
               <FormTextfield
                 label="Llegada"
                 name="ending_point"
+                errors={errors}
+                setErrors={setErrors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+              />
+            </Grid>
+            <Grid size={12}>
+              <FormDataPicker
+                label="Fecha"
+                name="date"
                 errors={errors}
                 setErrors={setErrors}
                 form={createOneRoute}

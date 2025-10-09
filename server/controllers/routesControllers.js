@@ -111,6 +111,7 @@ class routesControllers {
       route_name,
       starting_point,
       ending_point,
+      date,
       level,
       distance,
       is_verified,
@@ -123,7 +124,8 @@ class routesControllers {
     let sql = `UPDATE route SET 
       route_name = '${route_name}', 
       starting_point = '${starting_point}', 
-      ending_point = '${ending_point}', 
+      ending_point = '${ending_point}',
+      date = '${date}', 
       level = '${level}', 
       distance = '${distance}', 
       is_verified='${is_verified}', 
