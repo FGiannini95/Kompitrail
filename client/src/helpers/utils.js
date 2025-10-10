@@ -19,3 +19,23 @@ export const capitalizeFullName = (name, lastname) => {
 
   return `${capitalizedName} ${capitalizedLastName}`;
 };
+
+export const formatDateTime = (iso) => {
+  const d = new Date(iso);
+
+  const date_dd_mm_yyyy = new globalThis.Intl.DateTimeFormat("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "Europe/Madrid",
+  }).format(d);
+
+  const time_hh_mm = new globalThis.Intl.DateTimeFormat("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Europe/Madrid",
+  }).format(d);
+
+  return { date_dd_mm_yyyy, time_hh_mm };
+};

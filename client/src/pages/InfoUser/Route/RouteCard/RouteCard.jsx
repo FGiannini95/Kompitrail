@@ -1,16 +1,17 @@
 import React from "react";
 
 import {
+  Avatar,
+  Badge,
   styled,
   Card,
-  CardHeader,
-  CardMedia,
   CardContent,
   CardActions,
   Collapse,
   IconButton,
   Typography,
   Box,
+  Stack,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -18,7 +19,13 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
+import { formatDateTime } from "../../../../helpers/utils";
 
 const ExpandMore = styled(IconButton)(({ expand }) => ({
   marginLeft: "auto",
@@ -44,6 +51,7 @@ export const RouteCard = ({
   isOwner,
 }) => {
   const { expandedRouteId, handleExpandToggle } = useRoutes();
+  const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
 
   const InfoItem = ({ label, value }) => (
     <Grid xs={6}>
@@ -55,6 +63,68 @@ export const RouteCard = ({
   );
 
   return (
+    <Card
+      sx={{
+        width: "100%",
+        bgcolor: "#eeeeee",
+        borderRadius: 2,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <CardContent>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
+          <Typography>{starting_point}</Typography>
+        </Stack>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <FlagOutlinedIcon fontSize="medium" aria-hidden />
+          <Typography>{ending_point}</Typography>
+        </Stack>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <CalendarMonthIcon fontSize="medium" aria-hidden />
+          <Typography>{date_dd_mm_yyyy}</Typography>
+          <AccessTimeOutlinedIcon fontSize="medium" aria-hidden />
+          <Typography>{time_hh_mm}</Typography>
+        </Stack>
+        <Grid display="flex" gap={1} marginTop={1}>
+          <Badge
+            overlap="circular"
+            badgeContent="x"
+            color="error"
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            // Style the dot a bit bigger and add a white ring
+            sx={{
+              "& .MuiBadge-badge": {
+                width: 16,
+                height: 16,
+                minWidth: 16,
+                borderRadius: "50%",
+              },
+            }}
+          >
+            <Avatar />
+          </Badge>
+          <Avatar />
+          <Avatar />
+          <Avatar />
+          <Avatar />
+        </Grid>
+      </CardContent>
+      <CardActions disableSpacing>
+        {isOwner && (
+          <>
+            <IconButton onClick={() => onEdit?.(route_id)}>
+              <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
+            </IconButton>
+            <IconButton onClick={() => onDelete?.(route_id)}>
+              <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
+            </IconButton>
+          </>
+        )}
+      </CardActions>
+    </Card>
+    /*
     <Card
       sx={{
         width: "100%",
@@ -151,5 +221,6 @@ export const RouteCard = ({
         </CardContent>
       </Collapse>
     </Card>
+    */
   );
 };

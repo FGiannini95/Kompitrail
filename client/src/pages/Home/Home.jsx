@@ -2,16 +2,7 @@ import React, { useContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
@@ -80,59 +71,6 @@ export const Home = () => {
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       <Grid>
         <Typography>Tus próximas rutas</Typography>
-        {/* onClick sulla card deve aprire RouteCard a piena pagina con tutte le informazioni */}
-        <Card
-          sx={{
-            width: "100%",
-            bgcolor: "#eeeeee",
-            borderRadius: 2,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <CardHeader
-            sx={{ ".MuiCardHeader-content": { minWidth: 0 } }}
-            title={
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  wordBreak: "break-word",
-                  overflowWrap: "anywhere",
-                  textAlign: "center",
-                }}
-              >
-                {"Nome"}
-              </Typography>
-            }
-          />
-          <CardContent>
-            <Typography>{"Partenza e arrivo"}</Typography>
-            <Typography>{"Data"}</Typography>
-            <Grid display="flex" gap={1}>
-              <Badge
-                overlap="circular"
-                badgeContent="x"
-                color="error"
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                // Style the dot a bit bigger and add a white ring
-                sx={{
-                  "& .MuiBadge-badge": {
-                    width: 16,
-                    height: 16,
-                    minWidth: 16,
-                    borderRadius: "50%",
-                  },
-                }}
-              >
-                <Avatar />
-              </Badge>
-              <Avatar />
-              <Avatar />
-              <Avatar />
-              <Avatar />
-            </Grid>
-          </CardContent>
-        </Card>
       </Grid>
 
       <Typography>button per creare una ruta</Typography>
