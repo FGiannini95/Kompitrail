@@ -73,6 +73,7 @@ export const RouteCard = ({
       }}
     >
       <CardContent>
+        <Typography>Created by:{name} </Typography>
         <Stack direction="row" alignItems="center" spacing={1}>
           <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
           <Typography>{starting_point}</Typography>
@@ -120,6 +121,7 @@ export const RouteCard = ({
             <IconButton onClick={() => onDelete?.(route_id)}>
               <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
             </IconButton>
+            <Typography sx={{ ml: "auto" }}>{"Federico"}</Typography>
           </>
         )}
       </CardActions>
