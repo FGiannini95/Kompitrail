@@ -29,6 +29,7 @@ export const NavBarApp = ({ children }) => {
     RoutesString.createRoute,
     RoutesString.editRoute,
     RoutesString.route,
+    RoutesString.routeDetail,
   ].includes(location.pathname);
 
   const topBarHeight = 64;

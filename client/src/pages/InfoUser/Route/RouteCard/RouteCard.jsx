@@ -20,6 +20,7 @@ import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import ForwardOutlinedIcon from "@mui/icons-material/ForwardOutlined";
+
 import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
 
@@ -73,7 +74,7 @@ export const RouteCard = ({
         flexDirection: "column",
       }}
     >
-      <CardContent>
+      <CardContent onClick={handleOpenDetails}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
           <Typography>{starting_point}</Typography>

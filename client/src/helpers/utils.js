@@ -37,5 +37,10 @@ export const formatDateTime = (iso) => {
     timeZone: "Europe/Madrid",
   }).format(d);
 
-  return { date_dd_mm_yyyy, time_hh_mm };
+  const weekday = new globalThis.Intl.DateTimeFormat("es-ES", {
+    weekday: "long",
+    timeZone: "Europe/Madrid",
+  }).format(d);
+
+  return { date_dd_mm_yyyy, time_hh_mm, weekday };
 };
