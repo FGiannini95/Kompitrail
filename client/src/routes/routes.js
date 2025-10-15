@@ -13,4 +13,5 @@ export const RoutesString = {
   settings: "/settings",
   editPassword: "/editPassword",
   route: "/route",
+  routeDetail: "/route/:id",
 };

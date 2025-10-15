@@ -6,7 +6,6 @@ class routesControllers {
   createRoute = (req, res) => {
     const {
       user_id,
-      route_name,
       starting_point,
       ending_point,
       date,
@@ -21,7 +20,6 @@ class routesControllers {
 
     if (
       !user_id ||
-      !route_name ||
       !starting_point ||
       !ending_point ||
       !date ||
@@ -37,13 +35,12 @@ class routesControllers {
 
     const sql = `
     INSERT INTO route (
-      user_id, route_name, date, starting_point, ending_point, level, distance,
+      user_id, date, starting_point, ending_point, level, distance,
       is_verified, suitable_motorbike_type, estimated_time, participants,
       route_description, is_deleted
     )
     VALUES (
       '${user_id}',
-      '${route_name}',
       '${date}',
       '${starting_point}',
       '${ending_point}',
@@ -64,7 +61,7 @@ class routesControllers {
       }
 
       const sqlSelect = `
-      SELECT route_id, user_id, route_name, \`date\`, starting_point, ending_point,
+      SELECT route_id, user_id, \`date\`, starting_point, ending_point,
              level, distance, is_verified, suitable_motorbike_type,
              estimated_time, participants, route_description, is_deleted
       FROM route
@@ -108,7 +105,6 @@ class routesControllers {
 
   editRoute = (req, res) => {
     const {
-      route_name,
       starting_point,
       ending_point,
       date,
@@ -122,7 +118,6 @@ class routesControllers {
     } = JSON.parse(req.body.editRoute);
     const { id: route_id } = req.params;
     let sql = `UPDATE route SET 
-      route_name = '${route_name}', 
       starting_point = '${starting_point}', 
       ending_point = '${ending_point}',
       date = '${date}', 

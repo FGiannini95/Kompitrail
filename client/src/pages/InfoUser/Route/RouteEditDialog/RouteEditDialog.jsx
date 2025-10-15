@@ -101,16 +101,6 @@ export const RouteEditDialog = () => {
           <Grid container spacing={2}>
             <Grid size={12}>
               <FormTextfield
-                label="Nombre ruta"
-                name="route_name"
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-              />
-            </Grid>
-            <Grid size={12}>
-              <FormTextfield
                 label="Salida"
                 name="starting_point"
                 errors={errors}

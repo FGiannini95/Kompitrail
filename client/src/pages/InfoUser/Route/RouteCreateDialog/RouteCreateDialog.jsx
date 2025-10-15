@@ -64,7 +64,6 @@ export const RouteCreateDialog = () => {
     newFormData.append(
       "createRoute",
       JSON.stringify({
-        route_name: createOneRoute.route_name,
         starting_point: createOneRoute.starting_point,
         ending_point: createOneRoute.ending_point,
         date: createOneRoute.date,
@@ -104,16 +103,6 @@ export const RouteCreateDialog = () => {
           }}
         >
           <Grid container spacing={2}>
-            <Grid size={12}>
-              <FormTextfield
-                label="Nombre ruta"
-                name="route_name"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-              />
-            </Grid>
             <Grid size={12}>
               <FormTextfield
                 label="Salida"

@@ -1,5 +1,4 @@
 export const ROUTE_INITIAL_VALUE = {
-  route_name: "",
   starting_point: "",
   ending_point: "",
   date: "",

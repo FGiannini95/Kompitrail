@@ -1,8 +1,5 @@
 export const validateRouteForm = (routeData) => {
   const errors = {};
-  if (routeData.route_name === "") {
-    errors.route_name = "Nombre requerido";
-  }
   if (routeData.starting_point === "") {
     errors.starting_point = "Punto de salida requerido";
   }
