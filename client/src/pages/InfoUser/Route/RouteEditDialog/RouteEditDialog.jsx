@@ -9,7 +9,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -17,6 +16,7 @@ import Grid from "@mui/material/Grid2";
 // Components
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
+import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 // Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
@@ -129,8 +129,18 @@ export const RouteEditDialog = () => {
                 setForm={setEditRoute}
               />
             </Grid>
+            <Grid size={12}>
+              <FormDataPicker
+                label="Fecha"
+                name="date"
+                errors={errors}
+                setErrors={setErrors}
+                form={editRoute}
+                setForm={setEditRoute}
+              />
+            </Grid>
             <Grid size={6}>
-              <TextField
+              <FormTextfield
                 label="Km"
                 name="distance"
                 type="number"

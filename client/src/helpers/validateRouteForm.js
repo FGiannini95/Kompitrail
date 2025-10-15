@@ -9,9 +9,8 @@ export const validateRouteForm = (routeData) => {
   if (routeData.ending_point === "") {
     errors.ending_point = "Punto de llegada requerido";
   }
-  //Default value
   if (!routeData.date) {
-    routeData.date = new Date().toISOString().slice(0, 19).replace("T", " "); //ActualDate
+    routeData.date = "Fecha requerida";
   }
   if (!routeData.distance) {
     errors.distance = "Distancia requerida";
