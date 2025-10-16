@@ -26,6 +26,7 @@ import { RoutesString } from "../../../../routes/routes";
 
 import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
 
 export const RouteCard = ({
   route_id,
@@ -105,9 +106,19 @@ export const RouteCard = ({
               }}
             />
           ) : (
-            <Avatar sx={{ width: 40, height: 40 }} />
+            <BadgeAvatar
+              targetUserId={user?.user_id}
+              name={user?.name}
+              size={40}
+              showName
+            />
           )}
-          <Avatar />
+          <PlusAvatar
+            size={40}
+            onClick={() => {
+              /*/ */
+            }}
+          />
           <Avatar />
           <Avatar />
         </Grid>
