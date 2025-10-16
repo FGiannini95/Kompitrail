@@ -11,6 +11,7 @@ export const BadgeAvatar = ({
   showName = true,
   badgeContent = "x",
   onBadgeClick,
+  showBadge = true,
 }) => {
   const { user } = useContext(KompitrailContext);
   const isCurrentUser = user?.user_id !== null && user.user_id === targetUserId;
@@ -20,6 +21,8 @@ export const BadgeAvatar = ({
     [user?.name, user?.lastname]
   );
 
+  const shouldShowBadge = showBadge && isCurrentUser;
+
   return (
     <Stack alignItems="center" spacing={0.5} sx={{ width: size + 8 }}>
       <Badge
@@ -27,7 +30,7 @@ export const BadgeAvatar = ({
         color="error"
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         badgeContent={
-          isCurrentUser ? (
+          shouldShowBadge ? (
             <span
               onClick={(e) => {
                 if (!onBadgeClick) return;

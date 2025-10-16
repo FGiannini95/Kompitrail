@@ -1,17 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import {
-  Avatar,
-  Badge,
   Card,
   CardContent,
   CardActions,
   IconButton,
   Typography,
   Stack,
+  Box,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -24,8 +22,9 @@ import ForwardOutlinedIcon from "@mui/icons-material/ForwardOutlined";
 import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
 
-import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+
+import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
 import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
 
 export const RouteCard = ({
@@ -44,9 +43,9 @@ export const RouteCard = ({
   onDelete,
   isOwner,
 }) => {
-  const navigate = useNavigate();
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const { user } = useContext(KompitrailContext);
+  const navigate = useNavigate();
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -94,7 +93,7 @@ export const RouteCard = ({
           <AccessTimeOutlinedIcon fontSize="medium" aria-hidden />
           <Typography>{time_hh_mm}</Typography>
         </Stack>
-        <Grid display="flex" gap={1} marginTop={1}>
+        <Box display="flex" flexWrap="wrap" gap={1} marginTop={1}>
           {isOwner ? (
             <BadgeAvatar
               targetUserId={user?.user_id}
@@ -111,17 +110,19 @@ export const RouteCard = ({
               name={user?.name}
               size={40}
               showName
+              showBadge={false}
             />
           )}
-          <PlusAvatar
-            size={40}
-            onClick={() => {
-              /*/ */
-            }}
-          />
-          <Avatar />
-          <Avatar />
-        </Grid>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <PlusAvatar
+              key={`plus-${i}`}
+              size={40}
+              onClick={() => {
+                /*/ */
+              }}
+            />
+          ))}
+        </Box>
       </CardContent>
       <CardActions disableSpacing>
         {isOwner && (
