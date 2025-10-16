@@ -44,3 +44,6 @@ export const formatDateTime = (iso) => {
 
   return { date_dd_mm_yyyy, time_hh_mm, weekday };
 };
+
+export const toMySQLDateTime = (value, timeZone = "Europe/Madrid") =>
+  new Date(value).toLocaleString("sv-SE", { timeZone, hour12: false });
