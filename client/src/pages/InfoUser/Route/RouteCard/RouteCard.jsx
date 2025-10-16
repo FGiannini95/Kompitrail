@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import {
@@ -24,6 +24,9 @@ import ForwardOutlinedIcon from "@mui/icons-material/ForwardOutlined";
 import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
 
+import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+
 export const RouteCard = ({
   route_id,
   starting_point,
@@ -42,6 +45,7 @@ export const RouteCard = ({
 }) => {
   const navigate = useNavigate();
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
+  const { user } = useContext(KompitrailContext);
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -90,23 +94,19 @@ export const RouteCard = ({
           <Typography>{time_hh_mm}</Typography>
         </Stack>
         <Grid display="flex" gap={1} marginTop={1}>
-          <Badge
-            overlap="circular"
-            badgeContent="x"
-            color="error"
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            sx={{
-              "& .MuiBadge-badge": {
-                width: 16,
-                height: 16,
-                minWidth: 16,
-                borderRadius: "50%",
-              },
-            }}
-          >
-            <Avatar />
-          </Badge>
-          <Avatar />
+          {isOwner ? (
+            <BadgeAvatar
+              targetUserId={user?.user_id}
+              name={user?.name}
+              size={40}
+              showName
+              onBadgeClick={() => {
+                /*/ */
+              }}
+            />
+          ) : (
+            <Avatar sx={{ width: 40, height: 40 }} />
+          )}
           <Avatar />
           <Avatar />
           <Avatar />
