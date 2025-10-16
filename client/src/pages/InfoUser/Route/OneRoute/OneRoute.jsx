@@ -247,7 +247,7 @@ export const OneRoute = () => {
           sx={{
             color: "red",
             borderColor: "red",
-            borderWidth: "2px",
+            borderWidth: "1px",
             "&:hover": {
               borderColor: "#dddddd",
               borderWidth: "1px",
