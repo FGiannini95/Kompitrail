@@ -61,11 +61,25 @@ class routesControllers {
       }
 
       const sqlSelect = `
-      SELECT route_id, user_id, \`date\`, starting_point, ending_point,
-             level, distance, is_verified, suitable_motorbike_type,
-             estimated_time, max_participants, route_description, is_deleted
-      FROM route
-      WHERE route_id = ?
+      SELECT 
+        r.route_id, 
+        r.user_id, 
+        r.date, 
+        r.starting_point, 
+        r.ending_point,
+        r.level, 
+        r.distance, 
+        r.is_verified, 
+        r.suitable_motorbike_type,
+        r.estimated_time, 
+        r.max_participants, 
+        r.route_description, 
+        r.is_deleted,
+        u.name,
+        u.lastname,
+      FROM route r
+      LEFT JOIN user u ON r.user_id = u.user_id
+      WHERE r.route_id = ?
     `;
 
       connection.query(sqlSelect, [result.insertId], (error2, result2) => {
@@ -82,14 +96,32 @@ class routesControllers {
 
   showAllRoutesOneUser = (req, res) => {
     const { id: user_id } = req.params;
-    let sql = `SELECT * FROM route WHERE user_id = '${user_id}' AND is_deleted = 0 ORDER BY route_id DESC`;
+    const sql = `
+    SELECT
+      r.*,
+      u.name AS create_name, 
+      u.lastname AS create_lastname 
+    FROM route r
+    LEFT JOIN \`user\` u ON u.user_id = r.user_id
+    WHERE r.user_id = '${user_id}' AND r.is_deleted = 0
+    ORDER BY r.route_id DESC
+  `;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
   };
 
   showAllRoutes = (req, res) => {
-    let sql = `SELECT * FROM route WHERE is_deleted = 0 ORDER BY route_id DESC`;
+    const sql = `
+    SELECT
+      r.*,
+      u.name AS create_name, 
+      u.lastname AS create_lastname   
+    FROM route r
+    LEFT JOIN \`user\` u ON u.user_id = r.user_id
+    WHERE r.is_deleted = 0
+    ORDER BY r.route_id DESC
+  `;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });

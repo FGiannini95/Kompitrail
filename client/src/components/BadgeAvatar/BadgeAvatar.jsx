@@ -7,6 +7,8 @@ import { getInitials } from "../../helpers/utils";
 export const BadgeAvatar = ({
   targetUserId,
   name = "",
+  firstName,
+  lastName,
   size = 40,
   showName = true,
   badgeContent = "x",
@@ -16,10 +18,10 @@ export const BadgeAvatar = ({
   const { user } = useContext(KompitrailContext);
   const isCurrentUser = user?.user_id !== null && user.user_id === targetUserId;
 
-  const initials = useMemo(
-    () => getInitials(user?.name ?? "", user?.lastname ?? ""),
-    [user?.name, user?.lastname]
-  );
+  const initials = useMemo(() => {
+    // Call helper directly with provided props
+    return getInitials(firstName, lastName);
+  }, [firstName, lastName]);
 
   const shouldShowBadge = showBadge && isCurrentUser;
 

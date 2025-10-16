@@ -41,7 +41,8 @@ export const RouteCard = ({
   participants = [],
   is_verified,
   route_description,
-  creator_name,
+  create_name,
+  create_lastname,
   onEdit,
   onDelete,
   onJoinRoute,
@@ -133,25 +134,18 @@ export const RouteCard = ({
           <Typography>{time_hh_mm}</Typography>
         </Stack>
         <Box display="flex" flexWrap="wrap" gap={1} marginTop={1}>
-          {isOwner ? (
-            <BadgeAvatar
-              targetUserId={currentUser?.user_id}
-              name={currentUser?.name}
-              size={40}
-              showName
-              onBadgeClick={() => {
-                /*/ */
-              }}
-            />
-          ) : (
-            <BadgeAvatar
-              targetUserId={currentUser?.user_id}
-              name={currentUser?.name}
-              size={40}
-              showName
-              showBadge={false}
-            />
-          )}
+          {/* 1. CREATOR AVATAR - Always first */}
+          <BadgeAvatar
+            targetUserId={user_id}
+            name={create_name}
+            size={40}
+            showName
+            onBadgeClick={() => {
+              /*/ */
+            }}
+          />
+
+          {/* 2. ENROLLED PARTICIPANTS*/}
           {Array.from({ length: 5 }).map((_, i) => (
             <PlusAvatar
               key={`plus-${i}`}
@@ -161,6 +155,7 @@ export const RouteCard = ({
               }}
             />
           ))}
+          {/* 3. EMPTY SLOTS - "+" buttons (only if not owner and not enrolled) */}
         </Box>
       </CardContent>
       <CardActions disableSpacing>

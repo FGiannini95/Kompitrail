@@ -126,7 +126,7 @@ export const OneRoute = () => {
             sx={{ textAlign: "center", justifyContent: "center" }}
           >
             <InfoItem label="Distancia" value={`${distance} km`} />
-            <InfoItem label="Tiempo estimado" value={`${estimated_time} h`} />
+            <InfoItem label="Duración" value={`${estimated_time} h`} />
             <InfoItem label="Nivel" value={level} />
           </Grid>
         </CardContent>
