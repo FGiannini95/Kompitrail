@@ -64,6 +64,44 @@ export const Home = () => {
     openCreateEditDialog({ mode: "edit", route_id });
   };
 
+  const handleJoinRoute = (route_id) => {
+    console.log("handleJoinRoute");
+    // axios
+    //   .post(`${ROUTES_URL}/join/${route_id}`, { user_id: user.user_id })
+    //   .then(() => {
+    //     loadAllRoutes();
+    //     showSnackbar("Inscripción completada");
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     showSnackbar("Error al inscribirte", "error");
+    //   });
+  };
+
+  const handleLeaveRoute = (route_id) => {
+    console.log("handleLeaveRoute");
+    // axios
+    //   .delete(`${ROUTES_URL}/leave/${route_id}`, {
+    //     data: { user_id: user.user_id },
+    //   })
+    //   .then(() => {
+    //     loadAllRoutes();
+    //     showSnackbar("Inscripción cancelada");
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     showSnackbar("Error durante la cancelación", "error");
+    //   });
+  };
+
+  const handleOpenLeaveRoute = (route_id) => {
+    openDialog({
+      title: "Cancelar inscripción",
+      message: "¿Quieres cancelar la inscripción a esta ruta?",
+      onConfirm: () => handleLeaveRoute(route_id),
+    });
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -95,6 +133,8 @@ export const Home = () => {
               {...route}
               onEdit={openEditDialog}
               onDelete={handleOpenDeleteDialog}
+              onJoinRoute={handleJoinRoute}
+              onLeaveRoute={handleOpenLeaveRoute}
               isOwner={route.user_id === user.user_id}
             />
           </Grid>

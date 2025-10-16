@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import {
@@ -29,6 +29,7 @@ import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
 
 export const RouteCard = ({
   route_id,
+  user_id,
   starting_point,
   ending_point,
   date,
@@ -36,16 +37,44 @@ export const RouteCard = ({
   distance,
   suitable_motorbike_type,
   estimated_time,
-  participants,
+  max_particpants,
+  participants = [],
   is_verified,
   route_description,
+  creator_name,
   onEdit,
   onDelete,
+  onJoinRoute,
+  onLeaveRoute,
   isOwner,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
-  const { user } = useContext(KompitrailContext);
+  const { user: currentUser } = useContext(KompitrailContext);
   const navigate = useNavigate();
+
+  const enrollmentInfo = useMemo(() => {
+    // Creator + enrolled user
+    const currentParticipants = 1 + participants.length;
+
+    // Check if current user is already enrolled
+    const isCurrentUserEnrolled = participants.some(
+      (p) => p.user_id === currentUser?.user_id
+    );
+
+    const slotsAvailable = max_particpants - currentParticipants;
+    const isRouteFull = slotsAvailable <= 0;
+
+    // Number of empty slots  to display
+    const emptySlotsCount = Math.max(0, max_particpants - currentParticipants);
+
+    return {
+      currentParticipants,
+      isCurrentUserEnrolled,
+      slotsAvailable,
+      isRouteFull,
+      emptySlotsCount,
+    };
+  }, [max_particpants, participants, currentUser?.user_id]);
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -66,6 +95,16 @@ export const RouteCard = ({
         route_description,
       },
     });
+  };
+
+  const handleJoin = (e) => {
+    e.stopPropagation();
+    onJoinRoute?.(route_id);
+  };
+
+  const handleLeave = (e) => {
+    e.stopPropagation();
+    onLeaveRoute?.(route_id);
   };
 
   return (
@@ -96,8 +135,8 @@ export const RouteCard = ({
         <Box display="flex" flexWrap="wrap" gap={1} marginTop={1}>
           {isOwner ? (
             <BadgeAvatar
-              targetUserId={user?.user_id}
-              name={user?.name}
+              targetUserId={currentUser?.user_id}
+              name={currentUser?.name}
               size={40}
               showName
               onBadgeClick={() => {
@@ -106,8 +145,8 @@ export const RouteCard = ({
             />
           ) : (
             <BadgeAvatar
-              targetUserId={user?.user_id}
-              name={user?.name}
+              targetUserId={currentUser?.user_id}
+              name={currentUser?.name}
               size={40}
               showName
               showBadge={false}
