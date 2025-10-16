@@ -1,8 +1,8 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 import {
-  Box,
   Button,
   Card,
   CardContent,
@@ -23,11 +23,17 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
-
+// Utils
 import {
   capitalizeFirstLetter,
   formatDateTime,
 } from "../../../../helpers/utils";
+// Providers
+import { useConfirmationDialog } from "../../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
+import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
+import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
+import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
+import { RoutesString } from "../../../../routes/routes";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -41,6 +47,10 @@ const InfoItem = ({ label, value }) => (
 export const OneRoute = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
+  const { id: route_id } = useParams();
+  const { openDialog } = useConfirmationDialog();
+  const { deleteRoute } = useRoutes();
+  const { showSnackbar } = useSnackbar();
 
   const {
     date,
@@ -55,8 +65,27 @@ export const OneRoute = () => {
 
   const { date_dd_mm_yyyy, time_hh_mm, weekday } = formatDateTime(date);
   const weekdayCap = capitalizeFirstLetter(weekday);
-  const handleDelete = () => {
-    console.log("Deleteing the route");
+
+  const handleDeleteRoute = () => {
+    axios
+      .put(`${ROUTES_URL}/deleteroute/${route_id}`)
+      .then(() => {
+        deleteRoute(route_id);
+        showSnackbar("Ruata eliminada con éxito");
+        navigate(RoutesString.home);
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error al eliminar la ruta", "error");
+      });
+  };
+
+  const handleOpenDeleteDialog = (route_id) => {
+    openDialog({
+      title: "Eliminar ruta",
+      message: "¿Quieres eliminar la ruta?",
+      onConfirm: () => handleDeleteRoute(route_id),
+    });
   };
 
   return (
@@ -207,7 +236,7 @@ export const OneRoute = () => {
           type="button"
           variant="outlined"
           fullWidth
-          onClick={handleDelete}
+          onClick={handleOpenDeleteDialog}
           sx={{
             color: "red",
             borderColor: "red",
@@ -218,7 +247,7 @@ export const OneRoute = () => {
             },
           }}
         >
-          Eliminar ruta/ Eliminar reserva
+          Eliminar ruta
         </Button>
       </Grid>
     </Grid>
