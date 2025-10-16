@@ -13,7 +13,7 @@ class routesControllers {
       distance,
       suitable_motorbike_type,
       estimated_time,
-      participants,
+      max_participants,
       route_description,
       is_verified,
     } = JSON.parse(req.body.createRoute);
@@ -27,7 +27,7 @@ class routesControllers {
       !distance ||
       !suitable_motorbike_type ||
       !estimated_time ||
-      !participants ||
+      !max_participants ||
       !route_description
     ) {
       return res.status(400).json({ error: "Faltan campos requeridos." });
@@ -36,7 +36,7 @@ class routesControllers {
     const sql = `
     INSERT INTO route (
       user_id, date, starting_point, ending_point, level, distance,
-      is_verified, suitable_motorbike_type, estimated_time, participants,
+      is_verified, suitable_motorbike_type, estimated_time, max_participants,
       route_description, is_deleted
     )
     VALUES (
@@ -49,7 +49,7 @@ class routesControllers {
       '${is_verified}',
       '${suitable_motorbike_type}',
       '${estimated_time}',
-      '${participants}',
+      '${max_participants}',
       '${route_description}',
       '0'
     );
@@ -63,7 +63,7 @@ class routesControllers {
       const sqlSelect = `
       SELECT route_id, user_id, \`date\`, starting_point, ending_point,
              level, distance, is_verified, suitable_motorbike_type,
-             estimated_time, participants, route_description, is_deleted
+             estimated_time, max_participants, route_description, is_deleted
       FROM route
       WHERE route_id = ?
     `;
@@ -113,7 +113,7 @@ class routesControllers {
       is_verified,
       suitable_motorbike_type,
       estimated_time,
-      participants,
+      max_participants,
       route_description,
     } = JSON.parse(req.body.editRoute);
     const { id: route_id } = req.params;
@@ -126,7 +126,7 @@ class routesControllers {
       is_verified='${is_verified}', 
       suitable_motorbike_type='${suitable_motorbike_type}', 
       estimated_time='${estimated_time}', 
-      participants='${participants}', 
+      max_participants='${max_participants}', 
       route_description='${route_description}' 
       WHERE route_id = '${route_id}' AND is_deleted = 0`;
     connection.query(sql, (err, result) => {

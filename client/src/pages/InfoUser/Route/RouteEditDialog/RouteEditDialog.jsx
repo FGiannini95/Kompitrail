@@ -176,7 +176,7 @@ export const RouteEditDialog = () => {
             <Grid size={6}>
               <FormTextfield
                 label="Pilotos"
-                name="participants"
+                name="max_participants"
                 type="number"
                 errors={errors}
                 setErrors={setErrors}

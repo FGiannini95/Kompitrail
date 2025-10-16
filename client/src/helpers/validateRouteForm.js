@@ -18,8 +18,8 @@ export const validateRouteForm = (routeData) => {
   if (!routeData.estimated_time) {
     errors.estimated_time = "Duración requerida";
   }
-  if (!routeData.participants) {
-    errors.participants = "Nº de pilotos requerido";
+  if (!routeData.max_participants) {
+    errors.max_participants = "Nº de pilotos requerido";
   }
 
   if (!routeData.suitable_motorbike_type) {

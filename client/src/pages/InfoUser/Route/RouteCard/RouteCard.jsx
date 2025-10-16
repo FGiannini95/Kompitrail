@@ -37,7 +37,7 @@ export const RouteCard = ({
   distance,
   suitable_motorbike_type,
   estimated_time,
-  max_particpants,
+  max_participants,
   participants = [],
   is_verified,
   route_description,
@@ -61,11 +61,11 @@ export const RouteCard = ({
       (p) => p.user_id === currentUser?.user_id
     );
 
-    const slotsAvailable = max_particpants - currentParticipants;
+    const slotsAvailable = max_participants - currentParticipants;
     const isRouteFull = slotsAvailable <= 0;
 
     // Number of empty slots  to display
-    const emptySlotsCount = Math.max(0, max_particpants - currentParticipants);
+    const emptySlotsCount = Math.max(0, max_participants - currentParticipants);
 
     return {
       currentParticipants,
@@ -74,7 +74,7 @@ export const RouteCard = ({
       isRouteFull,
       emptySlotsCount,
     };
-  }, [max_particpants, participants, currentUser?.user_id]);
+  }, [max_participants, participants, currentUser?.user_id]);
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -90,7 +90,7 @@ export const RouteCard = ({
         distance,
         suitable_motorbike_type,
         estimated_time,
-        participants,
+        max_participants,
         is_verified,
         route_description,
       },

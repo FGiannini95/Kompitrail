@@ -58,7 +58,7 @@ export const OneRoute = () => {
     distance,
     suitable_motorbike_type,
     estimated_time,
-    participants,
+    max_participants,
     is_verified,
     route_description,
   } = state || {};
@@ -227,7 +227,7 @@ export const OneRoute = () => {
         <Typography sx={{ fontWeight: "bold" }}>Información general</Typography>
         <Stack direction="row" spacing={0.75}>
           <Groups2OutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{`Max. ${participants} pilotos`} </Typography>
+          <Typography>{`Max. ${max_participants} pilotos`} </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
           <TwoWheelerOutlinedIcon fontSize="medium" aria-hidden />
