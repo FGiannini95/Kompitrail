@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-// MUI
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -8,12 +7,10 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 
-// MUI-ICONS
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 import { FullScreenImg } from "../../../../components/FullScreenImg/FullScreenImg";
-import { CardHeader } from "@mui/material";
 
 export const MotorbikeCard = ({
   brand,
