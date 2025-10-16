@@ -20,6 +20,7 @@ import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPi
 // Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
+import { toMySQLDateTime } from "../../../../helpers/utils";
 // Providers
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
@@ -70,7 +71,13 @@ export const RouteEditDialog = () => {
     }
 
     const newFormData = new FormData();
-    newFormData.append("editRoute", JSON.stringify(editRoute));
+    newFormData.append(
+      "editRoute",
+      JSON.stringify({
+        ...editRoute,
+        date: toMySQLDateTime(editRoute.date, "Europe/Madrid"),
+      })
+    );
 
     axios
       .put(`${ROUTES_URL}/editroute/${route_id}`, newFormData)

@@ -231,7 +231,7 @@ export const OneRoute = () => {
         </Stack>
         <Stack direction="row" spacing={0.75}>
           <TwoWheelerOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{`Motos apatas: ${suitable_motorbike_type}`} </Typography>
+          <Typography>{`Motos aptas: ${suitable_motorbike_type}`} </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
           <DescriptionOutlinedIcon fontSize="medium" aria-hidden />
