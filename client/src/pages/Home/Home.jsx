@@ -55,7 +55,7 @@ export const Home = () => {
   const handleOpenDeleteDialog = (route_id) => {
     openDialog({
       title: "Eliminar ruta",
-      message: "¿Quieres eliminar la ruta de tu perfil?",
+      message: "¿Quieres eliminar la ruta de la plataforma?",
       onConfirm: () => handleDeleteRoute(route_id),
     });
   };
