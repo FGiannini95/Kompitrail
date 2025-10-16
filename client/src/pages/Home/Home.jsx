@@ -72,12 +72,11 @@ export const Home = () => {
       <Grid>
         <Typography>Tus próximas rutas</Typography>
       </Grid>
-
-      <Typography>button per creare una ruta</Typography>
       <Button
         type="button"
         variant="contained"
         sx={{
+          mb: 2,
           color: "black",
           boxShadow: "none",
           backgroundColor: "#eeeeee",
@@ -89,9 +88,6 @@ export const Home = () => {
         Crear ruta
         <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
       </Button>
-      <Typography>
-        Questo è solo per fare un pó di spazio con la sezione di sotto
-      </Typography>
       {allRoutes.length > 0 ? (
         allRoutes.map((route) => (
           <Grid key={route?.route_id} container justifyContent="center" mb={2}>
