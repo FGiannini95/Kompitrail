@@ -140,9 +140,7 @@ export const RouteCard = ({
             name={create_name}
             size={40}
             showName
-            onBadgeClick={() => {
-              /*/ */
-            }}
+            onBadgeClick={() => onDelete?.(route_id)}
           />
 
           {/* 2. ENROLLED PARTICIPANTS*/}
