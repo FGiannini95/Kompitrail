@@ -22,6 +22,7 @@ import TwoWheelerOutlinedIcon from "@mui/icons-material/TwoWheelerOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
+import ChatIcon from "@mui/icons-material/Chat";
 
 import {
   capitalizeFirstLetter,
@@ -100,13 +101,20 @@ export const OneRoute = () => {
         </CardContent>
       </Card>
       <Stack sx={{ pl: 2 }}>
-        <Typography>
+        <Typography
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+          }}
+        >
           {is_verified === 0 ? (
             <VerifiedOutlinedIcon fontSize="medium" aria-hidden />
           ) : (
             <NewReleasesOutlinedIcon fontSize="medium" aria-hidden />
           )}
-          {is_verified === 0 ? "Ruta conocida" : "Nueva ruta"}
+          {is_verified === 0
+            ? "Ruta conocida — ya probada"
+            : "Ruta nueva — a la aventura"}
         </Typography>
       </Stack>
 
@@ -163,10 +171,7 @@ export const OneRoute = () => {
           }}
         >
           Chat
-          <ShareOutlinedIcon
-            style={{ paddingLeft: "5px", width: "20px" }}
-            aria-hidden
-          />
+          <ChatIcon style={{ paddingLeft: "5px", width: "20px" }} aria-hidden />
         </Button>
       </Stack>
       <Card
