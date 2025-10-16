@@ -136,6 +136,7 @@ export const OneRoute = () => {
           sx={{
             display: "inline-flex",
             alignItems: "center",
+            gap: 0.75,
           }}
         >
           {is_verified === 0 ? (
