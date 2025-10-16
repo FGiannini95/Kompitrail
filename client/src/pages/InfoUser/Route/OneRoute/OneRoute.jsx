@@ -17,8 +17,11 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-
-import { RouteCard } from "../RouteCard/RouteCard";
+import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
+import TwoWheelerOutlinedIcon from "@mui/icons-material/TwoWheelerOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
+import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
 
 import {
   capitalizeFirstLetter,
@@ -96,6 +99,16 @@ export const OneRoute = () => {
           </Grid>
         </CardContent>
       </Card>
+      <Stack sx={{ pl: 2 }}>
+        <Typography>
+          {is_verified === 0 ? (
+            <VerifiedOutlinedIcon fontSize="medium" aria-hidden />
+          ) : (
+            <NewReleasesOutlinedIcon fontSize="medium" aria-hidden />
+          )}
+          {is_verified === 0 ? "Ruta conocida" : "Nueva ruta"}
+        </Typography>
+      </Stack>
 
       <Card
         sx={{
@@ -156,19 +169,34 @@ export const OneRoute = () => {
           />
         </Button>
       </Stack>
+      <Card
+        sx={{
+          width: "100%",
+          borderRadius: "2",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <CardContent sx={{ padding: 3 }}>
+          <Typography>Aqui va en enlace para maps</Typography>
+        </CardContent>
+      </Card>
 
-      {/* <InfoItem label="Participantes" value={participants} />
-            <Grid size={12}>
-              <InfoItem label="Motos aptas" value={suitable_motorbike_type} />
-            </Grid>
-            <Grid size={12}>
-              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                Descripción
-              </Typography>
-              <Typography sx={{ textAlign: "left" }}>
-                {route_description}
-              </Typography>
-            </Grid> */}
+      <Stack sx={{ pl: 2 }}>
+        <Typography sx={{ fontWeight: "bold" }}>Información general</Typography>
+        <Stack direction="row" spacing={0.75}>
+          <Groups2OutlinedIcon fontSize="medium" aria-hidden />
+          <Typography>{`Max. ${participants} pilotos`} </Typography>
+        </Stack>
+        <Stack direction="row" spacing={0.75}>
+          <TwoWheelerOutlinedIcon fontSize="medium" aria-hidden />
+          <Typography>{`Motos apatas: ${suitable_motorbike_type}`} </Typography>
+        </Stack>
+        <Stack direction="row" spacing={0.75}>
+          <DescriptionOutlinedIcon fontSize="medium" aria-hidden />
+          <Typography>{route_description} </Typography>
+        </Stack>
+      </Stack>
       <Grid>
         <Button
           type="button"
