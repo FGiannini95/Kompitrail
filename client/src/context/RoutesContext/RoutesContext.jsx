@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, {
   createContext,
   useCallback,
@@ -6,6 +5,7 @@ import React, {
   useState,
   useEffect,
 } from "react";
+import axios from "axios";
 import { ROUTES_URL } from "../../../../server/config/serverConfig";
 import { useLocation } from "react-router-dom";
 
@@ -17,10 +17,6 @@ export const RoutesProvider = ({ children }) => {
   const [expandedRouteId, setExpandedRouteId] = useState(null);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
-
-  const handleExpandToggle = (route_id) => {
-    setExpandedRouteId((prev) => (prev == route_id ? null : route_id));
-  };
 
   // Reset the value when there is a navigation
   useEffect(() => {
@@ -102,7 +98,6 @@ export const RoutesProvider = ({ children }) => {
     editRoute,
     deleteRoute,
     expandedRouteId,
-    handleExpandToggle,
     loading,
   };
 

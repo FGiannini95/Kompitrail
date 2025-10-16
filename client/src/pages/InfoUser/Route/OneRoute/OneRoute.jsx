@@ -83,7 +83,7 @@ export const OneRoute = () => {
   const handleOpenDeleteDialog = (route_id) => {
     openDialog({
       title: "Eliminar ruta",
-      message: "¿Quieres eliminar la ruta?",
+      message: "¿Quieres eliminar la ruta de tu perfil?",
       onConfirm: () => handleDeleteRoute(route_id),
     });
   };
