@@ -100,7 +100,9 @@ export const OneRoute = () => {
       </Grid>
       <Card
         sx={{
-          width: "100%",
+          width: "95%",
+          ml: "10px",
+          bgcolor: "#eeeeee",
           borderRadius: "2",
           display: "flex",
           flexDirection: "column",
@@ -149,7 +151,9 @@ export const OneRoute = () => {
 
       <Card
         sx={{
-          width: "100%",
+          width: "95%",
+          ml: "10px",
+          bgcolor: "#eeeeee",
           borderRadius: "2",
           display: "flex",
           flexDirection: "column",
@@ -205,7 +209,9 @@ export const OneRoute = () => {
       </Stack>
       <Card
         sx={{
-          width: "100%",
+          width: "95%",
+          ml: "10px",
+          bgcolor: "#eeeeee",
           borderRadius: "2",
           display: "flex",
           flexDirection: "column",
