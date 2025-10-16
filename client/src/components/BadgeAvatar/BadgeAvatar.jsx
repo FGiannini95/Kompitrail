@@ -19,7 +19,6 @@ export const BadgeAvatar = ({
   const isCurrentUser = user?.user_id !== null && user.user_id === targetUserId;
 
   const initials = useMemo(() => {
-    // Call helper directly with provided props
     return getInitials(firstName, lastName);
   }, [firstName, lastName]);
 
