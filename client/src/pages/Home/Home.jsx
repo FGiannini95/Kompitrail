@@ -86,18 +86,18 @@ export const Home = () => {
   };
 
   const handleLeaveRoute = (route_id) => {
-    // axios
-    //   .delete(`${ROUTES_URL}/leave/${route_id}`, {
-    //     data: { user_id: user.user_id },
-    //   })
-    //   .then(() => {
-    //     loadAllRoutes();
-    //     showSnackbar("Inscripción cancelada");
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     showSnackbar("Error durante la cancelación", "error");
-    //   });
+    axios
+      .delete(`${ROUTES_URL}/leave/${route_id}`, {
+        data: { user_id: user.user_id },
+      })
+      .then(() => {
+        loadAllRoutes();
+        showSnackbar("Inscripción cancelada");
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error durante la cancelación", "error");
+      });
   };
 
   const handleOpenLeaveRoute = (route_id) => {

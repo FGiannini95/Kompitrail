@@ -164,9 +164,7 @@ export const RouteCard = ({
                 name={participant.name}
                 size={40}
                 showName
-                onBadgeClick={() => {
-                  /*/ */
-                }}
+                onBadgeClick={handleLeave}
               />
             );
           })}

@@ -34,9 +34,10 @@ export const BadgeAvatar = ({
           shouldShowBadge ? (
             <span
               onClick={(e) => {
-                if (!onBadgeClick) return;
                 e.stopPropagation();
-                onBadgeClick();
+                if (onBadgeClick) {
+                  onBadgeClick(e);
+                }
               }}
             >
               {badgeContent}
