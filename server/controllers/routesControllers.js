@@ -114,16 +114,41 @@ class routesControllers {
   showAllRoutes = (req, res) => {
     const sql = `
     SELECT
-      r.*,
-      u.name AS create_name, 
-      u.lastname AS create_lastname   
-    FROM route r
-    LEFT JOIN \`user\` u ON u.user_id = r.user_id
-    WHERE r.is_deleted = 0
-    ORDER BY r.route_id DESC
+      route.*,
+      creator_user.name     AS create_name,
+      creator_user.lastname AS create_lastname,
+      GROUP_CONCAT(
+        DISTINCT CONCAT(route_participant.user_id, ':', COALESCE(participant_user.name, ''))
+        SEPARATOR '|'
+      ) AS participants_raw
+    FROM route
+    LEFT JOIN \`user\` AS creator_user
+           ON creator_user.user_id = route.user_id
+    LEFT JOIN route_participant
+           ON route_participant.route_id = route.route_id
+    LEFT JOIN \`user\` AS participant_user
+           ON participant_user.user_id = route_participant.user_id
+    WHERE route.is_deleted = 0
+    GROUP BY route.route_id
+    ORDER BY route.route_id DESC
   `;
-    connection.query(sql, (error, result) => {
-      error ? res.status(500).json({ error }) : res.status(200).json(result);
+    connection.query(sql, (error, rows) => {
+      if (error) return res.status(500).json({ error });
+
+      // Convert "12:Marco|27:Anna" -> [{ user_id:12, name:"Marco" }, { user_id:27, name:"Anna" }]
+      const data = rows.map((r) => {
+        const participants = (r.participants_raw || "")
+          .split("|")
+          .filter(Boolean)
+          .map((pair) => {
+            const [uid, name] = pair.split(":");
+            return { user_id: Number(uid), name };
+          });
+        const { participants_raw, ...rest } = r;
+        return { ...rest, participants };
+      });
+
+      return res.status(200).json(data);
     });
   };
 
