@@ -139,7 +139,7 @@ class routesControllers {
       const data = rows.map((r) => {
         const participants = (r.participants_raw || "")
           .split("|")
-          .filter(Boolean)
+          .filter(Boolean) // Empty string filtered out
           .map((pair) => {
             const [uid, name] = pair.split(":");
             return { user_id: Number(uid), name };

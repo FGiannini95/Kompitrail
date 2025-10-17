@@ -68,7 +68,7 @@ export const Home = () => {
 
   const handleJoinRoute = (route_id) => {
     if (joiningRouteId) return;
-    // We habdle only that particular route with that id
+    // We handle only that particular route with that id
     setJoiningRouteId(route_id);
     axios
       .post(`${ROUTES_URL}/join/${route_id}`, { user_id: user.user_id })
