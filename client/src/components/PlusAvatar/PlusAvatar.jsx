@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, IconButton, Stack, Typography } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
-export const PlusAvatar = ({ size = 40, onClick }) => {
+export const PlusAvatar = ({ size = 40, onClick, disabled = false }) => {
   return (
     <Stack alignItems="center" spacing={0.5} sx={{ width: size + 8 }}>
       <IconButton
@@ -10,6 +10,7 @@ export const PlusAvatar = ({ size = 40, onClick }) => {
           e.stopPropagation();
           onClick?.();
         }}
+        disabled={disabled}
         sx={{
           p: 0,
           display: "flex",
@@ -25,7 +26,7 @@ export const PlusAvatar = ({ size = 40, onClick }) => {
             height: size,
             fontSize: 32,
             border: "1px dashed black",
-            color: "black",
+            color: disabled ? "text.disabled" : "black",
             backgroundColor: "transparent",
           }}
         >
@@ -33,7 +34,11 @@ export const PlusAvatar = ({ size = 40, onClick }) => {
         </Avatar>
         <Typography
           variant="caption"
-          sx={{ lineHeight: 1, textAlign: "center" }}
+          sx={{
+            lineHeight: 1,
+            textAlign: "center",
+            color: disabled ? "text.disabled" : "black",
+          }}
         >
           Únete
         </Typography>

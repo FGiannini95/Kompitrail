@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import {
@@ -18,12 +18,12 @@ import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import ForwardOutlinedIcon from "@mui/icons-material/ForwardOutlined";
-
+// Utils
 import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
-
+// Providers
 import { KompitrailContext } from "../../../../context/KompitrailContext";
-
+// Components
 import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
 import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
 
@@ -42,7 +42,6 @@ export const RouteCard = ({
   is_verified,
   route_description,
   create_name,
-  create_lastname,
   onEdit,
   onDelete,
   onJoinRoute,
@@ -76,6 +75,10 @@ export const RouteCard = ({
       emptySlotsCount,
     };
   }, [max_participants, participants, currentUser?.user_id]);
+
+  // - NOT clickable if: user is creator OR user is already enrolled
+  // - Clickable if: user is NOT creator AND NOT enrolled
+  const canJoinRoute = !isOwner && !enrollmentInfo.isCurrentUserEnrolled;
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -118,21 +121,23 @@ export const RouteCard = ({
         flexDirection: "column",
       }}
     >
-      <CardContent onClick={handleOpenDetails}>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{starting_point}</Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <FlagOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{ending_point}</Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <CalendarMonthIcon fontSize="medium" aria-hidden />
-          <Typography>{date_dd_mm_yyyy}</Typography>
-          <AccessTimeOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{time_hh_mm}</Typography>
-        </Stack>
+      <CardContent>
+        <Box onClick={handleOpenDetails}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
+            <Typography>{starting_point}</Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <FlagOutlinedIcon fontSize="medium" aria-hidden />
+            <Typography>{ending_point}</Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <CalendarMonthIcon fontSize="medium" aria-hidden />
+            <Typography>{date_dd_mm_yyyy}</Typography>
+            <AccessTimeOutlinedIcon fontSize="medium" aria-hidden />
+            <Typography>{time_hh_mm}</Typography>
+          </Stack>
+        </Box>
         <Box display="flex" flexWrap="wrap" gap={1} marginTop={1}>
           {/* 1. CREATOR AVATAR - Always first */}
           <BadgeAvatar
@@ -143,17 +148,35 @@ export const RouteCard = ({
             onBadgeClick={() => onDelete?.(route_id)}
           />
 
-          {/* 2. ENROLLED PARTICIPANTS*/}
-          {Array.from({ length: 5 }).map((_, i) => (
-            <PlusAvatar
-              key={`plus-${i}`}
-              size={40}
-              onClick={() => {
-                /*/ */
-              }}
-            />
-          ))}
+          {/* 2. ENROLLED PARTICIPANTS */}
+          {participants.map((participant) => {
+            const isCurrentUser = participant.user_id === currentUser?.user_id;
+
+            return (
+              <BadgeAvatar
+                key={participant.user_id}
+                targetUserId={participant.user_id}
+                name={participant.name}
+                size={40}
+                showName
+                onBadgeClick={() => {
+                  /*/ */
+                }}
+              />
+            );
+          })}
+
           {/* 3. EMPTY SLOTS - "+" buttons (only if not owner and not enrolled) */}
+          {Array.from({ length: enrollmentInfo.emptySlotsCount }).map(
+            (_, i) => (
+              <PlusAvatar
+                key={`empty-slot-${i}`}
+                size={40}
+                onClick={handleJoin}
+                disabled={!canJoinRoute}
+              />
+            )
+          )}
         </Box>
       </CardContent>
       <CardActions disableSpacing>

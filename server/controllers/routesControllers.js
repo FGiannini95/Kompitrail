@@ -76,7 +76,7 @@ class routesControllers {
         r.route_description, 
         r.is_deleted,
         u.name,
-        u.lastname,
+        u.lastname
       FROM route r
       LEFT JOIN user u ON r.user_id = u.user_id
       WHERE r.route_id = ?
