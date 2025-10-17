@@ -47,6 +47,7 @@ export const RouteCard = ({
   onJoinRoute,
   onLeaveRoute,
   isOwner,
+  isJoining,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const { user: currentUser } = useContext(KompitrailContext);
@@ -76,9 +77,12 @@ export const RouteCard = ({
     };
   }, [max_participants, participants, currentUser?.user_id]);
 
-  // - NOT clickable if: user is creator OR user is already enrolled
-  // - Clickable if: user is NOT creator AND NOT enrolled
-  const canJoinRoute = !isOwner && !enrollmentInfo.isCurrentUserEnrolled;
+  // - NOT clickable if: user is creator OR user is already enrolled OR route is full
+  const canJoinRoute =
+    !isOwner &&
+    !enrollmentInfo.isCurrentUserEnrolled &&
+    !enrollmentInfo.isRouteFull &&
+    !isJoining;
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -103,6 +107,7 @@ export const RouteCard = ({
 
   const handleJoin = (e) => {
     e.stopPropagation();
+    if (!canJoinRoute) return;
     onJoinRoute?.(route_id);
   };
 

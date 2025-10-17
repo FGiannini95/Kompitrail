@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -23,6 +23,8 @@ import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
 
 export const Home = () => {
+  const [isJoining, setIsJoining] = useState(false);
+  const [optimisticJoined, setOptimisticJoined] = useState(() => new Set());
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
   const {
@@ -66,16 +68,31 @@ export const Home = () => {
 
   const handleJoinRoute = (route_id) => {
     console.log("handleJoinRoute");
-    // axios
-    //   .post(`${ROUTES_URL}/join/${route_id}`, { user_id: user.user_id })
-    //   .then(() => {
-    //     loadAllRoutes();
-    //     showSnackbar("Inscripción completada");
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     showSnackbar("Error al inscribirte", "error");
-    //   });
+    setOptimisticJoined((prev) => {
+      const next = new Set(prev); // Copy
+      next.add(route_id); // Modify
+      return next; // Re-render
+    });
+    setIsJoining(true);
+    axios
+      .post(`${ROUTES_URL}/join/${route_id}`, { user_id: user.user_id })
+      .then(() => {
+        loadAllRoutes();
+        showSnackbar("Inscripción completada");
+      })
+      .catch((err) => {
+        console.log(err);
+        // Rollback if any error
+        setOptimisticJoined((prev) => {
+          const next = new Set(prev);
+          next.delete(route_id);
+          return next;
+        });
+        showSnackbar("Error al inscribirte", "error");
+      })
+      .finally(() => {
+        setIsJoining(false);
+      });
   };
 
   const handleLeaveRoute = (route_id) => {
@@ -127,18 +144,40 @@ export const Home = () => {
         <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
       </Button>
       {allRoutes.length > 0 ? (
-        allRoutes.map((route) => (
-          <Grid key={route?.route_id} container justifyContent="center" mb={2}>
-            <RouteCard
-              {...route}
-              onEdit={openEditDialog}
-              onDelete={handleOpenDeleteDialog}
-              onJoinRoute={handleJoinRoute}
-              onLeaveRoute={handleOpenLeaveRoute}
-              isOwner={route.user_id === user.user_id}
-            />
-          </Grid>
-        ))
+        allRoutes.map((route) => {
+          const isOptimistic = optimisticJoined.has(route.route_id);
+          const iAmAlreadyIn = (route.participants || []).some(
+            (p) => p.user_id === user.user_id
+          );
+
+          const renderedParticipants =
+            isOptimistic && !iAmAlreadyIn
+              ? [
+                  ...(route.participants || []),
+                  { user_id: user.user_id, name: user.name || "You" },
+                ]
+              : route.participants;
+
+          return (
+            <Grid
+              key={route?.route_id}
+              container
+              justifyContent="center"
+              mb={2}
+            >
+              <RouteCard
+                {...route}
+                participants={renderedParticipants}
+                onEdit={openEditDialog}
+                onDelete={handleOpenDeleteDialog}
+                onJoinRoute={handleJoinRoute}
+                onLeaveRoute={handleOpenLeaveRoute}
+                isOwner={route.user_id === user.user_id}
+                isJoining={isJoining}
+              />
+            </Grid>
+          );
+        })
       ) : (
         <Grid container justifyContent="center" mb={2}>
           <EmptyState />

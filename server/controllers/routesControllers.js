@@ -185,6 +185,45 @@ class routesControllers {
       err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
     });
   };
+
+  joinRoute = (req, res) => {
+    console.log("joining route");
+    const { id: route_id } = req.params;
+    const { user_id } = req.body;
+
+    console.log(req.params, " params in Joining rute");
+    console.log(req.body, " body in Joining rute");
+
+    // Avoid duplicate entry error
+    let checkSql = `SELECT * FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}'`;
+
+    connection.query(checkSql, (err, result) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+
+      // If user is already enrolled, return error
+      if (result.length > 0) {
+        return res.status(409).json({
+          error: "Usuario ya inscrito",
+        });
+      }
+
+      // If not enrolled, proceed with INSERT
+      let sql = `INSERT INTO route_participant (user_id, route_id) VALUES ('${user_id}', '${route_id}')`;
+
+      connection.query(sql, (err, result) => {
+        if (err) {
+          return res.status(400).json({ err });
+        }
+
+        res.status(201).json({
+          message: "Inscripción completada",
+          route_participant_id: result.insertId,
+        });
+      });
+    });
+  };
 }
 
 module.exports = new routesControllers();

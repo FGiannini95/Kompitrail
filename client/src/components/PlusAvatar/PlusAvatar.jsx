@@ -8,7 +8,9 @@ export const PlusAvatar = ({ size = 40, onClick, disabled = false }) => {
       <IconButton
         onClick={(e) => {
           e.stopPropagation();
-          onClick?.();
+          if (!disabled && onClick) {
+            onClick(e);
+          }
         }}
         disabled={disabled}
         sx={{
