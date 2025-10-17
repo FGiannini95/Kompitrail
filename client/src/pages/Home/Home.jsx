@@ -67,7 +67,6 @@ export const Home = () => {
   };
 
   const handleJoinRoute = (route_id) => {
-    console.log("handleJoinRoute");
     setOptimisticJoined((prev) => {
       const next = new Set(prev); // Copy
       next.add(route_id); // Modify
@@ -96,7 +95,6 @@ export const Home = () => {
   };
 
   const handleLeaveRoute = (route_id) => {
-    console.log("handleLeaveRoute");
     // axios
     //   .delete(`${ROUTES_URL}/leave/${route_id}`, {
     //     data: { user_id: user.user_id },

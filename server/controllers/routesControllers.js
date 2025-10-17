@@ -187,12 +187,8 @@ class routesControllers {
   };
 
   joinRoute = (req, res) => {
-    console.log("joining route");
     const { id: route_id } = req.params;
     const { user_id } = req.body;
-
-    console.log(req.params, " params in Joining rute");
-    console.log(req.body, " body in Joining rute");
 
     // Avoid duplicate entry error
     let checkSql = `SELECT * FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}'`;
