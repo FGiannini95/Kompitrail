@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -23,6 +23,8 @@ import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
 
 export const Home = () => {
+  const [joiningRouteId, setJoiningRouteId] = useState(null);
+
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
   const {
@@ -55,13 +57,55 @@ export const Home = () => {
   const handleOpenDeleteDialog = (route_id) => {
     openDialog({
       title: "Eliminar ruta",
-      message: "¿Quieres eliminar la ruta de tu perfil?",
+      message: "¿Quieres eliminar la ruta de la plataforma?",
       onConfirm: () => handleDeleteRoute(route_id),
     });
   };
 
   const openEditDialog = (route_id) => {
     openCreateEditDialog({ mode: "edit", route_id });
+  };
+
+  const handleJoinRoute = (route_id) => {
+    if (joiningRouteId) return;
+    // We handle only that particular route with that id
+    setJoiningRouteId(route_id);
+    axios
+      .post(`${ROUTES_URL}/join/${route_id}`, { user_id: user.user_id })
+      .then(() => {
+        loadAllRoutes();
+        showSnackbar("Inscripción completada");
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error al inscribirte", "error");
+      })
+      .finally(() => {
+        setJoiningRouteId(null);
+      });
+  };
+
+  const handleLeaveRoute = (route_id) => {
+    // axios
+    //   .delete(`${ROUTES_URL}/leave/${route_id}`, {
+    //     data: { user_id: user.user_id },
+    //   })
+    //   .then(() => {
+    //     loadAllRoutes();
+    //     showSnackbar("Inscripción cancelada");
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     showSnackbar("Error durante la cancelación", "error");
+    //   });
+  };
+
+  const handleOpenLeaveRoute = (route_id) => {
+    openDialog({
+      title: "Cancelar inscripción",
+      message: "¿Quieres cancelar la inscripción a esta ruta?",
+      onConfirm: () => handleLeaveRoute(route_id),
+    });
   };
 
   if (loading) {
@@ -72,12 +116,11 @@ export const Home = () => {
       <Grid>
         <Typography>Tus próximas rutas</Typography>
       </Grid>
-
-      <Typography>button per creare una ruta</Typography>
       <Button
         type="button"
         variant="contained"
         sx={{
+          mb: 2,
           color: "black",
           boxShadow: "none",
           backgroundColor: "#eeeeee",
@@ -89,9 +132,6 @@ export const Home = () => {
         Crear ruta
         <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
       </Button>
-      <Typography>
-        Questo è solo per fare un pó di spazio con la sezione di sotto
-      </Typography>
       {allRoutes.length > 0 ? (
         allRoutes.map((route) => (
           <Grid key={route?.route_id} container justifyContent="center" mb={2}>
@@ -99,7 +139,10 @@ export const Home = () => {
               {...route}
               onEdit={openEditDialog}
               onDelete={handleOpenDeleteDialog}
+              onJoinRoute={handleJoinRoute}
+              onLeaveRoute={handleOpenLeaveRoute}
               isOwner={route.user_id === user.user_id}
+              isJoining={joiningRouteId === route.route_id}
             />
           </Grid>
         ))

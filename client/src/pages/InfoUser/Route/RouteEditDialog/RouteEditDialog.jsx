@@ -20,6 +20,7 @@ import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPi
 // Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
+import { toMySQLDateTime } from "../../../../helpers/utils";
 // Providers
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
@@ -70,7 +71,13 @@ export const RouteEditDialog = () => {
     }
 
     const newFormData = new FormData();
-    newFormData.append("editRoute", JSON.stringify(editRoute));
+    newFormData.append(
+      "editRoute",
+      JSON.stringify({
+        ...editRoute,
+        date: toMySQLDateTime(editRoute.date, "Europe/Madrid"),
+      })
+    );
 
     axios
       .put(`${ROUTES_URL}/editroute/${route_id}`, newFormData)
@@ -99,16 +106,6 @@ export const RouteEditDialog = () => {
           }}
         >
           <Grid container spacing={2}>
-            <Grid size={12}>
-              <FormTextfield
-                label="Nombre ruta"
-                name="route_name"
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-              />
-            </Grid>
             <Grid size={12}>
               <FormTextfield
                 label="Salida"
@@ -179,7 +176,7 @@ export const RouteEditDialog = () => {
             <Grid size={6}>
               <FormTextfield
                 label="Pilotos"
-                name="participants"
+                name="max_participants"
                 type="number"
                 errors={errors}
                 setErrors={setErrors}

@@ -17,17 +17,18 @@ export const TopBar = () => {
   const navigate = useNavigate();
   const { user } = useContext(KompitrailContext);
 
-  const noDesign = [
-    RoutesString.infouser,
-    RoutesString.editUser,
-    RoutesString.motorbike,
-    RoutesString.settings,
-    RoutesString.editPassword,
-    RoutesString.itinerary,
-    RoutesString.createRoute,
-    RoutesString.editRoute,
-    RoutesString.route,
-  ].includes(location.pathname);
+  const noDesign =
+    [
+      RoutesString.infouser,
+      RoutesString.editUser,
+      RoutesString.motorbike,
+      RoutesString.settings,
+      RoutesString.editPassword,
+      RoutesString.itinerary,
+      RoutesString.createRoute,
+      RoutesString.editRoute,
+      RoutesString.route,
+    ].includes(location.pathname) || location.pathname.startsWith("/route/");
 
   useEffect(() => {
     if (location.pathname === RoutesString.home) {

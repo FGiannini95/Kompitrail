@@ -64,7 +64,6 @@ export const RouteCreateDialog = () => {
     newFormData.append(
       "createRoute",
       JSON.stringify({
-        route_name: createOneRoute.route_name,
         starting_point: createOneRoute.starting_point,
         ending_point: createOneRoute.ending_point,
         date: createOneRoute.date,
@@ -73,7 +72,7 @@ export const RouteCreateDialog = () => {
         is_verified: createOneRoute.is_verified,
         suitable_motorbike_type: createOneRoute.suitable_motorbike_type,
         estimated_time: createOneRoute.estimated_time,
-        participants: createOneRoute.participants,
+        max_participants: createOneRoute.max_participants,
         route_description: createOneRoute.route_description,
         user_id: user.user_id,
       })
@@ -104,16 +103,6 @@ export const RouteCreateDialog = () => {
           }}
         >
           <Grid container spacing={2}>
-            <Grid size={12}>
-              <FormTextfield
-                label="Nombre ruta"
-                name="route_name"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-              />
-            </Grid>
             <Grid size={12}>
               <FormTextfield
                 label="Salida"
@@ -184,7 +173,7 @@ export const RouteCreateDialog = () => {
             <Grid size={6}>
               <FormTextfield
                 label="Pilotos"
-                name="participants"
+                name="max_participants"
                 type="number"
                 errors={errors}
                 setErrors={setErrors}

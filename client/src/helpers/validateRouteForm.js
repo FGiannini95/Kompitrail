@@ -1,8 +1,5 @@
 export const validateRouteForm = (routeData) => {
   const errors = {};
-  if (routeData.route_name === "") {
-    errors.route_name = "Nombre requerido";
-  }
   if (routeData.starting_point === "") {
     errors.starting_point = "Punto de salida requerido";
   }
@@ -21,8 +18,8 @@ export const validateRouteForm = (routeData) => {
   if (!routeData.estimated_time) {
     errors.estimated_time = "Duración requerida";
   }
-  if (!routeData.participants) {
-    errors.participants = "Nº de pilotos requerido";
+  if (!routeData.max_participants) {
+    errors.max_participants = "Nº de pilotos requerido";
   }
 
   if (!routeData.suitable_motorbike_type) {

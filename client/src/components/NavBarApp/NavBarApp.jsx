@@ -19,17 +19,19 @@ export const NavBarApp = ({ children }) => {
 
   const location = useLocation();
 
-  const noDesign = [
-    RoutesString.infouser,
-    RoutesString.editUser,
-    RoutesString.motorbike,
-    RoutesString.settings,
-    RoutesString.editPassword,
-    RoutesString.itinerary,
-    RoutesString.createRoute,
-    RoutesString.editRoute,
-    RoutesString.route,
-  ].includes(location.pathname);
+  const noDesign =
+    [
+      RoutesString.infouser,
+      RoutesString.editUser,
+      RoutesString.motorbike,
+      RoutesString.settings,
+      RoutesString.editPassword,
+      RoutesString.itinerary,
+      RoutesString.createRoute,
+      RoutesString.editRoute,
+      RoutesString.route,
+      RoutesString.routeDetail,
+    ].includes(location.pathname) || location.pathname.startsWith("/route/");
 
   const topBarHeight = 64;
   const navBarHeight = 56;

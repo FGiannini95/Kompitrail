@@ -1,41 +1,35 @@
-import React from "react";
+import React, { useContext, useMemo } from "react";
+import { generatePath, useNavigate } from "react-router-dom";
 
 import {
-  Avatar,
-  Badge,
-  styled,
   Card,
   CardContent,
   CardActions,
-  Collapse,
   IconButton,
   Typography,
-  Box,
   Stack,
+  Box,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-
-import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
+import ForwardOutlinedIcon from "@mui/icons-material/ForwardOutlined";
+// Utils
 import { formatDateTime } from "../../../../helpers/utils";
-
-const ExpandMore = styled(IconButton)(({ expand }) => ({
-  marginLeft: "auto",
-  transform: expand ? "rotate(180deg)" : "rotate(0deg)",
-  transition: "transform 0.3s",
-}));
+import { RoutesString } from "../../../../routes/routes";
+// Providers
+import { KompitrailContext } from "../../../../context/KompitrailContext";
+// Components
+import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
+import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
 
 export const RouteCard = ({
-  route_name,
   route_id,
+  user_id,
   starting_point,
   ending_point,
   date,
@@ -43,24 +37,84 @@ export const RouteCard = ({
   distance,
   suitable_motorbike_type,
   estimated_time,
-  participants,
+  max_participants,
+  participants = [],
   is_verified,
   route_description,
+  create_name,
   onEdit,
   onDelete,
+  onJoinRoute,
+  onLeaveRoute,
   isOwner,
+  isJoining,
 }) => {
-  const { expandedRouteId, handleExpandToggle } = useRoutes();
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
+  const { user: currentUser } = useContext(KompitrailContext);
+  const navigate = useNavigate();
 
-  const InfoItem = ({ label, value }) => (
-    <Grid xs={6}>
-      <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-        {label}
-      </Typography>
-      <Typography>{value}</Typography>
-    </Grid>
-  );
+  const enrollmentInfo = useMemo(() => {
+    // Creator + enrolled user
+    const currentParticipants = 1 + participants.length;
+
+    // Check if current user is already enrolled
+    const isCurrentUserEnrolled = participants.some(
+      (p) => p.user_id === currentUser?.user_id
+    );
+
+    const slotsAvailable = max_participants - currentParticipants;
+    const isRouteFull = slotsAvailable <= 0;
+
+    // Number of empty slots  to display
+    const emptySlotsCount = Math.max(0, max_participants - currentParticipants);
+
+    return {
+      currentParticipants,
+      isCurrentUserEnrolled,
+      slotsAvailable,
+      isRouteFull,
+      emptySlotsCount,
+    };
+  }, [max_participants, participants, currentUser?.user_id]);
+
+  // - NOT clickable if: user is creator OR user is already enrolled OR route is full
+  const canJoinRoute =
+    !isOwner &&
+    !enrollmentInfo.isCurrentUserEnrolled &&
+    !enrollmentInfo.isRouteFull &&
+    !isJoining;
+
+  const handleOpenDetails = () => {
+    // Guard to avoid pushing an invalid URL
+    if (!route_id) return;
+    // Build "/route/123" from "/route/:id"
+    const url = generatePath(RoutesString.routeDetail, { id: route_id });
+    navigate(url, {
+      state: {
+        starting_point,
+        ending_point,
+        date,
+        level,
+        distance,
+        suitable_motorbike_type,
+        estimated_time,
+        max_participants,
+        is_verified,
+        route_description,
+      },
+    });
+  };
+
+  const handleJoin = (e) => {
+    e.stopPropagation();
+    if (!canJoinRoute) return;
+    onJoinRoute?.(route_id);
+  };
+
+  const handleLeave = (e) => {
+    e.stopPropagation();
+    onLeaveRoute?.(route_id);
+  };
 
   return (
     <Card
@@ -73,44 +127,62 @@ export const RouteCard = ({
       }}
     >
       <CardContent>
-        <Typography>Created by:{name} </Typography>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{starting_point}</Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <FlagOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{ending_point}</Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <CalendarMonthIcon fontSize="medium" aria-hidden />
-          <Typography>{date_dd_mm_yyyy}</Typography>
-          <AccessTimeOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{time_hh_mm}</Typography>
-        </Stack>
-        <Grid display="flex" gap={1} marginTop={1}>
-          <Badge
-            overlap="circular"
-            badgeContent="x"
-            color="error"
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            // Style the dot a bit bigger and add a white ring
-            sx={{
-              "& .MuiBadge-badge": {
-                width: 16,
-                height: 16,
-                minWidth: 16,
-                borderRadius: "50%",
-              },
-            }}
-          >
-            <Avatar />
-          </Badge>
-          <Avatar />
-          <Avatar />
-          <Avatar />
-          <Avatar />
-        </Grid>
+        <Box onClick={handleOpenDetails}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
+            <Typography>{starting_point}</Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <FlagOutlinedIcon fontSize="medium" aria-hidden />
+            <Typography>{ending_point}</Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <CalendarMonthIcon fontSize="medium" aria-hidden />
+            <Typography>{date_dd_mm_yyyy}</Typography>
+            <AccessTimeOutlinedIcon fontSize="medium" aria-hidden />
+            <Typography>{time_hh_mm}</Typography>
+          </Stack>
+        </Box>
+        <Box display="flex" flexWrap="wrap" gap={1} marginTop={1}>
+          {/* 1. CREATOR AVATAR - Always first */}
+          <BadgeAvatar
+            targetUserId={user_id}
+            name={create_name}
+            size={40}
+            showName
+            onBadgeClick={() => onDelete?.(route_id)}
+          />
+
+          {/* 2. ENROLLED PARTICIPANTS */}
+          {participants.map((participant) => {
+            const isCurrentUser = participant.user_id === currentUser?.user_id;
+
+            return (
+              <BadgeAvatar
+                key={participant.user_id}
+                targetUserId={participant.user_id}
+                name={participant.name}
+                size={40}
+                showName
+                onBadgeClick={() => {
+                  /*/ */
+                }}
+              />
+            );
+          })}
+
+          {/* 3. EMPTY SLOTS - "+" buttons (only if not owner and not enrolled) */}
+          {Array.from({ length: enrollmentInfo.emptySlotsCount }).map(
+            (_, i) => (
+              <PlusAvatar
+                key={`empty-slot-${i}`}
+                size={40}
+                onClick={handleJoin}
+                disabled={!canJoinRoute}
+              />
+            )
+          )}
+        </Box>
       </CardContent>
       <CardActions disableSpacing>
         {isOwner && (
@@ -121,108 +193,17 @@ export const RouteCard = ({
             <IconButton onClick={() => onDelete?.(route_id)}>
               <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
             </IconButton>
-            <Typography sx={{ ml: "auto" }}>{"Federico"}</Typography>
           </>
         )}
-      </CardActions>
-    </Card>
-    /*
-    <Card
-      sx={{
-        width: "100%",
-        bgcolor: "#eeeeee",
-        borderRadius: 2,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <CardHeader
-        sx={{ ".MuiCardHeader-content": { minWidth: 0 } }}
-        title={
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              wordBreak: "break-word",
-              overflowWrap: "anywhere",
-              textAlign: "center",
-            }}
-          >
-            {route_name}
-          </Typography>
-        }
-      />
-      <CardMedia
-        component="img"
-        sx={{ height: 180, objectFit: "cover" }}
-        image=""
-        alt="Route img"
-      />
-      <CardContent>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          {starting_point} - {ending_point}
-        </Typography>
-        {
-          //TODO: REPLACE THE CREATION DATE WITH THE ACTUAL DATE OF THE TRIP
-        }
-        <Typography>{date}</Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        {isOwner ? (
-          <>
-            <IconButton onClick={() => onEdit?.(route_id)}>
-              <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
-            </IconButton>
-            <IconButton onClick={() => onDelete?.(route_id)}>
-              <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
-            </IconButton>
-          </>
-        ) : (
-          <IconButton onClick={() => onEdit?.(route_id)}>
-            <FavoriteBorderOutlinedIcon
-              fontSize="medium"
-              style={{ color: "black" }}
-            />
-          </IconButton>
-        )}
-        <ExpandMore
-          expand={expandedRouteId === route_id ? 1 : 0}
-          onClick={() => handleExpandToggle(route_id)}
-          aria-expanded={expandedRouteId === route_id}
-          aria-label="show more"
+        <Stack
+          sx={{ ml: "auto" }}
+          justifyContent="end"
+          alignItems="flex-end"
+          onClick={handleOpenDetails}
         >
-          <ExpandMoreIcon fontSize="large" style={{ color: "black" }} />
-        </ExpandMore>
+          <ForwardOutlinedIcon fontSize="medium" aria-hidden />
+        </Stack>
       </CardActions>
-      <Collapse in={expandedRouteId === route_id} timeout="auto" unmountOnExit>
-        <CardContent sx={{ padding: 3 }}>
-          <Box sx={{ textAlign: "center", mb: 2, fontWeight: "bold" }}>
-            <Box component="span">Ruta {""}</Box>
-            {is_verified === 0 ? "conocida" : "nueva"}
-          </Box>
-          <Grid
-            container
-            spacing={2}
-            sx={{ textAlign: "center", justifyContent: "center" }}
-          >
-            <InfoItem label="Distancia" value={`${distance} km`} />
-            <InfoItem label="Tiempo estimado" value={`${estimated_time} h`} />
-            <InfoItem label="Participantes" value={participants} />
-            <InfoItem label="Nivel" value={level} />
-            <Grid size={12}>
-              <InfoItem label="Motos aptas" value={suitable_motorbike_type} />
-            </Grid>
-            <Grid size={12}>
-              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                Descripción
-              </Typography>
-              <Typography sx={{ textAlign: "left" }}>
-                {route_description}
-              </Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Collapse>
     </Card>
-    */
   );
 };

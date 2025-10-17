@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import { Stack, Typography, Avatar } from "@mui/material";
+import { Stack, Typography, Avatar, Box } from "@mui/material";
 import { getInitials } from "../../helpers/utils";
 import { KompitrailContext } from "../../context/KompitrailContext";
 
@@ -12,7 +12,7 @@ export const UserAvatar = () => {
   const fullName = `${user.name ?? ""} ${user.lastname ?? ""}`.trim();
 
   return (
-    <Stack alignItems="center" spacing={1}>
+    <Stack alignItems="center" spacing={1} sx={{ mx: "auto" }}>
       <Avatar
         // src={user?.photoUrl || undefined}
         sx={{
@@ -26,9 +26,21 @@ export const UserAvatar = () => {
       >
         {initials}
       </Avatar>
-      <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-        {fullName}
-      </Typography>
+      <Box
+        sx={{ width: "100%", maxWidth: 360, mx: "auto", textAlign: "center" }}
+      >
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: "bold",
+            whiteSpace: "normal",
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+          }}
+        >
+          {fullName}
+        </Typography>
+      </Box>
     </Stack>
   );
 };

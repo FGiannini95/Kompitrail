@@ -22,5 +22,6 @@ router.put(
   routesControllers.editRoute
 );
 router.put("/deleteroute/:id", routesControllers.deleteRoute);
+router.post("/join/:id", routesControllers.joinRoute);
 
 module.exports = router;

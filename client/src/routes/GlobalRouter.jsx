@@ -18,6 +18,7 @@ import { EditPassword } from "../pages/InfoUser/Settings/EditPassword/EditPasswo
 import { KompitrailContext } from "../context/KompitrailContext";
 import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
 import { MyRoute } from "../pages/InfoUser/Route/MyRoute";
+import { OneRoute } from "../pages/InfoUser/Route/OneRoute/OneRoute";
 
 import { Box, CircularProgress } from "@mui/material";
 
@@ -84,6 +85,10 @@ export const GlobalRouter = () => {
                       element={<Settings />}
                     />
                     <Route path={RoutesString.route} element={<MyRoute />} />
+                    <Route
+                      path={RoutesString.routeDetail}
+                      element={<OneRoute />}
+                    />
                     <Route
                       path={RoutesString.editPassword}
                       element={<EditPassword />}

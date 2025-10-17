@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-import {
-  Typography,
-  Grid2 as Grid,
-  Button,
-  IconButton,
-  Box,
-} from "@mui/material";
+import { Typography, Button, IconButton, Box } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
