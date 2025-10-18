@@ -68,11 +68,13 @@ export const RoutesProvider = ({ children }) => {
       });
   }, []);
 
+  // CREATE action
   const createRoute = useCallback((route) => {
     setUserRoutes((prev) => [route, ...prev]);
     setAllRoutes((prev) => [route, ...prev]);
   }, []);
 
+  // EDIT action
   const editRoute = useCallback((updateRoute) => {
     const apply = (array) =>
       array.map((a) =>
@@ -83,6 +85,7 @@ export const RoutesProvider = ({ children }) => {
     setAllRoutes(apply);
   }, []);
 
+  // DELETE action
   const deleteRoute = useCallback((route_id) => {
     setAllRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
     setUserRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
@@ -122,6 +125,23 @@ export const RoutesProvider = ({ children }) => {
     joiningRouteId.has(route_id);
   }, []);
 
+  // LEAVE action
+  const leaveRoute = useCallback(
+    (route_id, user_id) => {
+      return axios
+        .delete(`${ROUTES_URL}/leave/${route_id}`, {
+          data: { user_id },
+        })
+        .then(() => {
+          loadAllRoutes();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    [loadAllRoutes]
+  );
+
   const value = {
     allRoutes,
     userRoutes,
@@ -137,6 +157,7 @@ export const RoutesProvider = ({ children }) => {
     loading,
     joinRoute,
     isJoiningRoute,
+    leaveRoute,
   };
 
   return (

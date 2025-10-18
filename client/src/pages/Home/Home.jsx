@@ -85,28 +85,28 @@ export const Home = () => {
   //     });
   // };
 
-  const handleLeaveRoute = (route_id) => {
-    axios
-      .delete(`${ROUTES_URL}/leave/${route_id}`, {
-        data: { user_id: user.user_id },
-      })
-      .then(() => {
-        loadAllRoutes();
-        showSnackbar("Inscripción cancelada");
-      })
-      .catch((err) => {
-        console.log(err);
-        showSnackbar("Error durante la cancelación", "error");
-      });
-  };
+  // const handleLeaveRoute = (route_id) => {
+  //   axios
+  //     .delete(`${ROUTES_URL}/leave/${route_id}`, {
+  //       data: { user_id: user.user_id },
+  //     })
+  //     .then(() => {
+  //       loadAllRoutes();
+  //       showSnackbar("Inscripción cancelada");
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       showSnackbar("Error durante la cancelación", "error");
+  //     });
+  // };
 
-  const handleOpenLeaveRoute = (route_id) => {
-    openDialog({
-      title: "Cancelar inscripción",
-      message: "¿Quieres cancelar la inscripción a esta ruta?",
-      onConfirm: () => handleLeaveRoute(route_id),
-    });
-  };
+  // const handleOpenLeaveRoute = (route_id) => {
+  //   openDialog({
+  //     title: "Cancelar inscripción",
+  //     message: "¿Quieres cancelar la inscripción a esta ruta?",
+  //     onConfirm: () => handleLeaveRoute(route_id),
+  //   });
+  // };
 
   if (loading) {
     return <Loading />;
@@ -140,7 +140,7 @@ export const Home = () => {
               onEdit={openEditDialog}
               onDelete={handleOpenDeleteDialog}
               // onJoinRoute={handleJoinRoute}
-              onLeaveRoute={handleOpenLeaveRoute}
+              // onLeaveRoute={handleOpenLeaveRoute}
               isOwner={route.user_id === user.user_id}
               isJoining={joiningRouteId === route.route_id}
             />

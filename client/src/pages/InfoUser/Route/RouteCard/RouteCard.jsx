@@ -28,6 +28,7 @@ import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
 import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
+import { useConfirmationDialog } from "../../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 
 export const RouteCard = ({
   route_id,
@@ -46,13 +47,13 @@ export const RouteCard = ({
   create_name,
   onEdit,
   onDelete,
-  onLeaveRoute,
   isOwner,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const { user: currentUser } = useContext(KompitrailContext);
-  const { joinRoute, isJoiningRoute } = useRoutes();
+  const { joinRoute, isJoiningRoute, leaveRoute } = useRoutes();
   const { showSnackbar } = useSnackbar();
+  const { openDialog } = useConfirmationDialog();
   const navigate = useNavigate();
 
   const enrollmentInfo = useMemo(() => {
@@ -116,6 +117,18 @@ export const RouteCard = ({
 
     joinRoute(route_id, currentUser.user_id)
       .then(() => {
+        showSnackbar("Inscripción completada");
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error al inscribirte", "error");
+      });
+  };
+
+  const handleLeave = (e) => {
+    e?.stopPropagation();
+    leaveRoute(route_id, currentUser.user_id)
+      .then(() => {
         showSnackbar("Inscripción cancelada");
       })
       .catch((err) => {
@@ -124,9 +137,12 @@ export const RouteCard = ({
       });
   };
 
-  const handleLeave = (e) => {
-    e.stopPropagation();
-    onLeaveRoute?.(route_id);
+  const handleOpenLeaveRoute = () => {
+    openDialog({
+      title: "Cancelar inscripción",
+      message: "¿Quieres cancelar la inscripción a esta ruta?",
+      onConfirm: () => handleLeave(),
+    });
   };
 
   return (
@@ -177,7 +193,7 @@ export const RouteCard = ({
                 name={participant.name}
                 size={40}
                 showName
-                onBadgeClick={handleLeave}
+                onBadgeClick={handleOpenLeaveRoute}
               />
             );
           })}
