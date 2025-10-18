@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -28,12 +28,13 @@ import {
   capitalizeFirstLetter,
   formatDateTime,
 } from "../../../../helpers/utils";
+import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
+import { RoutesString } from "../../../../routes/routes";
 // Providers
 import { useConfirmationDialog } from "../../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
-import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
-import { RoutesString } from "../../../../routes/routes";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -51,6 +52,7 @@ export const OneRoute = () => {
   const { openDialog } = useConfirmationDialog();
   const { deleteRoute } = useRoutes();
   const { showSnackbar } = useSnackbar();
+  const { user: currentUser } = useContext(KompitrailContext);
 
   const {
     date,
@@ -61,10 +63,57 @@ export const OneRoute = () => {
     max_participants,
     is_verified,
     route_description,
+    user_id,
+    participants = [],
+    isOwner,
+    handleJoin,
+    handleLeave,
   } = state || {};
 
   const { date_dd_mm_yyyy, time_hh_mm, weekday } = formatDateTime(date);
   const weekdayCap = capitalizeFirstLetter(weekday);
+
+  const isCurrentUserEnrolled = useMemo(() => {
+    return participants.some((p) => p.user_id === currentUser?.user_id);
+  }, [participants, currentUser?.user_id]);
+
+  const currentParticipants = 1 + participants.length;
+  const isRouteFull = currentParticipants >= max_participants;
+
+  const buttonConfig = useMemo(() => {
+    if (isOwner) {
+      return {
+        text: "Eliminar ruta",
+        onClick: handleOpenDeleteDialog,
+        color: "red",
+        show: true,
+      };
+    }
+
+    if (isCurrentUserEnrolled) {
+      return {
+        text: "Cancelar Inscripción",
+        onClick: handleLeave,
+        color: "red",
+        show: true,
+      };
+    }
+
+    if (!isRouteFull && !isOwner && !isCurrentUserEnrolled) {
+      return {
+        text: "únete",
+        onClcik: handleJoin,
+        color: "inherit",
+        show: true,
+      };
+    }
+
+    if (isRouteFull && !isOwner && !isCurrentUserEnrolled) {
+      return {
+        showw: false,
+      };
+    }
+  }, [isOwner, isCurrentUserEnrolled, isRouteFull]);
 
   const handleDeleteRoute = () => {
     axios
@@ -238,25 +287,28 @@ export const OneRoute = () => {
           <Typography>{route_description} </Typography>
         </Stack>
       </Stack>
-      <Grid>
-        <Button
-          type="button"
-          variant="outlined"
-          fullWidth
-          onClick={handleOpenDeleteDialog}
-          sx={{
-            color: "red",
-            borderColor: "red",
-            borderWidth: "1px",
-            "&:hover": {
-              borderColor: "#dddddd",
+
+      {buttonConfig.show && (
+        <Grid>
+          <Button
+            type="button"
+            variant="outlined"
+            fullWidth
+            onClick={buttonConfig.onClcik}
+            sx={{
+              color: "red",
+              borderColor: "red",
               borderWidth: "1px",
-            },
-          }}
-        >
-          Eliminar ruta
-        </Button>
-      </Grid>
+              "&:hover": {
+                borderColor: "#dddddd",
+                borderWidth: "1px",
+              },
+            }}
+          >
+            {buttonConfig.text}{" "}
+          </Button>
+        </Grid>
+      )}
     </Grid>
   );
 };

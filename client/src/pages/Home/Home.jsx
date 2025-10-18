@@ -66,24 +66,24 @@ export const Home = () => {
     openCreateEditDialog({ mode: "edit", route_id });
   };
 
-  const handleJoinRoute = (route_id) => {
-    if (joiningRouteId) return;
-    // We handle only that particular route with that id
-    setJoiningRouteId(route_id);
-    axios
-      .post(`${ROUTES_URL}/join/${route_id}`, { user_id: user.user_id })
-      .then(() => {
-        loadAllRoutes();
-        showSnackbar("Inscripción completada");
-      })
-      .catch((err) => {
-        console.log(err);
-        showSnackbar("Error al inscribirte", "error");
-      })
-      .finally(() => {
-        setJoiningRouteId(null);
-      });
-  };
+  // const handleJoinRoute = (route_id) => {
+  //   if (joiningRouteId) return;
+  //   // We handle only that particular route with that id
+  //   setJoiningRouteId(route_id);
+  //   axios
+  //     .post(`${ROUTES_URL}/join/${route_id}`, { user_id: user.user_id })
+  //     .then(() => {
+  //       loadAllRoutes();
+  //       showSnackbar("Inscripción completada");
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       showSnackbar("Error al inscribirte", "error");
+  //     })
+  //     .finally(() => {
+  //       setJoiningRouteId(null);
+  //     });
+  // };
 
   const handleLeaveRoute = (route_id) => {
     axios
@@ -139,7 +139,7 @@ export const Home = () => {
               {...route}
               onEdit={openEditDialog}
               onDelete={handleOpenDeleteDialog}
-              onJoinRoute={handleJoinRoute}
+              // onJoinRoute={handleJoinRoute}
               onLeaveRoute={handleOpenLeaveRoute}
               isOwner={route.user_id === user.user_id}
               isJoining={joiningRouteId === route.route_id}

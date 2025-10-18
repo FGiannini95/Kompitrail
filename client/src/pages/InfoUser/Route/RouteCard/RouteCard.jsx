@@ -26,6 +26,8 @@ import { KompitrailContext } from "../../../../context/KompitrailContext";
 // Components
 import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
 import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
+import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
+import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 
 export const RouteCard = ({
   route_id,
@@ -44,13 +46,13 @@ export const RouteCard = ({
   create_name,
   onEdit,
   onDelete,
-  onJoinRoute,
   onLeaveRoute,
   isOwner,
-  isJoining,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const { user: currentUser } = useContext(KompitrailContext);
+  const { joinRoute, isJoiningRoute } = useRoutes();
+  const { showSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const enrollmentInfo = useMemo(() => {
@@ -82,7 +84,7 @@ export const RouteCard = ({
     !isOwner &&
     !enrollmentInfo.isCurrentUserEnrolled &&
     !enrollmentInfo.isRouteFull &&
-    !isJoining;
+    !isJoiningRoute(route_id);
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -101,6 +103,9 @@ export const RouteCard = ({
         max_participants,
         is_verified,
         route_description,
+        user_id,
+        participants,
+        isOwner,
       },
     });
   };
@@ -108,7 +113,15 @@ export const RouteCard = ({
   const handleJoin = (e) => {
     e.stopPropagation();
     if (!canJoinRoute) return;
-    onJoinRoute?.(route_id);
+
+    joinRoute(route_id, currentUser.user_id)
+      .then(() => {
+        showSnackbar("Inscripción cancelada");
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error durante la cancelación", "error");
+      });
   };
 
   const handleLeave = (e) => {

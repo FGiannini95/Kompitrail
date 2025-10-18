@@ -16,6 +16,8 @@ export const RoutesProvider = ({ children }) => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [expandedRouteId, setExpandedRouteId] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Track per route ids to block double clicks
+  const [joiningRouteId, setJoiningRouteId] = useState(() => new Set());
   const location = useLocation();
 
   // Reset the value when there is a navigation
@@ -86,6 +88,40 @@ export const RoutesProvider = ({ children }) => {
     setUserRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
   }, []);
 
+  // JOIN action
+  const joinRoute = useCallback(
+    (route_id, user_id) => {
+      // Lock this route id
+      setJoiningRouteId((prev) => {
+        const next = new Set(prev);
+        next.add(route_id);
+        return next;
+      });
+
+      return axios
+        .post(`${ROUTES_URL}/join/${route_id}`, { user_id })
+        .then(() => {
+          loadAllRoutes();
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setJoiningRouteId((prev) => {
+            const next = new Set(prev);
+            next.delete(route_id);
+            return next;
+          });
+        });
+    },
+    [joiningRouteId, loadAllRoutes]
+  );
+
+  // Helper to know if a specific route is currently joining
+  const isJoiningRoute = useCallback((route_id) => {
+    joiningRouteId.has(route_id);
+  }, []);
+
   const value = {
     allRoutes,
     userRoutes,
@@ -99,6 +135,8 @@ export const RoutesProvider = ({ children }) => {
     deleteRoute,
     expandedRouteId,
     loading,
+    joinRoute,
+    isJoiningRoute,
   };
 
   return (
