@@ -23,12 +23,12 @@ import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
 // Providers
 import { KompitrailContext } from "../../../../context/KompitrailContext";
-// Components
-import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
-import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useConfirmationDialog } from "../../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
+// Components
+import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
+import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
 
 export const RouteCard = ({
   route_id,
@@ -45,20 +45,20 @@ export const RouteCard = ({
   is_verified,
   route_description,
   create_name,
-  // onEdit,
-  onDelete,
   isOwner,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const { user: currentUser } = useContext(KompitrailContext);
+  const { showSnackbar } = useSnackbar();
+  const { openDialog } = useConfirmationDialog();
   const {
     openDialog: openCreateEditDialog,
     joinRoute,
     isJoiningRoute,
     leaveRoute,
+    deleteRoute,
+    closeDialog,
   } = useRoutes();
-  const { showSnackbar } = useSnackbar();
-  const { openDialog } = useConfirmationDialog();
   const navigate = useNavigate();
 
   const enrollmentInfo = useMemo(() => {
@@ -118,6 +118,26 @@ export const RouteCard = ({
 
   const openEditDialog = (route_id) => {
     openCreateEditDialog({ mode: "edit", route_id });
+  };
+
+  const handleDelete = () => {
+    return deleteRoute(route_id)
+      .then(() => {
+        showSnackbar("Ruta eliminada con éxito");
+        closeDialog();
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error al eliminar la ruta", "error");
+      });
+  };
+
+  const handleOpenDeleteDialog = () => {
+    openDialog({
+      title: "Eliminar ruta",
+      message: "¿Quieres eliminar la ruta de la plataforma?",
+      onConfirm: () => handleDelete(),
+    });
   };
 
   const handleJoin = (e) => {
@@ -188,7 +208,7 @@ export const RouteCard = ({
             name={create_name}
             size={40}
             showName
-            onBadgeClick={() => onDelete?.(route_id)}
+            onBadgeClick={() => handleOpenDeleteDialog?.(route_id)}
           />
 
           {/* 2. ENROLLED PARTICIPANTS */}
@@ -226,7 +246,7 @@ export const RouteCard = ({
             <IconButton onClick={() => openEditDialog?.(route_id)}>
               <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
             </IconButton>
-            <IconButton onClick={() => onDelete?.(route_id)}>
+            <IconButton onClick={() => handleOpenDeleteDialog?.(route_id)}>
               <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
             </IconButton>
           </>
