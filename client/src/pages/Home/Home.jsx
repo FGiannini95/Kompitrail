@@ -27,13 +27,7 @@ export const Home = () => {
 
   const { openDialog } = useConfirmationDialog();
   const { showSnackbar } = useSnackbar();
-  const {
-    deleteRoute,
-    loadAllRoutes,
-    allRoutes,
-    openDialog: openCreateEditDialog,
-    loading,
-  } = useRoutes();
+  const { deleteRoute, loadAllRoutes, allRoutes, loading } = useRoutes();
   const { user } = useContext(KompitrailContext);
   const navigate = useNavigate();
 
@@ -61,52 +55,6 @@ export const Home = () => {
       onConfirm: () => handleDeleteRoute(route_id),
     });
   };
-
-  const openEditDialog = (route_id) => {
-    openCreateEditDialog({ mode: "edit", route_id });
-  };
-
-  // const handleJoinRoute = (route_id) => {
-  //   if (joiningRouteId) return;
-  //   // We handle only that particular route with that id
-  //   setJoiningRouteId(route_id);
-  //   axios
-  //     .post(`${ROUTES_URL}/join/${route_id}`, { user_id: user.user_id })
-  //     .then(() => {
-  //       loadAllRoutes();
-  //       showSnackbar("Inscripción completada");
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       showSnackbar("Error al inscribirte", "error");
-  //     })
-  //     .finally(() => {
-  //       setJoiningRouteId(null);
-  //     });
-  // };
-
-  // const handleLeaveRoute = (route_id) => {
-  //   axios
-  //     .delete(`${ROUTES_URL}/leave/${route_id}`, {
-  //       data: { user_id: user.user_id },
-  //     })
-  //     .then(() => {
-  //       loadAllRoutes();
-  //       showSnackbar("Inscripción cancelada");
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       showSnackbar("Error durante la cancelación", "error");
-  //     });
-  // };
-
-  // const handleOpenLeaveRoute = (route_id) => {
-  //   openDialog({
-  //     title: "Cancelar inscripción",
-  //     message: "¿Quieres cancelar la inscripción a esta ruta?",
-  //     onConfirm: () => handleLeaveRoute(route_id),
-  //   });
-  // };
 
   if (loading) {
     return <Loading />;
@@ -137,10 +85,7 @@ export const Home = () => {
           <Grid key={route?.route_id} container justifyContent="center" mb={2}>
             <RouteCard
               {...route}
-              onEdit={openEditDialog}
               onDelete={handleOpenDeleteDialog}
-              // onJoinRoute={handleJoinRoute}
-              // onLeaveRoute={handleOpenLeaveRoute}
               isOwner={route.user_id === user.user_id}
               isJoining={joiningRouteId === route.route_id}
             />

@@ -45,13 +45,18 @@ export const RouteCard = ({
   is_verified,
   route_description,
   create_name,
-  onEdit,
+  // onEdit,
   onDelete,
   isOwner,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const { user: currentUser } = useContext(KompitrailContext);
-  const { joinRoute, isJoiningRoute, leaveRoute } = useRoutes();
+  const {
+    openDialog: openCreateEditDialog,
+    joinRoute,
+    isJoiningRoute,
+    leaveRoute,
+  } = useRoutes();
   const { showSnackbar } = useSnackbar();
   const { openDialog } = useConfirmationDialog();
   const navigate = useNavigate();
@@ -109,6 +114,10 @@ export const RouteCard = ({
         isOwner,
       },
     });
+  };
+
+  const openEditDialog = (route_id) => {
+    openCreateEditDialog({ mode: "edit", route_id });
   };
 
   const handleJoin = (e) => {
@@ -214,7 +223,7 @@ export const RouteCard = ({
       <CardActions disableSpacing>
         {isOwner && (
           <>
-            <IconButton onClick={() => onEdit?.(route_id)}>
+            <IconButton onClick={() => openEditDialog?.(route_id)}>
               <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
             </IconButton>
             <IconButton onClick={() => onDelete?.(route_id)}>
