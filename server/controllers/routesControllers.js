@@ -245,6 +245,18 @@ class routesControllers {
       });
     });
   };
+
+  leaveRoute = (req, res) => {
+    const { id: route_id } = req.params;
+    const { user_id } = req.body;
+
+    let sql = `DELETE FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}';`;
+    connection.query(sql, (err, result) => {
+      err
+        ? res.status(400).json({ err })
+        : res.status(200).json({ message: "Inscripción cancelada", result });
+    });
+  };
 }
 
 module.exports = new routesControllers();

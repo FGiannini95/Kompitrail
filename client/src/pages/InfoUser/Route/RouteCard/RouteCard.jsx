@@ -23,6 +23,9 @@ import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
 // Providers
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
+import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
+import { useConfirmationDialog } from "../../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 // Components
 import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
 import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
@@ -42,15 +45,20 @@ export const RouteCard = ({
   is_verified,
   route_description,
   create_name,
-  onEdit,
-  onDelete,
-  onJoinRoute,
-  onLeaveRoute,
   isOwner,
-  isJoining,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const { user: currentUser } = useContext(KompitrailContext);
+  const { showSnackbar } = useSnackbar();
+  const { openDialog } = useConfirmationDialog();
+  const {
+    openDialog: openCreateEditDialog,
+    joinRoute,
+    isJoiningRoute,
+    leaveRoute,
+    deleteRoute,
+    closeDialog,
+  } = useRoutes();
   const navigate = useNavigate();
 
   const enrollmentInfo = useMemo(() => {
@@ -82,7 +90,7 @@ export const RouteCard = ({
     !isOwner &&
     !enrollmentInfo.isCurrentUserEnrolled &&
     !enrollmentInfo.isRouteFull &&
-    !isJoining;
+    !isJoiningRoute(route_id);
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -101,19 +109,69 @@ export const RouteCard = ({
         max_participants,
         is_verified,
         route_description,
+        user_id,
+        participants,
+        isOwner,
       },
+    });
+  };
+
+  const openEditDialog = (route_id) => {
+    openCreateEditDialog({ mode: "edit", route_id });
+  };
+
+  const handleDelete = () => {
+    return deleteRoute(route_id)
+      .then(() => {
+        showSnackbar("Ruta eliminada con éxito");
+        closeDialog();
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error al eliminar la ruta", "error");
+      });
+  };
+
+  const handleOpenDeleteDialog = () => {
+    openDialog({
+      title: "Eliminar ruta",
+      message: "¿Quieres eliminar la ruta de la plataforma?",
+      onConfirm: () => handleDelete(),
     });
   };
 
   const handleJoin = (e) => {
     e.stopPropagation();
     if (!canJoinRoute) return;
-    onJoinRoute?.(route_id);
+
+    joinRoute(route_id, currentUser.user_id)
+      .then(() => {
+        showSnackbar("Inscripción completada");
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error al inscribirte", "error");
+      });
   };
 
   const handleLeave = (e) => {
-    e.stopPropagation();
-    onLeaveRoute?.(route_id);
+    e?.stopPropagation();
+    leaveRoute(route_id, currentUser.user_id)
+      .then(() => {
+        showSnackbar("Inscripción cancelada");
+      })
+      .catch((err) => {
+        console.log(err);
+        showSnackbar("Error durante la cancelación", "error");
+      });
+  };
+
+  const handleOpenLeaveRoute = () => {
+    openDialog({
+      title: "Cancelar inscripción",
+      message: "¿Quieres cancelar la inscripción a esta ruta?",
+      onConfirm: () => handleLeave(),
+    });
   };
 
   return (
@@ -150,7 +208,7 @@ export const RouteCard = ({
             name={create_name}
             size={40}
             showName
-            onBadgeClick={() => onDelete?.(route_id)}
+            onBadgeClick={() => handleOpenDeleteDialog?.(route_id)}
           />
 
           {/* 2. ENROLLED PARTICIPANTS */}
@@ -164,9 +222,7 @@ export const RouteCard = ({
                 name={participant.name}
                 size={40}
                 showName
-                onBadgeClick={() => {
-                  /*/ */
-                }}
+                onBadgeClick={handleOpenLeaveRoute}
               />
             );
           })}
@@ -187,10 +243,10 @@ export const RouteCard = ({
       <CardActions disableSpacing>
         {isOwner && (
           <>
-            <IconButton onClick={() => onEdit?.(route_id)}>
+            <IconButton onClick={() => openEditDialog?.(route_id)}>
               <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
             </IconButton>
-            <IconButton onClick={() => onDelete?.(route_id)}>
+            <IconButton onClick={() => handleOpenDeleteDialog?.(route_id)}>
               <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
             </IconButton>
           </>
