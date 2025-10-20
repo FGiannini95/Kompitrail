@@ -77,6 +77,7 @@ export const RouteCard = ({
         route_description,
         user_id,
         participants,
+        create_name,
         isOwner,
       },
     });
