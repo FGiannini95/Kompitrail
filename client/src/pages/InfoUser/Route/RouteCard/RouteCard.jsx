@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useRef } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import {
@@ -18,14 +18,12 @@ import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import ForwardOutlinedIcon from "@mui/icons-material/ForwardOutlined";
+
 // Utils
 import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
 // Providers
-import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
-import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
-import { useConfirmationDialog } from "../../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 // Components
 
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
@@ -48,15 +46,10 @@ export const RouteCard = ({
   isOwner,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
-  const { user: currentUser } = useContext(KompitrailContext);
-  const { showSnackbar } = useSnackbar();
-  const { openDialog } = useConfirmationDialog();
-  const {
-    openDialog: openCreateEditDialog,
-    deleteRoute,
-    closeDialog,
-  } = useRoutes();
+  const { openDialog: openCreateEditDialog } = useRoutes();
   const navigate = useNavigate();
+
+  const participantsSectionRef = useRef();
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -87,26 +80,6 @@ export const RouteCard = ({
     openCreateEditDialog({ mode: "edit", route_id });
   };
 
-  const handleDelete = () => {
-    return deleteRoute(route_id)
-      .then(() => {
-        showSnackbar("Ruta eliminada con éxito");
-        closeDialog();
-      })
-      .catch((err) => {
-        console.log(err);
-        showSnackbar("Error al eliminar la ruta", "error");
-      });
-  };
-
-  const handleOpenDeleteDialog = () => {
-    openDialog({
-      title: "Eliminar ruta",
-      message: "¿Quieres eliminar la ruta de la plataforma?",
-      onConfirm: () => handleDelete(),
-    });
-  };
-
   return (
     <Card
       sx={{
@@ -135,6 +108,7 @@ export const RouteCard = ({
           </Stack>
         </Box>
         <RouteParticipantsSection
+          ref={participantsSectionRef}
           route_id={route_id}
           user_id={user_id}
           create_name={create_name}
@@ -149,7 +123,11 @@ export const RouteCard = ({
             <IconButton onClick={() => openEditDialog?.(route_id)}>
               <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
             </IconButton>
-            <IconButton onClick={() => handleOpenDeleteDialog?.(route_id)}>
+            <IconButton
+              onClick={() =>
+                participantsSectionRef.current?.handleOpenDeleteDialog()
+              }
+            >
               <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
             </IconButton>
           </>

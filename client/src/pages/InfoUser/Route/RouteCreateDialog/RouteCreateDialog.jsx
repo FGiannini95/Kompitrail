@@ -83,7 +83,7 @@ export const RouteCreateDialog = () => {
       .then(({ data }) => {
         createRoute(data);
         showSnackbar("Ruata añadida con éxito");
-        navigate(RoutesString.route);
+        navigate(RoutesString.home);
         cleanDialog();
       })
       .catch((err) => {

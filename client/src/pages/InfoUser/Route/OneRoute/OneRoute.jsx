@@ -1,6 +1,5 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 
 import {
   Button,
@@ -23,18 +22,15 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
+
 // Utils
 import {
   capitalizeFirstLetter,
   formatDateTime,
 } from "../../../../helpers/utils";
-import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
-import { RoutesString } from "../../../../routes/routes";
 // Providers
-import { useConfirmationDialog } from "../../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
-import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
-import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+// Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 
 const InfoItem = ({ label, value }) => (
@@ -50,10 +46,9 @@ export const OneRoute = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { id: route_id } = useParams();
-  const { openDialog } = useConfirmationDialog();
-  const { deleteRoute, closeDialog } = useRoutes();
-  const { showSnackbar } = useSnackbar();
   const { user: currentUser } = useContext(KompitrailContext);
+
+  const participantsSectionRef = useRef();
 
   const {
     date,
@@ -80,32 +75,11 @@ export const OneRoute = () => {
   const currentParticipants = 1 + participants.length;
   const isRouteFull = currentParticipants >= max_participants;
 
-  const handleDelete = () => {
-    return deleteRoute(route_id)
-      .then(() => {
-        showSnackbar("Ruta eliminada con éxito");
-        closeDialog();
-        navigate(RoutesString.home);
-      })
-      .catch((err) => {
-        console.log(err);
-        showSnackbar("Error al eliminar la ruta", "error");
-      });
-  };
-
-  const handleOpenDeleteDialog = () => {
-    openDialog({
-      title: "Eliminar ruta",
-      message: "¿Quieres eliminar la ruta de la plataforma?",
-      onConfirm: () => handleDelete(),
-    });
-  };
-
   const buttonConfig = useMemo(() => {
     if (isOwner) {
       return {
         text: "Eliminar ruta",
-        onClick: () => handleOpenDeleteDialog?.(route_id),
+        onClick: () => participantsSectionRef.current?.handleOpenDeleteDialog(),
         danger: true,
         disabled: false,
         show: true,
@@ -115,7 +89,7 @@ export const OneRoute = () => {
     if (isCurrentUserEnrolled) {
       return {
         text: "Cancelar Inscripción",
-        //onClick: handleLeave,
+        onClick: () => participantsSectionRef.current?.handleOpenLeaveRoute(),
         danger: true,
         disabled: false,
         show: true,
@@ -125,7 +99,7 @@ export const OneRoute = () => {
     if (!isRouteFull && !isOwner && !isCurrentUserEnrolled) {
       return {
         text: "Únete",
-        //onClick: handleJoin,
+        onClick: () => participantsSectionRef.current?.handleJoin(),
         danger: false,
         disabled: false,
         show: true,
@@ -214,9 +188,9 @@ export const OneRoute = () => {
           flexDirection: "column",
         }}
       >
-        ,
         <CardContent sx={{ padding: 3 }}>
           <RouteParticipantsSection
+            ref={participantsSectionRef}
             route_id={route_id}
             user_id={user_id}
             create_name={create_name}
