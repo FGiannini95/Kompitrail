@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import {
@@ -27,8 +27,8 @@ import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useConfirmationDialog } from "../../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 // Components
-import { BadgeAvatar } from "../../../../components/BadgeAvatar/BadgeAvatar";
-import { PlusAvatar } from "../../../../components/PlusAvatar/PlusAvatar";
+
+import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 
 export const RouteCard = ({
   route_id,
@@ -53,44 +53,10 @@ export const RouteCard = ({
   const { openDialog } = useConfirmationDialog();
   const {
     openDialog: openCreateEditDialog,
-    joinRoute,
-    isJoiningRoute,
-    leaveRoute,
     deleteRoute,
     closeDialog,
   } = useRoutes();
   const navigate = useNavigate();
-
-  const enrollmentInfo = useMemo(() => {
-    // Creator + enrolled user
-    const currentParticipants = 1 + participants.length;
-
-    // Check if current user is already enrolled
-    const isCurrentUserEnrolled = participants.some(
-      (p) => p.user_id === currentUser?.user_id
-    );
-
-    const slotsAvailable = max_participants - currentParticipants;
-    const isRouteFull = slotsAvailable <= 0;
-
-    // Number of empty slots  to display
-    const emptySlotsCount = Math.max(0, max_participants - currentParticipants);
-
-    return {
-      currentParticipants,
-      isCurrentUserEnrolled,
-      slotsAvailable,
-      isRouteFull,
-      emptySlotsCount,
-    };
-  }, [max_participants, participants, currentUser?.user_id]);
-
-  // - NOT clickable if: user is creator OR user is already enrolled OR route is full
-  const canJoinRoute =
-    !isOwner &&
-    !enrollmentInfo.isCurrentUserEnrolled &&
-    !enrollmentInfo.isRouteFull &&
-    !isJoiningRoute(route_id);
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -140,40 +106,6 @@ export const RouteCard = ({
     });
   };
 
-  const handleJoin = (e) => {
-    e.stopPropagation();
-    if (!canJoinRoute) return;
-
-    joinRoute(route_id, currentUser.user_id)
-      .then(() => {
-        showSnackbar("Inscripción completada");
-      })
-      .catch((err) => {
-        console.log(err);
-        showSnackbar("Error al inscribirte", "error");
-      });
-  };
-
-  const handleLeave = (e) => {
-    e?.stopPropagation();
-    leaveRoute(route_id, currentUser.user_id)
-      .then(() => {
-        showSnackbar("Inscripción cancelada");
-      })
-      .catch((err) => {
-        console.log(err);
-        showSnackbar("Error durante la cancelación", "error");
-      });
-  };
-
-  const handleOpenLeaveRoute = () => {
-    openDialog({
-      title: "Cancelar inscripción",
-      message: "¿Quieres cancelar la inscripción a esta ruta?",
-      onConfirm: () => handleLeave(),
-    });
-  };
-
   return (
     <Card
       sx={{
@@ -201,44 +133,14 @@ export const RouteCard = ({
             <Typography>{time_hh_mm}</Typography>
           </Stack>
         </Box>
-        <Box display="flex" flexWrap="wrap" gap={1} marginTop={1}>
-          {/* 1. CREATOR AVATAR - Always first */}
-          <BadgeAvatar
-            targetUserId={user_id}
-            name={create_name}
-            size={40}
-            showName
-            onBadgeClick={() => handleOpenDeleteDialog?.(route_id)}
-          />
-
-          {/* 2. ENROLLED PARTICIPANTS */}
-          {participants.map((participant) => {
-            const isCurrentUser = participant.user_id === currentUser?.user_id;
-
-            return (
-              <BadgeAvatar
-                key={participant.user_id}
-                targetUserId={participant.user_id}
-                name={participant.name}
-                size={40}
-                showName
-                onBadgeClick={handleOpenLeaveRoute}
-              />
-            );
-          })}
-
-          {/* 3. EMPTY SLOTS - "+" buttons (only if not owner and not enrolled) */}
-          {Array.from({ length: enrollmentInfo.emptySlotsCount }).map(
-            (_, i) => (
-              <PlusAvatar
-                key={`empty-slot-${i}`}
-                size={40}
-                onClick={handleJoin}
-                disabled={!canJoinRoute}
-              />
-            )
-          )}
-        </Box>
+        <RouteParticipantsSection
+          route_id={route_id}
+          user_id={user_id}
+          create_name={create_name}
+          participants={participants}
+          max_participants={max_participants}
+          isOwner={isOwner}
+        />
       </CardContent>
       <CardActions disableSpacing>
         {isOwner && (

@@ -35,6 +35,7 @@ import { useConfirmationDialog } from "../../../../context/ConfirmationDialogCon
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -65,8 +66,8 @@ export const OneRoute = () => {
     route_description,
     participants = [],
     isOwner,
-    handleJoin,
-    handleLeave,
+    user_id,
+    create_name,
   } = state || {};
 
   const { date_dd_mm_yyyy, time_hh_mm, weekday } = formatDateTime(date);
@@ -114,7 +115,7 @@ export const OneRoute = () => {
     if (isCurrentUserEnrolled) {
       return {
         text: "Cancelar Inscripción",
-        onClick: handleLeave,
+        //onClick: handleLeave,
         danger: true,
         disabled: false,
         show: true,
@@ -124,7 +125,7 @@ export const OneRoute = () => {
     if (!isRouteFull && !isOwner && !isCurrentUserEnrolled) {
       return {
         text: "Únete",
-        onClick: handleJoin,
+        //onClick: handleJoin,
         danger: false,
         disabled: false,
         show: true,
@@ -213,8 +214,16 @@ export const OneRoute = () => {
           flexDirection: "column",
         }}
       >
+        ,
         <CardContent sx={{ padding: 3 }}>
-          <Typography>Todos los avatar</Typography>
+          <RouteParticipantsSection
+            route_id={route_id}
+            user_id={user_id}
+            create_name={create_name}
+            participants={participants}
+            max_participants={max_participants}
+            isOwner={isOwner}
+          />
         </CardContent>
       </Card>
 
