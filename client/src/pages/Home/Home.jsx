@@ -17,6 +17,7 @@ import { RoutesString } from "../../routes/routes";
 // Providers
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
+import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
 
 export const Home = () => {
   const { loadAllRoutes, allRoutes, loading } = useRoutes();
@@ -36,12 +37,16 @@ export const Home = () => {
       <Grid>
         <Typography>Tus próximas rutas</Typography>
       </Grid>
+      <Grid>
+        <UserRoutesCarousel allRoutes={allRoutes} />
+      </Grid>
       <Button
         type="button"
         variant="outlined"
         fullWidth
         onClick={() => navigate(RoutesString.createTrip)}
         sx={{
+          mb: 2,
           color: "black",
           borderColor: "#eeeeee",
           borderWidth: "2px",

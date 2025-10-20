@@ -44,6 +44,7 @@ export const RouteCard = ({
   route_description,
   create_name,
   isOwner,
+  showActions = true,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const { openDialog: openCreateEditDialog } = useRoutes();
@@ -91,7 +92,7 @@ export const RouteCard = ({
       }}
     >
       <CardContent>
-        <Box onClick={handleOpenDetails}>
+        <Box onClick={handleOpenDetails} sx={{ cursor: "pointer" }}>
           <Stack direction="row" alignItems="center" spacing={1}>
             <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
             <Typography>{starting_point}</Typography>
@@ -117,30 +118,38 @@ export const RouteCard = ({
           isOwner={isOwner}
         />
       </CardContent>
-      <CardActions disableSpacing>
-        {isOwner && (
-          <>
-            <IconButton onClick={() => openEditDialog?.(route_id)}>
-              <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
-            </IconButton>
-            <IconButton
-              onClick={() =>
-                participantsSectionRef.current?.handleOpenDeleteDialog()
-              }
-            >
-              <DeleteOutlineIcon fontSize="medium" style={{ color: "black" }} />
-            </IconButton>
-          </>
-        )}
-        <Stack
-          sx={{ ml: "auto" }}
-          justifyContent="end"
-          alignItems="flex-end"
-          onClick={handleOpenDetails}
-        >
-          <ForwardOutlinedIcon fontSize="medium" aria-hidden />
-        </Stack>
-      </CardActions>
+      {showActions && (
+        <CardActions disableSpacing>
+          {isOwner && (
+            <>
+              <IconButton onClick={() => openEditDialog?.(route_id)}>
+                <EditOutlinedIcon
+                  fontSize="medium"
+                  style={{ color: "black" }}
+                />
+              </IconButton>
+              <IconButton
+                onClick={() =>
+                  participantsSectionRef.current?.handleOpenDeleteDialog()
+                }
+              >
+                <DeleteOutlineIcon
+                  fontSize="medium"
+                  style={{ color: "black" }}
+                />
+              </IconButton>
+            </>
+          )}
+          <Stack
+            sx={{ ml: "auto" }}
+            justifyContent="end"
+            alignItems="flex-end"
+            onClick={handleOpenDetails}
+          >
+            <ForwardOutlinedIcon fontSize="medium" aria-hidden />
+          </Stack>
+        </CardActions>
+      )}
     </Card>
   );
 };
