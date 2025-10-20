@@ -50,7 +50,7 @@ export const OneRoute = () => {
   const { state } = useLocation();
   const { id: route_id } = useParams();
   const { openDialog } = useConfirmationDialog();
-  const { deleteRoute } = useRoutes();
+  const { deleteRoute, closeDialog } = useRoutes();
   const { showSnackbar } = useSnackbar();
   const { user: currentUser } = useContext(KompitrailContext);
 
@@ -63,7 +63,6 @@ export const OneRoute = () => {
     max_participants,
     is_verified,
     route_description,
-    user_id,
     participants = [],
     isOwner,
     handleJoin,
@@ -80,47 +79,11 @@ export const OneRoute = () => {
   const currentParticipants = 1 + participants.length;
   const isRouteFull = currentParticipants >= max_participants;
 
-  const buttonConfig = useMemo(() => {
-    if (isOwner) {
-      return {
-        text: "Eliminar ruta",
-        onClick: handleOpenDeleteDialog,
-        color: "red",
-        show: true,
-      };
-    }
-
-    if (isCurrentUserEnrolled) {
-      return {
-        text: "Cancelar Inscripción",
-        onClick: handleLeave,
-        color: "red",
-        show: true,
-      };
-    }
-
-    if (!isRouteFull && !isOwner && !isCurrentUserEnrolled) {
-      return {
-        text: "únete",
-        onClcik: handleJoin,
-        color: "inherit",
-        show: true,
-      };
-    }
-
-    if (isRouteFull && !isOwner && !isCurrentUserEnrolled) {
-      return {
-        showw: false,
-      };
-    }
-  }, [isOwner, isCurrentUserEnrolled, isRouteFull]);
-
-  const handleDeleteRoute = () => {
-    axios
-      .put(`${ROUTES_URL}/deleteroute/${route_id}`)
+  const handleDelete = () => {
+    return deleteRoute(route_id)
       .then(() => {
-        deleteRoute(route_id);
-        showSnackbar("Ruata eliminada con éxito");
+        showSnackbar("Ruta eliminada con éxito");
+        closeDialog();
         navigate(RoutesString.home);
       })
       .catch((err) => {
@@ -129,13 +92,54 @@ export const OneRoute = () => {
       });
   };
 
-  const handleOpenDeleteDialog = (route_id) => {
+  const handleOpenDeleteDialog = () => {
     openDialog({
       title: "Eliminar ruta",
-      message: "¿Quieres eliminar la ruta de tu perfil?",
-      onConfirm: () => handleDeleteRoute(route_id),
+      message: "¿Quieres eliminar la ruta de la plataforma?",
+      onConfirm: () => handleDelete(),
     });
   };
+
+  const buttonConfig = useMemo(() => {
+    if (isOwner) {
+      return {
+        text: "Eliminar ruta",
+        onClick: () => handleOpenDeleteDialog?.(route_id),
+        danger: true,
+        disabled: false,
+        show: true,
+      };
+    }
+
+    if (isCurrentUserEnrolled) {
+      return {
+        text: "Cancelar Inscripción",
+        onClick: handleLeave,
+        danger: true,
+        disabled: false,
+        show: true,
+      };
+    }
+
+    if (!isRouteFull && !isOwner && !isCurrentUserEnrolled) {
+      return {
+        text: "Únete",
+        onClick: handleJoin,
+        danger: false,
+        disabled: false,
+        show: true,
+      };
+    }
+
+    if (isRouteFull && !isOwner && !isCurrentUserEnrolled) {
+      return {
+        text: "Ruta completa",
+        danger: false,
+        disabled: true,
+        show: true,
+      };
+    }
+  }, [isOwner, isCurrentUserEnrolled, isRouteFull]);
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -294,15 +298,12 @@ export const OneRoute = () => {
             type="button"
             variant="outlined"
             fullWidth
-            onClick={buttonConfig.onClcik}
+            disabled={buttonConfig.disabled}
+            onClick={buttonConfig.disabled ? undefined : buttonConfig.onClick}
             sx={{
-              color: "red",
-              borderColor: "red",
-              borderWidth: "1px",
-              "&:hover": {
-                borderColor: "#dddddd",
-                borderWidth: "1px",
-              },
+              color: buttonConfig.danger ? "error.main" : "black",
+              borderColor: buttonConfig.danger ? "error.main" : "#eeeeee",
+              borderWidth: buttonConfig.danger ? "1px" : "2px",
             }}
           >
             {buttonConfig.text}{" "}

@@ -38,20 +38,25 @@ export const Home = () => {
       </Grid>
       <Button
         type="button"
-        variant="contained"
-        sx={{
-          mb: 2,
-          color: "black",
-          boxShadow: "none",
-          backgroundColor: "#eeeeee",
-          "&:hover": { backgroundColor: "#dddddd" },
-        }}
+        variant="outlined"
         fullWidth
         onClick={() => navigate(RoutesString.createTrip)}
+        sx={{
+          color: "black",
+          borderColor: "#eeeeee",
+          borderWidth: "2px",
+          "&:hover": {
+            borderColor: "#dddddd",
+            borderWidth: "1px",
+          },
+        }}
       >
         Crear ruta
         <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
       </Button>
+      <Grid>
+        <Typography>Rutas disponibles</Typography>
+      </Grid>
       {allRoutes.length > 0 ? (
         allRoutes.map((route) => (
           <Grid key={route?.route_id} container justifyContent="center" mb={2}>
