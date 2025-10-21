@@ -25,7 +25,6 @@ import { RoutesString } from "../../../../routes/routes";
 // Providers
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 // Components
-
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 
 export const RouteCard = ({

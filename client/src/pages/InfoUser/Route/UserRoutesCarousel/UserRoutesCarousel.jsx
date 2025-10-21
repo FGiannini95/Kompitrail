@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from "react";
 
-import { Box } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { Box, Typography } from "@mui/material";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, A11y } from "swiper/modules";
@@ -9,6 +8,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 import { RouteCard } from "../RouteCard/RouteCard";
+
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 
 export const UserRoutesCarousel = ({ allRoutes = [] }) => {
@@ -27,43 +27,49 @@ export const UserRoutesCarousel = ({ allRoutes = [] }) => {
   }, [allRoutes, currentUser?.user_id]);
 
   return (
-    <Box
-      sx={{
-        pb: 2,
-        "& .swiper": {
-          overflow: "visible",
-          paddingBottom: 4, // ↑ more space between card and bullets
-        },
-        "& .swiper-pagination": {
-          bottom: 0, // keep bullets at the bottom of that padding
-        },
-        "& .swiper-slide": { display: "flex", justifyContent: "center" },
-        "& .swiper-pagination-bullet": {
-          opacity: 1,
-          backgroundColor: "rgba(0,0,0,0.25)",
-        },
-        "& .swiper-pagination-bullet-active": { backgroundColor: "#000" },
-      }}
-    >
-      <Swiper
-        modules={[Pagination, A11y]}
-        slidesPerView={1}
-        pagination={{ clickable: true }}
-        autoHeight
-        spaceBetween={12}
+    <Box sx={{ mb: 2 }}>
+      <Typography>Tus próximas rutas</Typography>
+      <Box
+        sx={{
+          overflow: "hidden", // Prevent horizontal scroll
+          "& .swiper-pagination-bullet": {
+            width: 8,
+            height: 8,
+            opacity: 1,
+            backgroundColor: "#d0d0d0", // Inactive dot color
+            transition: "all 0.3s",
+          },
+          "& .swiper-pagination-bullet-active": {
+            backgroundColor: "#000", // Active dot color
+            width: 10,
+            height: 10,
+          },
+        }}
       >
-        {userRoutes.map((route) => (
-          <SwiperSlide key={route?.route_id}>
-            <Grid container justify-content="center">
+        <Swiper
+          modules={[Pagination, A11y]}
+          slidesPerView={1}
+          spaceBetween={4}
+          pagination={{
+            clickable: true,
+            dynamicBullets: false,
+          }}
+          style={{
+            width: "100%",
+            paddingBottom: "30px",
+          }}
+        >
+          {userRoutes.map((route) => (
+            <SwiperSlide key={route.route_id}>
+              {/* Use RouteCarouselCard instead of RouteCard */}
               <RouteCard
                 {...route}
                 isOwner={route.user_id === currentUser.user_id}
-                showActions={false}
               />
-            </Grid>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </Box>
     </Box>
   );
 };

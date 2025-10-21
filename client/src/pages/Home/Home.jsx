@@ -6,17 +6,17 @@ import Grid from "@mui/material/Grid2";
 
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
-// Components
-import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
-import { EmptyState } from "../../components/EmptyState/EmptyState";
-import { Loading } from "../../components/Loading/Loading";
-import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
-
 // Utils
 import { RoutesString } from "../../routes/routes";
 // Providers
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
+
+// Components
+import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
+import { EmptyState } from "../../components/EmptyState/EmptyState";
+import { Loading } from "../../components/Loading/Loading";
+import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
 
 export const Home = () => {
@@ -34,9 +34,6 @@ export const Home = () => {
 
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
-      <Grid>
-        <Typography>Tus próximas rutas</Typography>
-      </Grid>
       <Grid>
         <UserRoutesCarousel allRoutes={allRoutes} />
       </Grid>
