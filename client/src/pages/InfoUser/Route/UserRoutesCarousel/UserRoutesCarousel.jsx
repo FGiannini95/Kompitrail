@@ -29,39 +29,38 @@ export const UserRoutesCarousel = ({ allRoutes = [] }) => {
   return (
     <Box sx={{ mb: 2 }}>
       <Typography>Tus próximas rutas</Typography>
+
       <Box
         sx={{
           overflow: "hidden", // Prevent horizontal scroll
-          "& .swiper-pagination-bullet": {
+          "& .routes-pagination-top .swiper-pagination-bullet": {
             width: 8,
             height: 8,
             opacity: 1,
             backgroundColor: "#d0d0d0", // Inactive dot color
             transition: "all 0.3s",
           },
-          "& .swiper-pagination-bullet-active": {
+          "& .routes-pagination-top .swiper-pagination-bullet-active": {
             backgroundColor: "#000", // Active dot color
             width: 10,
             height: 10,
           },
         }}
       >
+        {/* TOP DOTS */}
+        <Box
+          className="routes-pagination-top"
+          sx={{ display: "flex", justifyContent: "center", mb: 1 }}
+        />
+
         <Swiper
           modules={[Pagination, A11y]}
           slidesPerView={1}
           spaceBetween={4}
-          pagination={{
-            clickable: true,
-            dynamicBullets: false,
-          }}
-          style={{
-            width: "100%",
-            paddingBottom: "30px",
-          }}
+          pagination={{ el: ".routes-pagination-top", clickable: true }}
         >
           {userRoutes.map((route) => (
             <SwiperSlide key={route.route_id}>
-              {/* Use RouteCarouselCard instead of RouteCard */}
               <RouteCard
                 {...route}
                 isOwner={route.user_id === currentUser.user_id}
