@@ -1,3 +1,8 @@
+const isAndroid = () => {
+  const ua = navigator.userAgent || "";
+  return /Android/i.test(ua);
+};
+
 const isIOS = () => {
   const userAgent = navigator.userAgent || "";
   return /iPad|iPhone|iPod/i.test(userAgent); // Return true if contains any of this words in insensitive way
@@ -89,15 +94,14 @@ export const openCalendar = ({
 
   const title = `Ruta ${starting_point} - ${ending_point}`;
 
-  // Branch by device
   if (isIOS()) {
-    // Apple calendar via ICS
     const ics = buildICS({ title, start, end });
     const safeName = title.replace(/[^\w-]+/g, "_");
     openICSFile(ics, `${safeName}.ics`);
-  } else {
-    // Google calendar via URL
-    const url = buildGoogleCalendarURL({ title, start, end });
-    window.open(url, "_blank", "noopener,noreferrer");
+    return;
   }
+
+  // Fallback to Google Calendar
+  const url = buildGoogleCalendarURL({ title, start, end });
+  window.open(url, "_blank", "noopener,noreferrer");
 };
