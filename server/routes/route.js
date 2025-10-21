@@ -16,6 +16,10 @@ router.get(
   "/createdroutes-analytics/:id",
   routesControllers.showCreatedRoutesAnalytics
 );
+router.get(
+  "/joinedroutes-analytics/:id",
+  routesControllers.showJoineddRoutesAnalytics
+);
 router.put(
   "/editroute/:id",
   multerSingle("rutes"),

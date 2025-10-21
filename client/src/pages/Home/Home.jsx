@@ -6,17 +6,18 @@ import Grid from "@mui/material/Grid2";
 
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
-// Components
-import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
-import { EmptyState } from "../../components/EmptyState/EmptyState";
-import { Loading } from "../../components/Loading/Loading";
-import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
-
 // Utils
 import { RoutesString } from "../../routes/routes";
 // Providers
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
+
+// Components
+import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
+import { EmptyState } from "../../components/EmptyState/EmptyState";
+import { Loading } from "../../components/Loading/Loading";
+import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
+import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
 
 export const Home = () => {
   const { loadAllRoutes, allRoutes, loading } = useRoutes();
@@ -33,25 +34,29 @@ export const Home = () => {
 
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
-      <Grid>
-        <Typography>Tus próximas rutas</Typography>
-      </Grid>
+      <UserRoutesCarousel allRoutes={allRoutes} />
       <Button
         type="button"
-        variant="contained"
+        variant="outlined"
+        fullWidth
+        onClick={() => navigate(RoutesString.createTrip)}
         sx={{
           mb: 2,
           color: "black",
-          boxShadow: "none",
-          backgroundColor: "#eeeeee",
-          "&:hover": { backgroundColor: "#dddddd" },
+          borderColor: "#eeeeee",
+          borderWidth: "2px",
+          "&:hover": {
+            borderColor: "#dddddd",
+            borderWidth: "1px",
+          },
         }}
-        fullWidth
-        onClick={() => navigate(RoutesString.createTrip)}
       >
         Crear ruta
         <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
       </Button>
+      <Grid>
+        <Typography>Rutas disponibles</Typography>
+      </Grid>
       {allRoutes.length > 0 ? (
         allRoutes.map((route) => (
           <Grid key={route?.route_id} container justifyContent="center" mb={2}>

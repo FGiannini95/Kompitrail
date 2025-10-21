@@ -160,6 +160,14 @@ class routesControllers {
     });
   };
 
+  showJoineddRoutesAnalytics = (req, res) => {
+    const { id: user_id } = req.params;
+    let sql = `SELECT (SELECT COUNT(*) FROM route_participant WHERE user_id ="${user_id}") AS total_joinedroutes`;
+    connection.query(sql, (error, result) => {
+      error ? res.status(500).json({ error }) : res.status(200).json(result);
+    });
+  };
+
   editRoute = (req, res) => {
     const {
       starting_point,

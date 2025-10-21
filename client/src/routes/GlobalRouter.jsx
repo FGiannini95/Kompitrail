@@ -26,6 +26,7 @@ import { ConfirmationDialogProvider } from "../context/ConfirmationDialogContext
 import { SnackbarProvider } from "../context/SnackbarContext/SnackbarContext";
 import { MotorbikesProvider } from "../context/MotorbikesContext/MotorbikesContext";
 import { RoutesProvider } from "../context/RoutesContext/RoutesContext";
+import { ScrollToTop } from "../components/ScrollToTop/ScrollToTop";
 
 export const GlobalRouter = () => {
   const { user, token, isLoading } = useContext(KompitrailContext);
@@ -47,6 +48,7 @@ export const GlobalRouter = () => {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       {token && user && <TopBar />}
       {token && user && (
         <ConfirmationDialogProvider>

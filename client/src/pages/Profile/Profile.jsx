@@ -16,9 +16,8 @@ import {
   tableCellClasses,
   Typography,
   CardContent,
-  CardHeader,
   Card,
-  CardMedia,
+  Avatar,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -34,10 +33,14 @@ import {
 } from "../../../../server/config/serverConfig";
 // Components
 import { UserAvatar } from "../../components/UserAvatar/UserAvatar";
+import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
+import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 
 export const Profile = () => {
   const [motorbikesAnalytics, setMotorbikesAnalytics] = useState();
   const [createdRouteAnalytics, setCreatedRouteAnalytics] = useState();
+  const [joinedRouteAnalytics, setJoinedRouteAnalytics] = useState();
+  const { allRoutes } = useRoutes();
   const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
 
@@ -59,6 +62,18 @@ export const Profile = () => {
       .get(`${ROUTES_URL}/createdroutes-analytics/${user_id}`)
       .then((res) => {
         setCreatedRouteAnalytics(res.data[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    const { user_id } = jwtDecode(tokenLocalStorage).user;
+    axios
+      .get(`${ROUTES_URL}/joinedroutes-analytics/${user_id}`)
+      .then((res) => {
+        setJoinedRouteAnalytics(res.data[0]);
       })
       .catch((err) => {
         console.log(err);
@@ -162,7 +177,9 @@ export const Profile = () => {
                 <StyledTableCell align="center">
                   {createdRouteAnalytics?.total_createdroutes}
                 </StyledTableCell>
-                <StyledTableCell align="center">0</StyledTableCell>
+                <StyledTableCell align="center">
+                  {joinedRouteAnalytics?.total_joinedroutes}
+                </StyledTableCell>
               </StyledTableRow>
             </TableBody>
           </Table>
@@ -170,54 +187,27 @@ export const Profile = () => {
       </Grid>
 
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
-        <Typography>Tus rutas</Typography>
-        {/* Si dovrebbe fare un carrusel per vedere tutte. non permette vedere piú informazione */}
-        <Card
-          sx={{
-            bgcolor: "#eeeeee",
-            borderRadius: 2,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <CardHeader
-            sx={{ ".MuiCardHeader-content": { minWidth: 0 } }}
-            title={
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  wordBreak: "break-word",
-                  overflowWrap: "anywhere",
-                  textAlign: "center",
-                }}
-              >
-                {"Nome"}
-              </Typography>
-            }
-          />
-          <CardContent>
-            <Typography>{"Partenza e arrivo"}</Typography>
-            <Typography>{"Data"}</Typography>
-          </CardContent>
-        </Card>
+        <UserRoutesCarousel allRoutes={allRoutes} />
       </Grid>
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
         <Typography>Personas con las que viajas más</Typography>
         <Card
           sx={{
+            width: "50%",
             bgcolor: "#eeeeee",
             borderRadius: 2,
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
           }}
         >
-          <CardMedia
-            component="img"
-            sx={{ height: 180, objectFit: "cover" }}
-            image=""
-            alt="Route img"
-          />
-          <CardContent>
+          <CardContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar />
             <Typography>{"Nome"}</Typography>
             <Typography>{"# rutas en común"}</Typography>
           </CardContent>

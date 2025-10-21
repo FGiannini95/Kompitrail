@@ -27,6 +27,7 @@ import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 // Constants
 import {
   MOTORBIKE_TYPES,
+  PARTICIPANTS,
   ROUTE_INITIAL_VALUE,
   ROUTE_LEVELS,
 } from "../../../../constants/routeConstants";
@@ -161,12 +162,12 @@ export const RouteEditDialog = () => {
             </Grid>
             <Grid size={6}>
               <FormAutocomplete
-                form={editRoute}
-                setForm={setEditRoute}
-                errors={errors}
-                setErrors={setErrors}
                 name="level"
                 label="Nivel"
+                errors={errors}
+                setErrors={setErrors}
+                form={editRoute}
+                setForm={setEditRoute}
                 options={ROUTE_LEVELS}
                 optionLabelKey="name"
                 optionValueKey="name"
@@ -174,14 +175,17 @@ export const RouteEditDialog = () => {
               />
             </Grid>
             <Grid size={6}>
-              <FormTextfield
-                label="Pilotos"
+              <FormAutocomplete
                 name="max_participants"
-                type="number"
+                label="Pilotos"
                 errors={errors}
                 setErrors={setErrors}
                 form={editRoute}
                 setForm={setEditRoute}
+                options={PARTICIPANTS}
+                optionLabelKey="name"
+                optionValueKey="name"
+                disablePortal
               />
             </Grid>
             <Grid size={12}>

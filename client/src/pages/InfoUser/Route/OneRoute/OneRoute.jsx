@@ -1,6 +1,5 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 
 import {
   Button,
@@ -23,18 +22,16 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
+
 // Utils
 import {
   capitalizeFirstLetter,
   formatDateTime,
 } from "../../../../helpers/utils";
-import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
-import { RoutesString } from "../../../../routes/routes";
 // Providers
-import { useConfirmationDialog } from "../../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
-import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
-import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+// Components
+import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -49,10 +46,9 @@ export const OneRoute = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { id: route_id } = useParams();
-  const { openDialog } = useConfirmationDialog();
-  const { deleteRoute } = useRoutes();
-  const { showSnackbar } = useSnackbar();
   const { user: currentUser } = useContext(KompitrailContext);
+
+  const participantsSectionRef = useRef();
 
   const {
     date,
@@ -63,11 +59,10 @@ export const OneRoute = () => {
     max_participants,
     is_verified,
     route_description,
-    user_id,
     participants = [],
     isOwner,
-    handleJoin,
-    handleLeave,
+    user_id,
+    create_name,
   } = state || {};
 
   const { date_dd_mm_yyyy, time_hh_mm, weekday } = formatDateTime(date);
@@ -84,8 +79,9 @@ export const OneRoute = () => {
     if (isOwner) {
       return {
         text: "Eliminar ruta",
-        onClick: handleOpenDeleteDialog,
-        color: "red",
+        onClick: () => participantsSectionRef.current?.handleOpenDeleteDialog(),
+        danger: true,
+        disabled: false,
         show: true,
       };
     }
@@ -93,49 +89,32 @@ export const OneRoute = () => {
     if (isCurrentUserEnrolled) {
       return {
         text: "Cancelar Inscripción",
-        onClick: handleLeave,
-        color: "red",
+        onClick: () => participantsSectionRef.current?.handleOpenLeaveRoute(),
+        danger: true,
+        disabled: false,
         show: true,
       };
     }
 
     if (!isRouteFull && !isOwner && !isCurrentUserEnrolled) {
       return {
-        text: "únete",
-        onClcik: handleJoin,
-        color: "inherit",
+        text: "Únete",
+        onClick: () => participantsSectionRef.current?.handleJoin(),
+        danger: false,
+        disabled: false,
         show: true,
       };
     }
 
     if (isRouteFull && !isOwner && !isCurrentUserEnrolled) {
       return {
-        showw: false,
+        text: "Ruta completa",
+        danger: false,
+        disabled: true,
+        show: true,
       };
     }
   }, [isOwner, isCurrentUserEnrolled, isRouteFull]);
-
-  const handleDeleteRoute = () => {
-    axios
-      .put(`${ROUTES_URL}/deleteroute/${route_id}`)
-      .then(() => {
-        deleteRoute(route_id);
-        showSnackbar("Ruata eliminada con éxito");
-        navigate(RoutesString.home);
-      })
-      .catch((err) => {
-        console.log(err);
-        showSnackbar("Error al eliminar la ruta", "error");
-      });
-  };
-
-  const handleOpenDeleteDialog = (route_id) => {
-    openDialog({
-      title: "Eliminar ruta",
-      message: "¿Quieres eliminar la ruta de tu perfil?",
-      onConfirm: () => handleDeleteRoute(route_id),
-    });
-  };
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -210,7 +189,15 @@ export const OneRoute = () => {
         }}
       >
         <CardContent sx={{ padding: 3 }}>
-          <Typography>Todos los avatar</Typography>
+          <RouteParticipantsSection
+            ref={participantsSectionRef}
+            route_id={route_id}
+            user_id={user_id}
+            create_name={create_name}
+            participants={participants}
+            max_participants={max_participants}
+            isOwner={isOwner}
+          />
         </CardContent>
       </Card>
 
@@ -294,15 +281,12 @@ export const OneRoute = () => {
             type="button"
             variant="outlined"
             fullWidth
-            onClick={buttonConfig.onClcik}
+            disabled={buttonConfig.disabled}
+            onClick={buttonConfig.disabled ? undefined : buttonConfig.onClick}
             sx={{
-              color: "red",
-              borderColor: "red",
-              borderWidth: "1px",
-              "&:hover": {
-                borderColor: "#dddddd",
-                borderWidth: "1px",
-              },
+              color: buttonConfig.danger ? "error.main" : "black",
+              borderColor: buttonConfig.danger ? "error.main" : "#eeeeee",
+              borderWidth: buttonConfig.danger ? "1px" : "2px",
             }}
           >
             {buttonConfig.text}{" "}
