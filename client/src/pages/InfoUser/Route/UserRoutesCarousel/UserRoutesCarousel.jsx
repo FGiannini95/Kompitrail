@@ -29,7 +29,6 @@ export const UserRoutesCarousel = ({ allRoutes = [] }) => {
   return (
     <Box sx={{ mb: 2 }}>
       <Typography>Tus próximas rutas</Typography>
-
       <Box
         sx={{
           overflow: "hidden", // Prevent horizontal scroll
