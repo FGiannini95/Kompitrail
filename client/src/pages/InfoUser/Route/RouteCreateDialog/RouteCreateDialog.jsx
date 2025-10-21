@@ -29,6 +29,7 @@ import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 // Constants
 import {
   MOTORBIKE_TYPES,
+  PARTICIPANTS,
   ROUTE_INITIAL_VALUE,
   ROUTE_LEVELS,
 } from "../../../../constants/routeConstants";
@@ -158,12 +159,12 @@ export const RouteCreateDialog = () => {
             </Grid>
             <Grid size={6}>
               <FormAutocomplete
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-                errors={errors}
-                setErrors={setErrors}
                 name="level"
                 label="Nivel"
+                errors={errors}
+                setErrors={setErrors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
                 options={ROUTE_LEVELS}
                 optionLabelKey="name"
                 optionValueKey="name"
@@ -171,24 +172,27 @@ export const RouteCreateDialog = () => {
               />
             </Grid>
             <Grid size={6}>
-              <FormTextfield
-                label="Pilotos"
+              <FormAutocomplete
                 name="max_participants"
-                type="number"
+                label="Pilotos"
                 errors={errors}
                 setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
+                options={PARTICIPANTS}
+                optionLabelKey="name"
+                optionValueKey="name"
+                disablePortal
               />
             </Grid>
             <Grid size={12}>
               <FormAutocomplete
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
+                label="Motos aptas"
+                name="suitable_motorbike_type"
                 errors={errors}
                 setErrors={setErrors}
-                name="suitable_motorbike_type"
-                label="Motos aptas"
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
                 options={MOTORBIKE_TYPES}
                 optionLabelKey="name"
                 optionValueKey="name"
@@ -221,12 +225,12 @@ export const RouteCreateDialog = () => {
               <FormTextfield
                 label="Descripción"
                 name="route_description"
-                multiline
-                maxLength={250}
                 errors={errors}
                 setErrors={setErrors}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
+                multiline
+                maxLength={250}
               />
             </Grid>
           </Grid>
