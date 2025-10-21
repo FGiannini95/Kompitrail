@@ -57,6 +57,7 @@ export const UserRoutesCarousel = ({ allRoutes = [] }) => {
           modules={[Pagination, A11y]}
           slidesPerView={1}
           spaceBetween={4}
+          autoHeight
           pagination={{ el: ".routes-pagination-top", clickable: true }}
         >
           {userRoutes.map((route) => (

@@ -32,6 +32,7 @@ import {
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
+import { openCalendar } from "../../../../helpers/calendar";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -52,6 +53,8 @@ export const OneRoute = () => {
 
   const {
     date,
+    starting_point,
+    ending_point,
     level,
     distance,
     suitable_motorbike_type,
@@ -217,6 +220,14 @@ export const OneRoute = () => {
             "&:hover": { backgroundColor: "#dddddd" },
           }}
           fullWidth
+          onClick={() =>
+            openCalendar({
+              starting_point,
+              ending_point,
+              dateISO: date,
+              estimated_time,
+            })
+          }
         >
           Calendario
           <CalendarMonthIcon
