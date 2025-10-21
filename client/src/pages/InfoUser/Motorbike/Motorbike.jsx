@@ -91,7 +91,7 @@ export const Motorbike = () => {
         </IconButton>
         <Typography variant="h6">Mis motos</Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2, minWidth: 330 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2, minWidth: 310 }}>
         {allMotorbikes.length > 0 ? (
           allMotorbikes.map((motorbike) => (
             <Grid
