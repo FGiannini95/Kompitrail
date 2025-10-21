@@ -34,9 +34,7 @@ export const Home = () => {
 
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
-      <Grid>
-        <UserRoutesCarousel allRoutes={allRoutes} />
-      </Grid>
+      <UserRoutesCarousel allRoutes={allRoutes} />
       <Button
         type="button"
         variant="outlined"
