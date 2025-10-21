@@ -16,9 +16,8 @@ import {
   tableCellClasses,
   Typography,
   CardContent,
-  CardHeader,
   Card,
-  CardMedia,
+  Avatar,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -194,19 +193,21 @@ export const Profile = () => {
         <Typography>Personas con las que viajas más</Typography>
         <Card
           sx={{
+            width: "50%",
             bgcolor: "#eeeeee",
             borderRadius: 2,
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
           }}
         >
-          <CardMedia
-            component="img"
-            sx={{ height: 180, objectFit: "cover" }}
-            image=""
-            alt="Route img"
-          />
-          <CardContent>
+          <CardContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar />
             <Typography>{"Nome"}</Typography>
             <Typography>{"# rutas en común"}</Typography>
           </CardContent>
