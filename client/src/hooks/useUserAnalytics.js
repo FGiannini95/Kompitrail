@@ -3,13 +3,13 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 // Utils
-import { getLocalStorage } from "./localStorageUtils";
+import { getLocalStorage } from "../helpers/localStorageUtils";
 import {
   MOTORBIKES_URL,
   ROUTES_URL,
 } from "../../../server/config/serverConfig";
 
-export const userAnalytics = () => {
+export const useUserAnalytics = () => {
   const [analytics, setAnalytics] = useState({
     motorbikes: null,
     createdRoutes: null,

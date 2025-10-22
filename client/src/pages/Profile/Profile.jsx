@@ -12,10 +12,9 @@ import {
 import Grid from "@mui/material/Grid2";
 
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-// Utils
+
 import { RoutesString } from "../../routes/routes";
-import { userAnalytics } from "../../helpers/userAnalytics";
-// Providers
+import { useUserAnalytics } from "../../hooks/useUserAnalytics";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 // Components
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
@@ -29,7 +28,8 @@ export const Profile = () => {
   const { allRoutes } = useRoutes();
   const navigate = useNavigate();
 
-  const { motorbikes, createdRoutes, joinedRoutes, loading } = userAnalytics();
+  const { motorbikes, createdRoutes, joinedRoutes, loading } =
+    useUserAnalytics();
 
   return (
     <Box
