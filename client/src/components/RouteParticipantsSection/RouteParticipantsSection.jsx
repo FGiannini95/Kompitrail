@@ -8,15 +8,15 @@ import { useNavigate } from "react-router-dom";
 
 import { Box } from "@mui/material";
 
-import { BadgeAvatar } from "../BadgeAvatar/BadgeAvatar";
-import { PlusAvatar } from "../PlusAvatar/PlusAvatar";
+import { BadgeAvatar } from "../Avatars/BadgeAvatar/BadgeAvatar";
+import { PlusAvatar } from "../Avatars/PlusAvatar/PlusAvatar";
 // Providers
-import { KompitrailContext } from "../../context/KompitrailContext";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { useSnackbar } from "../../context/SnackbarContext/SnackbarContext";
 import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 // Utils
 import { RoutesString } from "../../routes/routes";
+import { KompitrailContext } from "../../context/KompitrailContext";
 
 export const RouteParticipantsSection = forwardRef(
   (

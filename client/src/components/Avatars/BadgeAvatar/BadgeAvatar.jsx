@@ -1,8 +1,8 @@
 import React, { useContext, useMemo } from "react";
 import { Avatar, Badge, Typography, Stack } from "@mui/material";
 
-import { KompitrailContext } from "../../context/KompitrailContext";
-import { getInitials } from "../../helpers/utils";
+import { KompitrailContext } from "../../../context/KompitrailContext";
+import { getInitials } from "../../../helpers/utils";
 
 export const BadgeAvatar = ({
   targetUserId,

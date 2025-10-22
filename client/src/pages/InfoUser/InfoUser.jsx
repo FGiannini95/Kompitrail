@@ -25,8 +25,8 @@ import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/C
 // Components
 import { SettingsRow } from "./Settings/SettingsRow/SettingsRow";
 import { PrivacyDialog } from "./Privacy/PrivacyDialog";
-import { UserAvatar } from "../../components/UserAvatar/UserAvatar";
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
+import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 
 function Section({ title, children }) {
   return (

@@ -14,15 +14,16 @@ import Grid from "@mui/material/Grid2";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 // Utils
 import { RoutesString } from "../../routes/routes";
-// Components
-import { UserAvatar } from "../../components/UserAvatar/UserAvatar";
-import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
+import { userAnalytics } from "../../helpers/userAnalytics";
+// Providers
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
+// Components
+import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
 import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 import { AnalyticsTable } from "./AnalyticsTable/AnalyticsTable";
-import { userAnalytics } from "../../helpers/userAnalytics";
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { ContainedButton } from "../../components/Buttons/ContainedButton/ContainedButton";
+import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 
 export const Profile = () => {
   const { allRoutes } = useRoutes();

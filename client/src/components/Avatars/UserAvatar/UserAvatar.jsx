@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from "react";
 import { Stack, Typography, Avatar, Box } from "@mui/material";
-import { getInitials } from "../../helpers/utils";
-import { KompitrailContext } from "../../context/KompitrailContext";
+import { getInitials } from "../../../helpers/utils";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 
 export const UserAvatar = () => {
   const { user } = useContext(KompitrailContext);
