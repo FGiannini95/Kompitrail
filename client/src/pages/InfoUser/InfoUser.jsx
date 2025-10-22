@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Box,
@@ -15,15 +16,17 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
-
+// Utils
 import { delLocalStorage } from "../../helpers/localStorageUtils";
-import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../routes/routes";
+// Providers
 import { KompitrailContext } from "../../context/KompitrailContext";
+import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
+// Components
 import { SettingsRow } from "./Settings/SettingsRow/SettingsRow";
 import { PrivacyDialog } from "./Privacy/PrivacyDialog";
 import { UserAvatar } from "../../components/UserAvatar/UserAvatar";
-import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
+import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 
 function Section({ title, children }) {
   return (
@@ -99,16 +102,13 @@ export const InfoUser = () => {
         paddingTop: "25px",
       }}
     >
-      {/* Back/close icon */}
       <Grid>
         <CloseOutlinedIcon
           sx={{ paddingLeft: "20px", cursor: "pointer" }}
           onClick={handleClose}
         />
       </Grid>
-      {/* User header */}
       <UserAvatar />
-      {/* Buttons actions */}
       <Stack
         direction="row"
         spacing={2}
@@ -134,28 +134,18 @@ export const InfoUser = () => {
           disableInteractive // It doesn't appear with the interaction of the mouse
           arrow // Display the arrow
         >
-          <Button
-            type="button"
-            variant="outlined"
-            color="secondary"
-            fullWidth
-            sx={{
-              color: "black",
-              borderColor: "#eeeeee",
-              borderWidth: "2px",
-              "&:hover": {
-                borderColor: "#dddddd",
-                borderWidth: "2px",
-              },
-            }}
+          <OutlinedButton
             onClick={handleShare}
-          >
-            Compartir perfil
-            <ShareOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
-          </Button>
+            text={"Compartir perfil"}
+            icon={
+              <ShareOutlinedIcon
+                style={{ paddingLeft: "5px", width: "20px" }}
+                aria-hidden
+              />
+            }
+          />
         </Tooltip>
       </Stack>
-
       <Section title="Mi cuenta">
         <SettingsRow
           action="editAccount"
@@ -186,7 +176,6 @@ export const InfoUser = () => {
       <Section title="Desconectar perfil">
         <SettingsRow action="logout" onClick={handleLogOut} />
       </Section>
-
       <PrivacyDialog
         openIframe={iframe}
         handleCloseIframe={() => setiIframe(false)}

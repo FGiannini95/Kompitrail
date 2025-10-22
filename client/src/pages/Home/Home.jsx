@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
@@ -18,6 +18,7 @@ import { EmptyState } from "../../components/EmptyState/EmptyState";
 import { Loading } from "../../components/Loading/Loading";
 import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
+import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 
 export const Home = () => {
   const { loadAllRoutes, allRoutes, loading } = useRoutes();
@@ -35,26 +36,17 @@ export const Home = () => {
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       <UserRoutesCarousel allRoutes={allRoutes} />
-      <Button
-        type="button"
-        variant="outlined"
-        fullWidth
+      <OutlinedButton
         onClick={() => navigate(RoutesString.createTrip)}
-        sx={{
-          mb: 2,
-          color: "black",
-          borderColor: "#eeeeee",
-          borderWidth: "2px",
-          "&:hover": {
-            borderColor: "#dddddd",
-            borderWidth: "1px",
-          },
-        }}
-      >
-        Crear ruta
-        <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
-      </Button>
-      <Grid>
+        text={"Crear ruta"}
+        icon={
+          <AddOutlinedIcon
+            style={{ paddingLeft: "5px", width: "20px" }}
+            aria-hidden
+          />
+        }
+      />
+      <Grid sx={{ pt: 2 }}>
         <Typography>Rutas disponibles</Typography>
       </Grid>
       {allRoutes.length > 0 ? (

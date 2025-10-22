@@ -9,13 +9,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-// Components
-import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
-import { MotorbikeEditDialog } from "./MotorbikeEditDialog/MotorbikeEditDialog";
-import { MotorbikeCard } from "./MotorbikeCard/MotorbikeCard";
-import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
-import { EmptyState } from "../../../components/EmptyState/EmptyState";
-import { Loading } from "../../../components/Loading/Loading";
+
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
@@ -23,6 +17,14 @@ import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
 import { useMotorbikes } from "../../../context/MotorbikesContext/MotorbikesContext";
+// Components
+import { MotorbikeCreateDialog } from "./MotorbikeCreateDialog/MotorbikeCreateDialog";
+import { MotorbikeEditDialog } from "./MotorbikeEditDialog/MotorbikeEditDialog";
+import { MotorbikeCard } from "./MotorbikeCard/MotorbikeCard";
+import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
+import { EmptyState } from "../../../components/EmptyState/EmptyState";
+import { Loading } from "../../../components/Loading/Loading";
+import { OutlinedButton } from "../../../components/Buttons/OutlinedButton/OutlinedButton";
 
 export const Motorbike = () => {
   const [openImg, setOpenImg] = useState(false);
@@ -91,7 +93,7 @@ export const Motorbike = () => {
         </IconButton>
         <Typography variant="h6">Mis motos</Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2, minWidth: 310 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, minWidth: 310 }}>
         {allMotorbikes.length > 0 ? (
           allMotorbikes.map((motorbike) => (
             <Grid
@@ -117,24 +119,16 @@ export const Motorbike = () => {
         )}
       </Box>
       <Grid>
-        <Button
-          type="button"
-          variant="outlined"
-          fullWidth
+        <OutlinedButton
           onClick={openCreateDialog}
-          sx={{
-            color: "black",
-            borderColor: "#eeeeee",
-            borderWidth: "2px",
-            "&:hover": {
-              borderColor: "#dddddd",
-              borderWidth: "1px",
-            },
-          }}
-        >
-          Añadir moto
-          <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
-        </Button>
+          text={"Añadir moto"}
+          icon={
+            <AddOutlinedIcon
+              style={{ paddingLeft: "5px", width: "20px" }}
+              aria-hidden
+            />
+          }
+        />
       </Grid>
       <MotorbikeCreateDialog />
       <MotorbikeEditDialog />

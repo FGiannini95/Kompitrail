@@ -22,6 +22,7 @@ import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 import { AnalyticsTable } from "./AnalyticsTable/AnalyticsTable";
 import { userAnalytics } from "../../helpers/userAnalytics";
+import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 
 export const Profile = () => {
   const { allRoutes } = useRoutes();
@@ -58,24 +59,16 @@ export const Profile = () => {
           >
             Ir a premium
           </Button>
-          <Button
-            type="button"
-            variant="outlined"
-            fullWidth
+          <OutlinedButton
             onClick={() => navigate(RoutesString.editUser)}
-            sx={{
-              color: "black",
-              borderColor: "#eeeeee",
-              borderWidth: "2px",
-              "&:hover": {
-                borderColor: "#dddddd",
-                borderWidth: "2px",
-              },
-            }}
-          >
-            Modificar Perfil
-            <EditOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
-          </Button>
+            text={"Modificar Perfil"}
+            icon={
+              <EditOutlinedIcon
+                style={{ paddingLeft: "5px", width: "20px" }}
+                aria-hidden
+              />
+            }
+          />
         </Stack>
 
         <AnalyticsTable

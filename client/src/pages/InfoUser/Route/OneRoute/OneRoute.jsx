@@ -33,6 +33,7 @@ import { KompitrailContext } from "../../../../context/KompitrailContext";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 import { openCalendar } from "../../../../helpers/calendar";
+import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -235,25 +236,16 @@ export const OneRoute = () => {
             aria-hidden
           />
         </Button>
-
-        <Button
-          type="button"
-          variant="outlined"
-          color="secondary"
-          fullWidth
-          sx={{
-            color: "black",
-            borderColor: "#eeeeee",
-            borderWidth: "2px",
-            "&:hover": {
-              borderColor: "#dddddd",
-              borderWidth: "2px",
-            },
-          }}
-        >
-          Chat
-          <ChatIcon style={{ paddingLeft: "5px", width: "20px" }} aria-hidden />
-        </Button>
+        <OutlinedButton
+          //onClick={}
+          text={"Chat"}
+          icon={
+            <ChatIcon
+              style={{ paddingLeft: "5px", width: "20px" }}
+              aria-hidden
+            />
+          }
+        />
       </Stack>
       <Card
         sx={{
