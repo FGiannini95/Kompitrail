@@ -310,6 +310,10 @@ class routesControllers {
       });
     });
   };
+
+  getFrequentCompanions = (req, res) => {
+    console.log("hi");
+  };
 }
 
 module.exports = new routesControllers();

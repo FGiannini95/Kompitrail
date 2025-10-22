@@ -28,5 +28,6 @@ router.put(
 router.put("/deleteroute/:id", routesControllers.deleteRoute);
 router.post("/join/:id", routesControllers.joinRoute);
 router.delete("/leave/:id", routesControllers.leaveRoute);
+router.get("/frequent-companions", routesControllers.getFrequentCompanions);
 
 module.exports = router;
