@@ -1,19 +1,10 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
   Box,
   Button,
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
-  TableRow,
   Stack,
-  TableCell,
-  tableCellClasses,
   Typography,
   CardContent,
   Card,
@@ -21,89 +12,22 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-import { styled } from "@mui/material/styles";
-
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 // Utils
-import { getLocalStorage } from "../../helpers/localStorageUtils";
 import { RoutesString } from "../../routes/routes";
-import {
-  MOTORBIKES_URL,
-  ROUTES_URL,
-} from "../../../../server/config/serverConfig";
 // Components
 import { UserAvatar } from "../../components/UserAvatar/UserAvatar";
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
+import { AnalyticsTable } from "./AnalyticsTable/AnalyticsTable";
+import { userAnalytics } from "../../helpers/userAnalytics";
 
 export const Profile = () => {
-  const [motorbikesAnalytics, setMotorbikesAnalytics] = useState();
-  const [createdRouteAnalytics, setCreatedRouteAnalytics] = useState();
-  const [joinedRouteAnalytics, setJoinedRouteAnalytics] = useState();
   const { allRoutes } = useRoutes();
-  const tokenLocalStorage = getLocalStorage("token");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const { user_id } = jwtDecode(tokenLocalStorage).user;
-    axios
-      .get(`${MOTORBIKES_URL}/motorbikes-analytics/${user_id}`)
-      .then((res) => {
-        setMotorbikesAnalytics(res.data[0]);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  useEffect(() => {
-    const { user_id } = jwtDecode(tokenLocalStorage).user;
-    axios
-      .get(`${ROUTES_URL}/createdroutes-analytics/${user_id}`)
-      .then((res) => {
-        setCreatedRouteAnalytics(res.data[0]);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  useEffect(() => {
-    const { user_id } = jwtDecode(tokenLocalStorage).user;
-    axios
-      .get(`${ROUTES_URL}/joinedroutes-analytics/${user_id}`)
-      .then((res) => {
-        setJoinedRouteAnalytics(res.data[0]);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#eeeeee",
-      color: "inherit",
-      fontSize: 16,
-      padding: "8px",
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 16,
-      padding: "8px",
-    },
-  }));
-
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    "&:nth-of-type(odd)": {
-      backgroundColor: "transparent",
-      border: "2px solid #eeeeee",
-    },
-    // hide last border
-    // "&:last-child td, &:last-child th": {
-    //   border: 0,
-    // },
-  }));
+  const { motorbikes, createdRoutes, joinedRoutes, loading } = userAnalytics();
 
   return (
     <Box
@@ -114,6 +38,7 @@ export const Profile = () => {
     >
       <Grid>
         <UserAvatar />
+
         <Stack
           direction="row"
           spacing={2}
@@ -152,44 +77,19 @@ export const Profile = () => {
             <EditOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
           </Button>
         </Stack>
-        <TableContainer
-          style={{
-            width: "95%",
-            borderRadius: "10px",
-            marginLeft: "10px",
-            paddingTop: "10px",
-          }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell align="center">Nº de motos</StyledTableCell>
-                <StyledTableCell align="center">Rutas creadas</StyledTableCell>
-                <StyledTableCell align="center">
-                  Rutas participantes
-                </StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <StyledTableRow>
-                <StyledTableCell align="center">
-                  {motorbikesAnalytics?.total_motorbikes}
-                </StyledTableCell>
-                <StyledTableCell align="center">
-                  {createdRouteAnalytics?.total_createdroutes}
-                </StyledTableCell>
-                <StyledTableCell align="center">
-                  {joinedRouteAnalytics?.total_joinedroutes}
-                </StyledTableCell>
-              </StyledTableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+
+        <AnalyticsTable
+          motorbikes={motorbikes?.total_motorbikes}
+          createdRoutes={createdRoutes?.total_createdroutes}
+          joinedRoutes={joinedRoutes?.total_joinedroutes}
+          loading={loading}
+        />
       </Grid>
 
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
         <UserRoutesCarousel allRoutes={allRoutes} />
       </Grid>
+
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
         <Typography>Personas con las que viajas más</Typography>
         <Card
