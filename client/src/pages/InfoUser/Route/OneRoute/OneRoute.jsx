@@ -34,6 +34,7 @@ import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 import { openCalendar } from "../../../../helpers/calendar";
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
+import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -211,16 +212,7 @@ export const OneRoute = () => {
         justifyContent="center"
         sx={{ p: "10px" }}
       >
-        <Button
-          type="button"
-          variant="contained"
-          sx={{
-            color: "black",
-            boxShadow: "none",
-            backgroundColor: "#eeeeee",
-            "&:hover": { backgroundColor: "#dddddd" },
-          }}
-          fullWidth
+        <ContainedButton
           onClick={() =>
             openCalendar({
               starting_point,
@@ -229,15 +221,15 @@ export const OneRoute = () => {
               estimated_time,
             })
           }
-        >
-          Calendario
-          <CalendarMonthIcon
-            style={{ paddingLeft: "5px", width: "20px" }}
-            aria-hidden
-          />
-        </Button>
+          text={"Calendario"}
+          icon={
+            <CalendarMonthIcon
+              style={{ paddingLeft: "5px", width: "20px" }}
+              aria-hidden
+            />
+          }
+        />
         <OutlinedButton
-          //onClick={}
           text={"Chat"}
           icon={
             <ChatIcon

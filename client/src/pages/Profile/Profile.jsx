@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import {
   Box,
-  Button,
   Stack,
   Typography,
   CardContent,
@@ -23,6 +22,7 @@ import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDial
 import { AnalyticsTable } from "./AnalyticsTable/AnalyticsTable";
 import { userAnalytics } from "../../helpers/userAnalytics";
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
+import { ContainedButton } from "../../components/Buttons/ContainedButton/ContainedButton";
 
 export const Profile = () => {
   const { allRoutes } = useRoutes();
@@ -46,19 +46,7 @@ export const Profile = () => {
           justifyContent="center"
           sx={{ p: "10px" }}
         >
-          <Button
-            type="button"
-            variant="contained"
-            sx={{
-              color: "black",
-              boxShadow: "none",
-              backgroundColor: "#eeeeee",
-              "&:hover": { backgroundColor: "#dddddd" },
-            }}
-            fullWidth
-          >
-            Ir a premium
-          </Button>
+          <ContainedButton text={"Ir a premium"} />
           <OutlinedButton
             onClick={() => navigate(RoutesString.editUser)}
             text={"Modificar Perfil"}
