@@ -1,9 +1,17 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import axios from "axios";
 
 import { MOTORBIKES_URL } from "../../../../server/config/serverConfig";
 
 export const MotorbikesContext = createContext();
+// Helpful for debugging with ReactDev Tools
+MotorbikesContext.displayName = "MotorbikesContext";
 
 export const MotorbikesProvider = ({ children }) => {
   const [allMotorbikes, setAllMotorbikes] = useState([]);
@@ -14,13 +22,13 @@ export const MotorbikesProvider = ({ children }) => {
     selectedId: null,
   });
 
-  const openDialog = ({ mode, motorbike_id = null }) => {
+  const openDialog = useCallback(({ mode, motorbike_id = null }) => {
     setDialog({ isOpen: true, mode, selectedId: motorbike_id });
-  };
+  }, []);
 
-  const closeDialog = () => {
-    setDialog({ isOpen: false, mode: null, motorbike_id: null });
-  };
+  const closeDialog = useCallback(() => {
+    setDialog({ isOpen: false, mode: null, selectedId: null });
+  }, []);
 
   const loadMotorbikes = useCallback((user_id) => {
     setLoading(true);
@@ -58,17 +66,30 @@ export const MotorbikesProvider = ({ children }) => {
     );
   }, []);
 
-  const value = {
-    allMotorbikes,
-    loadMotorbikes,
-    createMotorbike,
-    editMotorbike,
-    deleteMotorbike,
-    dialog,
-    openDialog,
-    closeDialog,
-    loading,
-  };
+  const value = useMemo(
+    () => ({
+      allMotorbikes,
+      loadMotorbikes,
+      createMotorbike,
+      editMotorbike,
+      deleteMotorbike,
+      dialog,
+      openDialog,
+      closeDialog,
+      loading,
+    }),
+    [
+      allMotorbikes,
+      loadMotorbikes,
+      createMotorbike,
+      editMotorbike,
+      deleteMotorbike,
+      dialog,
+      openDialog,
+      closeDialog,
+      loading,
+    ]
+  );
 
   return (
     <MotorbikesContext.Provider value={value}>
