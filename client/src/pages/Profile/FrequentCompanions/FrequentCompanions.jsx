@@ -1,4 +1,5 @@
 import React from "react";
+
 import {
   Avatar,
   Box,
@@ -7,6 +8,8 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
+
+import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
 
 export const FrequentCompanions = () => {
   const { companions, loading, error } = useFrequentCompanions();
