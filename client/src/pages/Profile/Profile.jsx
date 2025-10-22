@@ -35,6 +35,7 @@ import {
 import { UserAvatar } from "../../components/UserAvatar/UserAvatar";
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
+import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
 
 export const Profile = () => {
   const [motorbikesAnalytics, setMotorbikesAnalytics] = useState();
@@ -213,6 +214,7 @@ export const Profile = () => {
           </CardContent>
         </Card>
       </Grid>
+      <RouteEditDialog />
     </Box>
   );
 };

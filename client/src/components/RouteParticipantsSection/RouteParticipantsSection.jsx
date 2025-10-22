@@ -30,8 +30,14 @@ export const RouteParticipantsSection = forwardRef(
     },
     ref
   ) => {
-    const { joinRoute, isJoiningRoute, leaveRoute, deleteRoute, closeDialog } =
-      useRoutes();
+    const {
+      joinRoute,
+      isJoiningRoute,
+      leaveRoute,
+      deleteRoute,
+      closeDialog,
+      openDialog: openCreateEditDialog,
+    } = useRoutes();
     const { user: currentUser } = useContext(KompitrailContext);
     const { showSnackbar } = useSnackbar();
     const { openDialog } = useConfirmationDialog();
@@ -128,12 +134,17 @@ export const RouteParticipantsSection = forwardRef(
       });
     };
 
+    const handleOpenEditDialog = (route_id) => {
+      openCreateEditDialog({ mode: "edit", route_id });
+    };
+
     // Expose functions via ref
     useImperativeHandle(ref, () => ({
       handleJoin,
       handleLeave,
       handleOpenLeaveRoute,
       handleOpenDeleteDialog,
+      handleOpenEditDialog,
     }));
 
     return (
