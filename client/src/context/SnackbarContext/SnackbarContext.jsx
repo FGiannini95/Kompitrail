@@ -1,27 +1,39 @@
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+
 import { Alert, Snackbar } from "@mui/material";
-import React, { createContext, useContext, useState } from "react";
 
 export const SnackbarContext = createContext();
+// Helpful for debugging with ReactDev Tools
+SnackbarContext.displayName = "SnackbarContext";
 
 export const SnackbarProvider = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("success");
 
-  const showSnackbar = (message, severity = "success") => {
+  const showSnackbar = useCallback((message, severity = "success") => {
     setMessage(message);
     setSeverity(severity);
     setOpen(true);
-  };
+  }, []);
 
-  const closeSnackbar = () => {
+  const closeSnackbar = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
 
-  const value = {
-    showSnackbar,
-    closeSnackbar,
-  };
+  const value = useMemo(
+    () => ({
+      showSnackbar,
+      closeSnackbar,
+    }),
+    [showSnackbar, closeSnackbar]
+  );
 
   return (
     <SnackbarContext.Provider value={value}>
