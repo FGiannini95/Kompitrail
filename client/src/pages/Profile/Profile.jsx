@@ -69,7 +69,11 @@ export const Profile = () => {
       </Grid>
 
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
-        <UserRoutesCarousel allRoutes={allRoutes} title={"Rutas"} />
+        <UserRoutesCarousel
+          allRoutes={allRoutes}
+          title={"Rutas"}
+          showOnlyFuture={false}
+        />
       </Grid>
 
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>

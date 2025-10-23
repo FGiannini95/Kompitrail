@@ -11,20 +11,37 @@ import { RouteCard } from "../RouteCard/RouteCard";
 
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 
-export const UserRoutesCarousel = ({ allRoutes = [], title }) => {
+export const UserRoutesCarousel = ({
+  allRoutes = [],
+  title,
+  showOnlyFuture = false,
+}) => {
   const { user: currentUser } = useContext(KompitrailContext);
 
   // Compute only user-related routes and sort by ascending date
   const userRoutes = useMemo(() => {
     if (!Array.isArray(allRoutes) || !currentUser?.user_id) return [];
+
+    const now = new Date();
+
     return allRoutes
-      .filter(
-        (route) =>
+      .filter((route) => {
+        // Filter by user
+        const isUserRoute =
           route.user_id === currentUser?.user_id ||
-          route.participants?.some((p) => p.user_id === currentUser?.user_id)
-      )
+          route.participants?.some((p) => p.user_id === currentUser?.user_id);
+
+        if (!isUserRoute) return false;
+
+        // Filter by date
+        if (showOnlyFuture) {
+          return new Date(route.date) >= now;
+        }
+
+        return true;
+      })
       .sort((a, b) => new Date(a.date) - new Date(b.date));
-  }, [allRoutes, currentUser?.user_id]);
+  }, [allRoutes, currentUser?.user_id, showOnlyFuture]);
 
   return (
     <Box sx={{ mb: 2 }}>

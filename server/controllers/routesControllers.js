@@ -129,7 +129,6 @@ class routesControllers {
     LEFT JOIN \`user\` AS participant_user
            ON participant_user.user_id = route_participant.user_id
     WHERE route.is_deleted = 0
-      AND route.date >= NOW()
     GROUP BY route.route_id
     ORDER BY route.route_id DESC
   `;
