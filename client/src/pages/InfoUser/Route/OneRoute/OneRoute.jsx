@@ -80,7 +80,21 @@ export const OneRoute = () => {
   const currentParticipants = 1 + participants.length;
   const isRouteFull = currentParticipants >= max_participants;
 
+  const now = new Date();
+  const routeDate = new Date(date);
+  const isPastRoute = routeDate < now;
+
   const buttonConfig = useMemo(() => {
+    if (isPastRoute) {
+      return {
+        text: "Ruta finalizada",
+        onClick: undefined,
+        danger: false,
+        disabled: true,
+        show: true,
+      };
+    }
+
     if (isOwner) {
       return {
         text: "Eliminar ruta",
@@ -119,7 +133,17 @@ export const OneRoute = () => {
         show: true,
       };
     }
-  }, [isOwner, isCurrentUserEnrolled, isRouteFull]);
+  }, [isOwner, isCurrentUserEnrolled, isRouteFull, isPastRoute]);
+
+  const handleOpenCalendar = !isPastRoute
+    ? () =>
+        openCalendar({
+          starting_point,
+          ending_point,
+          dateISO: date,
+          estimated_time,
+        })
+    : undefined;
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -202,6 +226,7 @@ export const OneRoute = () => {
             participants={participants}
             max_participants={max_participants}
             isOwner={isOwner}
+            isPastRoute={isPastRoute}
           />
         </CardContent>
       </Card>
@@ -213,14 +238,7 @@ export const OneRoute = () => {
         sx={{ p: "10px" }}
       >
         <ContainedButton
-          onClick={() =>
-            openCalendar({
-              starting_point,
-              ending_point,
-              dateISO: date,
-              estimated_time,
-            })
-          }
+          onClick={handleOpenCalendar}
           text={"Calendario"}
           icon={
             <CalendarMonthIcon
@@ -284,7 +302,7 @@ export const OneRoute = () => {
               borderWidth: buttonConfig.danger ? "1px" : "2px",
             }}
           >
-            {buttonConfig.text}{" "}
+            {buttonConfig.text}
           </Button>
         </Grid>
       )}

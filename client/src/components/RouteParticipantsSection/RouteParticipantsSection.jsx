@@ -27,6 +27,7 @@ export const RouteParticipantsSection = forwardRef(
       participants = [],
       max_participants,
       isOwner,
+      isPastRoute,
     },
     ref
   ) => {
@@ -156,6 +157,7 @@ export const RouteParticipantsSection = forwardRef(
           size={40}
           showName
           onBadgeClick={() => handleOpenDeleteDialog(route_id)}
+          isPastRoute={isPastRoute}
         />
 
         {/* 2. ENROLLED PARTICIPANTS */}
@@ -170,6 +172,7 @@ export const RouteParticipantsSection = forwardRef(
               size={40}
               showName
               onBadgeClick={isCurrentUser ? handleOpenLeaveRoute : undefined}
+              isPastRoute={isPastRoute}
             />
           );
         })}
@@ -180,7 +183,7 @@ export const RouteParticipantsSection = forwardRef(
             key={`empty-slot-${i}`}
             size={40}
             onClick={handleJoin}
-            disabled={!canJoinRoute}
+            disabled={!canJoinRoute || !isPastRoute}
           />
         ))}
       </Box>

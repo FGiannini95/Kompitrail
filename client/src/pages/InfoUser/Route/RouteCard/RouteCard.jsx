@@ -48,6 +48,10 @@ export const RouteCard = ({
 
   const participantsSectionRef = useRef();
 
+  const now = new Date();
+  const routeDate = new Date(date);
+  const isPastRoute = routeDate < now;
+
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
     if (!route_id) return;
@@ -108,9 +112,10 @@ export const RouteCard = ({
           participants={participants}
           max_participants={max_participants}
           isOwner={isOwner}
+          isPastRoute={isPastRoute}
         />
       </CardContent>
-      {showActions && (
+      {showActions && !isPastRoute && (
         <CardActions disableSpacing>
           {isOwner && (
             <>
