@@ -35,7 +35,7 @@ export const Home = () => {
 
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
-      <UserRoutesCarousel allRoutes={allRoutes} />
+      <UserRoutesCarousel allRoutes={allRoutes} title={"Tus próximas rutas"} />
       <OutlinedButton
         onClick={() => navigate(RoutesString.createTrip)}
         text={"Crear ruta"}

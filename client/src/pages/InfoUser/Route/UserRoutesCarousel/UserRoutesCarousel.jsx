@@ -11,7 +11,7 @@ import { RouteCard } from "../RouteCard/RouteCard";
 
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 
-export const UserRoutesCarousel = ({ allRoutes = [] }) => {
+export const UserRoutesCarousel = ({ allRoutes = [], title }) => {
   const { user: currentUser } = useContext(KompitrailContext);
 
   // Compute only user-related routes and sort by ascending date
@@ -28,7 +28,7 @@ export const UserRoutesCarousel = ({ allRoutes = [] }) => {
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Typography>Tus próximas rutas</Typography>
+      <Typography>{title}</Typography>
       <Box
         sx={{
           overflow: "hidden", // Prevent horizontal scroll
