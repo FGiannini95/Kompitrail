@@ -3,30 +3,26 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-import {
-  Typography,
-  Grid2 as Grid,
-  Button,
-  IconButton,
-  Box,
-} from "@mui/material";
+import { Typography, Button, IconButton, Box } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+// Utils
+import { RoutesString } from "../../../routes/routes";
+import { getLocalStorage } from "../../../helpers/localStorageUtils";
+import { ROUTES_URL } from "../../../../../server/config/serverConfig";
+// Providers & Hooks
+import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
+import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
+import { useRoutes } from "../../../context/RoutesContext/RoutesContext";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 // Components
 import { RouteCard } from "./RouteCard/RouteCard";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
 import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
 import { Loading } from "../../../components/Loading/Loading";
-// Utils
-import { RoutesString } from "../../../routes/routes";
-import { getLocalStorage } from "../../../helpers/localStorageUtils";
-import { ROUTES_URL } from "../../../../../server/config/serverConfig";
-// Providers
-import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
-import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
-import { useRoutes } from "../../../context/RoutesContext/RoutesContext";
-import { KompitrailContext } from "../../../context/KompitrailContext";
+import { OutlinedButton } from "../../../components/Buttons/OutlinedButton/OutlinedButton";
 
 export const MyRoute = () => {
   const navigate = useNavigate();
@@ -88,7 +84,7 @@ export const MyRoute = () => {
         </IconButton>
         <Typography variant="h6">Mis rutas</Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2, minWidth: 330 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, minWidth: 310 }}>
         {userRoutes.length > 0 ? (
           userRoutes.map((route) => (
             <Grid
@@ -112,24 +108,16 @@ export const MyRoute = () => {
         )}
       </Box>
       <Grid>
-        <Button
-          type="button"
-          variant="outlined"
-          fullWidth
+        <OutlinedButton
           onClick={handleOpenCreateRoute}
-          sx={{
-            color: "black",
-            borderColor: "#eeeeee",
-            borderWidth: "2px",
-            "&:hover": {
-              borderColor: "#dddddd",
-              borderWidth: "1px",
-            },
-          }}
-        >
-          Crar Ruta
-          <AddOutlinedIcon style={{ paddingLeft: "5px", width: "20px" }} />
-        </Button>
+          text={"Crear ruta"}
+          icon={
+            <AddOutlinedIcon
+              style={{ paddingLeft: "5px", width: "20px" }}
+              aria-hidden
+            />
+          }
+        />
       </Grid>
       <RouteEditDialog />
     </Grid>

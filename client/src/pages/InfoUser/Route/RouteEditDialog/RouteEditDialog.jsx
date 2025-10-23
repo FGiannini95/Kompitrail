@@ -13,15 +13,11 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-// Components
-import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
-import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
-import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 // Utils
 import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 import { toMySQLDateTime } from "../../../../helpers/utils";
-// Providers
+// Providers & Hooks
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 // Constants
@@ -31,6 +27,10 @@ import {
   ROUTE_INITIAL_VALUE,
   ROUTE_LEVELS,
 } from "../../../../constants/routeConstants";
+// Components
+import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
+import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
+import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 
 export const RouteEditDialog = () => {
   const [editRoute, setEditRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -184,7 +184,7 @@ export const RouteEditDialog = () => {
                 setForm={setEditRoute}
                 options={PARTICIPANTS}
                 optionLabelKey="name"
-                optionValueKey="name"
+                optionValueKey="id"
                 disablePortal
               />
             </Grid>

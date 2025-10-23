@@ -103,7 +103,7 @@ class routesControllers {
       u.lastname AS create_lastname 
     FROM route r
     LEFT JOIN \`user\` u ON u.user_id = r.user_id
-    WHERE r.user_id = '${user_id}' AND r.is_deleted = 0
+    WHERE r.user_id = '${user_id}' AND r.is_deleted = 0 AND r.date >= NOW()
     ORDER BY r.route_id DESC
   `;
     connection.query(sql, (error, result) => {
@@ -203,11 +203,12 @@ class routesControllers {
 
   deleteRoute = (req, res) => {
     const { id: route_id } = req.params;
-    let sql = `UPDATE route SET is_deleted = 1 where route_id = "${route_id}"`;
-    connection.query(sql, (err, result) => {
+
+    let sql = `UPDATE route SET is_deleted = 1 WHERE route_id = "${route_id}" AND date >= NOW()`;
+    connection.query(sql, (err, deleteResult) => {
       err
         ? res.status(400).json({ err })
-        : res.status(200).json({ message: "Ruta eliminada", result });
+        : res.status(200).json({ message: "Ruta eliminada", deleteResult });
     });
   };
 
@@ -223,32 +224,46 @@ class routesControllers {
     const { id: route_id } = req.params;
     const { user_id } = req.body;
 
-    // Avoid duplicate entry error
-    let checkSql = `SELECT * FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}'`;
-
-    connection.query(checkSql, (err, result) => {
+    // Check if the route is passed
+    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}`;
+    connection.query(checkDateSql, (err, result) => {
       if (err) {
         return res.status(400).json({ err });
       }
+      const routeDate = new Date(result[0].date);
+      const now = new Date();
 
-      // If user is already enrolled, return error
-      if (result.length > 0) {
-        return res.status(409).json({
-          error: "Usuario ya inscrito",
-        });
+      if (routeDate < now) {
+        return res.status(400).json({ message: "Ruta ya pasada" });
       }
 
-      // If not enrolled, proceed with INSERT
-      let sql = `INSERT INTO route_participant (user_id, route_id) VALUES ('${user_id}', '${route_id}')`;
+      // Avoid duplicate entry error
+      let checkSql = `SELECT * FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}'`;
 
-      connection.query(sql, (err, result) => {
+      connection.query(checkSql, (err, result) => {
         if (err) {
           return res.status(400).json({ err });
         }
 
-        res.status(201).json({
-          message: "Inscripción completada",
-          route_participant_id: result.insertId,
+        // If user is already enrolled, return error
+        if (result.length > 0) {
+          return res.status(409).json({
+            error: "Usuario ya inscrito",
+          });
+        }
+
+        // If not enrolled, proceed with INSERT
+        let sql = `INSERT INTO route_participant (user_id, route_id) VALUES ('${user_id}', '${route_id}')`;
+
+        connection.query(sql, (err, deleteResult) => {
+          if (err) {
+            return res.status(400).json({ err });
+          }
+
+          res.status(201).json({
+            message: "Inscripción completada",
+            route_participant_id: deleteResult.insertId,
+          });
         });
       });
     });
@@ -258,12 +273,32 @@ class routesControllers {
     const { id: route_id } = req.params;
     const { user_id } = req.body;
 
-    let sql = `DELETE FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}';`;
-    connection.query(sql, (err, result) => {
-      err
-        ? res.status(400).json({ err })
-        : res.status(200).json({ message: "Inscripción cancelada", result });
+    // Check if the route is passed
+    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}`;
+    connection.query(checkDateSql, (err, result) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+      const routeDate = new Date(result[0].date);
+      const now = new Date();
+
+      if (routeDate < now) {
+        return res.status(400).json({ message: "Rute already expired" });
+      }
+
+      let sql = `DELETE FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}';`;
+      connection.query(sql, (err, deleteResult) => {
+        err
+          ? res.status(400).json({ err })
+          : res
+              .status(200)
+              .json({ message: "Inscripción cancelada", deleteResult });
+      });
     });
+  };
+
+  getFrequentCompanions = (req, res) => {
+    console.log("hi");
   };
 }
 

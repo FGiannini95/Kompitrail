@@ -1,8 +1,8 @@
 import React, { useContext, useMemo } from "react";
 import { Avatar, Badge, Typography, Stack } from "@mui/material";
 
-import { KompitrailContext } from "../../context/KompitrailContext";
-import { getInitials } from "../../helpers/utils";
+import { KompitrailContext } from "../../../context/KompitrailContext";
+import { getInitials } from "../../../helpers/utils";
 
 export const BadgeAvatar = ({
   targetUserId,
@@ -14,6 +14,7 @@ export const BadgeAvatar = ({
   badgeContent = "x",
   onBadgeClick,
   showBadge = true,
+  isPastRoute,
 }) => {
   const { user } = useContext(KompitrailContext);
   const isCurrentUser = user?.user_id !== null && user.user_id === targetUserId;
@@ -22,7 +23,7 @@ export const BadgeAvatar = ({
     return getInitials(firstName, lastName);
   }, [firstName, lastName]);
 
-  const shouldShowBadge = showBadge && isCurrentUser;
+  const shouldShowBadge = showBadge && isCurrentUser && !isPastRoute;
 
   return (
     <Stack alignItems="center" spacing={0.5} sx={{ width: size + 8 }}>

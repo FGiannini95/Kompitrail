@@ -28,10 +28,13 @@ import {
   capitalizeFirstLetter,
   formatDateTime,
 } from "../../../../helpers/utils";
-// Providers
+// Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
+import { openCalendar } from "../../../../helpers/calendar";
+import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
+import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -52,6 +55,8 @@ export const OneRoute = () => {
 
   const {
     date,
+    starting_point,
+    ending_point,
     level,
     distance,
     suitable_motorbike_type,
@@ -75,7 +80,21 @@ export const OneRoute = () => {
   const currentParticipants = 1 + participants.length;
   const isRouteFull = currentParticipants >= max_participants;
 
+  const now = new Date();
+  const routeDate = new Date(date);
+  const isPastRoute = routeDate < now;
+
   const buttonConfig = useMemo(() => {
+    if (isPastRoute) {
+      return {
+        text: "Ruta finalizada",
+        onClick: undefined,
+        danger: false,
+        disabled: true,
+        show: true,
+      };
+    }
+
     if (isOwner) {
       return {
         text: "Eliminar ruta",
@@ -114,7 +133,17 @@ export const OneRoute = () => {
         show: true,
       };
     }
-  }, [isOwner, isCurrentUserEnrolled, isRouteFull]);
+  }, [isOwner, isCurrentUserEnrolled, isRouteFull, isPastRoute]);
+
+  const handleOpenCalendar = !isPastRoute
+    ? () =>
+        openCalendar({
+          starting_point,
+          ending_point,
+          dateISO: date,
+          estimated_time,
+        })
+    : undefined;
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -197,6 +226,7 @@ export const OneRoute = () => {
             participants={participants}
             max_participants={max_participants}
             isOwner={isOwner}
+            isPastRoute={isPastRoute}
           />
         </CardContent>
       </Card>
@@ -207,42 +237,25 @@ export const OneRoute = () => {
         justifyContent="center"
         sx={{ p: "10px" }}
       >
-        <Button
-          type="button"
-          variant="contained"
-          sx={{
-            color: "black",
-            boxShadow: "none",
-            backgroundColor: "#eeeeee",
-            "&:hover": { backgroundColor: "#dddddd" },
-          }}
-          fullWidth
-        >
-          Calendario
-          <CalendarMonthIcon
-            style={{ paddingLeft: "5px", width: "20px" }}
-            aria-hidden
-          />
-        </Button>
-
-        <Button
-          type="button"
-          variant="outlined"
-          color="secondary"
-          fullWidth
-          sx={{
-            color: "black",
-            borderColor: "#eeeeee",
-            borderWidth: "2px",
-            "&:hover": {
-              borderColor: "#dddddd",
-              borderWidth: "2px",
-            },
-          }}
-        >
-          Chat
-          <ChatIcon style={{ paddingLeft: "5px", width: "20px" }} aria-hidden />
-        </Button>
+        <ContainedButton
+          onClick={handleOpenCalendar}
+          text={"Calendario"}
+          icon={
+            <CalendarMonthIcon
+              style={{ paddingLeft: "5px", width: "20px" }}
+              aria-hidden
+            />
+          }
+        />
+        <OutlinedButton
+          text={"Chat"}
+          icon={
+            <ChatIcon
+              style={{ paddingLeft: "5px", width: "20px" }}
+              aria-hidden
+            />
+          }
+        />
       </Stack>
       <Card
         sx={{
@@ -289,7 +302,7 @@ export const OneRoute = () => {
               borderWidth: buttonConfig.danger ? "1px" : "2px",
             }}
           >
-            {buttonConfig.text}{" "}
+            {buttonConfig.text}
           </Button>
         </Grid>
       )}

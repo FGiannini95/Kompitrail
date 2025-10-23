@@ -4,12 +4,16 @@ import React, {
   useContext,
   useState,
   useEffect,
+  useMemo,
 } from "react";
 import axios from "axios";
-import { ROUTES_URL } from "../../../../server/config/serverConfig";
 import { useLocation } from "react-router-dom";
 
+import { ROUTES_URL } from "../../../../server/config/serverConfig";
+
 export const RoutesContext = createContext();
+// Helpful for debugging with ReactDev Tools
+RoutesContext.displayName = "RoutesContext";
 
 export const RoutesProvider = ({ children }) => {
   const [allRoutes, setAllRoutes] = useState([]);
@@ -31,13 +35,13 @@ export const RoutesProvider = ({ children }) => {
     selectedId: null,
   });
 
-  const openDialog = ({ mode, route_id = null }) => {
+  const openDialog = useCallback(({ mode, route_id = null }) => {
     setDialog({ isOpen: true, mode, selectedId: route_id });
-  };
+  }, []);
 
-  const closeDialog = () => {
+  const closeDialog = useCallback(() => {
     setDialog({ isOpen: false, mode: null, selectedId: null });
-  };
+  }, []);
 
   const loadAllRoutes = useCallback(() => {
     setLoading(true);
@@ -124,13 +128,16 @@ export const RoutesProvider = ({ children }) => {
           });
         });
     },
-    [joiningRouteId, loadAllRoutes]
+    [loadAllRoutes]
   );
 
   // Helper to know if a specific route is currently joining
-  const isJoiningRoute = useCallback((route_id) => {
-    joiningRouteId.has(route_id);
-  }, []);
+  const isJoiningRoute = useCallback(
+    (route_id) => {
+      joiningRouteId.has(route_id);
+    },
+    [joiningRouteId]
+  );
 
   // LEAVE action
   const leaveRoute = useCallback(
@@ -149,23 +156,42 @@ export const RoutesProvider = ({ children }) => {
     [loadAllRoutes]
   );
 
-  const value = {
-    allRoutes,
-    userRoutes,
-    dialog,
-    openDialog,
-    closeDialog,
-    loadAllRoutes,
-    loadUserRoutes,
-    createRoute,
-    editRoute,
-    deleteRoute,
-    expandedRouteId,
-    loading,
-    joinRoute,
-    isJoiningRoute,
-    leaveRoute,
-  };
+  const value = useMemo(
+    () => ({
+      allRoutes,
+      userRoutes,
+      dialog,
+      openDialog,
+      closeDialog,
+      loadAllRoutes,
+      loadUserRoutes,
+      createRoute,
+      editRoute,
+      deleteRoute,
+      expandedRouteId,
+      loading,
+      joinRoute,
+      isJoiningRoute,
+      leaveRoute,
+    }),
+    [
+      allRoutes,
+      userRoutes,
+      dialog,
+      openDialog,
+      closeDialog,
+      loadAllRoutes,
+      loadUserRoutes,
+      createRoute,
+      editRoute,
+      deleteRoute,
+      expandedRouteId,
+      loading,
+      joinRoute,
+      isJoiningRoute,
+      leaveRoute,
+    ]
+  );
 
   return (
     <RoutesContext.Provider value={value}>{children}</RoutesContext.Provider>

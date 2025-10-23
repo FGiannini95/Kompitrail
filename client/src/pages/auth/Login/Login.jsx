@@ -11,7 +11,7 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 import { RoutesString } from "../../../routes/routes";
 import { USERS_URL } from "../../../../../server/config/serverConfig";
-// Providers
+// Providers & Hooks
 import { KompitrailContext } from "../../../context/KompitrailContext";
 // Components
 import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";

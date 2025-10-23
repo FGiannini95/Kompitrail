@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+
 import {
   Dialog,
   DialogTitle,
@@ -9,6 +16,8 @@ import {
 } from "@mui/material";
 
 export const ConfirmationDialogContext = createContext();
+// Helpful for debugging with ReactDev Tools
+ConfirmationDialogContext.displayName = "ConfirmationDialogContext";
 
 export const ConfirmationDialogProvider = ({ children }) => {
   const [open, setOpen] = useState(false);
@@ -18,27 +27,30 @@ export const ConfirmationDialogProvider = ({ children }) => {
     onConfirm: null,
   });
 
-  const openDialog = ({ title, message, onConfirm }) => {
+  const openDialog = useCallback(({ title, message, onConfirm }) => {
     setConfig({ title, message, onConfirm });
     setOpen(true);
-  };
+  }, []);
 
-  const closeDialog = () => {
+  const closeDialog = useCallback(() => {
     setOpen(false);
     setConfig({ title: "", message: "", onConfirm: null });
-  };
+  }, []);
 
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
     if (config.onConfirm) {
       config.onConfirm();
     }
     closeDialog();
-  };
+  }, [config.onConfirm, closeDialog]);
 
-  const value = {
-    openDialog,
-    closeDialog,
-  };
+  const value = useMemo(
+    () => ({
+      openDialog,
+      closeDialog,
+    }),
+    [openDialog, closeDialog]
+  );
 
   return (
     <ConfirmationDialogContext.Provider value={value}>

@@ -22,8 +22,6 @@ import ForwardOutlinedIcon from "@mui/icons-material/ForwardOutlined";
 // Utils
 import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
-// Providers
-import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 
@@ -46,10 +44,13 @@ export const RouteCard = ({
   showActions = true,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
-  const { openDialog: openCreateEditDialog } = useRoutes();
   const navigate = useNavigate();
 
   const participantsSectionRef = useRef();
+
+  const now = new Date();
+  const routeDate = new Date(date);
+  const isPastRoute = routeDate < now;
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -74,10 +75,6 @@ export const RouteCard = ({
         isOwner,
       },
     });
-  };
-
-  const openEditDialog = (route_id) => {
-    openCreateEditDialog({ mode: "edit", route_id });
   };
 
   return (
@@ -115,13 +112,18 @@ export const RouteCard = ({
           participants={participants}
           max_participants={max_participants}
           isOwner={isOwner}
+          isPastRoute={isPastRoute}
         />
       </CardContent>
-      {showActions && (
+      {showActions && !isPastRoute && (
         <CardActions disableSpacing>
           {isOwner && (
             <>
-              <IconButton onClick={() => openEditDialog?.(route_id)}>
+              <IconButton
+                onClick={() =>
+                  participantsSectionRef.current?.handleOpenEditDialog(route_id)
+                }
+              >
                 <EditOutlinedIcon
                   fontSize="medium"
                   style={{ color: "black" }}

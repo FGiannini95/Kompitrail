@@ -8,15 +8,15 @@ import { useNavigate } from "react-router-dom";
 
 import { Box } from "@mui/material";
 
-import { BadgeAvatar } from "../BadgeAvatar/BadgeAvatar";
-import { PlusAvatar } from "../PlusAvatar/PlusAvatar";
-// Providers
-import { KompitrailContext } from "../../context/KompitrailContext";
+import { BadgeAvatar } from "../Avatars/BadgeAvatar/BadgeAvatar";
+import { PlusAvatar } from "../Avatars/PlusAvatar/PlusAvatar";
+// Providers & Hooks
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { useSnackbar } from "../../context/SnackbarContext/SnackbarContext";
 import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 // Utils
 import { RoutesString } from "../../routes/routes";
+import { KompitrailContext } from "../../context/KompitrailContext";
 
 export const RouteParticipantsSection = forwardRef(
   (
@@ -27,11 +27,18 @@ export const RouteParticipantsSection = forwardRef(
       participants = [],
       max_participants,
       isOwner,
+      isPastRoute,
     },
     ref
   ) => {
-    const { joinRoute, isJoiningRoute, leaveRoute, deleteRoute, closeDialog } =
-      useRoutes();
+    const {
+      joinRoute,
+      isJoiningRoute,
+      leaveRoute,
+      deleteRoute,
+      closeDialog,
+      openDialog: openCreateEditDialog,
+    } = useRoutes();
     const { user: currentUser } = useContext(KompitrailContext);
     const { showSnackbar } = useSnackbar();
     const { openDialog } = useConfirmationDialog();
@@ -128,12 +135,17 @@ export const RouteParticipantsSection = forwardRef(
       });
     };
 
+    const handleOpenEditDialog = (route_id) => {
+      openCreateEditDialog({ mode: "edit", route_id });
+    };
+
     // Expose functions via ref
     useImperativeHandle(ref, () => ({
       handleJoin,
       handleLeave,
       handleOpenLeaveRoute,
       handleOpenDeleteDialog,
+      handleOpenEditDialog,
     }));
 
     return (
@@ -145,6 +157,7 @@ export const RouteParticipantsSection = forwardRef(
           size={40}
           showName
           onBadgeClick={() => handleOpenDeleteDialog(route_id)}
+          isPastRoute={isPastRoute}
         />
 
         {/* 2. ENROLLED PARTICIPANTS */}
@@ -159,6 +172,7 @@ export const RouteParticipantsSection = forwardRef(
               size={40}
               showName
               onBadgeClick={isCurrentUser ? handleOpenLeaveRoute : undefined}
+              isPastRoute={isPastRoute}
             />
           );
         })}
@@ -169,7 +183,7 @@ export const RouteParticipantsSection = forwardRef(
             key={`empty-slot-${i}`}
             size={40}
             onClick={handleJoin}
-            disabled={!canJoinRoute}
+            disabled={!canJoinRoute || !isPastRoute}
           />
         ))}
       </Box>
