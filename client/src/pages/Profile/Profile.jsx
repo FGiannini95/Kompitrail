@@ -78,6 +78,7 @@ export const Profile = () => {
           allRoutes={allRoutes}
           title={"Rutas"}
           showOnlyFuture={false}
+          sortOrder="desc"
         />
       </Grid>
 

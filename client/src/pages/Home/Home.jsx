@@ -38,6 +38,7 @@ export const Home = () => {
         allRoutes={allRoutes}
         title={"Tus próximas rutas"}
         showOnlyFuture={true}
+        sortOrder="asc"
       />
       <OutlinedButton
         onClick={() => navigate(RoutesString.createTrip)}

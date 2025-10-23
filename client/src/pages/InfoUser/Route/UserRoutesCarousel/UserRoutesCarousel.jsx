@@ -14,7 +14,8 @@ import { KompitrailContext } from "../../../../context/KompitrailContext";
 export const UserRoutesCarousel = ({
   allRoutes = [],
   title,
-  showOnlyFuture = false,
+  showOnlyFuture,
+  sortOrder,
 }) => {
   const { user: currentUser } = useContext(KompitrailContext);
 
@@ -24,23 +25,27 @@ export const UserRoutesCarousel = ({
 
     const now = new Date();
 
-    return allRoutes
-      .filter((route) => {
-        // Filter by user
-        const isUserRoute =
-          route.user_id === currentUser?.user_id ||
-          route.participants?.some((p) => p.user_id === currentUser?.user_id);
+    const filtered = allRoutes.filter((route) => {
+      const isUserRoute =
+        route.user_id === currentUser?.user_id ||
+        route.participants?.some((p) => p.user_id === currentUser?.user_id);
 
-        if (!isUserRoute) return false;
+      if (!isUserRoute) return false;
 
-        // Filter by date
-        if (showOnlyFuture) {
-          return new Date(route.date) >= now;
-        }
+      if (showOnlyFuture) {
+        return new Date(route.date) >= now;
+      }
 
-        return true;
-      })
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
+      return true;
+    });
+
+    // Sort based on sortOrder prop
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+
+      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+    });
   }, [allRoutes, currentUser?.user_id, showOnlyFuture]);
 
   return (
