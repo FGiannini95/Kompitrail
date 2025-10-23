@@ -12,8 +12,9 @@ import {
 import Grid from "@mui/material/Grid2";
 
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-
+// Utils
 import { RoutesString } from "../../routes/routes";
+// Providers & Hooks
 import { useUserAnalytics } from "../../hooks/useUserAnalytics";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 // Components

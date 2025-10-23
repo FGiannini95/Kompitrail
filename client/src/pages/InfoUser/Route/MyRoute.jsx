@@ -12,7 +12,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { RoutesString } from "../../../routes/routes";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { ROUTES_URL } from "../../../../../server/config/serverConfig";
-// Providers
+// Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../context/RoutesContext/RoutesContext";

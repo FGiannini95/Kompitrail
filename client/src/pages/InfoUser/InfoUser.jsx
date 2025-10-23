@@ -19,7 +19,7 @@ const url =
 // Utils
 import { delLocalStorage } from "../../helpers/localStorageUtils";
 import { RoutesString } from "../../routes/routes";
-// Providers
+// Providers & Hooks
 import { KompitrailContext } from "../../context/KompitrailContext";
 import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 // Components

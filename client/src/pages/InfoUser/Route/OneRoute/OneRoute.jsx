@@ -28,7 +28,7 @@ import {
   capitalizeFirstLetter,
   formatDateTime,
 } from "../../../../helpers/utils";
-// Providers
+// Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";

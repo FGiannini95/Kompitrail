@@ -10,7 +10,7 @@ import { Box } from "@mui/material";
 
 import { BadgeAvatar } from "../Avatars/BadgeAvatar/BadgeAvatar";
 import { PlusAvatar } from "../Avatars/PlusAvatar/PlusAvatar";
-// Providers
+// Providers & Hooks
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { useSnackbar } from "../../context/SnackbarContext/SnackbarContext";
 import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
