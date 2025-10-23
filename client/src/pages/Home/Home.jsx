@@ -32,6 +32,8 @@ export const Home = () => {
     return <Loading />;
   }
 
+  const now = new Date();
+
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       <UserRoutesCarousel
@@ -54,11 +56,19 @@ export const Home = () => {
         <Typography>Rutas disponibles</Typography>
       </Grid>
       {allRoutes.length > 0 ? (
-        allRoutes.map((route) => (
-          <Grid key={route?.route_id} container justifyContent="center" mb={2}>
-            <RouteCard {...route} isOwner={route.user_id === user.user_id} />
-          </Grid>
-        ))
+        allRoutes.map((route) => {
+          const date = route.date;
+          const routeDate = new Date(date);
+          const isPastRoute = routeDate < now;
+
+          if (isPastRoute) return null;
+
+          return (
+            <Grid key={route.route_id} container justifyContent="center" mb={2}>
+              <RouteCard {...route} isOwner={route.user_id === user.user_id} />
+            </Grid>
+          );
+        })
       ) : (
         <Grid container justifyContent="center" mb={2}>
           <EmptyState />
