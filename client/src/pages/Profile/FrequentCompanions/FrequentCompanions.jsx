@@ -12,7 +12,7 @@ import {
 import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
 
 export const FrequentCompanions = () => {
-  const { companions, loading, error } = useFrequentCompanions();
+  const { companions = [], loading, error } = useFrequentCompanions();
 
   if (loading) {
     return (
@@ -26,10 +26,10 @@ export const FrequentCompanions = () => {
     return <Typography>Error al cargar la sección</Typography>;
   }
 
-  if (companions.length === 0) {
+  if (!Array.isArray(companions) || companions.length === 0) {
     return (
       <Typography>
-        Aún no tienes compañeros frecuentes. ¡Haz más rutas!
+        Aún no tienes compañeros de viaje. Apúntate o crea una ruta ya.
       </Typography>
     );
   }
@@ -55,7 +55,10 @@ export const FrequentCompanions = () => {
               alignItems: "center",
             }}
           >
-            <Avatar />
+            <Avatar
+            //src={companion.img}
+            //alt={companion.name}
+            />
             <Typography>{companion.name}</Typography>
             <Typography>
               {companion.shared_routes}

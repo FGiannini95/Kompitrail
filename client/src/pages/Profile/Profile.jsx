@@ -24,6 +24,7 @@ import { AnalyticsTable } from "./AnalyticsTable/AnalyticsTable";
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { ContainedButton } from "../../components/Buttons/ContainedButton/ContainedButton";
 import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
+import { FrequentCompanions } from "./FrequentCompanions/FrequentCompanions";
 
 export const Profile = () => {
   const { allRoutes, loadAllRoutes } = useRoutes();
@@ -84,27 +85,7 @@ export const Profile = () => {
 
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
         <Typography>Personas con las que viajas más</Typography>
-        <Card
-          sx={{
-            width: "50%",
-            bgcolor: "#eeeeee",
-            borderRadius: 2,
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
-          <CardContent
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Avatar />
-            <Typography>{"Nome"}</Typography>
-            <Typography>{"# rutas en común"}</Typography>
-          </CardContent>
-        </Card>
+        <FrequentCompanions />
       </Grid>
       <RouteEditDialog />
     </Box>

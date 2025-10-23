@@ -298,7 +298,81 @@ class routesControllers {
   };
 
   getFrequentCompanions = (req, res) => {
-    console.log("hi");
+    const { id: user_id } = req.params;
+    let sql = `
+      SELECT 
+        companion_id as user_id,
+        u.name,
+        u.img,
+        COUNT(*) as shared_routes
+      FROM (
+        
+        /* ============================================
+          CASE 1: I'm the CREATOR of the route. Get PARTICIPANTS as companions
+          ============================================ */
+        SELECT 
+          rp.user_id as companion_id, 
+          r.route_id
+        FROM route r
+        JOIN route_participant rp ON r.route_id = rp.route_id
+        WHERE r.user_id = '${user_id}'
+          AND r.date < NOW()
+          AND r.is_deleted = 0
+          AND rp.user_id != '${user_id}'
+        
+        UNION ALL
+        
+        /* ============================================
+          CASE 2: I'm a PARTICIPANT of the route. Get the CREATOR as a companion
+          ============================================ */
+        SELECT 
+          r.user_id as companion_id, 
+          r.route_id
+        FROM route r
+        JOIN route_participant rp ON r.route_id = rp.route_id
+        WHERE rp.user_id = '${user_id}'
+          AND r.date < NOW()
+          AND r.is_deleted = 0
+          AND r.user_id != '${user_id}'
+        
+        UNION ALL
+        
+        /* ============================================
+          CASE 3: I'm a PARTICIPANT of the route. Get OTHER PARTICIPANTS as companions
+          ============================================ */
+        SELECT 
+          rp2.user_id as companion_id, 
+          r.route_id
+        FROM route r
+        JOIN route_participant rp ON r.route_id = rp.route_id
+        JOIN route_participant rp2 ON r.route_id = rp2.route_id
+        WHERE rp.user_id = '${user_id}'
+          AND r.date < NOW()
+          AND r.is_deleted = 0
+          AND rp2.user_id != '${user_id}'
+          AND rp2.user_id != r.user_id
+          
+      ) as companions
+      /* Join user to fetch display info */
+      JOIN user u ON companions.companion_id = u.user_id
+
+      /* Group and count */
+      GROUP BY companion_id, u.name, u.img
+
+      /* Minimum 2 shared routes */
+      HAVING COUNT(*) >= 2
+
+      /* Order by most shared routes */
+      ORDER BY shared_routes DESC;
+    `;
+
+    connection.query(sql, (err, result) => {
+      err
+        ? res.status(400).json({ err })
+        : res
+            .status(200)
+            .json({ message: "Error al encontrar compañeros", result });
+    });
   };
 }
 
