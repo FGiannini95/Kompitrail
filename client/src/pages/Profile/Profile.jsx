@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -26,11 +26,15 @@ import { ContainedButton } from "../../components/Buttons/ContainedButton/Contai
 import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 
 export const Profile = () => {
-  const { allRoutes } = useRoutes();
+  const { allRoutes, loadAllRoutes } = useRoutes();
   const navigate = useNavigate();
 
   const { motorbikes, createdRoutes, joinedRoutes, loading } =
     useUserAnalytics();
+
+  useEffect(() => {
+    loadAllRoutes();
+  }, [loadAllRoutes]);
 
   return (
     <Box
