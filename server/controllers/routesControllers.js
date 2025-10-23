@@ -103,7 +103,7 @@ class routesControllers {
       u.lastname AS create_lastname 
     FROM route r
     LEFT JOIN \`user\` u ON u.user_id = r.user_id
-    WHERE r.user_id = '${user_id}' AND r.is_deleted = 0
+    WHERE r.user_id = '${user_id}' AND r.is_deleted = 0 AND r.date >= NOW()
     ORDER BY r.route_id DESC
   `;
     connection.query(sql, (error, result) => {
@@ -129,6 +129,7 @@ class routesControllers {
     LEFT JOIN \`user\` AS participant_user
            ON participant_user.user_id = route_participant.user_id
     WHERE route.is_deleted = 0
+      AND route.date >= NOW()
     GROUP BY route.route_id
     ORDER BY route.route_id DESC
   `;
@@ -204,25 +205,11 @@ class routesControllers {
   deleteRoute = (req, res) => {
     const { id: route_id } = req.params;
 
-    // Check if the route is passed
-    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}`;
-    connection.query(checkDateSql, (err, result) => {
-      if (err) {
-        return res.status(400).json({ err });
-      }
-      const routeDate = new Date(result[0].date);
-      const now = new Date();
-
-      if (routeDate < now) {
-        return res.status(4000).json({ message: "Ruta ya pasada" });
-      }
-
-      let sql = `UPDATE route SET is_deleted = 1 where route_id = "${route_id}"`;
-      connection.query(sql, (err, deleteResult) => {
-        err
-          ? res.status(400).json({ err })
-          : res.status(200).json({ message: "Ruta eliminada", deleteResult });
-      });
+    let sql = `UPDATE route SET is_deleted = 1 WHERE route_id = "${route_id}" AND date >= NOW()`;
+    connection.query(sql, (err, deleteResult) => {
+      err
+        ? res.status(400).json({ err })
+        : res.status(200).json({ message: "Ruta eliminada", deleteResult });
     });
   };
 
