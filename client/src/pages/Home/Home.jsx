@@ -32,8 +32,6 @@ export const Home = () => {
     return <Loading />;
   }
 
-  const now = new Date();
-
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       <UserRoutesCarousel
@@ -57,8 +55,8 @@ export const Home = () => {
       </Grid>
       {allRoutes.length > 0 ? (
         allRoutes.map((route) => {
-          const date = route.date;
-          const routeDate = new Date(date);
+          const now = new Date();
+          const routeDate = new Date(route.date);
           const isPastRoute = routeDate < now;
 
           if (isPastRoute) return null;
