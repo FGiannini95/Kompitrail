@@ -60,13 +60,23 @@ export const Home = () => {
         <Typography>Rutas disponibles</Typography>
       </Grid>
       {futureRoutes.length > 0 ? (
-        futureRoutes.map((route) => {
-          return (
-            <Grid key={route.route_id} container justifyContent="center" mb={2}>
-              <RouteCard {...route} isOwner={route.user_id === user.user_id} />
-            </Grid>
-          );
-        })
+        futureRoutes
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .map((route) => {
+            return (
+              <Grid
+                key={route.route_id}
+                container
+                justifyContent="center"
+                mb={2}
+              >
+                <RouteCard
+                  {...route}
+                  isOwner={route.user_id === user.user_id}
+                />
+              </Grid>
+            );
+          })
       ) : (
         <Grid container justifyContent="center" mb={2}>
           <EmptyState />
