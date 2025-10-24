@@ -162,7 +162,14 @@ class routesControllers {
 
   showJoineddRoutesAnalytics = (req, res) => {
     const { id: user_id } = req.params;
-    let sql = `SELECT (SELECT COUNT(*) FROM route_participant WHERE user_id ="${user_id}") AS total_joinedroutes`;
+    let sql = `
+      SELECT COUNT(*) AS total_joinedroutes
+      FROM route_participant
+        JOIN route ON route_participant.route_id = route.route_id
+      WHERE route_participant.user_id = "${user_id}"
+      AND route.date < NOW()
+      AND route.is_deleted = 0
+    `;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
@@ -225,7 +232,7 @@ class routesControllers {
     const { user_id } = req.body;
 
     // Check if the route is passed
-    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}`;
+    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}"`;
     connection.query(checkDateSql, (err, result) => {
       if (err) {
         return res.status(400).json({ err });
@@ -238,7 +245,7 @@ class routesControllers {
       }
 
       // Avoid duplicate entry error
-      let checkSql = `SELECT * FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}'`;
+      let checkSql = `SELECT * FROM route_participant WHERE user_id = "${user_id}" AND route_id = "${route_id}"`;
 
       connection.query(checkSql, (err, result) => {
         if (err) {
@@ -253,7 +260,7 @@ class routesControllers {
         }
 
         // If not enrolled, proceed with INSERT
-        let sql = `INSERT INTO route_participant (user_id, route_id) VALUES ('${user_id}', '${route_id}')`;
+        let sql = `INSERT INTO route_participant (user_id, route_id) VALUES ("${user_id}", "${route_id}")`;
 
         connection.query(sql, (err, deleteResult) => {
           if (err) {
@@ -274,7 +281,7 @@ class routesControllers {
     const { user_id } = req.body;
 
     // Check if the route is passed
-    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}`;
+    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}"`;
     connection.query(checkDateSql, (err, result) => {
       if (err) {
         return res.status(400).json({ err });
@@ -298,7 +305,77 @@ class routesControllers {
   };
 
   getFrequentCompanions = (req, res) => {
-    console.log("hi");
+    const { id: user_id } = req.params;
+    let sql = `
+      SELECT 
+        companion_id as user_id,
+        u.name,
+        u.img,
+        COUNT(*) as shared_routes
+      FROM (
+        
+        /* ============================================
+          CASE 1: I'm the CREATOR of the route. Get PARTICIPANTS as companions
+          ============================================ */
+        SELECT 
+          rp.user_id as companion_id, 
+          r.route_id
+        FROM route r
+        JOIN route_participant rp ON r.route_id = rp.route_id
+        WHERE r.user_id = '${user_id}'
+          AND r.date < NOW()
+          AND r.is_deleted = 0
+          AND rp.user_id != '${user_id}'
+        
+        UNION ALL
+        
+        /* ============================================
+          CASE 2: I'm a PARTICIPANT of the route. Get the CREATOR as a companion
+          ============================================ */
+        SELECT 
+          r.user_id as companion_id, 
+          r.route_id
+        FROM route r
+        JOIN route_participant rp ON r.route_id = rp.route_id
+        WHERE rp.user_id = '${user_id}'
+          AND r.date < NOW()
+          AND r.is_deleted = 0
+          AND r.user_id != '${user_id}'
+        
+        UNION ALL
+        
+        /* ============================================
+          CASE 3: I'm a PARTICIPANT of the route. Get OTHER PARTICIPANTS as companions
+          ============================================ */
+        SELECT 
+          rp2.user_id as companion_id, 
+          r.route_id
+        FROM route r
+        JOIN route_participant rp ON r.route_id = rp.route_id
+        JOIN route_participant rp2 ON r.route_id = rp2.route_id
+        WHERE rp.user_id = '${user_id}'
+          AND r.date < NOW()
+          AND r.is_deleted = 0
+          AND rp2.user_id != '${user_id}'
+          AND rp2.user_id != r.user_id
+          
+      ) as companions
+      /* Join user to fetch display info */
+      JOIN user u ON companions.companion_id = u.user_id
+
+      /* Group and count */
+      GROUP BY companion_id, u.name, u.img
+
+      /* Minimum 2 shared routes */
+      HAVING COUNT(*) >= 2
+
+      /* Order by most shared routes */
+      ORDER BY shared_routes DESC;
+    `;
+
+    connection.query(sql, (err, result) => {
+      err ? res.status(400).json({ err }) : res.status(200).json(result);
+    });
   };
 }
 

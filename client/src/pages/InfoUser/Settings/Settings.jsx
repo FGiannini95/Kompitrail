@@ -1,34 +1,24 @@
-import React, { useContext, useState } from "react";
-
-// MUI
-import {
-  Box,
-  Grid,
-  Typography,
-  IconButton,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  List,
-} from "@mui/material";
-
-// MUI-ICONS
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-
+import React, { useContext } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import { KompitrailContext } from "../../../context/KompitrailContext";
+
+import { Box, Typography, IconButton, List } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+// Utils
 import { RoutesString } from "../../../routes/routes";
 import {
   getLocalStorage,
   delLocalStorage,
 } from "../../../helpers/localStorageUtils";
 import { USERS_URL } from "../../../../../server/config/serverConfig";
-import { SettingsRow } from "./SettingsRow/SettingsRow";
+// Providers & Hooks
+import { KompitrailContext } from "../../../context/KompitrailContext";
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
+// Components
+import { SettingsRow } from "./SettingsRow/SettingsRow";
 
 export const Settings = () => {
   const navigate = useNavigate();

@@ -2,14 +2,10 @@ import React, { useContext, useMemo } from "react";
 
 import { Box, Typography } from "@mui/material";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, A11y } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
+import { KompitrailContext } from "../../../../context/KompitrailContext";
 
 import { RouteCard } from "../RouteCard/RouteCard";
-
-import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { CardPlaceholder } from "../../../../components/CardPlaceholder/CardPlaceholder";
 
 export const UserRoutesCarousel = ({
   allRoutes = [],
@@ -48,49 +44,45 @@ export const UserRoutesCarousel = ({
     });
   }, [allRoutes, currentUser?.user_id, showOnlyFuture]);
 
+  const isOne = userRoutes.length === 1;
+
   return (
     <Box sx={{ mb: 2 }}>
       <Typography>{title}</Typography>
-      <Box
-        sx={{
-          overflow: "hidden", // Prevent horizontal scroll
-          "& .routes-pagination-top .swiper-pagination-bullet": {
-            width: 8,
-            height: 8,
-            opacity: 1,
-            backgroundColor: "#d0d0d0", // Inactive dot color
-            transition: "all 0.3s",
-          },
-          "& .routes-pagination-top .swiper-pagination-bullet-active": {
-            backgroundColor: "#000", // Active dot color
-            width: 10,
-            height: 10,
-          },
-        }}
-      >
-        {/* TOP DOTS */}
+      {userRoutes.length > 0 ? (
         <Box
-          className="routes-pagination-top"
-          sx={{ display: "flex", justifyContent: "center", mb: 1 }}
-        />
-
-        <Swiper
-          modules={[Pagination, A11y]}
-          slidesPerView={1}
-          spaceBetween={4}
-          autoHeight
-          pagination={{ el: ".routes-pagination-top", clickable: true }}
+          sx={{
+            display: "flex",
+            gap: 2,
+            overflowX: isOne ? "visible" : "auto",
+            paddingBottom: 2,
+            // Hide scrollbar
+            scrollbarWidth: "none", // Firefox
+            "&::-webkit-scrollbar": {
+              display: "none", // Chrome, Safari, Edge
+            },
+          }}
         >
           {userRoutes.map((route) => (
-            <SwiperSlide key={route.route_id}>
+            <Box
+              key={route.route_id}
+              sx={{
+                flexShrink: 0,
+                width: isOne ? "100%" : "calc(92% - 8px)",
+              }}
+            >
               <RouteCard
                 {...route}
                 isOwner={route.user_id === currentUser.user_id}
               />
-            </SwiperSlide>
+            </Box>
           ))}
-        </Swiper>
-      </Box>
+        </Box>
+      ) : (
+        <CardPlaceholder
+          text={"Aún no tienes rutas guardadas. Apúntate o crea una."}
+        />
+      )}
     </Box>
   );
 };

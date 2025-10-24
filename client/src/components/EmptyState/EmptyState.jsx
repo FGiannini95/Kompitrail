@@ -15,7 +15,7 @@ export const EmptyState = () => {
       ? "Aún no has añadido ninguna moto."
       : location.pathname === RoutesString.route
         ? "Aún no has creado ninguna ruta."
-        : "Ninguna ruta disponibles.";
+        : "Ninguna ruta disponible.";
 
   return (
     <Card

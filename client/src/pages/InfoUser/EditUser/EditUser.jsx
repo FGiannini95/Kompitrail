@@ -12,9 +12,9 @@ import IconButton from "@mui/material/IconButton";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
-import { getInitials } from "../../../helpers/Utils";
 import { RoutesString } from "../../../routes/routes";
 import { KompitrailContext } from "../../../context/KompitrailContext";
+import { getInitials } from "../../../helpers/utils";
 
 const countries = defaultCountries;
 

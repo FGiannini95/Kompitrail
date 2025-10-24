@@ -10,9 +10,10 @@ import {
 } from "@mui/material";
 
 import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
+import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
 
 export const FrequentCompanions = () => {
-  const { companions, loading, error } = useFrequentCompanions();
+  const { companions = [], loading, error } = useFrequentCompanions();
 
   if (loading) {
     return (
@@ -26,26 +27,35 @@ export const FrequentCompanions = () => {
     return <Typography>Error al cargar la sección</Typography>;
   }
 
-  if (companions.length === 0) {
-    return (
-      <Typography>
-        Aún no tienes compañeros frecuentes. ¡Haz más rutas!
-      </Typography>
-    );
+  if (!Array.isArray(companions) || companions.length === 0) {
+    return <CardPlaceholder text={"Aún no tienes compañeros de viaje."} />;
   }
 
+  const isTwoOrLess = companions.length <= 2;
+
   return (
-    <Box>
-      <Typography>Personas con las que viajas más</Typography>
+    <Box
+      sx={{
+        display: "flex",
+        gap: 2,
+        overflowX: isTwoOrLess ? "visible" : "auto",
+        paddingBottom: 2,
+        // Hide scrollbar
+        scrollbarWidth: "none", // Firefox
+        "&::-webkit-scrollbar": {
+          display: "none", // Chrome, Safari, Edge
+        },
+      }}
+    >
       {companions.map((companion) => (
         <Card
           key={companion.user_id}
           sx={{
-            width: "50%",
+            minWidth: isTwoOrLess ? "calc(50% - 8px)" : "calc(45% - 8px)",
+            maxWidth: isTwoOrLess ? "calc(50% - 8px)" : "calc(45% - 8px)",
             bgcolor: "#eeeeee",
             borderRadius: 2,
-            display: "flex",
-            flexDirection: "row",
+            flexShrink: 0,
           }}
         >
           <CardContent
@@ -53,14 +63,16 @@ export const FrequentCompanions = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              gap: 1,
             }}
           >
-            <Avatar />
-            <Typography>{companion.name}</Typography>
-            <Typography>
-              {companion.shared_routes}
-              {" rutas en común"}
-            </Typography>
+            <Avatar
+              src={companion.img}
+              alt={companion.name}
+              sx={{ width: 56, height: 56 }}
+            />
+            <Typography fontWeight={600}>{companion.name}</Typography>
+            <Typography>{companion.shared_routes} rutas en común</Typography>
           </CardContent>
         </Card>
       ))}
