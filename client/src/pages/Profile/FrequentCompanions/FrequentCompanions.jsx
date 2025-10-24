@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 
 import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
-import { CardPlaceholder } from "../../../components/Cards/CardPlaceholder/CardPlaceholder";
+import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
 
 export const FrequentCompanions = () => {
   const { companions = [], loading, error } = useFrequentCompanions();
