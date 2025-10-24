@@ -10,7 +10,7 @@ import "swiper/css/pagination";
 import { RouteCard } from "../RouteCard/RouteCard";
 
 import { KompitrailContext } from "../../../../context/KompitrailContext";
-import { CardPlaceholder } from "../../../../components/CardPlaceholder/CardPlaceholder";
+import { CardPlaceholder } from "../../../../components/Cards/CardPlaceholder/CardPlaceholder";
 
 export const UserRoutesCarousel = ({
   allRoutes = [],
