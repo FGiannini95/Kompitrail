@@ -46,7 +46,6 @@ export const Profile = () => {
     >
       <Grid>
         <UserAvatar />
-
         <Stack
           direction="row"
           spacing={2}

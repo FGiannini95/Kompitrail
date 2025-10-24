@@ -183,7 +183,7 @@ export const RouteParticipantsSection = forwardRef(
             key={`empty-slot-${i}`}
             size={40}
             onClick={handleJoin}
-            disabled={!canJoinRoute || !isPastRoute}
+            disabled={!canJoinRoute || isPastRoute}
           />
         ))}
       </Box>

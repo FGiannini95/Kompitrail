@@ -225,7 +225,7 @@ class routesControllers {
     const { user_id } = req.body;
 
     // Check if the route is passed
-    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}`;
+    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}"`;
     connection.query(checkDateSql, (err, result) => {
       if (err) {
         return res.status(400).json({ err });
@@ -238,7 +238,7 @@ class routesControllers {
       }
 
       // Avoid duplicate entry error
-      let checkSql = `SELECT * FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}'`;
+      let checkSql = `SELECT * FROM route_participant WHERE user_id = "${user_id}" AND route_id = "${route_id}"`;
 
       connection.query(checkSql, (err, result) => {
         if (err) {
@@ -253,7 +253,7 @@ class routesControllers {
         }
 
         // If not enrolled, proceed with INSERT
-        let sql = `INSERT INTO route_participant (user_id, route_id) VALUES ('${user_id}', '${route_id}')`;
+        let sql = `INSERT INTO route_participant (user_id, route_id) VALUES ("${user_id}", "${route_id}")`;
 
         connection.query(sql, (err, deleteResult) => {
           if (err) {
@@ -274,7 +274,7 @@ class routesControllers {
     const { user_id } = req.body;
 
     // Check if the route is passed
-    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}`;
+    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}"`;
     connection.query(checkDateSql, (err, result) => {
       if (err) {
         return res.status(400).json({ err });

@@ -32,11 +32,15 @@ export const Home = () => {
     return <Loading />;
   }
 
+  const futureRoutes = allRoutes.filter(
+    (route) => new Date(route.date) >= new Date()
+  );
+
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
-      {allRoutes.length > 0 && (
+      {futureRoutes.length > 0 && (
         <UserRoutesCarousel
-          allRoutes={allRoutes}
+          allRoutes={futureRoutes}
           title={"Tus próximas rutas"}
           showOnlyFuture={true}
           sortOrder="asc"
@@ -55,14 +59,8 @@ export const Home = () => {
       <Grid sx={{ pt: 2 }}>
         <Typography>Rutas disponibles</Typography>
       </Grid>
-      {allRoutes.length > 0 ? (
-        allRoutes.map((route) => {
-          const now = new Date();
-          const routeDate = new Date(route.date);
-          const isPastRoute = routeDate < now;
-
-          if (isPastRoute) return null;
-
+      {futureRoutes.length > 0 ? (
+        futureRoutes.map((route) => {
           return (
             <Grid key={route.route_id} container justifyContent="center" mb={2}>
               <RouteCard {...route} isOwner={route.user_id === user.user_id} />
