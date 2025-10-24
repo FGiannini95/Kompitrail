@@ -1,14 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Box,
-  Stack,
-  Typography,
-  CardContent,
-  Card,
-  Avatar,
-} from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
