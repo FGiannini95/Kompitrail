@@ -162,7 +162,14 @@ class routesControllers {
 
   showJoineddRoutesAnalytics = (req, res) => {
     const { id: user_id } = req.params;
-    let sql = `SELECT (SELECT COUNT(*) FROM route_participant WHERE user_id ="${user_id}") AS total_joinedroutes`;
+    let sql = `
+      SELECT COUNT(*) AS total_joinedroutes
+      FROM route_participant
+        JOIN route ON route_participant.route_id = route.route_id
+      WHERE route_participant.user_id = "${user_id}"
+      AND route.date < NOW()
+      AND route.is_deleted = 0
+    `;
     connection.query(sql, (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
