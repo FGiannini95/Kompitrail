@@ -28,15 +28,30 @@ export const FrequentCompanions = () => {
 
   if (!Array.isArray(companions) || companions.length === 0) {
     return (
-      <Typography>
-        Aún no tienes compañeros de viaje. Apúntate o crea una ruta ya.
-      </Typography>
+      <Card
+        sx={{
+          width: "100%",
+          bgcolor: "#eeeeee",
+          borderRadius: 2,
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        <CardContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography>{"Aún no tienes compañeros de viaje."}</Typography>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
     <Box>
-      <Typography>Personas con las que viajas más</Typography>
       {companions.map((companion) => (
         <Card
           key={companion.user_id}

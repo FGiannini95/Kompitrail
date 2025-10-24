@@ -34,12 +34,14 @@ export const Home = () => {
 
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
-      <UserRoutesCarousel
-        allRoutes={allRoutes}
-        title={"Tus próximas rutas"}
-        showOnlyFuture={true}
-        sortOrder="asc"
-      />
+      {allRoutes.length > 0 && (
+        <UserRoutesCarousel
+          allRoutes={allRoutes}
+          title={"Tus próximas rutas"}
+          showOnlyFuture={true}
+          sortOrder="asc"
+        />
+      )}
       <OutlinedButton
         onClick={() => navigate(RoutesString.createTrip)}
         text={"Crear ruta"}

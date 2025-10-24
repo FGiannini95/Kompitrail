@@ -51,9 +51,7 @@ export const AnalyticsTable = ({
           <TableRow>
             <StyledTableCell align="center">Nº de motos</StyledTableCell>
             <StyledTableCell align="center">Rutas creadas</StyledTableCell>
-            <StyledTableCell align="center">
-              Rutas participantes
-            </StyledTableCell>
+            <StyledTableCell align="center">Rutas completadas</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
