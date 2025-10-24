@@ -1,15 +1,15 @@
 import React, { useContext, useMemo } from "react";
 
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-import { RouteCard } from "../RouteCard/RouteCard";
-
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+
+import { RouteCard } from "../RouteCard/RouteCard";
 import { CardPlaceholder } from "../../../../components/Cards/CardPlaceholder/CardPlaceholder";
 
 export const UserRoutesCarousel = ({
