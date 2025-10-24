@@ -374,11 +374,7 @@ class routesControllers {
     `;
 
     connection.query(sql, (err, result) => {
-      err
-        ? res.status(400).json({ err })
-        : res
-            .status(200)
-            .json({ message: "Error al encontrar compañeros", result });
+      err ? res.status(400).json({ err }) : res.status(200).json(result);
     });
   };
 }
