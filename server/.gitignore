@@ -1,1 +1,19 @@
-node_modules
+# deps
+node_modules/
+
+# env & secrets
+.env
+.env.local
+.env.*.local
+
+# logs & runtime
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# OS/editor noise
+.DS_Store
+.vscode/

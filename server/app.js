@@ -27,6 +27,31 @@ app.use("/users", usersRouter);
 app.use("/motorbikes", motorbikesRouter);
 app.use("/routes", routesRouter);
 
+// <-- New pool info
+// + db import in the controllers
+// + postinstall in the script in package.json
+// Serve React build (Vite outputs to client/dist)
+const STATIC_DIR = path.resolve(__dirname, "../client/dist");
+
+// 1) Serve static files
+app.use(express.static(STATIC_DIR));
+
+// 2) SPA fallback: send index.html for non-API routes
+app.get("*", (req, res, next) => {
+  if (
+    req.path.startsWith("/users") ||
+    req.path.startsWith("/motorbikes") ||
+    req.path.startsWith("/routes")
+  ) {
+    return next();
+  }
+  if (req.accepts("html")) {
+    return res.sendFile(path.join(STATIC_DIR, "index.html"));
+  }
+  return next();
+});
+// --> New pool info
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
