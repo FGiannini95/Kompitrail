@@ -10,6 +10,7 @@ import "swiper/css/pagination";
 import { RouteCard } from "../RouteCard/RouteCard";
 
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { CardPlaceholder } from "../../../../components/CardPlaceholder/CardPlaceholder";
 
 export const UserRoutesCarousel = ({
   allRoutes = [],
@@ -93,27 +94,9 @@ export const UserRoutesCarousel = ({
           </Swiper>
         </Box>
       ) : (
-        <Card
-          sx={{
-            width: "100%",
-            bgcolor: "#eeeeee",
-            borderRadius: 2,
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
-          <CardContent
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Typography>
-              {"Aún no tienes rutas guardadas. Apúntate o crea una."}
-            </Typography>
-          </CardContent>
-        </Card>
+        <CardPlaceholder
+          text={"Aún no tienes rutas guardadas. Apúntate o crea una."}
+        />
       )}
     </Box>
   );

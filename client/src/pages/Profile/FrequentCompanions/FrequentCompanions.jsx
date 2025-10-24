@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 
 import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
+import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
 
 export const FrequentCompanions = () => {
   const { companions = [], loading, error } = useFrequentCompanions();
@@ -27,27 +28,7 @@ export const FrequentCompanions = () => {
   }
 
   if (!Array.isArray(companions) || companions.length === 0) {
-    return (
-      <Card
-        sx={{
-          width: "100%",
-          bgcolor: "#eeeeee",
-          borderRadius: 2,
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
-        <CardContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography>{"Aún no tienes compañeros de viaje."}</Typography>
-        </CardContent>
-      </Card>
-    );
+    return <CardPlaceholder text={"Aún no tienes compañeros de viaje."} />;
   }
 
   return (
