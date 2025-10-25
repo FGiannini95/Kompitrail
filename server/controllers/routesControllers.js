@@ -1,4 +1,4 @@
-const connection = require("../config/db.pool");
+const connection = require("../config/db");
 const { connect } = require("../routes/motorbikes");
 require("dotenv").config();
 

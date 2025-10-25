@@ -1,5 +1,5 @@
 // const { response } = require("express");
-const connection = require("../config/db.pool");
+const connection = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
