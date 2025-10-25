@@ -1,5 +1,5 @@
 // const { response } = require("express");
-const connection = require("../config/db.pool");
+const connection = require("../config/db");
 require("dotenv").config();
 
 class motorbikesControllers {
