@@ -27,6 +27,7 @@ app.use("/users", usersRouter);
 app.use("/motorbikes", motorbikesRouter);
 app.use("/routes", routesRouter);
 
+/*
 // <-- New pool info
 // + db import in the controllers
 // + postinstall in the script in package.json
@@ -51,6 +52,7 @@ app.get("*", (req, res, next) => {
   return next();
 });
 // --> New pool info
+*/
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
