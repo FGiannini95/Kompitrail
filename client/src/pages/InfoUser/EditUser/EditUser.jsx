@@ -188,7 +188,6 @@ export const EditUser = () => {
       editUser.lastname !== initialValues.lastname ||
       editUser.phonenumber !== initialValues.phonenumber ||
       editUser.removePhoto !== initialValues.removePhoto ||
-      editUser.photo !== null ||
       editUser.img !== initialValues.img;
 
     setSave(hasChange);
