@@ -11,10 +11,14 @@ export const UserAvatar = () => {
   );
   const fullName = `${user.name ?? ""} ${user.lastname ?? ""}`.trim();
 
+  const photoUrl = user?.img
+    ? `http://localhost:3000/images/users/${user.img}`
+    : null;
+
   return (
     <Stack alignItems="center" spacing={1} sx={{ mx: "auto" }}>
       <Avatar
-        // src={user?.photoUrl || undefined}
+        src={photoUrl || undefined}
         sx={{
           width: 96,
           height: 96,
@@ -24,7 +28,7 @@ export const UserAvatar = () => {
           backgroundColor: "transparent",
         }}
       >
-        {initials}
+        {!photoUrl && initials}
       </Avatar>
       <Box
         sx={{ width: "100%", maxWidth: 360, mx: "auto", textAlign: "center" }}
