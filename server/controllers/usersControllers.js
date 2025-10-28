@@ -169,7 +169,9 @@ class usersControllers {
   };
 
   editUser = (req, res) => {
-    const { name, lastname, phonenumber } = JSON.parse(req.body.editUser);
+    const { name, lastname, phonenumber, removePhoto } = JSON.parse(
+      req.body.editUser
+    );
     const { id: user_id } = req.params;
 
     let sql = `SELECT img FROM user WHERE user_id = "${user_id}" AND is_deleted = 0`;
@@ -178,14 +180,42 @@ class usersControllers {
         return res.status(400).json({ err });
       }
 
-      const currentImg = rows.length > 0 ? rows[0].img : "default.png";
-      const img = req.file ? req.file.filename : currentImg;
+      const currentImg = rows.length > 0 ? rows[0].img : null;
+      let img;
 
-      let sqlUpdate = `UPDATE user SET name = "${name}", lastname = "${lastname}", phonenumber = "${phonenumber}", img = "${img}" WHERE user_id = "${user_id}" AND is_deleted = 0`;
+      // User want to delete the photo
+      if (removePhoto === true) {
+        img = null;
+      } else if (req.file) {
+        // User want to upload a photo
+        img = req.file.filename;
+      } else {
+        // User does no change so we keep whatever was there
+        img = currentImg;
+      }
+
+      let sqlUpdate = `UPDATE user 
+          SET 
+            name = "${name}", 
+            lastname = "${lastname}", 
+            phonenumber = ${phonenumber ? `"${phonenumber}"` : "NULL"},
+            img = ${img ? `"${img}"` : "NULL"}
+          WHERE user_id = "${user_id}" AND is_deleted = 0`;
       connection.query(sqlUpdate, (err, result) => {
-        err
-          ? res.status(400).json({ err })
-          : res.status(200).json({ message: "Usuario modificado", result });
+        if (err) {
+          return res.status(400).json({ err });
+        }
+        // After update fetch the updated user data to pass it to FE
+        let sqlGetUser = `SELECT user_id, name, lastname, phonenumber, email, img
+          FROM user
+          WHERE user_id="${user_id}" AND is_deleted = 0
+          `;
+        connection.query(sqlGetUser, (err, userData) => {
+          if (err) {
+            return res.status(400).json({ err });
+          }
+          return res.status(200).json(userData[0]);
+        });
       });
     });
   };

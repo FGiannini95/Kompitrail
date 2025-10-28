@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Avatar, IconButton, Stack, Typography } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
@@ -22,7 +23,6 @@ export const PlusAvatar = ({ size = 40, onClick, disabled = false }) => {
         }}
       >
         <Avatar
-          // src={user?.photoUrl || undefined}
           sx={{
             width: size,
             height: size,

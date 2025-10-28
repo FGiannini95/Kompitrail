@@ -68,6 +68,7 @@ export const OneRoute = () => {
     isOwner,
     user_id,
     create_name,
+    user_img,
   } = state || {};
 
   const { date_dd_mm_yyyy, time_hh_mm, weekday } = formatDateTime(date);
@@ -223,6 +224,7 @@ export const OneRoute = () => {
             route_id={route_id}
             user_id={user_id}
             create_name={create_name}
+            user_img={user_img}
             participants={participants}
             max_participants={max_participants}
             isOwner={isOwner}

@@ -6,6 +6,10 @@ node_modules/
 .env.local
 .env.*.local
 
+# Ignore all images subdirectories
+server/public/images/**/*
+!server/public/images/**/.gitkeep
+
 # logs & runtime
 logs/
 *.log

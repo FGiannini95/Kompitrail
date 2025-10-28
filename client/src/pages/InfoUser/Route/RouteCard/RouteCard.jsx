@@ -40,6 +40,7 @@ export const RouteCard = ({
   is_verified,
   route_description,
   create_name,
+  user_img,
   isOwner,
   showActions = true,
 }) => {
@@ -72,6 +73,7 @@ export const RouteCard = ({
         user_id,
         participants,
         create_name,
+        user_img,
         isOwner,
       },
     });
@@ -109,6 +111,7 @@ export const RouteCard = ({
           route_id={route_id}
           user_id={user_id}
           create_name={create_name}
+          user_img={user_img}
           participants={participants}
           max_participants={max_participants}
           isOwner={isOwner}

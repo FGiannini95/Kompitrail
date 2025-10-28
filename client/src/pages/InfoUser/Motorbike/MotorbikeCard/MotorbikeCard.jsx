@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography,
+  IconButton,
+} from "@mui/material";
 
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -21,14 +23,8 @@ export const MotorbikeCard = ({
   onDelete,
 }) => {
   const [openImg, setOpenImg] = useState(false);
-
-  const handleOpenImg = () => {
-    setOpenImg(true);
-  };
-
-  const handleCloseImg = () => {
-    setOpenImg(false);
-  };
+  const handleOpenImg = () => setOpenImg(true);
+  const handleCloseImg = () => setOpenImg(false);
 
   return (
     <>
