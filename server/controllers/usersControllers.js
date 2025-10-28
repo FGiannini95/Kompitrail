@@ -198,8 +198,8 @@ class usersControllers {
           SET 
             name = "${name}", 
             lastname = "${lastname}", 
-            phonenumber = "${phonenumber}", 
-          img = ${img ? `"${img}"` : "NULL"}
+            phonenumber = ${phonenumber ? `"${phonenumber}"` : "NULL"},
+            img = ${img ? `"${img}"` : "NULL"}
           WHERE user_id = "${user_id}" AND is_deleted = 0`;
       connection.query(sqlUpdate, (err, result) => {
         if (err) {
