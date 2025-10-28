@@ -6,6 +6,7 @@ import { getInitials } from "../../../helpers/utils";
 
 export const BadgeAvatar = ({
   targetUserId,
+  targetUserImg,
   name = "",
   firstName,
   lastName,
@@ -24,6 +25,10 @@ export const BadgeAvatar = ({
   }, [firstName, lastName]);
 
   const shouldShowBadge = showBadge && isCurrentUser && !isPastRoute;
+
+  const photoUrl = targetUserImg
+    ? `http://localhost:3000/images/users/${targetUserImg}`
+    : undefined;
 
   return (
     <Stack alignItems="center" spacing={0.5} sx={{ width: size + 8 }}>
@@ -55,7 +60,7 @@ export const BadgeAvatar = ({
         }}
       >
         <Avatar
-          // src={user?.photoUrl || undefined}
+          src={photoUrl || undefined}
           sx={{
             width: size,
             height: size,

@@ -100,7 +100,8 @@ class routesControllers {
     SELECT
       r.*,
       u.name AS create_name, 
-      u.lastname AS create_lastname 
+      u.lastname AS create_lastname,
+      u.img AS user_img 
     FROM route r
     LEFT JOIN \`user\` u ON u.user_id = r.user_id
     WHERE r.user_id = '${user_id}' AND r.is_deleted = 0 AND r.date >= NOW()
@@ -117,8 +118,13 @@ class routesControllers {
       route.*,
       creator_user.name     AS create_name,
       creator_user.lastname AS create_lastname,
+      creator_user.img      AS user_img,
       GROUP_CONCAT(
-        DISTINCT CONCAT(route_participant.user_id, ':', COALESCE(participant_user.name, ''))
+          DISTINCT CONCAT(
+          route_participant.user_id, ':',
+          COALESCE(participant_user.name, ''), ':',
+          COALESCE(participant_user.img, '')
+        )
         SEPARATOR '|'
       ) AS participants_raw
     FROM route
@@ -140,9 +146,9 @@ class routesControllers {
         const participants = (r.participants_raw || "")
           .split("|")
           .filter(Boolean) // Empty string filtered out
-          .map((pair) => {
-            const [uid, name] = pair.split(":");
-            return { user_id: Number(uid), name };
+          .map((triple) => {
+            const [uid, name, img] = triple.split(":");
+            return { user_id: Number(uid), name, img };
           });
         const { participants_raw, ...rest } = r;
         return { ...rest, participants };

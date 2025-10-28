@@ -24,6 +24,7 @@ export const RouteParticipantsSection = forwardRef(
       route_id,
       user_id,
       create_name,
+      user_img,
       participants = [],
       max_participants,
       isOwner,
@@ -153,6 +154,7 @@ export const RouteParticipantsSection = forwardRef(
         {/* 1. CREATOR AVATAR - Always first */}
         <BadgeAvatar
           targetUserId={user_id}
+          targetUserImg={user_img}
           name={create_name}
           size={40}
           showName
@@ -168,6 +170,7 @@ export const RouteParticipantsSection = forwardRef(
             <BadgeAvatar
               key={participant.user_id}
               targetUserId={participant.user_id}
+              targetUserImg={participant.img}
               name={participant.name}
               size={40}
               showName
