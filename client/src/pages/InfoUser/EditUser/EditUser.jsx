@@ -275,7 +275,7 @@ export const EditUser = () => {
                 },
               }}
             >
-              <EditOutlinedIcon fontSize="small" />
+              <EditOutlinedIcon fontSize="small" aria-hidden />
               <input
                 type="file"
                 hidden
@@ -297,7 +297,7 @@ export const EditUser = () => {
                   },
                 }}
               >
-                <DeleteOutlineIcon fontSize="small" color="error" />
+                <DeleteOutlineIcon fontSize="small" aria-hidden color="error" />
               </IconButton>
             )}
           </Box>
