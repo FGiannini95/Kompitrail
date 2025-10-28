@@ -68,13 +68,20 @@ export const FrequentCompanions = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                textAlign: "center",
                 gap: 1,
               }}
             >
               <Avatar
                 src={photoUrl}
                 alt={`${companion.name ?? ""}`}
-                sx={{ width: 56, height: 56 }}
+                sx={{
+                  width: 56,
+                  height: 56,
+                  border: "1px solid black",
+                  color: "black",
+                  backgroundColor: "transparent",
+                }}
               />
               <Typography fontWeight={600}>{companion.name}</Typography>
               <Typography>{companion.shared_routes} rutas en común</Typography>
