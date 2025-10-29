@@ -52,21 +52,66 @@ export const Profile = () => {
   const isOwnProfile = !isOtherProfile;
 
   const displayUser = isOtherProfile ? otherUserData?.user : currentUser;
+
   const displayMotorbikes = isOtherProfile
     ? otherUserData?.motorbikes
     : motorbikes;
+
   const displayCreatedRoutes = isOtherProfile
     ? otherUserData?.createdRoutes
     : createdRoutes;
+
   const displayJoinedRoutes = isOtherProfile
     ? otherUserData?.joinedRoutes
     : joinedRoutes;
-  const displayRoutes = isOtherProfile
-    ? (otherUserData?.routes ?? [])
-    : (allRoutes ?? []);
+
   const displayCompanions = isOtherProfile
     ? (otherUserData?.companions ?? [])
     : myCompanions;
+
+  /* Decide which routes to render in the carousel.
+  Own profile  -> use allRoutes.
+  Other profile -> combine what the API returns for that user with what we can infer from the global list, then de-duplicate by id.*/
+
+  const displayRoutes = isOtherProfile
+    ? (() => {
+        // Routes returned by the "other user" API may be empty or only future/created)
+        const apiUserRoutes = Array.isArray(otherUserData?.routes)
+          ? otherUserData.routes
+          : [];
+
+        // Routes from the global cache that belong to (or include) the viewed profile user
+        const globalRoutesForViewedUser = Array.isArray(allRoutes)
+          ? allRoutes.filter((route) => {
+              // Owner match: route.user_id equals the viewed user's id
+              const ownerIsViewedUser =
+                Number(route?.user_id) === Number(otherUserId);
+              // Participant match: viewed user appears in participants
+              const viewedUserIsParticipant = Array.isArray(route?.participants)
+                ? route.participants.some(
+                    (p) => Number(p?.user_id) === Number(otherUserId)
+                  )
+                : false;
+              return ownerIsViewedUser || viewedUserIsParticipant;
+            })
+          : [];
+
+        // Merge, preferring API items first, then remove duplicates by id
+        const seenRouteIds = new Set(); // tracks which route ids we have kept
+        const combinedRoutesForViewedUser = [
+          ...apiUserRoutes,
+          ...globalRoutesForViewedUser,
+        ].filter((route) => {
+          const routeKey = route?.route_id ?? route?.id; // robust id extraction
+          if (!routeKey) return false; // drop items without a stable id
+          if (seenRouteIds.has(routeKey)) return false; // duplicate -> skip
+          seenRouteIds.add(routeKey); // first time -> keep
+          return true;
+        });
+
+        return combinedRoutesForViewedUser;
+      })()
+    : (allRoutes ?? []);
 
   const isLoading = isOtherProfile ? otherUserLoading : loading;
 
@@ -77,6 +122,10 @@ export const Profile = () => {
       </Box>
     );
   }
+
+  const profileUserId = isOtherProfile
+    ? Number(otherUserId)
+    : currentUser?.user_id;
 
   return (
     <Box
@@ -136,6 +185,7 @@ export const Profile = () => {
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
         <UserRoutesCarousel
           allRoutes={displayRoutes}
+          profileUserId={profileUserId}
           title={"Rutas"}
           showOnlyFuture={false}
           sortOrder="desc"

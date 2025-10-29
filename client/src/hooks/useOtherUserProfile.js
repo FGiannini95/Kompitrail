@@ -45,9 +45,9 @@ export const useOtherUserProfile = (otherUserId) => {
         const createdRoutesAnalytics = createdRoutesRes.data[0];
         const joinedRoutesAnalytics = joinedRutesRes.data[0];
         const routes = Array.isArray(routeRes.data)
-          ? routeRes.data
-          : routeRes.data
-            ? [routeRes.data]
+          ? routeRes.data // If it is an Array we use it
+          : routeRes.data // If it is exists
+            ? [routeRes.data] // We convert into an array
             : [];
 
         const companions = frequentCompanionRes.data;
