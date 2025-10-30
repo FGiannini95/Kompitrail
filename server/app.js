@@ -57,6 +57,9 @@ app.use(function (req, res, next) {
   next(createError(404));
 });
 
+// Health check
+app.get("/health", (_req, res) => res.status(200).send("ok"));
+
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
