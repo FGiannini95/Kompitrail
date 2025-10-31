@@ -21,5 +21,3 @@ pids/
 # OS/editor noise
 .DS_Store
 .vscode/
-
-server/config/tidb-ca.pem
