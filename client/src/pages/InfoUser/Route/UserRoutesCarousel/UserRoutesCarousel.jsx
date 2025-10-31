@@ -9,25 +9,22 @@ import { CardPlaceholder } from "../../../../components/CardPlaceholder/CardPlac
 
 export const UserRoutesCarousel = ({
   allRoutes = [],
-  profileUserId,
   title,
   showOnlyFuture,
   sortOrder,
 }) => {
   const { user: currentUser } = useContext(KompitrailContext);
 
-  const targetUserId = Number(profileUserId || currentUser?.user_id);
-
   // Compute only user-related routes and sort by ascending date
   const userRoutes = useMemo(() => {
-    if (!Array.isArray(allRoutes) || !targetUserId) return [];
+    if (!Array.isArray(allRoutes) || !currentUser?.user_id) return [];
 
     const now = new Date();
 
     const filtered = allRoutes.filter((route) => {
       const isUserRoute =
-        Number(route.user_id) === targetUserId ||
-        route.participants?.some((p) => Number(p.user_id) === targetUserId);
+        route.user_id === currentUser?.user_id ||
+        route.participants?.some((p) => p.user_id === currentUser?.user_id);
 
       if (!isUserRoute) return false;
 
@@ -45,7 +42,7 @@ export const UserRoutesCarousel = ({
 
       return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
     });
-  }, [allRoutes, targetUserId, showOnlyFuture, sortOrder]);
+  }, [allRoutes, currentUser?.user_id, showOnlyFuture]);
 
   const isOne = userRoutes.length === 1;
 
@@ -76,7 +73,7 @@ export const UserRoutesCarousel = ({
             >
               <RouteCard
                 {...route}
-                isOwner={Number(route.user_id) === targetUserId}
+                isOwner={route.user_id === currentUser.user_id}
               />
             </Box>
           ))}

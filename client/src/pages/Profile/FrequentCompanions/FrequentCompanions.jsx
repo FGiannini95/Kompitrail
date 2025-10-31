@@ -12,13 +12,8 @@ import {
 import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
 import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
 
-export const FrequentCompanions = ({ companions: companionsProp }) => {
-  const {
-    companions: myCompanions = [],
-    loading,
-    error,
-  } = useFrequentCompanions();
-  const companions = companionsProp ?? myCompanions;
+export const FrequentCompanions = () => {
+  const { companions = [], loading, error } = useFrequentCompanions();
 
   if (loading) {
     return (
