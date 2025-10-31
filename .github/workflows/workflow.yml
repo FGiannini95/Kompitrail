@@ -1,23 +1,15 @@
-name: GitHub Workflows for Pull Requests
+name: Block direct pushes to main
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened]
-  pull_request_review:
-    types: [submitted]
 
 jobs:
-  prevent-direct-push:
+  block-direct-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Block direct push to main
+      - name: Fail on direct push to main
         run: |
-          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "Direct pushes to 'main' are not allowed. Please use a pull request."
-            exit 1
-          else
-            echo "No direct push to 'main'. Check will be skipped."
-          fi
+          echo "Direct pushes to 'main' are not allowed. Please open a pull request."
+          exit 1
