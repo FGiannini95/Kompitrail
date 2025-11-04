@@ -17,7 +17,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { RoutesString } from "../../../../routes/routes";
 import { getLocalStorage } from "../../../../helpers/localStorageUtils";
-import { USERS_URL } from "../../../../../../server/config/serverConfig";
+import { USERS_URL } from "../../../../api";
 
 export const EditPassword = () => {
   const [showPassword, setShowPassword] = useState(false);

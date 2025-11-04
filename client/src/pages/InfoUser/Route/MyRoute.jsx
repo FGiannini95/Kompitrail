@@ -11,7 +11,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Utils
 import { RoutesString } from "../../../routes/routes";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
-import { ROUTES_URL } from "../../../../../server/config/serverConfig";
+import { ROUTES_URL } from "../../../api";
 // Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";

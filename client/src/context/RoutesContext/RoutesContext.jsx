@@ -9,7 +9,7 @@ import React, {
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 
-import { ROUTES_URL } from "../../../../server/config/serverConfig";
+import { ROUTES_URL } from "../../api";
 
 export const RoutesContext = createContext();
 // Helpful for debugging with ReactDev Tools

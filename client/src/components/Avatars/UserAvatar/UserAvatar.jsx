@@ -3,7 +3,7 @@ import { Stack, Typography, Avatar, Box } from "@mui/material";
 import { getInitials } from "../../../helpers/utils";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { FullScreenImg } from "../../FullScreenImg/FullScreenImg";
-import { API_BASE } from "../../../../../server/config/serverConfig";
+import { API_BASE } from "../../../api";
 
 export const UserAvatar = () => {
   const { user } = useContext(KompitrailContext);

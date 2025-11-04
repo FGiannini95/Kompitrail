@@ -12,10 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
-import {
-  API_BASE,
-  MOTORBIKES_URL,
-} from "../../../../../server/config/serverConfig";
+import { API_BASE, MOTORBIKES_URL } from "../../../api";
 // Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";

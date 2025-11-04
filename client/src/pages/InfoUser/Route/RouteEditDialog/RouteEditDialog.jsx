@@ -14,7 +14,7 @@ import {
 import Grid from "@mui/material/Grid2";
 
 // Utils
-import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
+import { ROUTES_URL } from "../../../../api";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 import { toMySQLDateTime } from "../../../../helpers/utils";
 // Providers & Hooks

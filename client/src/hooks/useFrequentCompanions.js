@@ -3,7 +3,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 import { getLocalStorage } from "../helpers/localStorageUtils";
-import { ROUTES_URL } from "../../../server/config/serverConfig";
+import { ROUTES_URL } from "../api";
 
 export const useFrequentCompanions = () => {
   const [companions, setCompanions] = useState([]);

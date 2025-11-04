@@ -27,6 +27,8 @@ app.use("/users", usersRouter);
 app.use("/motorbikes", motorbikesRouter);
 app.use("/routes", routesRouter);
 
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
