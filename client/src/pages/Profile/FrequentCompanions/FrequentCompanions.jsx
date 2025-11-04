@@ -11,6 +11,7 @@ import {
 
 import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
 import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
+import { API_BASE } from "../../../../../server/config/serverConfig";
 
 export const FrequentCompanions = () => {
   const { companions = [], loading, error } = useFrequentCompanions();
@@ -49,7 +50,7 @@ export const FrequentCompanions = () => {
     >
       {companions.map((companion) => {
         const photoUrl = companion.img
-          ? `http://localhost:3000/images/users/${companion.img}`
+          ? `${API_BASE}/images/users/${companion.img}`
           : undefined;
 
         return (

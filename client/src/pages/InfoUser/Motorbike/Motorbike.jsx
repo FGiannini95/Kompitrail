@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Typography, Button, IconButton, Box } from "@mui/material";
+import { Typography, IconButton, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -12,7 +12,10 @@ import { useNavigate } from "react-router-dom";
 
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
-import { MOTORBIKES_URL } from "../../../../../server/config/serverConfig";
+import {
+  API_BASE,
+  MOTORBIKES_URL,
+} from "../../../../../server/config/serverConfig";
 // Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
@@ -106,7 +109,7 @@ export const Motorbike = () => {
                 brand={motorbike.motorbike_brand}
                 model={motorbike.motorbike_model}
                 motorbike_id={motorbike.motorbike_id}
-                img={`http://localhost:3000/images/motorbikes/${motorbike.img}`}
+                img={`${API_BASE}/images/motorbikes/${motorbike.img}`}
                 onEdit={openEditMotorbike}
                 onDelete={handleOpenDeleteDialog}
               />

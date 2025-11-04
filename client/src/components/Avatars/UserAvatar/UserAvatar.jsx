@@ -3,6 +3,7 @@ import { Stack, Typography, Avatar, Box } from "@mui/material";
 import { getInitials } from "../../../helpers/utils";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { FullScreenImg } from "../../FullScreenImg/FullScreenImg";
+import { API_BASE } from "../../../../../server/config/serverConfig";
 
 export const UserAvatar = () => {
   const { user } = useContext(KompitrailContext);
@@ -12,9 +13,7 @@ export const UserAvatar = () => {
   );
   const fullName = `${user.name ?? ""} ${user.lastname ?? ""}`.trim();
 
-  const photoUrl = user?.img
-    ? `http://localhost:3000/images/users/${user.img}`
-    : null;
+  const photoUrl = user?.img ? `${API_BASE}/images/users/${user.img}` : null;
 
   const [openImg, setOpenImg] = useState(false);
   const handleOpenImg = () => setOpenImg(true);

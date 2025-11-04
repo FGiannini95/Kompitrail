@@ -3,6 +3,7 @@ import { Avatar, Badge, Typography, Stack } from "@mui/material";
 
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { getInitials } from "../../../helpers/utils";
+import { API_BASE } from "../../../../../server/config/serverConfig";
 
 export const BadgeAvatar = ({
   targetUserId,
@@ -27,7 +28,7 @@ export const BadgeAvatar = ({
   const shouldShowBadge = showBadge && isCurrentUser && !isPastRoute;
 
   const photoUrl = targetUserImg
-    ? `http://localhost:3000/images/users/${targetUserImg}`
+    ? `${API_BASE}/images/users/${targetUserImg}`
     : undefined;
 
   return (
