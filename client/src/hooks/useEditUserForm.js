@@ -9,6 +9,7 @@ import { USER_INITIAL_VALUE } from "../constants/userConstants";
 import { RoutesString } from "../routes/routes";
 // Hooks & Providers
 import { KompitrailContext } from "../context/KompitrailContext";
+import { API_BASE } from "../../../server/config/serverConfig";
 
 export const useEditUserForm = () => {
   const [editUser, setEditUser] = useState(USER_INITIAL_VALUE);
@@ -25,15 +26,13 @@ export const useEditUserForm = () => {
   useEffect(() => {
     if (user_id) {
       axios
-        .get(`http://localhost:3000/users/oneuser/${user_id}`)
+        .get(`${API_BASE}/users/oneuser/${user_id}`)
         .then((res) => {
           setEditUser(res.data);
           setInitialValue(res.data);
 
           if (res.data.img) {
-            setPhotoPreview(
-              `http://localhost:3000/images/users/${res.data.img}`
-            );
+            setPhotoPreview(`${API_BASE}/images/users/${res.data.img}`);
           }
         })
         .catch((err) => {
@@ -85,7 +84,7 @@ export const useEditUserForm = () => {
     }
 
     axios
-      .put(`http://localhost:3000/users/edituser/${user_id}`, newFormData)
+      .put(`${API_BASE}/users/edituser/${user_id}`, newFormData)
       .then((res) => {
         setEditUser(res.data);
         setInitialValue(res.data);
