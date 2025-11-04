@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import axios from "axios";
 
-import { MOTORBIKES_URL } from "../../../../server/config/serverConfig";
+import { MOTORBIKES_URL } from "../../api";
 
 export const MotorbikesContext = createContext();
 // Helpful for debugging with ReactDev Tools

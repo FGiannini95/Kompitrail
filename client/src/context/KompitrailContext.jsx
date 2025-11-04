@@ -3,7 +3,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 // Utils
 import { getLocalStorage } from "../helpers/localStorageUtils";
-import { USERS_URL } from "../../../server/config/serverConfig";
+import { USERS_URL } from "../api";
 
 export const KompitrailContext = createContext();
 

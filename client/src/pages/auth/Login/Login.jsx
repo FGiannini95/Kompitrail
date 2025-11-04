@@ -10,7 +10,7 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 // Utils
 import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 import { RoutesString } from "../../../routes/routes";
-import { USERS_URL } from "../../../../../server/config/serverConfig";
+import { USERS_URL } from "../../../api";
 // Providers & Hooks
 import { KompitrailContext } from "../../../context/KompitrailContext";
 // Components

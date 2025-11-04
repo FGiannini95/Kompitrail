@@ -13,7 +13,7 @@ import {
   getLocalStorage,
   delLocalStorage,
 } from "../../../helpers/localStorageUtils";
-import { USERS_URL } from "../../../../../server/config/serverConfig";
+import { USERS_URL } from "../../../api";
 // Providers & Hooks
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";

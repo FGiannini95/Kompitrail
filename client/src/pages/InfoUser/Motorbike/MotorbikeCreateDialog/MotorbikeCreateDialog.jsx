@@ -10,7 +10,7 @@ import TextField from "@mui/material/TextField";
 
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 // Utils
-import { MOTORBIKES_URL } from "../../../../../../server/config/serverConfig";
+import { MOTORBIKES_URL } from "../../../../api";
 //Providers
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";

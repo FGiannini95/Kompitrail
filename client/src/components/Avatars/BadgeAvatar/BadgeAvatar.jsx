@@ -3,7 +3,7 @@ import { Avatar, Badge, Typography, Stack } from "@mui/material";
 
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { getInitials } from "../../../helpers/utils";
-import { API_BASE } from "../../../../../server/config/serverConfig";
+import { API_BASE } from "../../../api";
 
 export const BadgeAvatar = ({
   targetUserId,

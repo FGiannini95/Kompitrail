@@ -4,10 +4,7 @@ import axios from "axios";
 
 // Utils
 import { getLocalStorage } from "../helpers/localStorageUtils";
-import {
-  MOTORBIKES_URL,
-  ROUTES_URL,
-} from "../../../server/config/serverConfig";
+import { MOTORBIKES_URL, ROUTES_URL } from "../api";
 
 export const useUserAnalytics = () => {
   const [analytics, setAnalytics] = useState({

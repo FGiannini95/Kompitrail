@@ -9,7 +9,7 @@ import { USER_INITIAL_VALUE } from "../constants/userConstants";
 import { RoutesString } from "../routes/routes";
 // Hooks & Providers
 import { KompitrailContext } from "../context/KompitrailContext";
-import { API_BASE } from "../../../server/config/serverConfig";
+import { API_BASE } from "../api";
 
 export const useEditUserForm = () => {
   const [editUser, setEditUser] = useState(USER_INITIAL_VALUE);

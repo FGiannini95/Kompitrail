@@ -19,7 +19,7 @@ import { FormTextfield } from "../../../../components/FormTextfield/FormTextfiel
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 // Utils
-import { ROUTES_URL } from "../../../../../../server/config/serverConfig";
+import { ROUTES_URL } from "../../../../api";
 import { RoutesString } from "../../../../routes/routes";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 // Providers & Hooks
