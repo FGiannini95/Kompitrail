@@ -55,9 +55,12 @@ export const UserAvatar = ({ user: userProp }) => {
           </Typography>
         </Box>
       </Stack>
-      {photoUrl && (
-        <FullScreenImg open={openImg} onClose={handleCloseImg} img={photoUrl} />
-      )}
+      <FullScreenImg
+        open={openImg}
+        onClose={handleCloseImg}
+        img={photoUrl}
+        initials={initials}
+      />
     </>
   );
 };
