@@ -53,7 +53,7 @@ jobs:
       - name: Create remote release dir
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
-            "set -euo pipefail; mkdir -p '${DEPLOY_BASE}/releases/${RELEASE}/backend'"
+            "set -euo pipefail; mkdir -p '${DEPLOY_BASE}/releases/${RELEASE}'"
 
       - name: Rsync app source
         run: |
@@ -62,18 +62,18 @@ jobs:
             --exclude '.git' \
             --exclude '.github' \
             "${BACKEND_SUBDIR}/" \
-            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/"
+            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/"
 
       - name: Rsync production node_modules
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
             "${BACKEND_SUBDIR}/node_modules/" \
-            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/node_modules/"
+            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/node_modules/"
 
       - name: Activate release and restart service
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; \
              mkdir -p '${DEPLOY_BASE}/current'; \
-             ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}/backend' '${DEPLOY_BASE}/current/backend'; \
+             ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}' '${DEPLOY_BASE}/current/backend'; \
              sudo /usr/bin/systemctl restart '${BACKEND_SERVICE}'"
