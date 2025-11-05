@@ -1,0 +1,73 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "server/**"
+      - ".github/workflows/deploy-backend.yml"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }}
+      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }}
+      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }}
+      RELEASE: ${{ github.run_id }}-${{ github.run_number }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: |
+            ${{ env.BACKEND_SUBDIR }}/package-lock.json
+            ${{ env.BACKEND_SUBDIR }}/package.json
+
+      - name: Install deps (dev)
+        working-directory: ${{ env.BACKEND_SUBDIR }}
+        run: npm ci
+
+      - name: Build
+        working-directory: ${{ env.BACKEND_SUBDIR }}
+        run: npm run build
+
+      - name: Prune to production deps
+        working-directory: ${{ env.BACKEND_SUBDIR }}
+        run: npm prune --omit=dev
+
+      - name: Prepare SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Create remote release dir
+        run: |
+          ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
+            "set -euo pipefail; mkdir -p '${DEPLOY_BASE}/releases/${RELEASE}/backend'"
+
+      - name: Rsync dist + prod node_modules
+        run: |
+          rsync -az --delete -e "ssh -p ${SSH_PORT}" \
+            "${BACKEND_SUBDIR}/dist/" \
+            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/dist/"
+          rsync -az --delete -e "ssh -p ${SSH_PORT}" \
+            "${BACKEND_SUBDIR}/node_modules/" \
+            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/node_modules/"
+          rsync -az -e "ssh -p ${SSH_PORT}" \
+            "${BACKEND_SUBDIR}/package.json" \
+            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/"
