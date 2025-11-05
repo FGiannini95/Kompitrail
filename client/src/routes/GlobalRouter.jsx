@@ -69,6 +69,10 @@ export const GlobalRouter = () => {
                       path={RoutesString.createTrip}
                       element={<CreateTrip />}
                     />
+                    <Route
+                      path={RoutesString.otherProfile}
+                      element={<Profile />}
+                    />
                     <Route path={RoutesString.profile} element={<Profile />} />
                     <Route
                       path={RoutesString.infouser}

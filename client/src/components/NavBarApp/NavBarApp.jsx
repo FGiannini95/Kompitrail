@@ -1,13 +1,11 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
 
 import { AppBar, Box, Toolbar, IconButton } from "@mui/material";
 
 import HomeIcon from "@mui/icons-material/Home";
 import ChatIcon from "@mui/icons-material/Chat";
 import PersonIcon from "@mui/icons-material/Person";
-// import SearchIcon from "@mui/icons-material/Search";
-// import AddIcon from "@mui/icons-material/Add";
 
 import { RoutesString } from "../../routes/routes";
 
@@ -18,8 +16,10 @@ export const NavBarApp = ({ children }) => {
     location.pathname === route || location.pathname.startsWith(route + "/");
 
   const location = useLocation();
+  const matchProfile = useMatch("/profile/:id");
 
   const noDesign =
+    Boolean(matchProfile) ||
     [
       RoutesString.infouser,
       RoutesString.editUser,
@@ -31,7 +31,8 @@ export const NavBarApp = ({ children }) => {
       RoutesString.editRoute,
       RoutesString.route,
       RoutesString.routeDetail,
-    ].includes(location.pathname) || location.pathname.startsWith("/route/");
+    ].includes(location.pathname) ||
+    location.pathname.startsWith("/route/");
 
   const topBarHeight = 64;
   const navBarHeight = 56;
@@ -66,18 +67,6 @@ export const NavBarApp = ({ children }) => {
           >
             <HomeIcon />
           </IconButton>
-          {/* <IconButton
-            onClick={() => handleButtonClick(RoutesString.search)}
-            color={activeButton === RoutesString.search ? "" : "inherit"}
-          >
-            <SearchIcon />
-          </IconButton> */}
-          {/* <IconButton
-            onClick={() => handleButtonClick(RoutesString.createTrip)}
-            color={activeButton === RoutesString.createTrip ? "" : "inherit"}
-          >
-            <AddIcon sx={{ fontSize: 50 }} />
-          </IconButton> */}
           <IconButton
             onClick={() => navigate(RoutesString.chat)}
             color={isActive(RoutesString.chat) ? "" : "inherit"}

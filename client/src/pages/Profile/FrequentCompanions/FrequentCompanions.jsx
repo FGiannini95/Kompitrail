@@ -13,8 +13,13 @@ import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
 import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
 import { API_BASE } from "../../../api";
 
-export const FrequentCompanions = () => {
-  const { companions = [], loading, error } = useFrequentCompanions();
+export const FrequentCompanions = ({ companions: companionsProp }) => {
+  const {
+    companions: myCompanions = [],
+    loading,
+    error,
+  } = useFrequentCompanions();
+  const companions = companionsProp ?? myCompanions;
 
   if (loading) {
     return (

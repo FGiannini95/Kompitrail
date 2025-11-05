@@ -5,13 +5,16 @@ import { KompitrailContext } from "../../../context/KompitrailContext";
 import { FullScreenImg } from "../../FullScreenImg/FullScreenImg";
 import { API_BASE } from "../../../api";
 
-export const UserAvatar = () => {
-  const { user } = useContext(KompitrailContext);
+export const UserAvatar = ({ user: userProp }) => {
+  const { user: ctxUser } = useContext(KompitrailContext);
+  // Choose the user coming from props if present; otherwise use context.
+  const user = userProp ?? ctxUser;
+
   const initials = useMemo(
     () => getInitials(user?.name ?? "", user?.lastname ?? ""),
     [user?.name, user?.lastname]
   );
-  const fullName = `${user.name ?? ""} ${user.lastname ?? ""}`.trim();
+  const fullName = `${user?.name ?? ""} ${user?.lastname ?? ""}`.trim();
 
   const photoUrl = user?.img ? `${API_BASE}/images/users/${user.img}` : null;
 
