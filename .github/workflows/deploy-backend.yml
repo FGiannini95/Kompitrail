@@ -19,8 +19,8 @@ jobs:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
       DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }}
-      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }}
-      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }}
+      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }} # "server"
+      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }} # "kompitrail-backend"
       RELEASE: ${{ github.run_id }}-${{ github.run_number }}
 
     steps:
@@ -36,17 +36,11 @@ jobs:
             ${{ env.BACKEND_SUBDIR }}/package-lock.json
             ${{ env.BACKEND_SUBDIR }}/package.json
 
-      - name: Install deps (dev)
+      - name: Install (clean) and prune dev deps
         working-directory: ${{ env.BACKEND_SUBDIR }}
-        run: npm ci
-
-      - name: Build
-        working-directory: ${{ env.BACKEND_SUBDIR }}
-        run: npm run build
-
-      - name: Prune to production deps
-        working-directory: ${{ env.BACKEND_SUBDIR }}
-        run: npm prune --omit=dev
+        run: |
+          npm ci
+          npm prune --omit=dev
 
       - name: Prepare SSH
         run: |
@@ -61,14 +55,27 @@ jobs:
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; mkdir -p '${DEPLOY_BASE}/releases/${RELEASE}/backend'"
 
-      - name: Rsync dist + prod node_modules
+      - name: Rsync app source (no dev stuff)
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
-            "${BACKEND_SUBDIR}/dist/" \
-            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/dist/"
+            --exclude 'node_modules' \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'test' \
+            --exclude 'tests' \
+            "${BACKEND_SUBDIR}/" \
+            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/"
+
+      - name: Rsync production node_modules
+        run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
             "${BACKEND_SUBDIR}/node_modules/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/node_modules/"
-          rsync -az -e "ssh -p ${SSH_PORT}" \
-            "${BACKEND_SUBDIR}/package.json" \
-            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/"
+
+      - name: Activate release and restart service
+        run: |
+          ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
+            "set -euo pipefail; \
+             mkdir -p '${DEPLOY_BASE}/current'; \
+             ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}/backend' '${DEPLOY_BASE}/current/backend'; \
+             sudo /usr/bin/systemctl restart '${BACKEND_SERVICE}'"
