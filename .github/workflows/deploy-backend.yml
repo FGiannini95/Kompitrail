@@ -36,10 +36,10 @@ jobs:
             ${{ env.BACKEND_SUBDIR }}/package-lock.json
             ${{ env.BACKEND_SUBDIR }}/package.json
 
-      - name: Install (clean) and prune dev deps
+      - name: Install and prune dev deps
         working-directory: ${{ env.BACKEND_SUBDIR }}
         run: |
-          npm ci
+          npm ci || npm install
           npm prune --omit=dev
 
       - name: Prepare SSH
@@ -55,14 +55,12 @@ jobs:
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; mkdir -p '${DEPLOY_BASE}/releases/${RELEASE}/backend'"
 
-      - name: Rsync app source (no dev stuff)
+      - name: Rsync app source
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
             --exclude 'node_modules' \
             --exclude '.git' \
             --exclude '.github' \
-            --exclude 'test' \
-            --exclude 'tests' \
             "${BACKEND_SUBDIR}/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/backend/"
 
