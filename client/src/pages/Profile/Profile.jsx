@@ -1,11 +1,12 @@
-import React, { useContext, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
 
 import {
   Box,
   CircularProgress,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -40,10 +41,27 @@ export const Profile = () => {
     useUserAnalytics();
   const { companions: myCompanions = [] } = useFrequentCompanions();
   const navigate = useNavigate();
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     loadAllRoutes();
   }, [loadAllRoutes]);
+
+  // Safe back handler with fallback to home.
+  const handleBack = () => {
+    // Check if the tab has history to go back to
+    const hasHistory =
+      typeof window !== "undefined" &&
+      window.history?.state &&
+      typeof window.history.state.idx === "number" &&
+      window.history.state.idx > 0;
+
+    if (hasHistory) {
+      navigate(-1);
+    } else {
+      navigate(RoutesString.home, { replace: true });
+    }
+  };
 
   // Determine which user profile we are watching
   const isOtherProfile =
@@ -72,7 +90,6 @@ export const Profile = () => {
   /* Decide which routes to render in the carousel.
   Own profile  -> use allRoutes.
   Other profile -> combine what the API returns for that user with what we can infer from the global list, then de-duplicate by id.*/
-
   const displayRoutes = isOtherProfile
     ? (() => {
         // Routes returned by the "other user" API may be empty or only future/created)
@@ -115,6 +132,33 @@ export const Profile = () => {
 
   const isLoading = isOtherProfile ? otherUserLoading : loading;
 
+  const profileUserId = isOtherProfile
+    ? Number(otherUserId)
+    : currentUser?.user_id;
+
+  // Build a canonical share URL that ALWAYS contains the user id.
+  // If we're viewing someone else: use that id.
+  // If we're viewing our own profile at /profile: use currentUser.user_id.
+  const shareUrl = useMemo(() => {
+    const viewedId = otherUserId ? otherUserId : currentUser?.user_id;
+    if (!viewedId) return window.location.href;
+
+    const pathWithId = generatePath(RoutesString.otherProfile, {
+      id: String(viewedId),
+    });
+    return `${window.location.origin}${pathWithId}`;
+  }, [otherUserId, currentUser?.user_id]);
+
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (error) {
+      console.error("Error al copiar la URL:", error);
+    }
+  };
+
   if (isOtherProfile && (otherUserLoading || !otherUserData)) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
@@ -122,10 +166,6 @@ export const Profile = () => {
       </Box>
     );
   }
-
-  const profileUserId = isOtherProfile
-    ? Number(otherUserId)
-    : currentUser?.user_id;
 
   return (
     <Box
@@ -141,15 +181,24 @@ export const Profile = () => {
           justifyContent="space-between"
           sx={{ px: 2, mb: 2 }}
         >
-          <IconButton onClick={() => navigate(-1)}>
+          <IconButton onClick={handleBack}>
             <ArrowBackIosIcon style={{ color: "black" }} />
           </IconButton>
           <Typography variant="h6">Perfil</Typography>
-          <IconButton>
-            <ShareOutlinedIcon style={{ color: "black" }} />
-          </IconButton>
+          <Tooltip
+            title="URL copiada"
+            open={isCopied}
+            disableInteractive
+            arrow
+            placement="bottom"
+          >
+            <IconButton onClick={handleShare}>
+              <ShareOutlinedIcon style={{ color: "black" }} />
+            </IconButton>
+          </Tooltip>
         </Grid>
       )}
+
       <Grid>
         <UserAvatar user={displayUser} />
 
@@ -160,10 +209,9 @@ export const Profile = () => {
             justifyContent="center"
             sx={{ p: "10px" }}
           >
-            <ContainedButton text={"Ir a premium"} />
             <OutlinedButton
               onClick={() => navigate(RoutesString.editUser)}
-              text={"Modificar Perfil"}
+              text={"Modificar"}
               icon={
                 <EditOutlinedIcon
                   style={{ paddingLeft: "5px", width: "20px" }}
@@ -171,6 +219,23 @@ export const Profile = () => {
                 />
               }
             />
+            <Tooltip
+              title="URL copiada"
+              open={isCopied} // Display the tooltip only if isCopied is true
+              disableInteractive // It doesn't appear with the interaction of the mouse
+              arrow // Display the arrow
+            >
+              <ContainedButton
+                onClick={handleShare}
+                text={"Compartir"}
+                icon={
+                  <ShareOutlinedIcon
+                    style={{ paddingLeft: "5px", width: "20px" }}
+                    aria-hidden
+                  />
+                }
+              />
+            </Tooltip>
           </Stack>
         )}
 
