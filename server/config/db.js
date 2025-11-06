@@ -1,8 +1,5 @@
+require("dotenv").config();
 const mysql2 = require("mysql2");
-const path = require("path");
-require("dotenv").config({
-  path: path.resolve("/var/www/kompitrail/shared/backend.env"),
-});
 
 const connection = mysql2.createConnection({
   host: process.env.DB_HOST,

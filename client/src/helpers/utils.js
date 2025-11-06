@@ -20,30 +20,43 @@ export const capitalizeFullName = (name, lastname) => {
   return `${capitalizedName} ${capitalizedLastName}`;
 };
 
-export const formatDateTime = (iso) => {
-  const d = new Date(iso);
+export const formatDateTime = (
+  input,
+  { locale = "es-ES", timeZone = "Europe/Madrid" } = {}
+) => {
+  const d = input instanceof Date ? input : new Date(input);
 
-  const date_dd_mm_yyyy = new globalThis.Intl.DateTimeFormat("es-ES", {
+  // Guard invalid dates (undefined, null, "", bad ISO, etc.)
+  if (!(d instanceof Date) || Number.isNaN(d.getTime())) {
+    return {
+      date_dd_mm_yyyy: "",
+      time_hh_mm: "",
+      weekday: "",
+      isValid: false,
+    };
+  }
+
+  const date_dd_mm_yyyy = new globalThis.Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-    timeZone: "Europe/Madrid",
+    timeZone,
   }).format(d);
 
-  const time_hh_mm = new globalThis.Intl.DateTimeFormat("es-ES", {
+  const time_hh_mm = new globalThis.Intl.DateTimeFormat(locale, {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
-    timeZone: "Europe/Madrid",
+    timeZone,
   }).format(d);
 
-  const weekday = new globalThis.Intl.DateTimeFormat("es-ES", {
+  const weekday = new globalThis.Intl.DateTimeFormat(locale, {
     weekday: "long",
-    timeZone: "Europe/Madrid",
+    timeZone,
   }).format(d);
 
-  return { date_dd_mm_yyyy, time_hh_mm, weekday };
+  return { date_dd_mm_yyyy, time_hh_mm, weekday, isValid: true };
 };
 
-export const toMySQLDateTime = (value, timeZone = "Europe/Madrid") =>
+export const toMySQLDateTime = (value, timeZone) =>
   new Date(value).toLocaleString("sv-SE", { timeZone, hour12: false });

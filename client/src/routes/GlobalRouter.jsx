@@ -16,7 +16,6 @@ import { Motorbike } from "../pages/InfoUser/Motorbike/Motorbike";
 import { Settings } from "../pages/InfoUser/Settings/Settings";
 import { EditPassword } from "../pages/InfoUser/Settings/EditPassword/EditPassword";
 import { KompitrailContext } from "../context/KompitrailContext";
-import { CreateTrip } from "../pages/CreateTrip/CreateTrip";
 import { MyRoute } from "../pages/InfoUser/Route/MyRoute";
 import { OneRoute } from "../pages/InfoUser/Route/OneRoute/OneRoute";
 
@@ -66,8 +65,8 @@ export const GlobalRouter = () => {
                     <Route path={RoutesString.search} element={<Search />} />
                     <Route path={RoutesString.chat} element={<Chat />} />
                     <Route
-                      path={RoutesString.createTrip}
-                      element={<CreateTrip />}
+                      path={RoutesString.otherProfile}
+                      element={<Profile />}
                     />
                     <Route path={RoutesString.profile} element={<Profile />} />
                     <Route

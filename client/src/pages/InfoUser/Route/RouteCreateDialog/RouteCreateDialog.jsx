@@ -14,10 +14,6 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-// Components
-import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
-import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
-import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 // Utils
 import { ROUTES_URL } from "../../../../api";
 import { RoutesString } from "../../../../routes/routes";
@@ -33,6 +29,10 @@ import {
   ROUTE_INITIAL_VALUE,
   ROUTE_LEVELS,
 } from "../../../../constants/routeConstants";
+// Components
+import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
+import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
+import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -95,7 +95,7 @@ export const RouteCreateDialog = () => {
 
   return (
     <Dialog open={isOpen} onClose={cleanDialog} fullWidth maxWidth="md">
-      <DialogTitle>Añadir ruta</DialogTitle>
+      <DialogTitle>Crear ruta</DialogTitle>
       <DialogContent>
         <Box
           style={{

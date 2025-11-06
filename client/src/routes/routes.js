@@ -2,7 +2,7 @@ export const RoutesString = {
   home: "/",
   search: "/search",
   profile: "/profile",
-  createTrip: "/createTrip",
+  otherProfile: "/profile/:id",
   register: "/register",
   login: "/login",
   chat: "/chat",

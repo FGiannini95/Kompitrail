@@ -1,14 +1,12 @@
 import React from "react";
 
-// MUI
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
+import { Box, IconButton, Modal, Typography } from "@mui/material";
 
-// MUI-ICONS
 import CloseIcon from "@mui/icons-material/Close";
 
-export const FullScreenImg = ({ open, onClose, img }) => {
+export const FullScreenImg = ({ open, onClose, img, initials }) => {
+  const hasImage = Boolean(img);
+
   return (
     <Modal
       open={open}
@@ -44,17 +42,47 @@ export const FullScreenImg = ({ open, onClose, img }) => {
         >
           <CloseIcon />
         </IconButton>
-        <img
-          src={img}
-          alt="Motorbike"
-          style={{
-            maxWidth: "90vw",
-            maxHeight: "90vh",
-            width: "auto",
-            height: "auto",
-            borderRadius: "5px",
+
+        <Box
+          role="img"
+          sx={{
+            width: "60vmin",
+            height: "60vmin",
+            maxWidth: 480,
+            maxHeight: 480,
+            minWidth: 240,
+            minHeight: 240,
+            borderRadius: "50%",
+            border: "4px solid black",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "transparent",
+            userSelect: "none",
+            overflow: "hidden",
+            ...(hasImage && {
+              backgroundImage: `url(${img})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }),
           }}
-        />
+        >
+          {!hasImage && (
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: "18vmin",
+                lineHeight: 1,
+                color: "black",
+                fontWeight: 700,
+                letterSpacing: 2,
+                textTransform: "uppercase",
+              }}
+            >
+              {initials}
+            </Typography>
+          )}
+        </Box>
       </Box>
     </Modal>
   );

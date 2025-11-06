@@ -1,19 +1,17 @@
-import React, { useContext, useMemo, useRef } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import axios from "axios";
 
 import {
   Button,
   Card,
   CardContent,
-  IconButton,
   Stack,
   Typography,
   Divider,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
@@ -28,13 +26,17 @@ import {
   capitalizeFirstLetter,
   formatDateTime,
 } from "../../../../helpers/utils";
+import { ROUTES_URL, USERS_URL } from "../../../../api";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { useShareUrl } from "../../../../hooks/useShareUrl";
+import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 import { openCalendar } from "../../../../helpers/calendar";
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
+import { Header } from "../../../../components/Header/Header";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -46,12 +48,109 @@ const InfoItem = ({ label, value }) => (
 );
 
 export const OneRoute = () => {
-  const navigate = useNavigate();
-  const { state } = useLocation();
+  const { state } = useLocation(); // May be undefined on deep link
   const { id: route_id } = useParams();
   const { user: currentUser } = useContext(KompitrailContext);
+  const { isCopied, handleShare } = useShareUrl({
+    mode: "route",
+    routeId: route_id,
+  });
+  const { allRoutes, loadAllRoutes } = useRoutes();
+
+  const [fetched, setFetched] = useState(null);
 
   const participantsSectionRef = useRef();
+  useEffect(() => {
+    if (state) return; // Internal navigation already has data
+    if (!route_id) return;
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        // Fetch the route
+        const { data: routeRaw } = await axios.get(
+          `${ROUTES_URL}/oneroute/${route_id}`
+        );
+        const route = routeRaw ?? {};
+
+        // Base object
+        const base = {
+          ...route,
+          participants: Array.isArray(route.participants)
+            ? route.participants
+            : [],
+        };
+
+        let create_name = base.create_name;
+        let user_img = base.user_img;
+
+        if ((!create_name || !user_img) && base.user_id) {
+          try {
+            const { data: userRaw } = await axios.get(
+              `${USERS_URL}/oneuser/${base.user_id}`
+            );
+            const user = Array.isArray(userRaw)
+              ? (userRaw[0] ?? {})
+              : (userRaw ?? {});
+
+            create_name =
+              create_name ??
+              `${user?.name ?? ""} ${user?.lastname ?? ""}`.trim();
+            user_img = user_img ?? user?.img ?? null;
+          } catch (e) {
+            // Non-blocking: keep page working even if this fails
+            console.log("Creator fetch failed (non-blocking)", e);
+          }
+        }
+
+        if (!cancelled) {
+          setFetched({ ...base, create_name, user_img });
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Route fetch error:", err);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [state, route_id]);
+
+  // Ensure the routes cache exists to use as a fallback source
+  useEffect(() => {
+    if (state) return; // internal navigation already has participants
+    if (!fetched) return; // wait for the single-route fetch
+    if (Array.isArray(fetched.participants) && fetched.participants.length > 0)
+      return;
+
+    // If cache is empty, load it
+    if (!allRoutes || allRoutes.length === 0) {
+      loadAllRoutes();
+    }
+  }, [state, fetched, allRoutes, loadAllRoutes]);
+
+  // When cache is available and fetched participants are empty, pull them from cache
+  useEffect(() => {
+    if (state) return; // not needed for internal navigation
+    if (!fetched || (fetched.participants?.length ?? 0) > 0) return;
+
+    // Try to find this route in the cache and use its participants
+    const fromCache = Array.isArray(allRoutes)
+      ? allRoutes.find((r) => String(r.route_id) === String(route_id))
+      : null;
+
+    if (fromCache?.participants?.length) {
+      setFetched((prev) => ({
+        ...prev,
+        participants: fromCache.participants, // fallback participants
+      }));
+    }
+  }, [state, fetched, allRoutes, route_id]);
+
+  const data = state ?? fetched;
 
   const {
     date,
@@ -69,10 +168,11 @@ export const OneRoute = () => {
     user_id,
     create_name,
     user_img,
-  } = state || {};
+  } = data || {};
 
-  const { date_dd_mm_yyyy, time_hh_mm, weekday } = formatDateTime(date);
-  const weekdayCap = capitalizeFirstLetter(weekday);
+  const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } =
+    formatDateTime(date);
+  const weekdayCap = isValid ? capitalizeFirstLetter(weekday) : "";
 
   const isCurrentUserEnrolled = useMemo(() => {
     return participants.some((p) => p.user_id === currentUser?.user_id);
@@ -147,15 +247,8 @@ export const OneRoute = () => {
     : undefined;
 
   return (
-    <Grid container direction="column" spacing={2}>
-      <Grid container alignItems="center" justifyContent="space-between">
-        <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
-        </IconButton>
-        <IconButton>
-          <ShareOutlinedIcon style={{ color: "black" }} />
-        </IconButton>
-      </Grid>
+    <Grid container direction="column" spacing={2} sx={{ overflowX: "auto" }}>
+      <Header onShare={handleShare} isCopied={isCopied} />
       <Card
         sx={{
           width: "95%",
@@ -174,7 +267,11 @@ export const OneRoute = () => {
           >
             <TimelineOutlinedIcon fontSize="medium" aria-hidden />
             <InfoItem
-              value={`${weekdayCap} ${date_dd_mm_yyyy} - ${time_hh_mm}`}
+              value={
+                isValid
+                  ? `${weekdayCap} ${date_dd_mm_yyyy} - ${time_hh_mm}`
+                  : "Fecha no disponible"
+              }
             />
           </Grid>
           <Divider sx={{ my: 1 }} />
@@ -225,7 +322,9 @@ export const OneRoute = () => {
             user_id={user_id}
             create_name={create_name}
             user_img={user_img}
-            participants={participants}
+            participants={
+              participants
+            } /* Will have data via state OR cache fallback */
             max_participants={max_participants}
             isOwner={isOwner}
             isPastRoute={isPastRoute}

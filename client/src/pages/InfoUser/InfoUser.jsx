@@ -1,19 +1,9 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Box,
-  Grid2 as Grid,
-  Typography,
-  Button,
-  Tooltip,
-  List,
-  Stack,
-} from "@mui/material";
+import { Box, Grid2 as Grid, Typography, List } from "@mui/material";
 
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 // Utils
@@ -25,7 +15,6 @@ import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/C
 // Components
 import { SettingsRow } from "./Settings/SettingsRow/SettingsRow";
 import { PrivacyDialog } from "./Privacy/PrivacyDialog";
-import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 
 function Section({ title, children }) {
@@ -52,7 +41,6 @@ export const InfoUser = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [iframe, setiIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
-  const [isCopied, setIsCopied] = useState(false);
 
   const navigate = useNavigate();
   const { openDialog } = useConfirmationDialog();
@@ -78,17 +66,6 @@ export const InfoUser = () => {
     setiIframe(!iframe);
   };
 
-  const handleShare = async () => {
-    try {
-      const url = window.location.href; // Obtain the url
-      await navigator.clipboard.writeText(url); // Copy the url
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (error) {
-      console.error("Error al copiar la URL:", error);
-    }
-  };
-
   const handleClose = () => {
     const target = sessionStorage.getItem(RETURN_KEY) || "/";
     sessionStorage.removeItem(RETURN_KEY);
@@ -109,7 +86,7 @@ export const InfoUser = () => {
         />
       </Grid>
       <UserAvatar />
-      <Stack
+      {/* <Stack
         direction="row"
         spacing={2}
         justifyContent="center"
@@ -128,24 +105,7 @@ export const InfoUser = () => {
         >
           Ir a premium
         </Button>
-        <Tooltip
-          title="URL copiada"
-          open={isCopied} // Display the tooltip only if isCopied is true
-          disableInteractive // It doesn't appear with the interaction of the mouse
-          arrow // Display the arrow
-        >
-          <OutlinedButton
-            onClick={handleShare}
-            text={"Compartir perfil"}
-            icon={
-              <ShareOutlinedIcon
-                style={{ paddingLeft: "5px", width: "20px" }}
-                aria-hidden
-              />
-            }
-          />
-        </Tooltip>
-      </Stack>
+      </Stack> */}
       <Section title="Mi cuenta">
         <SettingsRow
           action="editAccount"
