@@ -133,9 +133,7 @@ export const RoutesProvider = ({ children }) => {
 
   // Helper to know if a specific route is currently joining
   const isJoiningRoute = useCallback(
-    (route_id) => {
-      joiningRouteId.has(route_id);
-    },
+    (route_id) => joiningRouteId.has(route_id), // <-- return the boolean
     [joiningRouteId]
   );
 
