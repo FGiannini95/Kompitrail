@@ -73,8 +73,9 @@ export const OneRoute = () => {
     user_img,
   } = state || {};
 
-  const { date_dd_mm_yyyy, time_hh_mm, weekday } = formatDateTime(date);
-  const weekdayCap = capitalizeFirstLetter(weekday);
+  const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } =
+    formatDateTime(date);
+  const weekdayCap = isValid ? capitalizeFirstLetter(weekday) : "";
 
   const isCurrentUserEnrolled = useMemo(() => {
     return participants.some((p) => p.user_id === currentUser?.user_id);
@@ -150,7 +151,7 @@ export const OneRoute = () => {
 
   return (
     <Grid container direction="column" spacing={2}>
-      <Header title="Info" onShare={handleShare} isCopied={isCopied} />
+      <Header onShare={handleShare} isCopied={isCopied} />
       <Card
         sx={{
           width: "95%",
@@ -169,7 +170,11 @@ export const OneRoute = () => {
           >
             <TimelineOutlinedIcon fontSize="medium" aria-hidden />
             <InfoItem
-              value={`${weekdayCap} ${date_dd_mm_yyyy} - ${time_hh_mm}`}
+              value={
+                isValid
+                  ? `${weekdayCap} ${date_dd_mm_yyyy} - ${time_hh_mm}`
+                  : "Fecha no disponible"
+              }
             />
           </Grid>
           <Divider sx={{ my: 1 }} />
