@@ -9,7 +9,6 @@ import Grid from "@mui/material/Grid2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Utils
-import { RoutesString } from "../../../routes/routes";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { ROUTES_URL } from "../../../api";
 // Providers & Hooks
@@ -23,6 +22,7 @@ import { EmptyState } from "../../../components/EmptyState/EmptyState";
 import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
 import { Loading } from "../../../components/Loading/Loading";
 import { OutlinedButton } from "../../../components/Buttons/OutlinedButton/OutlinedButton";
+import { RouteCreateDialog } from "./RouteCreateDialog/RouteCreateDialog";
 
 export const MyRoute = () => {
   const navigate = useNavigate();
@@ -43,8 +43,8 @@ export const MyRoute = () => {
     loadUserRoutes(user_id);
   }, [tokenLocalStorage, loadUserRoutes]);
 
-  const handleOpenCreateRoute = () => {
-    navigate(RoutesString.createTrip);
+  const openCreateDialog = () => {
+    openCreateEditDialog({ mode: "create" });
   };
 
   const handleDeleteRoute = (route_id) => {
@@ -109,7 +109,7 @@ export const MyRoute = () => {
       </Box>
       <Grid>
         <OutlinedButton
-          onClick={handleOpenCreateRoute}
+          onClick={openCreateDialog}
           text={"Crear ruta"}
           icon={
             <AddOutlinedIcon
@@ -120,6 +120,7 @@ export const MyRoute = () => {
         />
       </Grid>
       <RouteEditDialog />
+      <RouteCreateDialog />
     </Grid>
   );
 };
