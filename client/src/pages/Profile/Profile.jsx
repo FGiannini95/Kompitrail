@@ -22,6 +22,8 @@ import { useOtherUserProfile } from "../../hooks/useOtherUserProfile";
 import { useFrequentCompanions } from "../../hooks/useFrequentCompanions";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
+import { useShareUrl } from "../../hooks/useShareUrl";
+
 // Components
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
 import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDialog";
@@ -30,6 +32,7 @@ import { OutlinedButton } from "../../components/Buttons/OutlinedButton/Outlined
 import { ContainedButton } from "../../components/Buttons/ContainedButton/ContainedButton";
 import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 import { FrequentCompanions } from "./FrequentCompanions/FrequentCompanions";
+import { Header } from "../../components/Header/Header";
 
 export const Profile = () => {
   const { allRoutes, loadAllRoutes } = useRoutes();
@@ -41,27 +44,15 @@ export const Profile = () => {
     useUserAnalytics();
   const { companions: myCompanions = [] } = useFrequentCompanions();
   const navigate = useNavigate();
-  const [isCopied, setIsCopied] = useState(false);
+  const { isCopied, handleShare } = useShareUrl({
+    mode: "profile",
+    otherUserId,
+    currentUserId: currentUser?.user_id,
+  });
 
   useEffect(() => {
     loadAllRoutes();
   }, [loadAllRoutes]);
-
-  // Safe back handler with fallback to home.
-  const handleBack = () => {
-    // Check if the tab has history to go back to
-    const hasHistory =
-      typeof window !== "undefined" &&
-      window.history?.state &&
-      typeof window.history.state.idx === "number" &&
-      window.history.state.idx > 0;
-
-    if (hasHistory) {
-      navigate(-1);
-    } else {
-      navigate(RoutesString.home, { replace: true });
-    }
-  };
 
   // Determine which user profile we are watching
   const isOtherProfile =
@@ -136,29 +127,6 @@ export const Profile = () => {
     ? Number(otherUserId)
     : currentUser?.user_id;
 
-  // Build a canonical share URL that ALWAYS contains the user id.
-  // If we're viewing someone else: use that id.
-  // If we're viewing our own profile at /profile: use currentUser.user_id.
-  const shareUrl = useMemo(() => {
-    const viewedId = otherUserId ? otherUserId : currentUser?.user_id;
-    if (!viewedId) return window.location.href;
-
-    const pathWithId = generatePath(RoutesString.otherProfile, {
-      id: String(viewedId),
-    });
-    return `${window.location.origin}${pathWithId}`;
-  }, [otherUserId, currentUser?.user_id]);
-
-  const handleShare = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (error) {
-      console.error("Error al copiar la URL:", error);
-    }
-  };
-
   if (isOtherProfile && (otherUserLoading || !otherUserData)) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
@@ -175,28 +143,7 @@ export const Profile = () => {
       }}
     >
       {isOtherProfile && (
-        <Grid
-          container
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ px: 2, mb: 2 }}
-        >
-          <IconButton onClick={handleBack}>
-            <ArrowBackIosIcon style={{ color: "black" }} />
-          </IconButton>
-          <Typography variant="h6">Perfil</Typography>
-          <Tooltip
-            title="URL copiada"
-            open={isCopied}
-            disableInteractive
-            arrow
-            placement="bottom"
-          >
-            <IconButton onClick={handleShare}>
-              <ShareOutlinedIcon style={{ color: "black" }} />
-            </IconButton>
-          </Tooltip>
-        </Grid>
+        <Header title="Perfil" onShare={handleShare} isCopied={isCopied} />
       )}
 
       <Grid>

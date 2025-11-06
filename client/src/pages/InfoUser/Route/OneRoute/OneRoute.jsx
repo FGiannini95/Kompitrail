@@ -1,19 +1,16 @@
 import React, { useContext, useMemo, useRef } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import {
   Button,
   Card,
   CardContent,
-  IconButton,
   Stack,
   Typography,
   Divider,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
@@ -30,11 +27,13 @@ import {
 } from "../../../../helpers/utils";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
+import { useShareUrl } from "../../../../hooks/useShareUrl";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 import { openCalendar } from "../../../../helpers/calendar";
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
+import { Header } from "../../../../components/Header/Header";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -46,10 +45,13 @@ const InfoItem = ({ label, value }) => (
 );
 
 export const OneRoute = () => {
-  const navigate = useNavigate();
   const { state } = useLocation();
   const { id: route_id } = useParams();
   const { user: currentUser } = useContext(KompitrailContext);
+  const { isCopied, handleShare } = useShareUrl({
+    mode: "route",
+    routeId: route_id,
+  });
 
   const participantsSectionRef = useRef();
 
@@ -148,14 +150,7 @@ export const OneRoute = () => {
 
   return (
     <Grid container direction="column" spacing={2}>
-      <Grid container alignItems="center" justifyContent="space-between">
-        <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
-        </IconButton>
-        <IconButton>
-          <ShareOutlinedIcon style={{ color: "black" }} />
-        </IconButton>
-      </Grid>
+      <Header title="Info" onShare={handleShare} isCopied={isCopied} />
       <Card
         sx={{
           width: "95%",
