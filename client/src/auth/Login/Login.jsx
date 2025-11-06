@@ -8,11 +8,11 @@ import Grid from "@mui/material/Grid2";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 // Utils
-import { saveLocalStorage } from "../../../helpers/localStorageUtils";
-import { RoutesString } from "../../../routes/routes";
-import { USERS_URL } from "../../../api";
+import { saveLocalStorage } from "../../helpers/localStorageUtils";
+import { RoutesString } from "../../routes/routes";
+import { USERS_URL } from "../../api";
 // Providers & Hooks
-import { KompitrailContext } from "../../../context/KompitrailContext";
+import { KompitrailContext } from "../../context/KompitrailContext";
 // Components
 import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
 

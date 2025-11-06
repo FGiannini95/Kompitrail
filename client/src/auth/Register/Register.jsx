@@ -9,8 +9,8 @@ import Grid from "@mui/material/Grid2";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 // Utils
-import { RoutesString } from "../../../routes/routes";
-import { USERS_URL } from "../../../api";
+import { RoutesString } from "../../routes/routes";
+import { USERS_URL } from "../../api";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
