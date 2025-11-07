@@ -8,7 +8,7 @@ import Grid from "@mui/material/Grid2";
 
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-// Utils
+
 import { RoutesString } from "../../routes/routes";
 import { USERS_URL } from "../../api";
 import { useRedirectParam } from "../../hooks/useRedirectParam";
