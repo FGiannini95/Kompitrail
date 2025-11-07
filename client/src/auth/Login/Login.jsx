@@ -36,7 +36,7 @@ export const Login = () => {
   const [openRestorePasswordDialog, setOpenRestorePasswordDialog] =
     useState(false);
   const navigate = useNavigate();
-  const { redirectValue } = useRedirectParam();
+  const { redirectValue, buildUrl } = useRedirectParam();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -204,7 +204,7 @@ export const Login = () => {
           <Typography textAlign="center">
             ¿Aún no tienes un perfil? ¡Regístrate{" "}
             <Link
-              href={RoutesString.register}
+              onClick={() => navigate(buildUrl(RoutesString.register))}
               color="#777777"
               underline="hover"
             >

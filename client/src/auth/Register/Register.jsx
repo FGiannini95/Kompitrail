@@ -193,7 +193,11 @@ export const Register = () => {
         <Grid size xs={12}>
           <Typography textAlign="center">
             ¿Ya tienes un perfil? ¡Haz el login{" "}
-            <Link href={RoutesString.login} color="#777777" underline="hover">
+            <Link
+              onClick={() => navigate(buildUrl(RoutesString.login))}
+              color="#777777"
+              underline="hover"
+            >
               aquí
             </Link>
             !
