@@ -26,7 +26,9 @@ export const setRedirectTarget = (absoluteUrl, { maxLen = 2048 } = {}) => {
 };
 
 // Read the stored redirect target (validated to still look like an internal path)
-export const getRedirectTarget = ({ maxLen = 2048 }) => {
+export const getRedirectTarget = (opts) => {
+  const { maxLen = 2048 } = opts && typeof opts === "object" ? opts : {};
+
   if (typeof window === "undefined" || !window.sessionStorage) return;
   try {
     const path = window.sessionStorage.getItem(REDIRECT_STORAGE_KEY);
