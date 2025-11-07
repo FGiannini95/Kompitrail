@@ -8,6 +8,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { KompitrailProvider } from "../src/context/KompitrailContext";
 import { GlobalRouter } from "./routes/GlobalRouter";
 import { ThemeKompitrail } from "./ThemeKompitrail";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export function App() {
   // The useTheme hook in Material-UI is used to access the overall theme of the application, which includes design settings such as breakpoints
@@ -21,14 +22,18 @@ export function App() {
       </Typography>
     );
   }
+  const CLIENT_ID =
+    "410466436986-cppdeullcjun8b3hnqn4610hiivm4abd.apps.googleusercontent.com";
 
   return (
     <>
-      <ThemeKompitrail>
-        <KompitrailProvider>
-          <GlobalRouter />
-        </KompitrailProvider>
-      </ThemeKompitrail>
+      <GoogleOAuthProvider clientId={CLIENT_ID}>
+        <ThemeKompitrail>
+          <KompitrailProvider>
+            <GlobalRouter />
+          </KompitrailProvider>
+        </ThemeKompitrail>
+      </GoogleOAuthProvider>
     </>
   );
 }

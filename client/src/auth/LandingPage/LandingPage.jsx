@@ -5,6 +5,7 @@ import { Button, Box, Typography } from "@mui/material";
 
 import { RoutesString } from "../../routes/routes";
 import { useRedirectParam } from "../../hooks/useRedirectParam";
+import { SocialAuthButtons } from "../../components/Buttons/SocialAuthButtons/SocialAuthButtons";
 
 export const LandingPage = () => {
   const navigate = useNavigate();
@@ -64,6 +65,9 @@ export const LandingPage = () => {
           {" "}
           Log in
         </Button>
+      </Box>
+      <Box>
+        <SocialAuthButtons />
       </Box>
     </Box>
   );
