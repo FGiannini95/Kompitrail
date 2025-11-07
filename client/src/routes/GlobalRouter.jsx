@@ -6,7 +6,7 @@ import { Home } from "../pages/Home/Home";
 import { Search } from "../pages/Search/Search";
 import { Profile } from "../pages/Profile/Profile";
 import { Register } from "../auth/Register/Register";
-import { LandingPage } from "../pages/LandingPage/LandingPage";
+import { LandingPage } from "../auth/LandingPage/LandingPage";
 import { Login } from "../auth/Login/Login";
 import { TopBar } from "../components/TopBarApp/TopBarApp";
 import { Chat } from "../pages/Chat/Chat";

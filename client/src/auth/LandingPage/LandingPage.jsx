@@ -1,13 +1,31 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import { useLocation, useNavigate } from "react-router-dom";
+
+import { Button, Box, Typography } from "@mui/material";
+import { getRedirectTarget } from "../redirectTarget";
 
 import { RoutesString } from "../../routes/routes";
 
 export const LandingPage = () => {
+  const location = useLocation();
   const navigate = useNavigate();
+
+  // Extract ?redirect from current URL
+  const searchParams = new URLSearchParams(location.search);
+  const redirectParams = searchParams.get("redirect");
+
+  // Fallback: if no query param, try sessionStorage
+  const storeRedirect = getRedirectTarget();
+  const redirectValue = redirectParams || storeRedirect || "";
+
+  // Build the ?redirect
+  const redirectQuery = redirectValue
+    ? `?redirect=${encodeURIComponent(redirectValue)}`
+    : "";
+
+  const handleRegister = () =>
+    navigate(`${RoutesString.register}${redirectQuery}`);
+  const handleLogin = () => navigate(`${RoutesString.login}${redirectQuery}`);
 
   return (
     <Box paddingTop={4} textAlign="center" width="100%">
@@ -32,7 +50,7 @@ export const LandingPage = () => {
         <Button
           type="button"
           variant="outlined"
-          onClick={() => navigate(RoutesString.register)}
+          onClick={handleRegister}
           sx={{
             color: "black",
             borderColor: "#eeeeee",
@@ -54,7 +72,7 @@ export const LandingPage = () => {
             backgroundColor: "#eeeeee",
             "&:hover": { backgroundColor: "#dddddd" },
           }}
-          onClick={() => navigate(RoutesString.login)}
+          onClick={handleLogin}
         >
           {" "}
           Log in
