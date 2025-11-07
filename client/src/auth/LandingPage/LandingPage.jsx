@@ -1,31 +1,18 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Button, Box, Typography } from "@mui/material";
-import { getRedirectTarget } from "../redirectTarget";
 
 import { RoutesString } from "../../routes/routes";
+import { useRedirectParam } from "../../hooks/useRedirectParam";
 
 export const LandingPage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-
-  // Extract ?redirect from current URL
-  const searchParams = new URLSearchParams(location.search);
-  const redirectParams = searchParams.get("redirect");
-
-  // Fallback: if no query param, try sessionStorage
-  const storeRedirect = getRedirectTarget();
-  const redirectValue = redirectParams || storeRedirect || "";
-
-  // Build the ?redirect
-  const redirectQuery = redirectValue
-    ? `?redirect=${encodeURIComponent(redirectValue)}`
-    : "";
+  const { navigateWithRedirect } = useRedirectParam();
 
   const handleRegister = () =>
-    navigate(`${RoutesString.register}${redirectQuery}`);
-  const handleLogin = () => navigate(`${RoutesString.login}${redirectQuery}`);
+    navigateWithRedirect(navigate, RoutesString.register);
+  const handleLogin = () => navigateWithRedirect(navigate, RoutesString.login);
 
   return (
     <Box paddingTop={4} textAlign="center" width="100%">

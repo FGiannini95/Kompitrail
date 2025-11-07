@@ -11,11 +11,13 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 // Utils
 import { RoutesString } from "../../routes/routes";
 import { USERS_URL } from "../../api";
+import { useRedirectParam } from "../../hooks/useRedirectParam";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
   const navigate = useNavigate();
+  const { buildUrl } = useRedirectParam();
 
   const {
     register,
@@ -30,7 +32,7 @@ export const Register = () => {
     try {
       const response = await axios.post(`${USERS_URL}/createuser`, data);
       console.log("Respuesta del servidor:", response.data);
-      navigate(RoutesString.login);
+      navigate(buildUrl(RoutesString.login));
     } catch (error) {
       console.error("Error al crear el usuario:", error);
       // Mostrar un mensaje de error más claro si el correo ya está en uso
