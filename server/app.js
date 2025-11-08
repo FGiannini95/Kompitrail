@@ -8,6 +8,7 @@ const cors = require("cors");
 const usersRouter = require("./routes/users");
 const motorbikesRouter = require("./routes/motorbikes");
 const routesRouter = require("./routes/route");
+const authRouter = require("./routes/auth");
 
 var app = express();
 
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/users", usersRouter);
 app.use("/motorbikes", motorbikesRouter);
 app.use("/routes", routesRouter);
+app.use("/auth", authRouter);
 
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 

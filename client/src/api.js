@@ -12,3 +12,4 @@ export const USERS_URL = `${API_BASE}/users`;
 export const MOTORBIKES_URL = `${API_BASE}/motorbikes`;
 export const ROUTES_URL = `${API_BASE}/routes`;
 export const IMAGES_URL = `${API_BASE}/images`;
+export const AUTH_URL = `${API_BASE}/auth`;

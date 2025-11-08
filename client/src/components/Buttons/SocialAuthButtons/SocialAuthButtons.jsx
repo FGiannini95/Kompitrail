@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { Stack, Typography } from "@mui/material";
 
-import { API_BASE } from "../../../api";
+import { API_BASE, AUTH_URL } from "../../../api";
 import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 
 import { KompitrailContext } from "../../../context/KompitrailContext";
@@ -26,7 +26,7 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
 
     try {
       // Send IdToken to be
-      const res = await axios.psot(`${API_BASE}/googlauth`, {
+      const res = await axios.post(`${AUTH_URL}/google`, {
         id_token: idToken,
       });
 
