@@ -1,23 +1,79 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
-import { RoutesString } from "../../../routes/routes";
+import axios from "axios";
+
 import { Stack, Typography } from "@mui/material";
 
-export const SocialAuthButtons = () => {
-  const navigate = useNavigate();
+import { API_BASE } from "../../../api";
+import { saveLocalStorage } from "../../../helpers/localStorageUtils";
+
+import { KompitrailContext } from "../../../context/KompitrailContext";
+
+export const SocialAuthButtons = ({ onAuthSuccess }) => {
+  const { setUser, setTokem, setIsLogged } = useContext(KompitrailContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const idToken = credentialResponse?.credential;
+    if (!idToken) {
+      setErrMsg("Falta de credenciales");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrMsg("");
+
+    try {
+      // Send IdToken to be
+      const res = await axios.psot(`${API_BASE}/googlauth`, {
+        id_token: idToken,
+      });
+
+      // Return the same data object as the login
+      const { token, user } = res.data || {};
+      if (!token || !user) {
+        throw new Error("Error en el token o en el usuario");
+      }
+
+      setIsLogged(true);
+      setUser(user);
+      setTokem(token);
+      saveLocalStorage("token", token);
+
+      // Let the parent run the post-auth redirect
+      if (typeof onAuthSuccess === "function") onAuthSuccess();
+    } catch (e) {
+      console.log("Autenticación fallida", e);
+      setErrMsg("No se pudo iniciar sesión con Google. Intenta nuevamente.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setErrMsg("No se pudo iniciar sesión con Google. Intenta nuevamente.");
+  };
+
   return (
     <Stack alignItems="center" pt={2}>
       <Typography>--------- o ---------</Typography>
       <GoogleLogin
-        onSuccess={(credentialResponse) => {
-          console.log(credentialResponse);
-          navigate(RoutesString.home);
-        }}
-        onError={() => console.log("login fallido")}
+        onSuccess={handleGoogleSuccess}
+        onError={handleGoogleError}
         auto_select={true}
       />
+
+      {isLoading && (
+        <Typography variant="body2" color="text.secondary">
+          Conectandose a Google…
+        </Typography>
+      )}
+      {errMsg && (
+        <Typography variant="body2" color="error">
+          {errMsg}
+        </Typography>
+      )}
       {/* Here below Apple Auth */}
     </Stack>
   );
