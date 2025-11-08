@@ -18,6 +18,7 @@ export const SocialAuthButtons = () => {
         onError={() => console.log("login fallido")}
         auto_select={true}
       />
+      {/* Here below Apple Auth */}
     </Stack>
   );
 };
