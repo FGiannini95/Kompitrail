@@ -2,7 +2,8 @@ import React, { useContext, useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
-import { Stack, Typography } from "@mui/material";
+import { Box, Button, Divider, Stack, Typography } from "@mui/material";
+import AppleIcon from "@mui/icons-material/Apple";
 
 import { AUTH_URL } from "../../../api";
 import { saveLocalStorage } from "../../../helpers/localStorageUtils";
@@ -56,25 +57,45 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
   };
 
   return (
-    <Stack alignItems="center" pt={2}>
-      <Typography>--------- o ---------</Typography>
-      <GoogleLogin
-        onSuccess={handleGoogleSuccess}
-        onError={handleGoogleError}
-        auto_select={true}
-      />
-
-      {isLoading && (
+    <Stack alignItems="stretch" pt={2} spacing={2} sx={{ width: "100%" }}>
+      <Divider
+        sx={{
+          width: "100%",
+          "&::before, &::after": { borderTopWidth: 2 },
+        }}
+      >
         <Typography variant="body2" color="text.secondary">
+          o
+        </Typography>
+      </Divider>
+
+      {/* Google Auth */}
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
+          auto_select={true}
+        />
+      </Box>
+
+      {/* Loading & error states */}
+      {isLoading && (
+        <Typography variant="body2" color="text.secondary" textAlign="center">
           Conectandose a Google…
         </Typography>
       )}
       {errMsg && (
-        <Typography variant="body2" color="error">
+        <Typography variant="body2" color="error" textAlign="center">
           {errMsg}
         </Typography>
       )}
-      {/* Here below Apple Auth */}
+
+      {/* Apple Auth */}
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Button variant="outlined" startIcon={<AppleIcon />}>
+          Sign in with Apple
+        </Button>
+      </Box>
     </Stack>
   );
 };

@@ -96,7 +96,7 @@ class authControllers {
               [picture, existingUser.user_id],
               (updateErr, updateResult) => {
                 if (updateErr) {
-                  console.err(
+                  console.error(
                     "Error actualizando la imagen de Google",
                     updateErr
                   );
