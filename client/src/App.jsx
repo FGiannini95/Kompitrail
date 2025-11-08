@@ -22,8 +22,8 @@ export function App() {
       </Typography>
     );
   }
-  const CLIENT_ID =
-    "410466436986-cppdeullcjun8b3hnqn4610hiivm4abd.apps.googleusercontent.com";
+
+  const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   return (
     <>

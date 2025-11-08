@@ -10,7 +10,7 @@ import { saveLocalStorage } from "../../../helpers/localStorageUtils";
 import { KompitrailContext } from "../../../context/KompitrailContext";
 
 export const SocialAuthButtons = ({ onAuthSuccess }) => {
-  const { setUser, setTokem, setIsLogged } = useContext(KompitrailContext);
+  const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
@@ -38,21 +38,21 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
 
       setIsLogged(true);
       setUser(user);
-      setTokem(token);
+      setToken(token);
       saveLocalStorage("token", token);
 
       // Let the parent run the post-auth redirect
       if (typeof onAuthSuccess === "function") onAuthSuccess();
     } catch (e) {
       console.log("Autenticación fallida", e);
-      setErrMsg("No se pudo iniciar sesión con Google. Intenta nuevamente.");
+      setErrMsg("No se pudo iniciar sesión con Google.");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleError = () => {
-    setErrMsg("No se pudo iniciar sesión con Google. Intenta nuevamente.");
+    setErrMsg("No se pudo iniciar sesión con Google.");
   };
 
   return (
