@@ -8,13 +8,15 @@ import Grid from "@mui/material/Grid2";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 // Utils
-import { saveLocalStorage } from "../../../helpers/localStorageUtils";
-import { RoutesString } from "../../../routes/routes";
-import { USERS_URL } from "../../../api";
+import { saveLocalStorage } from "../../helpers/localStorageUtils";
+import { RoutesString } from "../../routes/routes";
+import { USERS_URL } from "../../api";
 // Providers & Hooks
-import { KompitrailContext } from "../../../context/KompitrailContext";
+import { KompitrailContext } from "../../context/KompitrailContext";
 // Components
 import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
+import { useRedirectParam } from "../../hooks/useRedirectParam";
+import { clearRedirectTarget } from "../redirectTarget";
 
 const initialValue = {
   email: "",
@@ -34,6 +36,7 @@ export const Login = () => {
   const [openRestorePasswordDialog, setOpenRestorePasswordDialog] =
     useState(false);
   const navigate = useNavigate();
+  const { redirectValue, buildUrl } = useRedirectParam();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +83,14 @@ export const Login = () => {
         setUser(res.data.user);
         setToken(res.data.token);
         saveLocalStorage("token", res.data.token);
-        navigate(RoutesString.home);
+
+        // If redirectValue exists and it is safe use it, otherwise fallback to home
+        const target = redirectValue?.startsWith("/")
+          ? redirectValue
+          : RoutesString.home;
+        // NAvigation + clear sessionStorage to avoid loops
+        navigate(target, { replace: true });
+        clearRedirectTarget();
       })
       .catch((err) => {
         console.log(err);
@@ -194,7 +204,7 @@ export const Login = () => {
           <Typography textAlign="center">
             ¿Aún no tienes un perfil? ¡Regístrate{" "}
             <Link
-              href={RoutesString.register}
+              onClick={() => navigate(buildUrl(RoutesString.register))}
               color="#777777"
               underline="hover"
             >

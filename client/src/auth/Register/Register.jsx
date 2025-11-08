@@ -8,14 +8,16 @@ import Grid from "@mui/material/Grid2";
 
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-// Utils
-import { RoutesString } from "../../../routes/routes";
-import { USERS_URL } from "../../../api";
+
+import { RoutesString } from "../../routes/routes";
+import { USERS_URL } from "../../api";
+import { useRedirectParam } from "../../hooks/useRedirectParam";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
   const navigate = useNavigate();
+  const { buildUrl } = useRedirectParam();
 
   const {
     register,
@@ -30,7 +32,7 @@ export const Register = () => {
     try {
       const response = await axios.post(`${USERS_URL}/createuser`, data);
       console.log("Respuesta del servidor:", response.data);
-      navigate(RoutesString.login);
+      navigate(buildUrl(RoutesString.login));
     } catch (error) {
       console.error("Error al crear el usuario:", error);
       // Mostrar un mensaje de error más claro si el correo ya está en uso
@@ -191,7 +193,11 @@ export const Register = () => {
         <Grid size xs={12}>
           <Typography textAlign="center">
             ¿Ya tienes un perfil? ¡Haz el login{" "}
-            <Link href={RoutesString.login} color="#777777" underline="hover">
+            <Link
+              onClick={() => navigate(buildUrl(RoutesString.login))}
+              color="#777777"
+              underline="hover"
+            >
               aquí
             </Link>
             !

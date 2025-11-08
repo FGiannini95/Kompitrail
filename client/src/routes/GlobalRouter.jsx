@@ -5,9 +5,9 @@ import { RoutesString } from "./routes";
 import { Home } from "../pages/Home/Home";
 import { Search } from "../pages/Search/Search";
 import { Profile } from "../pages/Profile/Profile";
-import { Register } from "../pages/auth/Register/Register";
-import { LandingPage } from "../pages/LandingPage/LandingPage";
-import { Login } from "../pages/auth/Login/Login";
+import { Register } from "../auth/Register/Register";
+import { LandingPage } from "../auth/LandingPage/LandingPage";
+import { Login } from "../auth/Login/Login";
 import { TopBar } from "../components/TopBarApp/TopBarApp";
 import { Chat } from "../pages/Chat/Chat";
 import { InfoUser } from "../pages/InfoUser/InfoUser";
@@ -26,6 +26,7 @@ import { SnackbarProvider } from "../context/SnackbarContext/SnackbarContext";
 import { MotorbikesProvider } from "../context/MotorbikesContext/MotorbikesContext";
 import { RoutesProvider } from "../context/RoutesContext/RoutesContext";
 import { ScrollToTop } from "../components/ScrollToTop/ScrollToTop";
+import { CaptureAndForward } from "../auth/CaptureAndForward/CaptureAndForward";
 
 export const GlobalRouter = () => {
   const { user, token, isLoading } = useContext(KompitrailContext);
@@ -103,11 +104,12 @@ export const GlobalRouter = () => {
       )}
       {(!token || !user) && (
         <Routes>
-          {/* Redirect any unknown route to /landing */}
-          <Route path="*" element={<Navigate to={RoutesString.landing} />} />
+          {/* Explicit public routes */}
           <Route path={RoutesString.landing} element={<LandingPage />} />
           <Route path={RoutesString.register} element={<Register />} />
           <Route path={RoutesString.login} element={<Login />} />
+          {/* Catch-all: capture & forward to /landing with redirect */}
+          <Route path="*" element={<CaptureAndForward />} />
         </Routes>
       )}
     </BrowserRouter>

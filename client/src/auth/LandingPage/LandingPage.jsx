@@ -1,13 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+
+import { Button, Box, Typography } from "@mui/material";
 
 import { RoutesString } from "../../routes/routes";
+import { useRedirectParam } from "../../hooks/useRedirectParam";
+import { SocialAuthButtons } from "../../components/Buttons/SocialAuthButtons/SocialAuthButtons";
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const { navigateWithRedirect } = useRedirectParam();
+
+  const handleRegister = () =>
+    navigateWithRedirect(navigate, RoutesString.register);
+  const handleLogin = () => navigateWithRedirect(navigate, RoutesString.login);
 
   return (
     <Box paddingTop={4} textAlign="center" width="100%">
@@ -32,7 +38,7 @@ export const LandingPage = () => {
         <Button
           type="button"
           variant="outlined"
-          onClick={() => navigate(RoutesString.register)}
+          onClick={handleRegister}
           sx={{
             color: "black",
             borderColor: "#eeeeee",
@@ -54,11 +60,14 @@ export const LandingPage = () => {
             backgroundColor: "#eeeeee",
             "&:hover": { backgroundColor: "#dddddd" },
           }}
-          onClick={() => navigate(RoutesString.login)}
+          onClick={handleLogin}
         >
           {" "}
           Log in
         </Button>
+      </Box>
+      <Box>
+        <SocialAuthButtons />
       </Box>
     </Box>
   );
