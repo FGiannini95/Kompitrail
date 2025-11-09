@@ -16,7 +16,15 @@ export const UserAvatar = ({ user: userProp }) => {
   );
   const fullName = `${user?.name ?? ""} ${user?.lastname ?? ""}`.trim();
 
-  const photoUrl = user?.img ? `${API_BASE}/images/users/${user.img}` : null;
+  const photoUrl = useMemo(() => {
+    if (!user?.img) return;
+
+    // Google picture
+    if (user.img.startsWith("https://") || user.img.startsWith("https://")) {
+      return user.img;
+    }
+    return `${API_BASE}/images/users/${user.img}`;
+  }, [user?.img]);
 
   const [openImg, setOpenImg] = useState(false);
   const handleOpenImg = () => setOpenImg(true);
