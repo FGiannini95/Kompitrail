@@ -88,6 +88,7 @@ class authControllers {
             "googleusercontent.com"
           );
           const shouldUpdatePhoto = (hasNoPhoto || isGooglePhoto) && picture;
+          existingUser.img = picture;
 
           if (shouldUpdatePhoto) {
             const updateSql = `UPDATE user SET img = ? WHERE user_id = ?`;
@@ -108,8 +109,6 @@ class authControllers {
                 }
               }
             );
-
-            existingUser.img = picture;
           } else {
             console.log("El usuario tiene una foto personalizada");
           }
