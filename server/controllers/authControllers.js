@@ -88,9 +88,9 @@ class authControllers {
             "googleusercontent.com"
           );
           const shouldUpdatePhoto = (hasNoPhoto || isGooglePhoto) && picture;
-          existingUser.img = picture;
 
           if (shouldUpdatePhoto) {
+            existingUser.img = picture;
             const updateSql = `UPDATE user SET img = ? WHERE user_id = ?`;
             connection.query(
               updateSql,

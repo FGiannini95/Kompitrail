@@ -19,10 +19,8 @@ export const UserAvatar = ({ user: userProp }) => {
   const photoUrl = useMemo(() => {
     if (!user?.img) return;
 
-    // Google picture
-    if (user.img.startsWith("https://") || user.img.startsWith("https://")) {
-      return user.img;
-    }
+    // Accept absolute URL (http or https), case-insensitive.
+    if (/^https?:\/\//i.test(user.img)) return user.img;
     return `${API_BASE}/images/users/${user.img}`;
   }, [user?.img]);
 
