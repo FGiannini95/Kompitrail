@@ -15,14 +15,15 @@ export const UserAvatar = ({ user: userProp }) => {
     [user?.name, user?.lastname]
   );
   const fullName = `${user?.name ?? ""} ${user?.lastname ?? ""}`.trim();
+  const photoUrl = user?.img ? `${API_BASE}/images/users/${user.img}` : null;
 
-  const photoUrl = useMemo(() => {
-    if (!user?.img) return;
+  // const photoUrl = useMemo(() => {
+  //   if (!user?.img) return;
 
-    // Accept absolute URL (http or https), case-insensitive.
-    if (/^https?:\/\//i.test(user.img)) return user.img;
-    return `${API_BASE}/images/users/${user.img}`;
-  }, [user?.img]);
+  //   // Accept absolute URL (http or https), case-insensitive.
+  //   if (/^https?:\/\//i.test(user.img)) return user.img;
+  //   return `${API_BASE}/images/users/${user.img}`;
+  // }, [user?.img]);
 
   const [openImg, setOpenImg] = useState(false);
   const handleOpenImg = () => setOpenImg(true);
