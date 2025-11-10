@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { generatePath, useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Box,
   CircularProgress,
-  IconButton,
   Stack,
   Tooltip,
   Typography,
@@ -13,7 +12,6 @@ import Grid from "@mui/material/Grid2";
 
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 // Utils
 import { RoutesString } from "../../routes/routes";
 // Providers & Hooks
