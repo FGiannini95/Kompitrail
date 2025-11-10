@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Avatar, Badge, Typography, Stack } from "@mui/material";
 
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { getInitials } from "../../../helpers/utils";
-import { API_BASE } from "../../../api";
-import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../../routes/routes";
+import { normalizeImg } from "../../../helpers/normalizeImg";
 
 export const BadgeAvatar = ({
   targetUserId,
@@ -30,16 +31,7 @@ export const BadgeAvatar = ({
 
   const shouldShowBadge = showBadge && isCurrentUser && !isPastRoute;
 
-  const photoUrl = useMemo(() => {
-    if (!targetUserImg) return;
-
-    // Accept absolute URL (http or https), case-insensitive.
-    if (/^https?:\/\//i.test(targetUserImg)) return targetUserImg;
-    // Safe guard
-    if (targetUserImg === "http" || targetUserImg === "https") return undefined;
-
-    return `${API_BASE}/images/users/${targetUserImg}`;
-  }, [targetUserImg]);
+  const photoUrl = useMemo(() => normalizeImg(targetUserImg), [targetUserImg]);
 
   const handleAvarClick = (e) => {
     e.stopPropagation();

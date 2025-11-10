@@ -147,7 +147,10 @@ class routesControllers {
           .split("|")
           .filter(Boolean) // Empty string filtered out
           .map((triple) => {
-            const [uid, name, img] = triple.split(":");
+            const parts = triple.split(":");
+            const uid = Number(parts.shift()); // first field
+            const name = parts.shift() || ""; // second field
+            const img = parts.join(":") || ""; // everything else
             return { user_id: Number(uid), name, img };
           });
         const { participants_raw, ...rest } = r;

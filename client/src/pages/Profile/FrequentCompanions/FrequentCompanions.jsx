@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 
 import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
+import { normalizeImg } from "../../../helpers/normalizeImg";
 import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
-import { API_BASE } from "../../../api";
 
 export const FrequentCompanions = ({ companions: companionsProp }) => {
   const {
@@ -54,9 +54,7 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
       }}
     >
       {companions.map((companion) => {
-        const photoUrl = companion.img
-          ? `${API_BASE}/images/users/${companion.img}`
-          : undefined;
+        const photoUrl = normalizeImg(companion.img);
 
         return (
           <Card
