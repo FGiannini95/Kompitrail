@@ -124,11 +124,14 @@ export const Login = () => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid size={12} align="center">
-            <Typography variant="h4">Login</Typography>
+        <Grid container spacing={2} direction="column" alignItems="stretch">
+          <Grid xs={12}>
+            <Typography variant="h4" textAlign="center">
+              Login
+            </Typography>
           </Grid>
-          <Grid size={12}>
+
+          <Grid xs={12}>
             <TextField
               label="Email"
               name="email"
@@ -138,7 +141,8 @@ export const Login = () => {
               helperText={msgError.email}
             />
           </Grid>
-          <Grid size={12}>
+
+          <Grid xs={12}>
             <TextField
               label="Contraseña"
               name="password"
@@ -162,49 +166,54 @@ export const Login = () => {
               }}
             />
           </Grid>
+
           {msgError.global && (
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Typography color="error" align="center">
                 {msgError.global}
               </Typography>
             </Grid>
           )}
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              sx={{
-                color: "black",
-                boxShadow: "none",
-                backgroundColor: "#eeeeee",
-                "&:hover": { backgroundColor: "#dddddd" },
-              }}
-            >
-              ACEPTAR
-            </Button>
+
+          <Grid container xs={12} spacing={2} justifyContent="center">
+            <Grid xs={6}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  color: "black",
+                  boxShadow: "none",
+                  backgroundColor: "#eeeeee",
+                  "&:hover": { backgroundColor: "#dddddd" },
+                }}
+              >
+                ACEPTAR
+              </Button>
+            </Grid>
+
+            <Grid xs={6}>
+              <Button
+                type="button"
+                variant="outlined"
+                sx={{
+                  color: "black",
+                  borderColor: "#eeeeee",
+                  borderWidth: "2px",
+                  "&:hover": {
+                    borderColor: "#dddddd",
+                    borderWidth: "2px",
+                  },
+                }}
+                fullWidth
+                onClick={handleCancel}
+              >
+                CANCELAR
+              </Button>
+            </Grid>
           </Grid>
 
-          <Grid item xs={12}>
-            <Button
-              type="button"
-              variant="outlined"
-              sx={{
-                color: "black",
-                borderColor: "#eeeeee",
-                borderWidth: "2px",
-                "&:hover": {
-                  borderColor: "#dddddd",
-                  borderWidth: "2px",
-                },
-              }}
-              fullWidth
-              onClick={handleCancel}
-            >
-              CANCELAR
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Typography textAlign="center">
               ¿Aún no tienes un perfil? ¡Regístrate{" "}
               <Link
@@ -217,7 +226,8 @@ export const Login = () => {
               !
             </Typography>
           </Grid>
-          <Grid item xs={12}>
+
+          <Grid xs={12}>
             <Typography textAlign="center">
               ¿Has olvidado tu contraseña? Pincha{" "}
               <Link
@@ -230,6 +240,7 @@ export const Login = () => {
               !
             </Typography>
           </Grid>
+
           <RestorePasswordDialog
             openRestorePasswordDialog={openRestorePasswordDialog}
             handleCloseDialog={handleCloseDialog}
