@@ -83,6 +83,7 @@ export const BadgeAvatar = ({
       >
         <Avatar
           src={photoUrl || undefined}
+          imgProps={{ referrerPolicy: "no-referrer" }}
           sx={{
             width: size,
             height: size,

@@ -36,6 +36,7 @@ export const UserAvatar = ({ user: userProp }) => {
       <Stack alignItems="center" spacing={1} sx={{ mx: "auto" }}>
         <Avatar
           src={photoUrl || undefined}
+          imgProps={{ referrerPolicy: "no-referrer" }}
           sx={{
             width: 96,
             height: 96,
