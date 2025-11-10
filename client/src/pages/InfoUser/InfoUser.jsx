@@ -1,7 +1,8 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Box, Grid2 as Grid, Typography, List } from "@mui/material";
+import { Box, Typography, List } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 const url =
