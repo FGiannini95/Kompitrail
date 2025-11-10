@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Stack, Typography, Avatar, Box } from "@mui/material";
 import { getInitials } from "../../../helpers/utils";
 import { KompitrailContext } from "../../../context/KompitrailContext";
@@ -15,15 +15,17 @@ export const UserAvatar = ({ user: userProp }) => {
     [user?.name, user?.lastname]
   );
   const fullName = `${user?.name ?? ""} ${user?.lastname ?? ""}`.trim();
-  const photoUrl = user?.img ? `${API_BASE}/images/users/${user.img}` : null;
 
-  // const photoUrl = useMemo(() => {
-  //   if (!user?.img) return;
+  const photoUrl = useMemo(() => {
+    if (!user?.img) return;
 
-  //   // Accept absolute URL (http or https), case-insensitive.
-  //   if (/^https?:\/\//i.test(user.img)) return user.img;
-  //   return `${API_BASE}/images/users/${user.img}`;
-  // }, [user?.img]);
+    // Accept absolute URL (http or https), case-insensitive.
+    if (/^https?:\/\//i.test(user.img)) return user.img;
+    // Safe guard
+    if (user.img === "http" || user.img === "https") return undefined;
+
+    return `${API_BASE}/images/users/${user.img}`;
+  }, [user?.img]);
 
   const [openImg, setOpenImg] = useState(false);
   const handleOpenImg = () => setOpenImg(true);

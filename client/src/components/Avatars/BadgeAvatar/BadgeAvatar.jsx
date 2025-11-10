@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { Avatar, Badge, Typography, Stack } from "@mui/material";
 
 import { KompitrailContext } from "../../../context/KompitrailContext";
@@ -30,9 +30,16 @@ export const BadgeAvatar = ({
 
   const shouldShowBadge = showBadge && isCurrentUser && !isPastRoute;
 
-  const photoUrl = targetUserImg
-    ? `${API_BASE}/images/users/${targetUserImg}`
-    : undefined;
+  const photoUrl = useMemo(() => {
+    if (!targetUserImg) return;
+
+    // Accept absolute URL (http or https), case-insensitive.
+    if (/^https?:\/\//i.test(targetUserImg)) return targetUserImg;
+    // Safe guard
+    if (targetUserImg === "http" || targetUserImg === "https") return undefined;
+
+    return `${API_BASE}/images/users/${targetUserImg}`;
+  }, [targetUserImg]);
 
   const handleAvarClick = (e) => {
     e.stopPropagation();
