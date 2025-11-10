@@ -7,9 +7,10 @@ import axios from "axios";
 import { getLocalStorage } from "../helpers/localStorageUtils";
 import { USER_INITIAL_VALUE } from "../constants/userConstants";
 import { RoutesString } from "../routes/routes";
+import { API_BASE } from "../api";
+import { normalizeImg } from "../helpers/normalizeImg";
 // Hooks & Providers
 import { KompitrailContext } from "../context/KompitrailContext";
-import { API_BASE } from "../api";
 
 export const useEditUserForm = () => {
   const [editUser, setEditUser] = useState(USER_INITIAL_VALUE);
@@ -32,7 +33,7 @@ export const useEditUserForm = () => {
           setInitialValue(res.data);
 
           if (res.data.img) {
-            setPhotoPreview(`${API_BASE}/images/users/${res.data.img}`);
+            setPhotoPreview(normalizeImg(res.data.img));
           }
         })
         .catch((err) => {
