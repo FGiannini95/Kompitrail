@@ -1,9 +1,11 @@
 import React, { useContext, useMemo, useState } from "react";
+
 import { Stack, Typography, Avatar, Box } from "@mui/material";
-import { getInitials } from "../../../helpers/utils";
+
 import { KompitrailContext } from "../../../context/KompitrailContext";
+import { getInitials } from "../../../helpers/utils";
+import { normalizeImg } from "../../../helpers/normalizeImg";
 import { FullScreenImg } from "../../FullScreenImg/FullScreenImg";
-import { API_BASE } from "../../../api";
 
 export const UserAvatar = ({ user: userProp }) => {
   const { user: ctxUser } = useContext(KompitrailContext);
@@ -16,7 +18,7 @@ export const UserAvatar = ({ user: userProp }) => {
   );
   const fullName = `${user?.name ?? ""} ${user?.lastname ?? ""}`.trim();
 
-  const photoUrl = user?.img ? `${API_BASE}/images/users/${user.img}` : null;
+  const photoUrl = useMemo(() => normalizeImg(user?.img), [user?.img]);
 
   const [openImg, setOpenImg] = useState(false);
   const handleOpenImg = () => setOpenImg(true);
@@ -27,6 +29,7 @@ export const UserAvatar = ({ user: userProp }) => {
       <Stack alignItems="center" spacing={1} sx={{ mx: "auto" }}>
         <Avatar
           src={photoUrl || undefined}
+          imgProps={{ referrerPolicy: "no-referrer" }}
           sx={{
             width: 96,
             height: 96,

@@ -8,16 +8,21 @@ import Grid from "@mui/material/Grid2";
 
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-
+// Utils
 import { RoutesString } from "../../routes/routes";
 import { USERS_URL } from "../../api";
+// Hooks & Providers
 import { useRedirectParam } from "../../hooks/useRedirectParam";
+import { usePostAuthRedirect } from "../../hooks/usePostAuthRedirect";
+// Components
+import { SocialAuthButtons } from "../../components/Buttons/SocialAuthButtons/SocialAuthButtons";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
   const navigate = useNavigate();
   const { buildUrl } = useRedirectParam();
+  const { handlePostAuthRedirect } = usePostAuthRedirect();
 
   const {
     register,
@@ -67,143 +72,146 @@ export const Register = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={2} justifyContent="center">
-        <Grid size={12} align="center">
-          <Typography variant="h4">Registro</Typography>
-        </Grid>
-        <Grid size={12}>
-          <TextField
-            {...register("name", {
-              required: "El nombre es obligatorio",
-              minLength: {
-                value: 2,
-                message: "El nombre debe tener al menos 2 caracteres",
-              },
-            })}
-            label="Nombre"
-            fullWidth
-            error={!!errors.name}
-            helperText={errors.name?.message}
-          />
-        </Grid>
-        <Grid size={12}>
-          <TextField
-            {...register("lastname", {
-              required: "Los apellidos son obligatorio",
-              minLength: {
-                value: 2,
-                message: "Los apellidos deben tener al menos 2 caracteres",
-              },
-            })}
-            label="Apellidos"
-            variant="outlined"
-            fullWidth
-            error={!!errors.lastname}
-            helperText={errors.lastname?.message}
-          />
-        </Grid>
-        <Grid size={12}>
-          <TextField
-            {...register("email", {
-              required: "El correo es obligatorio",
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: "Ingrese un correo válido",
-              },
-            })}
-            label="Correo"
-            variant="outlined"
-            fullWidth
-            error={!!errors.email}
-            helperText={errors.email?.message}
-          />
-        </Grid>
-        <Grid size={12}>
-          <TextField
-            {...register("password", {
-              required: "La contraseña es obligatoria",
-              pattern: {
-                // Password with 8 caracteres and on of the has to be a special one
-                value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                message: "La contraseña no es suficientemente fuerte",
-              },
-            })}
-            label="Contraseña"
-            type={showPassword ? "text" : "password"}
-            variant="outlined"
-            fullWidth
-            error={!!errors.password}
-            helperText={errors.password?.message}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            InputProps={{
-              endAdornment: (
-                <Button onClick={displayPassword}>
-                  {showPassword ? (
-                    <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                  ) : (
-                    <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                  )}
-                </Button>
-              ),
-            }}
-          />
-        </Grid>
-        {errors.root && (
-          <Grid size xs={12}>
-            <Typography color="error">{errors.root.message}</Typography>
+    <>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={2} justifyContent="center">
+          <Grid size={12} align="center">
+            <Typography variant="h4">Registro</Typography>
           </Grid>
-        )}
-        <Grid size xs={12}>
-          <Button
-            disabled={isSubmitting}
-            type="submit"
-            variant="contained"
-            sx={{
-              color: "black",
-              boxShadow: "none",
-              backgroundColor: "#eeeeee",
-              "&:hover": { backgroundColor: "#dddddd" },
-            }}
-            fullWidth
-          >
-            {isSubmitting ? "Cargando..." : "Crear"}
-          </Button>
-        </Grid>
-        <Grid size xs={12}>
-          <Button
-            type="button"
-            variant="outlined"
-            sx={{
-              color: "black",
-              borderColor: "#eeeeee",
-              borderWidth: "2px",
-              "&:hover": {
-                borderColor: "#dddddd",
-                borderWidth: "2px",
-              },
-            }}
-            fullWidth
-            onClick={handleCancel}
-          >
-            Cancelar
-          </Button>
-        </Grid>
-        <Grid size xs={12}>
-          <Typography textAlign="center">
-            ¿Ya tienes un perfil? ¡Haz el login{" "}
-            <Link
-              onClick={() => navigate(buildUrl(RoutesString.login))}
-              color="#777777"
-              underline="hover"
+          <Grid size={12}>
+            <TextField
+              {...register("name", {
+                required: "El nombre es obligatorio",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe tener al menos 2 caracteres",
+                },
+              })}
+              label="Nombre"
+              fullWidth
+              error={!!errors.name}
+              helperText={errors.name?.message}
+            />
+          </Grid>
+          <Grid size={12}>
+            <TextField
+              {...register("lastname", {
+                required: "Los apellidos son obligatorio",
+                minLength: {
+                  value: 2,
+                  message: "Los apellidos deben tener al menos 2 caracteres",
+                },
+              })}
+              label="Apellidos"
+              variant="outlined"
+              fullWidth
+              error={!!errors.lastname}
+              helperText={errors.lastname?.message}
+            />
+          </Grid>
+          <Grid size={12}>
+            <TextField
+              {...register("email", {
+                required: "El correo es obligatorio",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Ingrese un correo válido",
+                },
+              })}
+              label="Correo"
+              variant="outlined"
+              fullWidth
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+          </Grid>
+          <Grid size={12}>
+            <TextField
+              {...register("password", {
+                required: "La contraseña es obligatoria",
+                pattern: {
+                  // Password with 8 caracteres and on of the has to be a special one
+                  value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                  message: "La contraseña no es suficientemente fuerte",
+                },
+              })}
+              label="Contraseña"
+              type={showPassword ? "text" : "password"}
+              variant="outlined"
+              fullWidth
+              error={!!errors.password}
+              helperText={errors.password?.message}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              InputProps={{
+                endAdornment: (
+                  <Button onClick={displayPassword}>
+                    {showPassword ? (
+                      <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
+                    ) : (
+                      <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
+                    )}
+                  </Button>
+                ),
+              }}
+            />
+          </Grid>
+          {errors.root && (
+            <Grid size xs={12}>
+              <Typography color="error">{errors.root.message}</Typography>
+            </Grid>
+          )}
+          <Grid size xs={12}>
+            <Button
+              disabled={isSubmitting}
+              type="submit"
+              variant="contained"
+              sx={{
+                color: "black",
+                boxShadow: "none",
+                backgroundColor: "#eeeeee",
+                "&:hover": { backgroundColor: "#dddddd" },
+              }}
+              fullWidth
             >
-              aquí
-            </Link>
-            !
-          </Typography>
+              {isSubmitting ? "Cargando..." : "Crear"}
+            </Button>
+          </Grid>
+          <Grid size xs={12}>
+            <Button
+              type="button"
+              variant="outlined"
+              sx={{
+                color: "black",
+                borderColor: "#eeeeee",
+                borderWidth: "2px",
+                "&:hover": {
+                  borderColor: "#dddddd",
+                  borderWidth: "2px",
+                },
+              }}
+              fullWidth
+              onClick={handleCancel}
+            >
+              Cancelar
+            </Button>
+          </Grid>
+          <Grid size xs={12}>
+            <Typography textAlign="center">
+              ¿Ya tienes un perfil? ¡Haz el login{" "}
+              <Link
+                onClick={() => navigate(buildUrl(RoutesString.login))}
+                color="#777777"
+                underline="hover"
+              >
+                aquí
+              </Link>
+              !
+            </Typography>
+          </Grid>
         </Grid>
-      </Grid>
-    </form>
+      </form>
+      <SocialAuthButtons onAuthSuccess={handlePostAuthRedirect} />
+    </>
   );
 };

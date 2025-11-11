@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import {
   Avatar,
@@ -10,8 +10,11 @@ import {
 } from "@mui/material";
 
 import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
+import { normalizeImg } from "../../../helpers/normalizeImg";
 import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
-import { API_BASE } from "../../../api";
+import { RoutesString } from "../../../routes/routes";
+import { useNavigate } from "react-router-dom";
+import { KompitrailContext } from "../../../context/KompitrailContext";
 
 export const FrequentCompanions = ({ companions: companionsProp }) => {
   const {
@@ -20,6 +23,8 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
     error,
   } = useFrequentCompanions();
   const companions = companionsProp ?? myCompanions;
+  const navigate = useNavigate();
+  const { user } = useContext(KompitrailContext);
 
   if (loading) {
     return (
@@ -39,6 +44,17 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
 
   const isTwoOrLess = companions.length <= 2;
 
+  const handleCardClick = (companion) => (e) => {
+    e.stopPropagation();
+    const isCurrentUser =
+      user?.user_id !== null && user?.user_id === companion.user_id;
+    navigate(
+      isCurrentUser
+        ? RoutesString.profile
+        : RoutesString.otherProfile.replace(":id", companion.user_id)
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -54,9 +70,7 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
       }}
     >
       {companions.map((companion) => {
-        const photoUrl = companion.img
-          ? `${API_BASE}/images/users/${companion.img}`
-          : undefined;
+        const photoUrl = normalizeImg(companion.img);
 
         return (
           <Card
@@ -68,6 +82,7 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
               borderRadius: 2,
               flexShrink: 0,
             }}
+            onClick={handleCardClick(companion)}
           >
             <CardContent
               sx={{

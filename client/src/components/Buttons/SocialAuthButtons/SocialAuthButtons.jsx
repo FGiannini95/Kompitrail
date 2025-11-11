@@ -1,24 +1,101 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
-import { RoutesString } from "../../../routes/routes";
-import { Stack, Typography } from "@mui/material";
+import axios from "axios";
 
-export const SocialAuthButtons = () => {
-  const navigate = useNavigate();
+import { Box, Button, Divider, Stack, Typography } from "@mui/material";
+import AppleIcon from "@mui/icons-material/Apple";
+
+import { AUTH_URL } from "../../../api";
+import { saveLocalStorage } from "../../../helpers/localStorageUtils";
+
+import { KompitrailContext } from "../../../context/KompitrailContext";
+
+export const SocialAuthButtons = ({ onAuthSuccess }) => {
+  const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const idToken = credentialResponse?.credential;
+    if (!idToken) {
+      setErrMsg("Falta de credenciales");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrMsg("");
+
+    try {
+      // Send IdToken to BE
+      const res = await axios.post(`${AUTH_URL}/google`, {
+        id_token: idToken,
+      });
+
+      // Return the same data object as the login
+      const { token, user } = res.data || {};
+      if (!token || !user) {
+        throw new Error("Error en el token o en el usuario");
+      }
+
+      setIsLogged(true);
+      setUser(user);
+      setToken(token);
+      saveLocalStorage("token", token);
+
+      // Let the parent run the post-auth redirect
+      if (typeof onAuthSuccess === "function") onAuthSuccess();
+    } catch (e) {
+      console.log("Autenticación fallida", e);
+      setErrMsg("No se pudo iniciar sesión con Google.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setErrMsg("No se pudo iniciar sesión con Google.");
+  };
+
   return (
-    <Stack alignItems="center" pt={2}>
-      <Typography>--------- o ---------</Typography>
-      <GoogleLogin
-        onSuccess={(credentialResponse) => {
-          console.log(credentialResponse);
-          navigate(RoutesString.home);
+    <Stack alignItems="stretch" pt={2} spacing={2} sx={{ width: "100%" }}>
+      <Divider
+        sx={{
+          width: "100%",
+          "&::before, &::after": { borderTopWidth: 2 },
         }}
-        onError={() => console.log("login fallido")}
-        auto_select={true}
-      />
-      {/* Here below Apple Auth */}
+      >
+        <Typography variant="body2" color="text.secondary">
+          o
+        </Typography>
+      </Divider>
+
+      {/* Google Auth */}
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
+          auto_select={true}
+        />
+      </Box>
+
+      {/* Loading & error states */}
+      {isLoading && (
+        <Typography variant="body2" color="text.secondary" textAlign="center">
+          Conectandose a Google…
+        </Typography>
+      )}
+      {errMsg && (
+        <Typography variant="body2" color="error" textAlign="center">
+          {errMsg}
+        </Typography>
+      )}
+
+      {/* Apple Auth */}
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Button variant="outlined" startIcon={<AppleIcon />}>
+          Sign in with Apple
+        </Button>
+      </Box>
     </Stack>
   );
 };

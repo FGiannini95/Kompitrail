@@ -1,11 +1,12 @@
 import React, { useContext, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Avatar, Badge, Typography, Stack } from "@mui/material";
 
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { getInitials } from "../../../helpers/utils";
-import { API_BASE } from "../../../api";
-import { useNavigate } from "react-router-dom";
 import { RoutesString } from "../../../routes/routes";
+import { normalizeImg } from "../../../helpers/normalizeImg";
 
 export const BadgeAvatar = ({
   targetUserId,
@@ -30,9 +31,7 @@ export const BadgeAvatar = ({
 
   const shouldShowBadge = showBadge && isCurrentUser && !isPastRoute;
 
-  const photoUrl = targetUserImg
-    ? `${API_BASE}/images/users/${targetUserImg}`
-    : undefined;
+  const photoUrl = useMemo(() => normalizeImg(targetUserImg), [targetUserImg]);
 
   const handleAvarClick = (e) => {
     e.stopPropagation();
@@ -76,6 +75,7 @@ export const BadgeAvatar = ({
       >
         <Avatar
           src={photoUrl || undefined}
+          imgProps={{ referrerPolicy: "no-referrer" }}
           sx={{
             width: size,
             height: size,
