@@ -159,15 +159,6 @@ class usersControllers {
     });
   };
 
-  showOneUser = (req, res) => {
-    const { id: user_id } = req.params;
-    let sql = `SELECT * FROM user WHERE user_id = '${user_id}' AND is_deleted = 0`;
-
-    connection.query(sql, (err, result) => {
-      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
-    });
-  };
-
   editUser = (req, res) => {
     const { name, lastname, phonenumber, removePhoto } = JSON.parse(
       req.body.editUser
