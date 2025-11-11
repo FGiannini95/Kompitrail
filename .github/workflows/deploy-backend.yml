@@ -18,9 +18,9 @@ jobs:
       SSH_PORT: ${{ secrets.SSH_PORT }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }}
-      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }} # "server"
-      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }} # "kompitrail-backend"
+      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # /var/www/kompitrail
+      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }} # server
+      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }} # kompitrail-backend (non usato ma ok)
       RELEASE: ${{ github.run_id }}-${{ github.run_number }}
 
     steps:
@@ -50,11 +50,13 @@ jobs:
           echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
+      # Usa sudo -n per creare la cartella della release
       - name: Create remote release dir
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
-            "set -euo pipefail; mkdir -p '${DEPLOY_BASE}/releases/${RELEASE}'"
+            "set -euo pipefail; sudo -n mkdir -p '${DEPLOY_BASE}/releases/${RELEASE}'"
 
+      # Copia il codice sorgente del backend
       - name: Rsync app source
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
@@ -64,17 +66,22 @@ jobs:
             "${BACKEND_SUBDIR}/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/"
 
+      # Copia i node_modules di produzione
       - name: Rsync production node_modules
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
             "${BACKEND_SUBDIR}/node_modules/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/node_modules/"
 
+      # Attiva la nuova release e riavvia il server Node
       - name: Activate release and restart service
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; \
-            mkdir -p '${DEPLOY_BASE}/current/backend/logs'; \
-            ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}' '${DEPLOY_BASE}/current/backend'; \
-            sudo pkill -f 'node .*current/backend/bin/www' || true; \
-            sudo -u deploy nohup node '${DEPLOY_BASE}/current/backend/bin/www' > '${DEPLOY_BASE}/current/backend/logs/server.log' 2>&1 &"
+             sudo -n mkdir -p '${DEPLOY_BASE}/current/backend/logs'; \
+             sudo -n ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}' '${DEPLOY_BASE}/current/backend'; \
+             # termina eventuali processi Node precedenti
+             sudo -n pkill -f 'node .*current/backend/bin/www' || true; \
+             # avvia il nuovo backend come utente deploy (background)
+             sudo -u deploy nohup node '${DEPLOY_BASE}/current/backend/bin/www' > '${DEPLOY_BASE}/current/backend/logs/server.log' 2>&1 & \
+             && echo 'Backend restarted successfully'"
