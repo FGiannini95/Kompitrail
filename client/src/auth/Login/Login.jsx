@@ -139,6 +139,12 @@ export const Login = () => {
               onChange={handleChange}
               error={!!msgError.email}
               helperText={msgError.email}
+              autoComplete="email"
+              inputProps={{
+                inputMode: "email", // mobile keyboard with @
+                autoCapitalize: "none", // avoid capitalizing emails
+                autoCorrect: "off", // no autocorrect on emails
+              }}
             />
           </Grid>
 
@@ -153,6 +159,7 @@ export const Login = () => {
               helperText={msgError.password}
               onFocus={handleFocus}
               onBlur={handleBlur}
+              autoComplete="current-password" //required for login
               InputProps={{
                 endAdornment: (
                   <Button onClick={displayPassword}>

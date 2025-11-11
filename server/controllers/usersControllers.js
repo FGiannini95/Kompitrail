@@ -159,65 +159,123 @@ class usersControllers {
     });
   };
 
-  showOneUser = (req, res) => {
-    const { id: user_id } = req.params;
-    let sql = `SELECT * FROM user WHERE user_id = '${user_id}' AND is_deleted = 0`;
-
-    connection.query(sql, (err, result) => {
-      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
-    });
-  };
-
   editUser = (req, res) => {
-    const { name, lastname, phonenumber, removePhoto } = JSON.parse(
-      req.body.editUser
-    );
-    const { id: user_id } = req.params;
+    try {
+      const { name, lastname, phonenumber, removePhoto } = JSON.parse(
+        req.body.editUser
+      );
+      const { id: user_id } = req.params;
 
-    let sql = `SELECT img FROM user WHERE user_id = "${user_id}" AND is_deleted = 0`;
-    connection.query(sql, (err, rows) => {
-      if (err) {
-        return res.status(400).json({ err });
-      }
-
-      const currentImg = rows.length > 0 ? rows[0].img : null;
-      let img;
-
-      // User want to delete the photo
-      if (removePhoto === true) {
-        img = null;
-      } else if (req.file) {
-        // User want to upload a photo
-        img = req.file.filename;
+      // Clean phonenumber: if it's only "+" or empty or null, save NULL in DB. This prevents duplicate entry errors.
+      let cleanPhoneNumber = phonenumber;
+      if (
+        !phonenumber ||
+        phonenumber.trim() === "" ||
+        phonenumber.trim() === "+"
+      ) {
+        cleanPhoneNumber = null;
       } else {
-        // User does no change so we keep whatever was there
-        img = currentImg;
+        cleanPhoneNumber = phonenumber.trim();
       }
 
-      let sqlUpdate = `UPDATE user 
-          SET 
-            name = "${name}", 
-            lastname = "${lastname}", 
-            phonenumber = ${phonenumber ? `"${phonenumber}"` : "NULL"},
-            img = ${img ? `"${img}"` : "NULL"}
-          WHERE user_id = "${user_id}" AND is_deleted = 0`;
-      connection.query(sqlUpdate, (err, result) => {
+      // First, fetch the current image to know which file to delete if needed
+      let sql = `SELECT img FROM user WHERE user_id = ? AND is_deleted = 0`;
+
+      connection.query(sql, [user_id], (err, rows) => {
         if (err) {
-          return res.status(400).json({ err });
+          return res.status(400).json({ err: err.message });
         }
-        // After update fetch the updated user data to pass it to FE
-        let sqlGetUser = `SELECT user_id, name, lastname, phonenumber, email, img
-          FROM user
-          WHERE user_id="${user_id}" AND is_deleted = 0
-          `;
-        connection.query(sqlGetUser, (err, userData) => {
-          if (err) {
-            return res.status(400).json({ err });
+
+        // Check if user exists
+        if (rows.length === 0) {
+          return res.status(404).json({ err: "User not found" });
+        }
+
+        const currentImg = rows.length > 0 ? rows[0].img : null;
+        let img;
+
+        // User want to delete the photo
+        if (removePhoto === true) {
+          img = null;
+          // Delete the physical file from server if it exists
+          if (currentImg) {
+            const fs = require("fs");
+            const path = require("path");
+            const oldImagePath = path.join(
+              __dirname,
+              `../public/images/users/${currentImg}`
+            );
+            fs.unlink(oldImagePath, (err) => {
+              if (err) console.log("Could not delete old image:", err);
+            });
           }
-          return res.status(200).json(userData[0]);
-        });
+        } else if (req.file) {
+          // User want to upload a photo
+          img = req.file.filename;
+          // Delete old photo when uploading a new one to avoid cluttering the server
+          if (currentImg && currentImg !== img) {
+            const fs = require("fs");
+            const path = require("path");
+            const oldImagePath = path.join(
+              __dirname,
+              `../public/images/users/${currentImg}`
+            );
+            fs.unlink(oldImagePath, (err) => {
+              if (err) console.log("Could not delete old image:", err);
+            });
+          }
+        } else {
+          // User does not change so we keep whatever was there
+          img = currentImg;
+        }
+
+        // Update user data using prepared statements
+        let sqlUpdate = `UPDATE user 
+          SET 
+            name = ?, 
+            lastname = ?, 
+            phonenumber = ?,
+            img = ?
+          WHERE user_id = ? AND is_deleted = 0`;
+
+        connection.query(
+          sqlUpdate,
+          [name, lastname, cleanPhoneNumber, img, user_id],
+          (err, result) => {
+            if (err) {
+              return res.status(400).json({ err: err.message });
+            }
+
+            // Check if the update actually modified any rows
+            if (result.affectedRows === 0) {
+              return res
+                .status(404)
+                .json({ err: "User not found or not updated" });
+            }
+
+            // After update fetch the updated user data to pass it to FE
+            let sqlGetUser = `SELECT user_id, name, lastname, phonenumber, email, img
+            FROM user
+            WHERE user_id = ? AND is_deleted = 0`;
+
+            connection.query(sqlGetUser, [user_id], (err, userData) => {
+              if (err) {
+                return res.status(400).json({ err: err.message });
+              }
+
+              // Make sure we found the user
+              if (userData.length === 0) {
+                return res.status(404).json({ err: "User not found" });
+              }
+
+              return res.status(200).json(userData[0]);
+            });
+          }
+        );
       });
-    });
+    } catch (err) {
+      return res.status(400).json({ err: "Invalid request format" });
+    }
   };
 }
 

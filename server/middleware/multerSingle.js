@@ -1,16 +1,21 @@
+// Use absolute path so it works locally and in prod
 const multer = require("multer");
-function uploadImage(a) {
-  const storage = multer.diskStorage({
-    destination: `./public/images/${a}`,
+const path = require("path");
 
-    filename: function (req, file, callback) {
-      callback(null, "Id-" + Date.now() + "-" + file.originalname);
+// Upload middleware for a single file field named "file".
+function uploadImage(folderName) {
+  const storage = multer.diskStorage({
+    // Always resolve from this file’s directory
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, `../public/images/${folderName}`));
+    },
+    filename: (req, file, cb) => {
+      // Avoid collisions
+      cb(null, "Id-" + Date.now() + "-" + file.originalname);
     },
   });
 
-  const upload = multer({ storage: storage }).single("file");
-
-  return upload;
+  return multer({ storage }).single("file");
 }
 
 module.exports = uploadImage;

@@ -63,37 +63,70 @@ export const useEditUserForm = () => {
 
   const handleConfirm = (e) => {
     e.preventDefault();
-    setUser((prev) =>
-      prev
-        ? { ...prev, name: editUser.name, lastname: editUser.lastname }
-        : prev
-    );
 
+    // Create FormData object to send both JSON data and file
     const newFormData = new FormData();
-    newFormData.append(
-      "editUser",
-      JSON.stringify({
-        name: editUser.name,
-        lastname: editUser.lastname,
-        phonenumber: editUser.phonenumber,
-        removePhoto: editUser.removePhoto,
-      })
-    );
 
+    // Clean phonenumber: if it's only "+" or empty or null, save NULL in DB. This prevents duplicate entry errors.
+    // let cleanPhoneNumber = editUser.phonenumber.trim();
+    // if (cleanPhoneNumber === "+" || cleanPhoneNumber === "") {
+    //   cleanPhoneNumber = "";
+    // }
+
+    // Prepare the user data object
+    const editUserData = {
+      name: editUser.name.trim(),
+      lastname: editUser.lastname.trim(),
+      //phonenumber: cleanPhoneNumber,
+      removePhoto: editUser.removePhoto || false,
+    };
+
+    console.log("Sending data:", editUserData); // Debug log
+
+    // Add the JSON data as a string to FormData
+    newFormData.append("editUser", JSON.stringify(editUserData));
+
+    // Add the file only if user selected a new photo
     if (editUser.photo) {
       newFormData.append("file", editUser.photo);
     }
 
     axios
-      .put(`${API_BASE}/users/edituser/${user_id}`, newFormData)
+      .put(`${API_BASE}/users/edituser/${user_id}`, newFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Required for file uploads
+        },
+      })
       .then((res) => {
-        setEditUser(res.data);
-        setInitialValue(res.data);
+        // Normalize the received data to ensure consistent state
+        const normalizedData = {
+          user_id: res.data.user_id,
+          name: res.data.name || "",
+          lastname: res.data.lastname || "",
+          //phonenumber: res.data.phonenumber || "",
+          email: res.data.email || "",
+          img: res.data.img || null,
+          removePhoto: false, // Reset to false after successful save
+          photo: null, // Reset to null after successful save
+        };
+
+        setEditUser(normalizedData);
+        setInitialValue(normalizedData);
         setUser(res.data);
+
+        // Update photo preview based on server response
+        if (res.data.img) {
+          setPhotoPreview(normalizeImg(res.data.img));
+        } else {
+          setPhotoPreview(null);
+        }
+
+        // Navigate back to profile page
         navigate(RoutesString.profile, { replace: true });
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error al actualizar el usuario:", err);
+        console.error("Error:", err.response?.data);
       });
   };
 

@@ -205,7 +205,7 @@ export const EditUser = () => {
         />
       </Grid>
       {/* Phone section */}
-      <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
+      {/* <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
         <PhoneInput
           defaultCountry="es"
           value={editUser?.phonenumber || ""}
@@ -231,7 +231,7 @@ export const EditUser = () => {
             },
           }}
         />
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };
