@@ -18,10 +18,10 @@ jobs:
       SSH_PORT: ${{ secrets.SSH_PORT }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }}
-      FRONTEND_SUBDIR: ${{ secrets.FRONTEND_SUBDIR }}
+      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # e.g. /var/www/kompitrail
+      FRONTEND_SUBDIR: ${{ secrets.FRONTEND_SUBDIR }} # e.g. client
       RELEASE: ${{ github.run_id }}-${{ github.run_number }}
-      BUILD_DIR: dist # output directory from Vite build
+      BUILD_DIR: dist
 
     steps:
       - name: Checkout
@@ -52,20 +52,24 @@ jobs:
           echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
-      - name: Create release dir
+      # Create the release dir with sudo, but make it OWNED by the SSH user so rsync can write.
+      - name: Create release dir (sudo, owned by SSH user)
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
-            "set -euo pipefail; mkdir -p '${DEPLOY_BASE}/releases/${RELEASE}/frontend'"
+            "set -euo pipefail; \
+             sudo install -d -o \"$USER\" -g \"$USER\" '${DEPLOY_BASE}/releases/${RELEASE}/frontend'"
 
+      # Upload the built assets into that release
       - name: Rsync build
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
             "${FRONTEND_SUBDIR}/${BUILD_DIR}/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/frontend/"
 
-      - name: Activate release
+      # Atomically flip current/frontend -> this release (needs sudo because `current` is root-owned)
+      - name: Activate release (sudo symlink switch)
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; \
-             mkdir -p '${DEPLOY_BASE}/current'; \
-             ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}/frontend' '${DEPLOY_BASE}/current/frontend'"
+             sudo mkdir -p '${DEPLOY_BASE}/current'; \
+             sudo ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}/frontend' '${DEPLOY_BASE}/current/frontend'"
