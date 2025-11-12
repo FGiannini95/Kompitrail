@@ -1,4 +1,4 @@
-name: Deploy Backend (debug)
+name: Deploy Backend
 
 on:
   push:
@@ -14,13 +14,13 @@ jobs:
 
     env:
       SSH_HOST: ${{ secrets.SSH_HOST }}
-      SSH_USER: ${{ secrets.SSH_USER }}
-      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_USER: ${{ secrets.SSH_USER }} # keep: federico
+      SSH_PORT: ${{ secrets.SSH_PORT }} # e.g. 7059
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }}
-      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }} # es. "server"
-      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }} # es. "kompitrail-backend"
+      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # e.g. /var/www/kompitrail
+      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }}# e.g. server
+      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }}
       RELEASE: ${{ github.run_id }}-${{ github.run_number }}
 
     steps:
@@ -45,31 +45,20 @@ jobs:
       - name: Prepare SSH
         run: |
           mkdir -p ~/.ssh
+          # Use id_rsa because your key is RSA and GitHub runner offers id_rsa by default
           echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
-      # ✅ Step 1: mostra prime righe della chiave per confermare che GitHub la legga bene
-      - name: Debug SSH key
-        run: |
-          echo "SSH user: ${SSH_USER}"
-          echo "Key preview (first 5 lines):"
-          echo "${SSH_PRIVATE_KEY}" | head -n 5
-          echo "--- END PREVIEW ---"
-
-      # ✅ Step 2: test connessione grezza con log dettagliato (-vvv)
-      - name: Test raw SSH connection
-        run: |
-          ssh -vvv -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" "whoami" || true
-
-      # 🔹 Se sopra va bene, parte il deploy vero
+      # Create the release directory OWNED by federico so rsync can write without sudo
       - name: Create remote release dir
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; \
-             sudo -n install -d -o federico -g federico '${DEPLOY_BASE}/releases/${RELEASE}'"
+             sudo -n install -d -o federico -g federico \"${DEPLOY_BASE}/releases/${RELEASE}\""
 
+      # Sync app source (no sudo needed; dir owned by federico)
       - name: Rsync app source
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
@@ -79,18 +68,20 @@ jobs:
             "${BACKEND_SUBDIR}/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/"
 
+      # Sync production node_modules (already pruned)
       - name: Rsync production node_modules
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
             "${BACKEND_SUBDIR}/node_modules/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/node_modules/"
 
+      # Flip symlink and restart backend — fixed quoting and backgrounding
       - name: Activate release and restart service
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; \
-             sudo -n mkdir -p '${DEPLOY_BASE}/current/backend/logs'; \
-             sudo -n ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}' '${DEPLOY_BASE}/current/backend'; \
-             sudo -n pkill -f 'node .*current/backend/bin/www' || true; \
-             sudo -u federico nohup node '${DEPLOY_BASE}/current/backend/bin/www' > '${DEPLOY_BASE}/current/backend/logs/server.log' 2>&1 & \
-             && echo 'Backend restarted successfully'"
+             sudo -n install -d -o root -g root \"${DEPLOY_BASE}/current/backend/logs\"; \
+             sudo -n ln -sfn \"${DEPLOY_BASE}/releases/${RELEASE}\" \"${DEPLOY_BASE}/current/backend\"; \
+             sudo -n pkill -f \"node .*current/backend/bin/www\" || true; \
+             sudo -u federico nohup node \"${DEPLOY_BASE}/current/backend/bin/www\" > \"${DEPLOY_BASE}/current/backend/logs/server.log\" 2>&1 &; \
+             echo 'Backend restarted successfully'"
