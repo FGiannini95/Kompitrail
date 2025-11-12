@@ -1,4 +1,4 @@
-name: Deploy Backend
+name: Deploy Backend (debug)
 
 on:
   push:
@@ -18,9 +18,9 @@ jobs:
       SSH_PORT: ${{ secrets.SSH_PORT }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # /var/www/kompitrail
-      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }} # server
-      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }} # kompitrail-backend (non usato ma ok)
+      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }}
+      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }} # es. "server"
+      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }} # es. "kompitrail-backend"
       RELEASE: ${{ github.run_id }}-${{ github.run_number }}
 
     steps:
@@ -45,19 +45,31 @@ jobs:
       - name: Prepare SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
-      # Usa sudo -n per creare la cartella della release
+      # ✅ Step 1: mostra prime righe della chiave per confermare che GitHub la legga bene
+      - name: Debug SSH key
+        run: |
+          echo "SSH user: ${SSH_USER}"
+          echo "Key preview (first 5 lines):"
+          echo "${SSH_PRIVATE_KEY}" | head -n 5
+          echo "--- END PREVIEW ---"
+
+      # ✅ Step 2: test connessione grezza con log dettagliato (-vvv)
+      - name: Test raw SSH connection
+        run: |
+          ssh -vvv -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" "whoami" || true
+
+      # 🔹 Se sopra va bene, parte il deploy vero
       - name: Create remote release dir
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; \
-            sudo -n install -d -o federico -g federico '${DEPLOY_BASE}/releases/${RELEASE}'"
+             sudo -n install -d -o federico -g federico '${DEPLOY_BASE}/releases/${RELEASE}'"
 
-      # Copia il codice sorgente del backend
       - name: Rsync app source
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
@@ -67,22 +79,18 @@ jobs:
             "${BACKEND_SUBDIR}/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/"
 
-      # Copia i node_modules di produzione
       - name: Rsync production node_modules
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
             "${BACKEND_SUBDIR}/node_modules/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/node_modules/"
 
-      # Attiva la nuova release e riavvia il server Node
       - name: Activate release and restart service
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; \
              sudo -n mkdir -p '${DEPLOY_BASE}/current/backend/logs'; \
              sudo -n ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}' '${DEPLOY_BASE}/current/backend'; \
-             # termina eventuali processi Node precedenti
              sudo -n pkill -f 'node .*current/backend/bin/www' || true; \
-             # avvia il nuovo backend come utente deploy (background)
-             sudo -u deploy nohup node '${DEPLOY_BASE}/current/backend/bin/www' > '${DEPLOY_BASE}/current/backend/logs/server.log' 2>&1 & \
+             sudo -u federico nohup node '${DEPLOY_BASE}/current/backend/bin/www' > '${DEPLOY_BASE}/current/backend/logs/server.log' 2>&1 & \
              && echo 'Backend restarted successfully'"
