@@ -11,30 +11,45 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     env:
       SSH_HOST: ${{ secrets.SSH_HOST }}
-      SSH_USER: ${{ secrets.SSH_USER }} # keep: federico
-      SSH_PORT: ${{ secrets.SSH_PORT }} # e.g. 7059
+      SSH_USER: ${{ secrets.SSH_USER }} # es: federico
+      SSH_PORT: ${{ secrets.SSH_PORT }} # es: 7059
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # e.g. /var/www/kompitrail
-      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }}# e.g. server
-      BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }}
+      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # es: /var/www/kompitrail
+      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }} # es: server
       RELEASE: ${{ github.run_id }}-${{ github.run_number }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      # === Manual checkout (no marketplace actions) ===
+      - name: Manual checkout
+        env:
+          REPO: ${{ github.repository }}
+          REF: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git init .
+          git config --global advice.detachedHead false
+          git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n x-access-token:${GH_TOKEN} | base64)"
+          git remote add origin "https://github.com/${REPO}.git"
+          git fetch --no-tags --prune --depth=1 origin "${REF}"
+          git checkout --progress --force -B ci FETCH_HEAD
+          git rev-parse --short HEAD
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "npm"
-          cache-dependency-path: |
-            ${{ env.BACKEND_SUBDIR }}/package-lock.json
-            ${{ env.BACKEND_SUBDIR }}/package.json
+      # === Node 20 via nvm (runner già ce l'ha) ===
+      - name: Use Node 20
+        shell: bash
+        run: |
+          set -euo pipefail
+          source ~/.nvm/nvm.sh
+          nvm install 20
+          nvm use 20
+          node -v
+          npm -v
 
       - name: Install and prune dev deps
         working-directory: ${{ env.BACKEND_SUBDIR }}
@@ -42,23 +57,26 @@ jobs:
           npm ci || npm install
           npm prune --omit=dev
 
+      # === SSH prep (no marketplace actions) ===
       - name: Prepare SSH
         run: |
+          set -euo pipefail
           mkdir -p ~/.ssh
-          # Use id_rsa because your key is RSA and GitHub runner offers id_rsa by default
           echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
+          if [ -n "${SSH_KNOWN_HOSTS:-}" ]; then
+            echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "${SSH_PORT}" "${SSH_HOST}" >> ~/.ssh/known_hosts
+          fi
           chmod 644 ~/.ssh/known_hosts
 
-      # Create the release directory OWNED by federico so rsync can write without sudo
-      - name: Create remote release dir
+      # === Deploy ===
+      - name: Create remote release dir (owned by SSH_USER)
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
-            "set -euo pipefail; \
-             sudo -n install -d -o federico -g federico \"${DEPLOY_BASE}/releases/${RELEASE}\""
+            "set -euo pipefail; sudo -n install -d -o ${SSH_USER} -g ${SSH_USER} \"${DEPLOY_BASE}/releases/${RELEASE}\""
 
-      # Sync app source (no sudo needed; dir owned by federico)
       - name: Rsync app source
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
@@ -68,14 +86,12 @@ jobs:
             "${BACKEND_SUBDIR}/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/"
 
-      # Sync production node_modules (already pruned)
       - name: Rsync production node_modules
         run: |
           rsync -az --delete -e "ssh -p ${SSH_PORT}" \
             "${BACKEND_SUBDIR}/node_modules/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/node_modules/"
 
-      # Flip symlink and restart backend — fixed quoting and backgrounding
       - name: Activate release and restart service
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
@@ -83,5 +99,5 @@ jobs:
              sudo -n install -d -o root -g root \"${DEPLOY_BASE}/current/backend/logs\"; \
              sudo -n ln -sfn \"${DEPLOY_BASE}/releases/${RELEASE}\" \"${DEPLOY_BASE}/current/backend\"; \
              sudo -n pkill -f \"node .*current/backend/bin/www\" || true; \
-             sudo -u federico nohup node \"${DEPLOY_BASE}/current/backend/bin/www\" > \"${DEPLOY_BASE}/current/backend/logs/server.log\" 2>&1 &; \
-             echo 'Backend restarted successfully'"
+             sudo -u ${SSH_USER} nohup node \"${DEPLOY_BASE}/current/backend/bin/www\" > \"${DEPLOY_BASE}/current/backend/logs/server.log\" 2>&1 &; \
+             echo Backend restarted successfully"
