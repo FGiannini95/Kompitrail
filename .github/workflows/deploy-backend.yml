@@ -55,7 +55,7 @@ jobs:
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "set -euo pipefail; \
-             sudo -n install -d -o deploy -g deploy '${DEPLOY_BASE}/releases/${RELEASE}'"
+            sudo -n install -d -o federico -g federico '${DEPLOY_BASE}/releases/${RELEASE}'"
 
       # Copia il codice sorgente del backend
       - name: Rsync app source
