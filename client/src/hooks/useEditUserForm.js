@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
@@ -51,37 +51,33 @@ export const useEditUserForm = () => {
       const { name, value } = e.target;
 
       const nextValue =
-        typeof value === "string" && value.length > 0 && name !== "phonenumber"
+        typeof value === "string" && value.length > 0
           ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
           : value;
       setEditUser((prevState) => ({ ...prevState, [name]: nextValue }));
     } else {
-      // Direct value - PhoneInput
-      setEditUser((prevState) => ({ ...prevState, phonenumber: e }));
+      setEditUser((prevState) => ({ ...prevState }));
     }
   };
 
   const handleConfirm = (e) => {
     e.preventDefault();
+    if (
+      (editUser.name || "").trim().length < 2 ||
+      (editUser.lastname || "").trim().length < 2
+    ) {
+      return;
+    }
 
     // Create FormData object to send both JSON data and file
     const newFormData = new FormData();
-
-    // Clean phonenumber: if it's only "+" or empty or null, save NULL in DB. This prevents duplicate entry errors.
-    // let cleanPhoneNumber = editUser.phonenumber.trim();
-    // if (cleanPhoneNumber === "+" || cleanPhoneNumber === "") {
-    //   cleanPhoneNumber = "";
-    // }
 
     // Prepare the user data object
     const editUserData = {
       name: editUser.name.trim(),
       lastname: editUser.lastname.trim(),
-      //phonenumber: cleanPhoneNumber,
       removePhoto: editUser.removePhoto || false,
     };
-
-    console.log("Sending data:", editUserData); // Debug log
 
     // Add the JSON data as a string to FormData
     newFormData.append("editUser", JSON.stringify(editUserData));
@@ -103,7 +99,6 @@ export const useEditUserForm = () => {
           user_id: res.data.user_id,
           name: res.data.name || "",
           lastname: res.data.lastname || "",
-          //phonenumber: res.data.phonenumber || "",
           email: res.data.email || "",
           img: res.data.img || null,
           removePhoto: false, // Reset to false after successful save
@@ -142,25 +137,17 @@ export const useEditUserForm = () => {
       return;
     }
 
-    // Don't compare if data not loaded yet
-    if (
-      !editUser.name ||
-      !initialValue.name ||
-      editUser === USER_INITIAL_VALUE ||
-      initialValue === USER_INITIAL_VALUE
-    ) {
-      setSave(false);
-      return;
-    }
-
     const hasChange =
       editUser.name !== initialValue.name ||
       editUser.lastname !== initialValue.lastname ||
-      editUser.phonenumber !== initialValue.phonenumber ||
       editUser.removePhoto !== initialValue.removePhoto ||
       editUser.img !== initialValue.img;
 
-    setSave(hasChange);
+    const nameOk = (editUser.name || "").trim().length >= 2;
+    const lastNameOk = (editUser.lastname || "").trim().length >= 2;
+    const isValid = nameOk && lastNameOk;
+
+    setSave(hasChange && isValid);
   }, [editUser, initialValue, isLoading]);
 
   return {
