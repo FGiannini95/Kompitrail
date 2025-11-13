@@ -41,22 +41,24 @@ export const useShareUrl = ({ mode, otherUserId, currentUserId, routeId }) => {
 
       if (canUseClipboard) {
         await navigator.clipboard.writeText(shareUrl);
-      } else {
-        // Fallback: create a temporary textarea and use execCommand('copy')
-        const textArea = document.createElement("textarea");
-        textArea.value = shareUrl;
-        textArea.setAttribute("readonly", "");
-        textArea.style.position = "fixed";
-        textArea.style.top = "-9999px";
-        document.body.appendChild(textArea);
-        textArea.select();
-        textArea.setSelectionRange(0, textArea.value.length);
-        textArea.execComand("copy");
-        document.body.removeChild(textArea);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+        return;
       }
 
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      // Web share API
+      if (typeof navigator !== "undefined" && navigator.share === "function") {
+        try {
+          await navigator.share({ urL: shareUrl });
+          setIsCopied(true);
+          setTimeout(() => setIsCopied(false), 2000);
+          return;
+        } catch (err) {
+          // Share no disponible
+        }
+      }
+
+      window.prompt("Url copiada", shareUrl);
     } catch (error) {
       console.error("Error al copiar la URL:", error);
     }
