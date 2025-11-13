@@ -16,22 +16,22 @@ jobs:
 
     env:
       SSH_HOST: ${{ secrets.SSH_HOST }}
-      SSH_USER: ${{ secrets.SSH_USER }} # es: federico
-      SSH_PORT: ${{ secrets.SSH_PORT }} # es: 7059
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # es: /var/www/kompitrail
-      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }} # es: server
+      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }}
+      BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }}
       RELEASE: ${{ github.run_id }}-${{ github.run_number }}
 
     steps:
-      # === Manual checkout (no marketplace actions) ===
       - name: Manual checkout
         env:
           REPO: ${{ github.repository }}
           REF: ${{ github.sha }}
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           git init .
           git config --global advice.detachedHead false
           git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n x-access-token:${GH_TOKEN} | base64)"
@@ -40,7 +40,6 @@ jobs:
           git checkout --progress --force -B ci FETCH_HEAD
           git rev-parse --short HEAD
 
-      # === Node 20 via nvm (runner già ce l'ha) ===
       - name: Use Node 20
         shell: bash
         run: |
@@ -54,10 +53,10 @@ jobs:
       - name: Install and prune dev deps
         working-directory: ${{ env.BACKEND_SUBDIR }}
         run: |
+          set -euo pipefail
           npm ci || npm install
           npm prune --omit=dev
 
-      # === SSH prep (no marketplace actions) ===
       - name: Prepare SSH
         run: |
           set -euo pipefail
@@ -71,7 +70,6 @@ jobs:
           fi
           chmod 644 ~/.ssh/known_hosts
 
-      # === Deploy ===
       - name: Create remote release dir (owned by SSH_USER)
         run: |
           ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
@@ -99,5 +97,4 @@ jobs:
              sudo -n install -d -o root -g root \"${DEPLOY_BASE}/current/backend/logs\"; \
              sudo -n ln -sfn \"${DEPLOY_BASE}/releases/${RELEASE}\" \"${DEPLOY_BASE}/current/backend\"; \
              sudo -n pkill -f \"node .*current/backend/bin/www\" || true; \
-             sudo -u ${SSH_USER} nohup node \"${DEPLOY_BASE}/current/backend/bin/www\" > \"${DEPLOY_BASE}/current/backend/logs/server.log\" 2>&1 &; \
-             echo Backend restarted successfully"
+             sudo -u ${SSH_USER} nohup node \"${DEPLOY_BASE}/current/backend/bin/www\" > \"${DEPLOY_BASE}/current/backend/logs/server.log\" 2>&1 & echo Backend restarted successfully"
