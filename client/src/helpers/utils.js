@@ -8,8 +8,24 @@ export const getInitials = (name, lastname) => {
 
 // Capitalize the first letter of a given string
 export const capitalizeFirstLetter = (string) => {
-  if (!string) return "";
-  return string.charAt(0).toUpperCase() + string.slice(1);
+  if (typeof string !== "string") return "";
+  const trimmedValue = string.trim();
+  if (!trimmedValue) return "";
+
+  // Split by spaces; inside each word, also split by hyphen and title-case each part
+  return trimmedValue
+    .split(/\s+/)
+    .map((word) =>
+      word
+        .split("-")
+        .map((part) =>
+          part
+            ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            : part
+        )
+        .join("-")
+    )
+    .join(" ");
 };
 
 // Capitalize the first letter of both the name and the lastname

@@ -161,22 +161,8 @@ class usersControllers {
 
   editUser = (req, res) => {
     try {
-      const { name, lastname, phonenumber, removePhoto } = JSON.parse(
-        req.body.editUser
-      );
+      const { name, lastname, removePhoto } = JSON.parse(req.body.editUser);
       const { id: user_id } = req.params;
-
-      // Clean phonenumber: if it's only "+" or empty or null, save NULL in DB. This prevents duplicate entry errors.
-      let cleanPhoneNumber = phonenumber;
-      if (
-        !phonenumber ||
-        phonenumber.trim() === "" ||
-        phonenumber.trim() === "+"
-      ) {
-        cleanPhoneNumber = null;
-      } else {
-        cleanPhoneNumber = phonenumber.trim();
-      }
 
       // First, fetch the current image to know which file to delete if needed
       let sql = `SELECT img FROM user WHERE user_id = ? AND is_deleted = 0`;
@@ -234,13 +220,12 @@ class usersControllers {
           SET 
             name = ?, 
             lastname = ?, 
-            phonenumber = ?,
             img = ?
           WHERE user_id = ? AND is_deleted = 0`;
 
         connection.query(
           sqlUpdate,
-          [name, lastname, cleanPhoneNumber, img, user_id],
+          [name, lastname, img, user_id],
           (err, result) => {
             if (err) {
               return res.status(400).json({ err: err.message });
@@ -254,7 +239,7 @@ class usersControllers {
             }
 
             // After update fetch the updated user data to pass it to FE
-            let sqlGetUser = `SELECT user_id, name, lastname, phonenumber, email, img
+            let sqlGetUser = `SELECT user_id, name, lastname, email, img
             FROM user
             WHERE user_id = ? AND is_deleted = 0`;
 

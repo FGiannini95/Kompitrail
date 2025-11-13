@@ -11,6 +11,7 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 // Utils
 import { RoutesString } from "../../routes/routes";
 import { USERS_URL } from "../../api";
+import { capitalizeFirstLetter } from "../../helpers/utils";
 // Hooks & Providers
 import { useRedirectParam } from "../../hooks/useRedirectParam";
 import { usePostAuthRedirect } from "../../hooks/usePostAuthRedirect";
@@ -86,6 +87,7 @@ export const Register = () => {
                   value: 2,
                   message: "El nombre debe tener al menos 2 caracteres",
                 },
+                setValueAs: (v) => capitalizeFirstLetter(v),
               })}
               label="Nombre"
               fullWidth
@@ -101,6 +103,7 @@ export const Register = () => {
                   value: 2,
                   message: "Los apellidos deben tener al menos 2 caracteres",
                 },
+                setValueAs: (v) => capitalizeFirstLetter(v),
               })}
               label="Apellidos"
               variant="outlined"

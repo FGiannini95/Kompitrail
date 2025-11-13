@@ -1,6 +1,4 @@
 import React from "react";
-import { PhoneInput, defaultCountries } from "react-international-phone";
-import "react-international-phone/style.css";
 
 import {
   Box,
@@ -15,12 +13,10 @@ import IconButton from "@mui/material/IconButton";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-// Utils
+
 import { getInitials } from "../../../helpers/utils";
 
 import { useEditUserForm } from "../../../hooks/useEditUserForm";
-
-const countries = defaultCountries;
 
 export const EditUser = () => {
   const {
@@ -204,34 +200,6 @@ export const EditUser = () => {
           onChange={handleChange}
         />
       </Grid>
-      {/* Phone section */}
-      {/* <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
-        <PhoneInput
-          defaultCountry="es"
-          value={editUser?.phonenumber || ""}
-          onChange={(value) => {
-            handleChange(value);
-          }}
-          countries={countries}
-          style={{
-            width: "100%",
-            backgroundColor: "#f5f4f4",
-            border: "1px solid rgba(0, 0, 0, 0.3)",
-            borderRadius: "5px",
-            fontFamily: "Arial, sans-serif",
-            fontSize: "18px",
-          }}
-          inputStyle={{
-            height: "56px",
-            flex: "1",
-          }}
-          countrySelectorStyleProps={{
-            buttonStyle: {
-              height: "56px",
-            },
-          }}
-        />
-      </Grid> */}
     </Grid>
   );
 };
