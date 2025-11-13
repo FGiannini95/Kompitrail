@@ -9,6 +9,7 @@ export const useShareUrl = ({ mode, otherUserId, currentUserId, routeId }) => {
   // If we're viewing someone else: use that id.
   // If we're viewing our own profile at /profile: use currentUser.user_id.
   const shareUrl = useMemo(() => {
+    if (typeof window === "undefined") return "";
     const origin = window.location.origin;
 
     if (mode === "route") {
@@ -27,11 +28,33 @@ export const useShareUrl = ({ mode, otherUserId, currentUserId, routeId }) => {
       });
       return `${origin}${path}`;
     }
+    return window.location.href;
   }, [mode, routeId, otherUserId, currentUserId]);
 
   const handleShare = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      const canUseClipboard =
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        typeof window !== "undefined" &&
+        window.isSecureContext;
+
+      if (canUseClipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        // Fallback: create a temporary textarea and use execCommand('copy')
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.setAttribute("readonly", "");
+        textArea.style.position = "fixed";
+        textArea.style.top = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        textArea.setSelectionRange(0, textArea.value.length);
+        textArea.execComand("copy");
+        document.body.removeChild(textArea);
+      }
+
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
