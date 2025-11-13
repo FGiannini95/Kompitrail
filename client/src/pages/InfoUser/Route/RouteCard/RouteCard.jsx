@@ -87,10 +87,17 @@ export const RouteCard = ({
         borderRadius: 2,
         display: "flex",
         flexDirection: "column",
+        disabled: { isPastRoute },
       }}
     >
       <CardContent>
-        <Box onClick={handleOpenDetails} sx={{ cursor: "pointer" }}>
+        <Box
+          onClick={handleOpenDetails}
+          sx={{
+            cursor: "pointer",
+            color: isPastRoute ? "text.disabled" : "text.primary",
+          }}
+        >
           <Stack direction="row" alignItems="center" spacing={1}>
             <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
             <Typography>{starting_point}</Typography>
