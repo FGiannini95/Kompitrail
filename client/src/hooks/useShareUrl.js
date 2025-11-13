@@ -5,9 +5,6 @@ import { RoutesString } from "../routes/routes";
 export const useShareUrl = ({ mode, otherUserId, currentUserId, routeId }) => {
   const [isCopied, setIsCopied] = useState(false);
 
-  // Build a canonical share URL that ALWAYS contains the user id.
-  // If we're viewing someone else: use that id.
-  // If we're viewing our own profile at /profile: use currentUser.user_id.
   const shareUrl = useMemo(() => {
     if (typeof window === "undefined") return "";
     const origin = window.location.origin;
@@ -28,6 +25,7 @@ export const useShareUrl = ({ mode, otherUserId, currentUserId, routeId }) => {
       });
       return `${origin}${path}`;
     }
+
     return window.location.href;
   }, [mode, routeId, otherUserId, currentUserId]);
 
@@ -37,28 +35,27 @@ export const useShareUrl = ({ mode, otherUserId, currentUserId, routeId }) => {
         typeof navigator !== "undefined" &&
         navigator.clipboard &&
         typeof window !== "undefined" &&
-        window.isSecureContext;
+        window.isSecureContext; // HTTPS/localhost required
 
       if (canUseClipboard) {
         await navigator.clipboard.writeText(shareUrl);
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
-        return;
+      } else {
+        // Fallback: temporary textarea + execCommand('copy')
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.setAttribute("readonly", "");
+        textArea.style.position = "fixed";
+        textArea.style.top = "-9999px";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        textArea.setSelectionRange(0, textArea.value.length);
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
       }
 
-      // Web share API
-      if (typeof navigator !== "undefined" && navigator.share === "function") {
-        try {
-          await navigator.share({ urL: shareUrl });
-          setIsCopied(true);
-          setTimeout(() => setIsCopied(false), 2000);
-          return;
-        } catch (err) {
-          // Share no disponible
-        }
-      }
-
-      window.prompt("Url copiada", shareUrl);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
       console.error("Error al copiar la URL:", error);
     }
