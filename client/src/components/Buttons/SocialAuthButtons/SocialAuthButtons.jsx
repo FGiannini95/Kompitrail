@@ -12,17 +12,18 @@ import { KompitrailContext } from "../../../context/KompitrailContext";
 
 export const SocialAuthButtons = ({ onAuthSuccess }) => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    if (isGoogleLoading) return;
     const idToken = credentialResponse?.credential;
     if (!idToken) {
       setErrMsg("Falta de credenciales");
       return;
     }
 
-    setIsLoading(true);
+    setIsGoogleLoading(true);
     setErrMsg("");
 
     try {
@@ -37,18 +38,17 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
         throw new Error("Error en el token o en el usuario");
       }
 
-      setIsLogged(true);
-      setUser(user);
       setToken(token);
       saveLocalStorage("token", token);
-
+      setUser(user);
+      setIsLogged(true);
       // Let the parent run the post-auth redirect
-      if (typeof onAuthSuccess === "function") onAuthSuccess();
+      onAuthSuccess?.();
     } catch (e) {
       console.log("Autenticación fallida", e);
       setErrMsg("No se pudo iniciar sesión con Google.");
     } finally {
-      setIsLoading(false);
+      setIsGoogleLoading(false);
     }
   };
 
@@ -70,7 +70,12 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
       </Divider>
 
       {/* Google Auth */}
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
           onError={handleGoogleError}
@@ -79,9 +84,9 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
       </Box>
 
       {/* Loading & error states */}
-      {isLoading && (
+      {isGoogleLoading && (
         <Typography variant="body2" color="text.secondary" textAlign="center">
-          Conectandose a Google…
+          Conectándose a Google…
         </Typography>
       )}
       {errMsg && (

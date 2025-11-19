@@ -16,7 +16,10 @@ export const UserRoutesCarousel = ({
 }) => {
   const { user: currentUser } = useContext(KompitrailContext);
 
+  // Viewed user id: used ONLY for filtering which routes to show in the carousel
   const targetUserId = Number(profileUserId || currentUser?.user_id);
+  // Viewer (authenticated) user id: used for ownership/capabilities
+  const ownerUserId = Number(currentUser?.user_id);
 
   // Compute only user-related routes and sort by ascending date
   const userRoutes = useMemo(() => {
@@ -76,7 +79,7 @@ export const UserRoutesCarousel = ({
             >
               <RouteCard
                 {...route}
-                isOwner={Number(route.user_id) === targetUserId}
+                isOwner={Number(route.user_id) === ownerUserId}
               />
             </Box>
           ))}

@@ -1,13 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import {
-  Box,
-  CircularProgress,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -31,6 +25,7 @@ import { ContainedButton } from "../../components/Buttons/ContainedButton/Contai
 import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 import { FrequentCompanions } from "./FrequentCompanions/FrequentCompanions";
 import { Header } from "../../components/Header/Header";
+import { Loading } from "../../components/Loading/Loading";
 
 export const Profile = () => {
   const { allRoutes, loadAllRoutes } = useRoutes();
@@ -126,11 +121,7 @@ export const Profile = () => {
     : currentUser?.user_id;
 
   if (isOtherProfile && (otherUserLoading || !otherUserData)) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-        <CircularProgress size={20} />
-      </Box>
-    );
+    return <Loading />;
   }
 
   return (

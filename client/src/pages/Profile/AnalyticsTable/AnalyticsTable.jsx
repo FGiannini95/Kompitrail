@@ -7,9 +7,9 @@ import {
   TableRow,
   TableCell,
   tableCellClasses,
-  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { Loading } from "../../../components/Loading/Loading";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -57,13 +57,13 @@ export const AnalyticsTable = ({
         <TableBody>
           <StyledTableRow>
             <StyledTableCell align="center">
-              {loading ? <CircularProgress size={20} /> : motorbikes || 0}
+              {loading ? <Loading /> : motorbikes || 0}
             </StyledTableCell>
             <StyledTableCell align="center">
-              {loading ? <CircularProgress size={20} /> : createdRoutes || 0}
+              {loading ? <Loading /> : createdRoutes || 0}
             </StyledTableCell>
             <StyledTableCell align="center">
-              {loading ? <CircularProgress size={20} /> : joinedRoutes || 0}
+              {loading ? <Loading /> : joinedRoutes || 0}
             </StyledTableCell>
           </StyledTableRow>
         </TableBody>

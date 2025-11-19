@@ -11,7 +11,7 @@ export const Loading = () => {
         minHeight: "50vh",
       }}
     >
-      <CircularProgress sx={{ color: "inherit" }} />
+      <CircularProgress sx={{ color: "inherit" }} size={20} />
     </Box>
   );
 };
