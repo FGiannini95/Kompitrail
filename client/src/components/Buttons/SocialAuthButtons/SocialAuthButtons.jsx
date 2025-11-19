@@ -12,18 +12,18 @@ import { KompitrailContext } from "../../../context/KompitrailContext";
 
 export const SocialAuthButtons = ({ onAuthSuccess }) => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
   const handleGoogleSuccess = async (credentialResponse) => {
-    if (isLoading) return;
+    if (isGoogleLoading) return;
     const idToken = credentialResponse?.credential;
     if (!idToken) {
       setErrMsg("Falta de credenciales");
       return;
     }
 
-    setIsLoading(true);
+    setIsGoogleLoading(true);
     setErrMsg("");
 
     try {
@@ -48,7 +48,7 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
       console.log("Autenticación fallida", e);
       setErrMsg("No se pudo iniciar sesión con Google.");
     } finally {
-      setIsLoading(false);
+      setIsGoogleLoading(false);
     }
   };
 
@@ -84,7 +84,7 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
       </Box>
 
       {/* Loading & error states */}
-      {isLoading && (
+      {isGoogleLoading && (
         <Typography variant="body2" color="text.secondary" textAlign="center">
           Conectándose a Google…
         </Typography>
