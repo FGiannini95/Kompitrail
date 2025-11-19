@@ -16,6 +16,7 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
   const [errMsg, setErrMsg] = useState("");
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    if (isLoading) return;
     const idToken = credentialResponse?.credential;
     if (!idToken) {
       setErrMsg("Falta de credenciales");
@@ -37,13 +38,12 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
         throw new Error("Error en el token o en el usuario");
       }
 
-      setIsLogged(true);
-      setUser(user);
       setToken(token);
       saveLocalStorage("token", token);
-
+      setUser(user);
+      setIsLogged(true);
       // Let the parent run the post-auth redirect
-      if (typeof onAuthSuccess === "function") onAuthSuccess();
+      onAuthSuccess?.();
     } catch (e) {
       console.log("Autenticación fallida", e);
       setErrMsg("No se pudo iniciar sesión con Google.");
@@ -70,7 +70,12 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
       </Divider>
 
       {/* Google Auth */}
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
           onError={handleGoogleError}
@@ -81,7 +86,7 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
       {/* Loading & error states */}
       {isLoading && (
         <Typography variant="body2" color="text.secondary" textAlign="center">
-          Conectandose a Google…
+          Conectándose a Google…
         </Typography>
       )}
       {errMsg && (

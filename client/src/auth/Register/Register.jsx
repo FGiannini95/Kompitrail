@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -15,15 +15,20 @@ import { capitalizeFirstLetter } from "../../helpers/utils";
 // Hooks & Providers
 import { useRedirectParam } from "../../hooks/useRedirectParam";
 import { usePostAuthRedirect } from "../../hooks/usePostAuthRedirect";
+import { KompitrailContext } from "../../context/KompitrailContext";
 // Components
 import { SocialAuthButtons } from "../../components/Buttons/SocialAuthButtons/SocialAuthButtons";
+import { Loading } from "../../components/Loading/Loading";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
+  const [redirectRequested, setRedirectRequested] = useState(false);
+
   const navigate = useNavigate();
   const { buildUrl } = useRedirectParam();
   const { handlePostAuthRedirect } = usePostAuthRedirect();
+  const { user, token } = useContext(KompitrailContext);
 
   const {
     register,
@@ -72,149 +77,164 @@ export const Register = () => {
     setIsPasswordSelected(false);
   };
 
+  const showLoading = redirectRequested && !(token && user);
+
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid size={12} align="center">
-            <Typography variant="h4">Registro</Typography>
-          </Grid>
-          <Grid size={12}>
-            <TextField
-              {...register("name", {
-                required: "El nombre es obligatorio",
-                minLength: {
-                  value: 2,
-                  message: "El nombre debe tener al menos 2 caracteres",
-                },
-                setValueAs: (v) => capitalizeFirstLetter(v),
-              })}
-              label="Nombre"
-              fullWidth
-              error={!!errors.name}
-              helperText={errors.name?.message}
-            />
-          </Grid>
-          <Grid size={12}>
-            <TextField
-              {...register("lastname", {
-                required: "Los apellidos son obligatorio",
-                minLength: {
-                  value: 2,
-                  message: "Los apellidos deben tener al menos 2 caracteres",
-                },
-                setValueAs: (v) => capitalizeFirstLetter(v),
-              })}
-              label="Apellidos"
-              variant="outlined"
-              fullWidth
-              error={!!errors.lastname}
-              helperText={errors.lastname?.message}
-            />
-          </Grid>
-          <Grid size={12}>
-            <TextField
-              {...register("email", {
-                required: "El correo es obligatorio",
-                pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "Ingrese un correo válido",
-                },
-              })}
-              label="Correo"
-              variant="outlined"
-              fullWidth
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-          </Grid>
-          <Grid size={12}>
-            <TextField
-              {...register("password", {
-                required: "La contraseña es obligatoria",
-                pattern: {
-                  // Password with 8 caracteres and on of the has to be a special one
-                  value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  message: "La contraseña no es suficientemente fuerte",
-                },
-              })}
-              label="Contraseña"
-              type={showPassword ? "text" : "password"}
-              variant="outlined"
-              fullWidth
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              InputProps={{
-                endAdornment: (
-                  <Button onClick={displayPassword}>
-                    {showPassword ? (
-                      <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                    ) : (
-                      <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                    )}
-                  </Button>
-                ),
-              }}
-            />
-          </Grid>
-          {errors.root && (
-            <Grid size xs={12}>
-              <Typography color="error">{errors.root.message}</Typography>
+      {showLoading && <Loading />}
+      {!showLoading && (
+        <>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={2} justifyContent="center">
+              <Grid size={12} align="center">
+                <Typography variant="h4">Registro</Typography>
+              </Grid>
+              <Grid size={12}>
+                <TextField
+                  {...register("name", {
+                    required: "El nombre es obligatorio",
+                    minLength: {
+                      value: 2,
+                      message: "El nombre debe tener al menos 2 caracteres",
+                    },
+                    setValueAs: (v) => capitalizeFirstLetter(v),
+                  })}
+                  label="Nombre"
+                  fullWidth
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                />
+              </Grid>
+              <Grid size={12}>
+                <TextField
+                  {...register("lastname", {
+                    required: "Los apellidos son obligatorio",
+                    minLength: {
+                      value: 2,
+                      message:
+                        "Los apellidos deben tener al menos 2 caracteres",
+                    },
+                    setValueAs: (v) => capitalizeFirstLetter(v),
+                  })}
+                  label="Apellidos"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.lastname}
+                  helperText={errors.lastname?.message}
+                />
+              </Grid>
+              <Grid size={12}>
+                <TextField
+                  {...register("email", {
+                    required: "El correo es obligatorio",
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: "Ingrese un correo válido",
+                    },
+                  })}
+                  label="Correo"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
+                />
+              </Grid>
+              <Grid size={12}>
+                <TextField
+                  {...register("password", {
+                    required: "La contraseña es obligatoria",
+                    pattern: {
+                      // Password with 8 caracteres and on of the has to be a special one
+                      value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message: "La contraseña no es suficientemente fuerte",
+                    },
+                  })}
+                  label="Contraseña"
+                  type={showPassword ? "text" : "password"}
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  InputProps={{
+                    endAdornment: (
+                      <Button onClick={displayPassword}>
+                        {showPassword ? (
+                          <VisibilityOffOutlinedIcon
+                            sx={{ color: "#aaaaaa" }}
+                          />
+                        ) : (
+                          <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
+                        )}
+                      </Button>
+                    ),
+                  }}
+                />
+              </Grid>
+              {errors.root && (
+                <Grid size xs={12}>
+                  <Typography color="error">{errors.root.message}</Typography>
+                </Grid>
+              )}
+              <Grid size xs={12}>
+                <Button
+                  disabled={isSubmitting}
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    color: "black",
+                    boxShadow: "none",
+                    backgroundColor: "#eeeeee",
+                    "&:hover": { backgroundColor: "#dddddd" },
+                  }}
+                  fullWidth
+                >
+                  {isSubmitting ? "Cargando..." : "Crear"}
+                </Button>
+              </Grid>
+              <Grid size xs={12}>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  sx={{
+                    color: "black",
+                    borderColor: "#eeeeee",
+                    borderWidth: "2px",
+                    "&:hover": {
+                      borderColor: "#dddddd",
+                      borderWidth: "2px",
+                    },
+                  }}
+                  fullWidth
+                  onClick={handleCancel}
+                >
+                  Cancelar
+                </Button>
+              </Grid>
+              <Grid size xs={12}>
+                <Typography textAlign="center">
+                  ¿Ya tienes un perfil? ¡Haz el login{" "}
+                  <Link
+                    onClick={() => navigate(buildUrl(RoutesString.login))}
+                    color="#777777"
+                    underline="hover"
+                  >
+                    aquí
+                  </Link>
+                  !
+                </Typography>
+              </Grid>
             </Grid>
-          )}
-          <Grid size xs={12}>
-            <Button
-              disabled={isSubmitting}
-              type="submit"
-              variant="contained"
-              sx={{
-                color: "black",
-                boxShadow: "none",
-                backgroundColor: "#eeeeee",
-                "&:hover": { backgroundColor: "#dddddd" },
-              }}
-              fullWidth
-            >
-              {isSubmitting ? "Cargando..." : "Crear"}
-            </Button>
-          </Grid>
-          <Grid size xs={12}>
-            <Button
-              type="button"
-              variant="outlined"
-              sx={{
-                color: "black",
-                borderColor: "#eeeeee",
-                borderWidth: "2px",
-                "&:hover": {
-                  borderColor: "#dddddd",
-                  borderWidth: "2px",
-                },
-              }}
-              fullWidth
-              onClick={handleCancel}
-            >
-              Cancelar
-            </Button>
-          </Grid>
-          <Grid size xs={12}>
-            <Typography textAlign="center">
-              ¿Ya tienes un perfil? ¡Haz el login{" "}
-              <Link
-                onClick={() => navigate(buildUrl(RoutesString.login))}
-                color="#777777"
-                underline="hover"
-              >
-                aquí
-              </Link>
-              !
-            </Typography>
-          </Grid>
-        </Grid>
-      </form>
-      <SocialAuthButtons onAuthSuccess={handlePostAuthRedirect} />
+          </form>
+        </>
+      )}
+      <SocialAuthButtons
+        onAuthSuccess={() => {
+          setRedirectRequested(true);
+          handlePostAuthRedirect();
+        }}
+      />
     </>
   );
 };

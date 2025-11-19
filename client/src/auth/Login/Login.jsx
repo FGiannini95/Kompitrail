@@ -14,11 +14,11 @@ import { USERS_URL } from "../../api";
 // Providers & Hooks
 import { KompitrailContext } from "../../context/KompitrailContext";
 import { useRedirectParam } from "../../hooks/useRedirectParam";
-import { clearRedirectTarget } from "../redirectTarget";
 import { usePostAuthRedirect } from "../../hooks/usePostAuthRedirect";
 // Components
 import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
 import { SocialAuthButtons } from "../../components/Buttons/SocialAuthButtons/SocialAuthButtons";
+import { Loading } from "../../components/Loading/Loading";
 
 const initialValue = {
   email: "",
@@ -26,7 +26,8 @@ const initialValue = {
 };
 
 export const Login = () => {
-  const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
+  const { user, setUser, token, setToken, setIsLogged } =
+    useContext(KompitrailContext);
   const [login, setLogin] = useState(initialValue);
   const [msgError, setMsgError] = useState({
     email: "",
@@ -37,8 +38,10 @@ export const Login = () => {
   const [, setIsPasswordSelected] = useState(false);
   const [openRestorePasswordDialog, setOpenRestorePasswordDialog] =
     useState(false);
+  const [redirectRequested, setRedirectRequested] = useState(false);
+
   const navigate = useNavigate();
-  const { redirectValue, buildUrl } = useRedirectParam();
+  const { buildUrl } = useRedirectParam();
   const { handlePostAuthRedirect } = usePostAuthRedirect();
 
   const handleChange = (e) => {
@@ -82,18 +85,13 @@ export const Login = () => {
     axios
       .post(`${USERS_URL}/loginuser`, login)
       .then((res) => {
-        setIsLogged(true);
-        setUser(res.data.user);
         setToken(res.data.token);
         saveLocalStorage("token", res.data.token);
+        setUser(res.data.user);
+        setIsLogged(true);
 
-        // If redirectValue exists and it is safe use it, otherwise fallback to home
-        const target = redirectValue?.startsWith("/")
-          ? redirectValue
-          : RoutesString.home;
-        // NAvigation + clear sessionStorage to avoid loops
-        navigate(target, { replace: true });
-        clearRedirectTarget();
+        setRedirectRequested(true);
+        handlePostAuthRedirect();
       })
       .catch((err) => {
         console.log(err);
@@ -121,140 +119,154 @@ export const Login = () => {
     setOpenRestorePasswordDialog(false);
   };
 
+  const showLoading = redirectRequested && !(token && user);
+
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2} direction="column" alignItems="stretch">
-          <Grid xs={12}>
-            <Typography variant="h4" textAlign="center">
-              Login
-            </Typography>
-          </Grid>
+      {showLoading && <Loading />}
+      {!showLoading && (
+        <>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2} direction="column" alignItems="stretch">
+              <Grid xs={12}>
+                <Typography variant="h4" textAlign="center">
+                  Login
+                </Typography>
+              </Grid>
 
-          <Grid xs={12}>
-            <TextField
-              label="Email"
-              name="email"
-              fullWidth
-              onChange={handleChange}
-              error={!!msgError.email}
-              helperText={msgError.email}
-              autoComplete="email"
-              inputProps={{
-                inputMode: "email", // mobile keyboard with @
-                autoCapitalize: "none", // avoid capitalizing emails
-                autoCorrect: "off", // no autocorrect on emails
-              }}
-            />
-          </Grid>
+              <Grid xs={12}>
+                <TextField
+                  label="Email"
+                  name="email"
+                  fullWidth
+                  onChange={handleChange}
+                  error={!!msgError.email}
+                  helperText={msgError.email}
+                  autoComplete="email"
+                  inputProps={{
+                    inputMode: "email", // mobile keyboard with @
+                    autoCapitalize: "none", // avoid capitalizing emails
+                    autoCorrect: "off", // no autocorrect on emails
+                  }}
+                />
+              </Grid>
 
-          <Grid xs={12}>
-            <TextField
-              label="Contraseña"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              fullWidth
-              onChange={handleChange}
-              error={!!msgError.password}
-              helperText={msgError.password}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              autoComplete="current-password" //required for login
-              InputProps={{
-                endAdornment: (
-                  <Button onClick={displayPassword}>
-                    {showPassword ? (
-                      <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                    ) : (
-                      <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                    )}
+              <Grid xs={12}>
+                <TextField
+                  label="Contraseña"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  fullWidth
+                  onChange={handleChange}
+                  error={!!msgError.password}
+                  helperText={msgError.password}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  autoComplete="current-password" //required for login
+                  InputProps={{
+                    endAdornment: (
+                      <Button onClick={displayPassword}>
+                        {showPassword ? (
+                          <VisibilityOffOutlinedIcon
+                            sx={{ color: "#aaaaaa" }}
+                          />
+                        ) : (
+                          <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
+                        )}
+                      </Button>
+                    ),
+                  }}
+                />
+              </Grid>
+
+              {msgError.global && (
+                <Grid xs={12}>
+                  <Typography color="error" align="center">
+                    {msgError.global}
+                  </Typography>
+                </Grid>
+              )}
+
+              <Grid container xs={12} spacing={2} justifyContent="center">
+                <Grid xs={6}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                      color: "black",
+                      boxShadow: "none",
+                      backgroundColor: "#eeeeee",
+                      "&:hover": { backgroundColor: "#dddddd" },
+                    }}
+                  >
+                    ACEPTAR
                   </Button>
-                ),
-              }}
-            />
-          </Grid>
+                </Grid>
 
-          {msgError.global && (
-            <Grid xs={12}>
-              <Typography color="error" align="center">
-                {msgError.global}
-              </Typography>
+                <Grid xs={6}>
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    sx={{
+                      color: "black",
+                      borderColor: "#eeeeee",
+                      borderWidth: "2px",
+                      "&:hover": {
+                        borderColor: "#dddddd",
+                        borderWidth: "2px",
+                      },
+                    }}
+                    fullWidth
+                    onClick={handleCancel}
+                  >
+                    CANCELAR
+                  </Button>
+                </Grid>
+              </Grid>
+
+              <Grid xs={12}>
+                <Typography textAlign="center">
+                  ¿Aún no tienes un perfil? ¡Regístrate{" "}
+                  <Link
+                    onClick={() => navigate(buildUrl(RoutesString.register))}
+                    color="#777777"
+                    underline="hover"
+                  >
+                    aquí
+                  </Link>
+                  !
+                </Typography>
+              </Grid>
+
+              <Grid xs={12}>
+                <Typography textAlign="center">
+                  ¿Has olvidado tu contraseña? Pincha{" "}
+                  <Link
+                    onClick={() => setOpenRestorePasswordDialog(true)}
+                    color="#777777"
+                    underline="hover"
+                  >
+                    aquí
+                  </Link>
+                  !
+                </Typography>
+              </Grid>
+
+              <RestorePasswordDialog
+                openRestorePasswordDialog={openRestorePasswordDialog}
+                handleCloseDialog={handleCloseDialog}
+              />
             </Grid>
-          )}
-
-          <Grid container xs={12} spacing={2} justifyContent="center">
-            <Grid xs={6}>
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                sx={{
-                  color: "black",
-                  boxShadow: "none",
-                  backgroundColor: "#eeeeee",
-                  "&:hover": { backgroundColor: "#dddddd" },
-                }}
-              >
-                ACEPTAR
-              </Button>
-            </Grid>
-
-            <Grid xs={6}>
-              <Button
-                type="button"
-                variant="outlined"
-                sx={{
-                  color: "black",
-                  borderColor: "#eeeeee",
-                  borderWidth: "2px",
-                  "&:hover": {
-                    borderColor: "#dddddd",
-                    borderWidth: "2px",
-                  },
-                }}
-                fullWidth
-                onClick={handleCancel}
-              >
-                CANCELAR
-              </Button>
-            </Grid>
-          </Grid>
-
-          <Grid xs={12}>
-            <Typography textAlign="center">
-              ¿Aún no tienes un perfil? ¡Regístrate{" "}
-              <Link
-                onClick={() => navigate(buildUrl(RoutesString.register))}
-                color="#777777"
-                underline="hover"
-              >
-                aquí
-              </Link>
-              !
-            </Typography>
-          </Grid>
-
-          <Grid xs={12}>
-            <Typography textAlign="center">
-              ¿Has olvidado tu contraseña? Pincha{" "}
-              <Link
-                onClick={() => setOpenRestorePasswordDialog(true)}
-                color="#777777"
-                underline="hover"
-              >
-                aquí
-              </Link>
-              !
-            </Typography>
-          </Grid>
-
-          <RestorePasswordDialog
-            openRestorePasswordDialog={openRestorePasswordDialog}
-            handleCloseDialog={handleCloseDialog}
-          />
-        </Grid>
-      </form>
-      <SocialAuthButtons onAuthSuccess={handlePostAuthRedirect} />
+          </form>
+        </>
+      )}
+      <SocialAuthButtons
+        onAuthSuccess={() => {
+          setRedirectRequested(true);
+          handlePostAuthRedirect();
+        }}
+      />
     </>
   );
 };
