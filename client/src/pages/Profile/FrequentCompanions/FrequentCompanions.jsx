@@ -1,20 +1,16 @@
 import React, { useContext } from "react";
-
-import {
-  Avatar,
-  Box,
-  Card,
-  CardContent,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
-
-import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
-import { normalizeImg } from "../../../helpers/normalizeImg";
-import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
-import { RoutesString } from "../../../routes/routes";
 import { useNavigate } from "react-router-dom";
+
+import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
+
+import { normalizeImg } from "../../../helpers/normalizeImg";
+import { RoutesString } from "../../../routes/routes";
+
 import { KompitrailContext } from "../../../context/KompitrailContext";
+import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
+
+import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
+import { Loading } from "../../../components/Loading/Loading";
 
 export const FrequentCompanions = ({ companions: companionsProp }) => {
   const {
@@ -27,11 +23,7 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
   const { user } = useContext(KompitrailContext);
 
   if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-        <CircularProgress size={20} />
-      </Box>
-    );
+    return <Loading />;
   }
 
   if (error) {

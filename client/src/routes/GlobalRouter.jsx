@@ -18,8 +18,7 @@ import { EditPassword } from "../pages/InfoUser/Settings/EditPassword/EditPasswo
 import { KompitrailContext } from "../context/KompitrailContext";
 import { MyRoute } from "../pages/InfoUser/Route/MyRoute";
 import { OneRoute } from "../pages/InfoUser/Route/OneRoute/OneRoute";
-
-import { Box, CircularProgress } from "@mui/material";
+import { Loading } from "../components/Loading/Loading";
 
 import { ConfirmationDialogProvider } from "../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { SnackbarProvider } from "../context/SnackbarContext/SnackbarContext";
@@ -32,18 +31,7 @@ export const GlobalRouter = () => {
   const { user, token, isLoading } = useContext(KompitrailContext);
 
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress color="inherit" />
-      </Box>
-    );
+    return <Loading />;
   }
 
   return (

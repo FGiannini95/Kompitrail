@@ -1,12 +1,6 @@
 import React from "react";
 
-import {
-  Box,
-  Button,
-  CircularProgress,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import IconButton from "@mui/material/IconButton";
@@ -17,6 +11,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { getInitials } from "../../../helpers/utils";
 
 import { useEditUserForm } from "../../../hooks/useEditUserForm";
+import { Loading } from "../../../components/Loading/Loading";
 
 export const EditUser = () => {
   const {
@@ -32,11 +27,7 @@ export const EditUser = () => {
   } = useEditUserForm();
 
   if (isLoading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-        <CircularProgress size={20} />
-      </Box>
-    );
+    return <Loading />;
   }
 
   const initials = getInitials(editUser.name, editUser.lastname);
