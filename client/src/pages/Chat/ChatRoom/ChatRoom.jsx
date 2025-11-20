@@ -17,15 +17,15 @@ export const ChatRoom = () => {
   return (
     <Box
       sx={{
-        height: "100svh",
+        position: "fixed",
+        inset: 0,
         display: "flex",
         flexDirection: "column",
-        // Prevent the page itself from scrolling on mobile
-        overflow: "hidden",
         backgroundColor: (t) => t.palette.background.default,
+        overflow: "hidden",
+        height: "100dvh",
       }}
     >
-      {/* HEADER — sticky top */}
       <Box
         sx={{
           position: "sticky",
@@ -49,7 +49,6 @@ export const ChatRoom = () => {
             Mi chat + nombre ruta
           </Typography>
 
-          {/* Tip: usa navigate(`/route/${id}`) se vuoi aprire la routeDetail di questa chat */}
           <IconButton
             onClick={() => navigate(`/route/${id}`)}
             aria-label="info"
@@ -61,20 +60,38 @@ export const ChatRoom = () => {
         <Divider sx={{ "&::before, &::after": { borderTopWidth: 2 } }} />
       </Box>
 
-      {/* MESSAGES — the only scrollable area */}
       <Box
         sx={{
           flex: 1,
-          minHeight: 0, // IMPORTANT: lets this box actually shrink and scroll
+          minHeight: 0,
           overflowY: "auto",
-          overscrollBehavior: "contain", // prevent body scroll chaining
+          overscrollBehavior: "contain",
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
         }}
       >
         <MessageList items={[]} />
       </Box>
 
-      {/* INPUT — sticky bottom */}
-      <MessageInput onSend={(msg) => console.log(`SEND to chat ${id}:`, msg)} />
+      <Box
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          zIndex: 2,
+          backgroundColor: (t) => t.palette.background.default,
+          borderTop: (t) => `1px solid ${t.palette.divider}`,
+          py: 1,
+          px: 1,
+        }}
+      >
+        <MessageInput
+          onSend={(msg) => console.log(`SEND to chat ${id}:`, msg)}
+        />
+      </Box>
     </Box>
   );
 };

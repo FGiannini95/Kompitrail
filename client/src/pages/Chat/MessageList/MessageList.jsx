@@ -1,19 +1,11 @@
-// MessageList.jsx
-import * as React from "react";
-
-// MessageList.jsx (only a small change: bottom padding so the last bubble is never hidden)
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 
 /**
- * MessageList
- * ---------------------------------------------
  * Scrollable list of bubbles. Adds bottom padding so the input never overlaps
  * the last message. Auto-scrolls to bottom when items change.
- *
- * Props:
- * - items: Array<{ id: string, text: string, fromMe: boolean, at?: string }>
  */
+
 export const MessageList = ({ items = [] }) => {
   const scrollRef = useRef(null);
 
@@ -31,7 +23,7 @@ export const MessageList = ({ items = [] }) => {
         overflow: "auto",
         px: 2,
         pt: 2,
-        pb: 10, // keep bottom space so the sticky input never covers content
+        pb: 10,
         display: "flex",
         flexDirection: "column",
         gap: 1,

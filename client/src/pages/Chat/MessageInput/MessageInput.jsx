@@ -1,26 +1,8 @@
-import * as React from "react";
-// MessageInput.jsx
-// MessageInput.jsx
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import { Box, Paper, IconButton, Tooltip, OutlinedInput } from "@mui/material";
 import SendRounded from "@mui/icons-material/SendRounded";
 
-/**
- * MessageInput
- * ---------------------------------------------
- * Bottom-fixed composer. The right action column fills the component height,
- * making the send button a large, easy touch target.
- *
- * Requirements covered:
- * - Always stays at the bottom (sticky inside a 100dvh flex column container).
- * - Does not create page scroll; only the message list scrolls.
- * - Send icon on the right, occupying the full available height.
- *
- * Props:
- * - onSend: (text: string) => void
- * - placeholder?: string
- * - disabled?: boolean
- */
 export const MessageInput = ({
   onSend,
   placeholder = "Message",
@@ -33,7 +15,6 @@ export const MessageInput = ({
     inputRef.current?.focus();
   }, []);
 
-  // Send helper
   const handleSend = () => {
     const text = value.trim();
     if (!text || disabled) return;
@@ -68,10 +49,9 @@ export const MessageInput = ({
           borderRadius: 3,
           overflow: "hidden",
           display: "flex",
-          alignItems: "stretch", // let the right column fill height
+          alignItems: "stretch",
         }}
       >
-        {/* Text area (flex:1) */}
         <OutlinedInput
           inputRef={inputRef}
           value={value}
@@ -91,7 +71,6 @@ export const MessageInput = ({
           }}
         />
 
-        {/* Right action column (full height, big touch target) */}
         <Box
           sx={{
             width: 56,
@@ -107,7 +86,6 @@ export const MessageInput = ({
                 onClick={handleSend}
                 disabled={disabled || value.trim().length === 0}
                 aria-label="send"
-                // Full-height / full-width button
                 sx={{
                   m: 0,
                   borderRadius: 0,
