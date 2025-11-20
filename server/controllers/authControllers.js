@@ -3,10 +3,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
 require("dotenv").config();
+const crypto = require("crypto");
 
 class authControllers {
   authGoogle = async (req, res) => {
-    const { id_token: idToken } = req.body;
+    const idToken = req.body?.id_token || req.body?.credential;
     console.log("id_token", idToken);
 
     // 1. Check we receive the token from the FE
