@@ -1,53 +1,96 @@
+const path = require("path");
+const Contract = require(path.resolve(
+  __dirname,
+  "../../shared/chat-contract/index"
+));
+const { EVENTS } = Contract;
+
 // Registers all Socket.IO chat events.
 module.exports = (io) => {
   io.on("connection", (socket) => {
-    console.log("[socket] connected", socket.id);
+    // Join a room (client passes { chatId })
+    socket.on(EVENTS.C2S.ROOM_JOIN, ({ chatId, user }) => {
+      if (!chatId) return;
 
-    socket.on("ping", (payload) => {
-      socket.emit("pong", { echo: payload?.echo ?? null, ts: Date.now() });
+      // Keep info to reuse in leave
+      const displayName = user?.name || "Un usuario";
+      socket.data.user = { id: user?.id || null, name: displayName };
+
+      // Subscribe this socket to the room (a channel)
+      socket.join(chatId);
+
+      // System line for the joiner
+      socket.emit(EVENTS.S2C.MESSAGE_NEW, {
+        chatId,
+        message: {
+          id: `sys-${Date.now()}-self-join`,
+          chatId,
+          userId: "system",
+          text: "Has entrado en la chat",
+          createdAt: new Date().toISOString(),
+        },
+      });
+
+      // System line for everyone else in the room
+      socket.to(chatId).emit(EVENTS.S2C.MESSAGE_NEW, {
+        chatId,
+        message: {
+          id: `sys-${Date.now()}-self-join`,
+          chatId,
+          userId: "system",
+          text: `${displayName} se ha unido al chat`,
+          createdAt: new Date().toISOString(),
+        },
+      });
+
+      console.log(`[room] ${socket.id} joined ${chatId}`);
     });
 
-    socket.on("disconnect", (reason) => {
-      console.log("[socket] disconnected", socket.id, reason);
+    // Leave a room (client passes { chatId })
+    socket.on(EVENTS.C2S.ROOM_LEAVE, ({ chatId }) => {
+      if (!chatId) return;
+
+      const displayName = socket.data?.user?.name || "Un usuario";
+
+      // System line for the leaver
+      socket.emit(EVENTS.S2C.MESSAGE_NEW, {
+        chatId,
+        message: {
+          id: `sys-${Date.now()}-self-leave`,
+          chatId,
+          userId: "system",
+          text: "Has abandonado el chat",
+          createdAt: new Date().toISOString(),
+        },
+      });
+
+      // System line for everyone else in the room
+      socket.to(chatId).emit(EVENTS.S2C.MESSAGE_NEW, {
+        chatId,
+        message: {
+          id: `sys-${Date.now()}-others-leave`,
+          chatId,
+          userId: "system",
+          text: `${displayName} ha abandonado el chat`,
+          createdAt: new Date().toISOString(),
+        },
+      });
+
+      // Unsubscribe from the room
+      socket.leave(chatId);
+      console.log(`[room] ${socket.id} left ${chatId}`);
+    });
+
+    // Debug healthcheck: client emits "ping" → we reply "pong" to that same client.
+    socket.on("ping", (payload) => {
+      socket.emit("pong", { echo: payload?.echo ?? null, ts: Date.now() });
     });
   });
 };
 
-//module.exports = function registerChatSockets(io) {
-// Fired for every new WebSocket connection
-// TIP: if you use auth, decode JWT here and attach userId to socket.data
-/**
- * Join a route chat room (room name = `room:<routeId>`).
- * Payload: { routeId }
- * - Validate the user can access the route (membership)
- * - socket.join(room)
- * - Optionally emit a system message "X joined the chat"
- */
-/**
- * Leave the route chat room.
- * Payload: { routeId }
- * - socket.leave(room)
- * - Optionally emit a system message "X left the chat"
- */
-/**
- * Send chat message to the room.
- * Payload: { routeId, body }
- * - Validate not locked, user is participant
- * - Persist to DB (chat_message)
- * - Broadcast to the room with the saved messageId/timestamp
- */
-/**
- * Typing indicator.
- * Payload: { routeId, isTyping }
- * - Broadcast to others in the same room (no DB)
- */
-/**
- * Read receipts (double check).
- * Payload: { routeId, lastSeenMessageId }
- * - Upsert chat_room_read for this user
- * - Broadcast to the room so others update checks
- */
-/**
- * Helper (optional): expose a function to lock a room when a route is deleted.
- * You can call this from an Express route by doing: req.app.get("io").emit(...)
- */
+/*
+Send chat message to the room.
+Typing indicator.
+Read receipts (double check).
+Payload: { routeId, lastSeenMessageId }
+*/
