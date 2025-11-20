@@ -1,6 +1,12 @@
 const connection = require("../config/db");
 const { connect } = require("../routes/motorbikes");
 require("dotenv").config();
+const path = require("path");
+const Contract = require(path.resolve(
+  __dirname,
+  "../../shared/chat-contract/index"
+));
+const { EVENTS } = Contract;
 
 class routesControllers {
   createRoute = (req, res) => {
@@ -33,7 +39,7 @@ class routesControllers {
       return res.status(400).json({ error: "Faltan campos requeridos." });
     }
 
-    const sql = `
+    const sqlInsertRoute = `
     INSERT INTO route (
       user_id, date, starting_point, ending_point, level, distance,
       is_verified, suitable_motorbike_type, estimated_time, max_participants,
@@ -55,41 +61,56 @@ class routesControllers {
     );
   `;
 
-    connection.query(sql, (error, result) => {
+    connection.query(sqlInsertRoute, (error, result) => {
       if (error) {
         return res.status(500).json({ error });
       }
 
-      const sqlSelect = `
-      SELECT 
-        r.route_id, 
-        r.user_id, 
-        r.date, 
-        r.starting_point, 
-        r.ending_point,
-        r.level, 
-        r.distance, 
-        r.is_verified, 
-        r.suitable_motorbike_type,
-        r.estimated_time, 
-        r.max_participants, 
-        r.route_description, 
-        r.is_deleted,
-        u.name,
-        u.lastname
-      FROM route r
-      LEFT JOIN user u ON r.user_id = u.user_id
-      WHERE r.route_id = ?
-    `;
+      const routeId = result.insertId;
 
-      connection.query(sqlSelect, [result.insertId], (error2, result2) => {
-        if (error2) {
-          return res.status(500).json({ error: error2 });
+      // Create also a chat_room, 1:1 with route
+      const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
+
+      connection.query(sqlInsertChatRoom, (errorChat) => {
+        if (errorChat) {
+          console.error(
+            "Failed to create chat_room from route",
+            routeId,
+            errorChat
+          );
         }
-        if (!result2 || result2.length === 0) {
-          return res.status(404).json({ error: "Ruta no encontrada" });
-        }
-        return res.status(200).json(result2[0]);
+
+        const sqlSelect = `
+          SELECT 
+            r.route_id, 
+            r.user_id, 
+            r.date, 
+            r.starting_point, 
+            r.ending_point,
+            r.level, 
+            r.distance, 
+            r.is_verified, 
+            r.suitable_motorbike_type,
+            r.estimated_time, 
+            r.max_participants, 
+            r.route_description, 
+            r.is_deleted,
+            u.name,
+            u.lastname
+          FROM route r
+            LEFT JOIN user u ON r.user_id = u.user_id
+          WHERE r.route_id = ?
+          `;
+
+        connection.query(sqlSelect, [routeId], (error2, result2) => {
+          if (error2) {
+            return res.status(500).json({ error: error2 });
+          }
+          if (!result2 || result2.length === 0) {
+            return res.status(404).json({ error: "Ruta no encontrada" });
+          }
+          return res.status(200).json(result2[0]);
+        });
       });
     });
   };
