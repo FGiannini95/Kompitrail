@@ -6,6 +6,7 @@ export const RoutesString = {
   register: "/register",
   login: "/login",
   chat: "/chat",
+  chatDetail: "/chat/:id",
   landing: "/landing",
   infouser: "/infouser",
   editUser: "/editUser",

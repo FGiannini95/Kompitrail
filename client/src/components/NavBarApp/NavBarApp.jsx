@@ -32,7 +32,8 @@ export const NavBarApp = ({ children }) => {
       RoutesString.route,
       RoutesString.routeDetail,
     ].includes(location.pathname) ||
-    location.pathname.startsWith("/route/");
+    location.pathname.startsWith("/route/") ||
+    location.pathname.startsWith("/chat/");
 
   const topBarHeight = 64;
   const navBarHeight = 56;
