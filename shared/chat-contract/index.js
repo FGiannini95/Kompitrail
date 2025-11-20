@@ -1,5 +1,6 @@
+// shared/chat-contract/index.js
 const EVENTS = {
-  // Client → Server
+  // Client ==> Server
   C2S: {
     ROOM_JOIN: "room:join",
     ROOM_LEAVE: "room:leave",
@@ -9,8 +10,7 @@ const EVENTS = {
     MESSAGE_READ: "message:read",
     PING: "ping",
   },
-
-  // Server → Client
+  // Server ==> Client
   S2C: {
     ROOM_JOINED: "room:joined",
     MESSAGE_NEW: "message:new",
@@ -21,9 +21,4 @@ const EVENTS = {
   },
 };
 
-const Contract = { EVENTS };
-
-// CommonJS default export (server)
-module.exports = Contract;
-// ESM default interop (client)
-module.exports.default = Contract;
+module.exports = { EVENTS };
