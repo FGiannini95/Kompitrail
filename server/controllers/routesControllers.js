@@ -80,7 +80,23 @@ class routesControllers {
           );
         }
 
-        const sqlSelect = `
+        // Ensure the creator is a participant, in order to see the chat in /chat/rooms in real time.
+        const sqlAddCreator = `
+          INSERT IGNORE INTO route_participant(user_id, route_id)
+            values ('${user_id}', '${routeId}')
+        `;
+
+        connection.query(sqlAddCreator, (errAdd) => {
+          if (errAdd) {
+            console.error(
+              "Failed to add creator as participant for route:",
+              routeId,
+              errAdd
+            );
+          }
+
+          // Return the freshly created route (joined with creator name for convenience)
+          const sqlSelect = `
           SELECT 
             r.route_id, 
             r.user_id, 
@@ -102,14 +118,15 @@ class routesControllers {
           WHERE r.route_id = ?
           `;
 
-        connection.query(sqlSelect, [routeId], (error2, result2) => {
-          if (error2) {
-            return res.status(500).json({ error: error2 });
-          }
-          if (!result2 || result2.length === 0) {
-            return res.status(404).json({ error: "Ruta no encontrada" });
-          }
-          return res.status(200).json(result2[0]);
+          connection.query(sqlSelect, [routeId], (error2, result2) => {
+            if (error2) {
+              return res.status(500).json({ error: error2 });
+            }
+            if (!result2 || result2.length === 0) {
+              return res.status(404).json({ error: "Ruta no encontrada" });
+            }
+            return res.status(200).json(result2[0]);
+          });
         });
       });
     });
