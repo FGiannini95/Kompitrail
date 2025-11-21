@@ -12,14 +12,16 @@ chat:read (update double checks)
 chat:locked (disable MessageInput)
 Cleanup listeners on unmount.
 */
-import React, { useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { socket } from "../helpers/socket";
 import Contract from "@shared/chat-contract";
 const { EVENTS } = Contract;
+import { KompitrailContext } from "../context/KompitrailContext";
 
 export const useChat = (chatId) => {
   const [messages, setMessages] = useState([]);
   const joinedRef = useRef(false); // Avoid duplicate join on fast renders
+  const { user: currentUser } = useContext(KompitrailContext);
 
   // Append new message
   const pushMessage = useMemo(
@@ -27,6 +29,44 @@ export const useChat = (chatId) => {
     []
   );
 
-  socket.emit(EVENTS.C2S.ROOM_JOIN, { chatId });
-  socket.on(EVENTS.S2C.MESSAGE_NEW, (payload) => {});
+  useEffect(() => {
+    if (!chatId) return;
+
+    // Join after socket is connect
+    const join = () => {
+      if (joinedRef.current) return;
+      socket.emit(EVENTS.C2S.ROOM_JOIN, { chatId, user: currentUser });
+      joinedRef.current = true;
+    };
+
+    const onConnect = () => join();
+    const onDisconnect = () => {
+      joinedRef.current = false;
+    };
+
+    const onMessageNew = (payload) => {
+      if (!payload || payload.chatId !== chatId) return;
+      pushMessage(payload.message);
+    };
+
+    // Register listeners
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on(EVENTS.S2C.MESSAGE_NEW, onMessageNew);
+
+    // If already connect, join inmidiately
+    if (socket.conenct) join();
+
+    return () => {
+      if (joinedRef.current) {
+        socket.emit(EVENTS.C2S.ROOM_LEAVE, { chatId });
+        joinedRef.current = false;
+      }
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off(EVENTS.S2C.MESSAGE_NEW, onMessageNew);
+    };
+  }, [chatId, currentUser, pushMessage]);
+
+  return { messages };
 };
