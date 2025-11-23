@@ -15,4 +15,6 @@ export const RoutesString = {
   editPassword: "/editPassword",
   route: "/route",
   routeDetail: "/route/:id",
+  theme: "/theme",
+  language: "/language",
 };
