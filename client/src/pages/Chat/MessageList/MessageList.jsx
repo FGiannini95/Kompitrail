@@ -1,10 +1,68 @@
 import React, { useEffect, useRef } from "react";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, Divider } from "@mui/material";
 
-/**
- * Scrollable list of bubbles. Adds bottom padding so the input never overlaps
- * the last message. Auto-scrolls to bottom when items change.
- */
+import { formatDateTime } from "../../../helpers/utils";
+
+const formatDateDivider = (dateString) => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const dateOnly = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  );
+  const todayOnly = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+  const yesterdayOnly = new Date(
+    yesterday.getFullYear(),
+    yesterday.getMonth(),
+    yesterday.getDate()
+  );
+
+  if (dateOnly.getTime() === todayOnly.getTime()) {
+    return "Hoy";
+  } else if (dateOnly.getTime() === yesterdayOnly.getTime()) {
+    return "Ayer";
+  } else {
+    const { date_dd_mm_yyyy, weekday, isValid } = formatDateTime(dateString, {
+      locale: "es-ES",
+      timeZone: "Europe/Madrid",
+    });
+
+    if (!isValid) return "";
+
+    const weekdayCap = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+    return `${weekdayCap} ${date_dd_mm_yyyy}`;
+  }
+};
+
+const groupMessagesByDate = (messages) => {
+  const groups = [];
+  let currentDate = null;
+
+  messages.forEach((msg) => {
+    const msgDate = new Date(msg.createdAt).toDateString();
+
+    if (msgDate !== currentDate) {
+      currentDate = msgDate;
+      groups.push({
+        type: "date-divider",
+        date: msg.createdAt,
+        id: `divider-${msgDate}`,
+      });
+    }
+
+    groups.push(msg);
+  });
+
+  return groups;
+};
 
 export const MessageList = ({ items = [] }) => {
   const scrollRef = useRef(null);
@@ -14,6 +72,8 @@ export const MessageList = ({ items = [] }) => {
     if (!el) return;
     el.scrollTop = el.scrollHeight;
   }, [items]);
+
+  const groupedItems = groupMessagesByDate(items);
 
   return (
     <Box
@@ -30,11 +90,66 @@ export const MessageList = ({ items = [] }) => {
         backgroundColor: (t) => t.palette.background.default,
       }}
     >
-      {items.map((m) => {
-        const mine = !!m.fromMe;
+      {groupedItems.map((item) => {
+        // Date divider
+        if (item.type === "date-divider") {
+          return (
+            <Box
+              key={item.id}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                my: 2,
+              }}
+            >
+              <Divider sx={{ flex: 1 }} />
+              <Typography
+                variant="caption"
+                sx={{
+                  px: 2,
+                  color: "text.secondary",
+                  fontWeight: 500,
+                }}
+              >
+                {formatDateDivider(item.date)}
+              </Typography>
+              <Divider sx={{ flex: 1 }} />
+            </Box>
+          );
+        }
+
+        // System message
+        if (item.isSystem) {
+          return (
+            <Box
+              key={item.id}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                my: 1,
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{
+                  px: 2,
+                  py: 0.5,
+                  bgcolor: "action.hover",
+                  borderRadius: 2,
+                  color: "text.secondary",
+                }}
+              >
+                {item.text}
+              </Typography>
+            </Box>
+          );
+        }
+
+        // Regular message
+        const mine = !!item.fromMe;
         return (
           <Box
-            key={m.id}
+            key={item.id}
             sx={{
               display: "flex",
               justifyContent: mine ? "flex-end" : "flex-start",
@@ -55,8 +170,8 @@ export const MessageList = ({ items = [] }) => {
                     : t.palette.text.primary,
               }}
             >
-              <Typography variant="body2">{m.text}</Typography>
-              {m.at && (
+              <Typography variant="body2">{item.text}</Typography>
+              {item.at && (
                 <Typography
                   variant="caption"
                   sx={{
@@ -66,7 +181,7 @@ export const MessageList = ({ items = [] }) => {
                     textAlign: "right",
                   }}
                 >
-                  {m.at}
+                  {item.at}
                 </Typography>
               )}
             </Paper>

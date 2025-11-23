@@ -1,49 +1,100 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 
-import { Box, Divider, IconButton, Typography, Chip } from "@mui/material";
+import { Box, Divider, IconButton, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
+// Utils
+import { formatDateTime } from "../../../helpers/utils";
+import { socket } from "../../../helpers/chat";
+// Hooks & Providers
+import { KompitrailContext } from "../../../context/KompitrailContext";
+// Components
 import { MessageList } from "../MessageList/MessageList";
 import { MessageInput } from "../MessageInput/MessageInput";
-import { socket } from "../../../helpers/chat";
+
+// Import contract events
+const EVENTS = {
+  C2S: {
+    ROOM_JOIN: "room:join",
+    ROOM_LEAVE: "room:leave",
+    MESSAGE_SEND: "message:send",
+  },
+  S2C: {
+    MESSAGE_NEW: "message:new",
+    MESSAGE_ACK: "message:ack",
+  },
+};
 
 export const ChatRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user: currentUser } = useContext(KompitrailContext);
 
-  const title = location.state?.title;
+  const title = location.state?.title || "Chat";
 
-  // --- connectivity state (small, non-intrusive) ---
-  const [connected, setConnected] = useState(socket.connected);
-  const [lastPong, setLastPong] = useState(null);
+  const [messages, setMessages] = useState([]);
 
+  // Join room on mount
   useEffect(() => {
-    // Handlers
-    const onConnect = () => setConnected(true);
-    const onDisconnect = () => setConnected(false);
-    const onPong = (data) => {
-      setLastPong(new Date(data?.ts || Date.now()).toLocaleTimeString());
-      // console.log("[socket] pong:", data);
+    if (!id || !currentUser) return;
+
+    socket.emit(EVENTS.C2S.ROOM_JOIN, {
+      chatId: id,
+      user: {
+        id: currentUser.user_id,
+        name: currentUser.name,
+      },
+    });
+
+    // Leave when unmounting
+    // return () => {
+    //   socket.emit(EVENTS.C2S.ROOM_LEAVE, { chatId: id });
+    // };
+  }, [id, currentUser]);
+
+  // Listen for new messages
+  useEffect(() => {
+    const handleNewMessage = (payload) => {
+      if (payload.chatId !== id) return;
+
+      const msg = payload.message;
+      const isSystem = msg.userId === "system";
+
+      const { time_hh_mm } = formatDateTime(msg.createdAt, {
+        locale: "es-ES",
+        timeZone: "Europe/Madrid",
+      });
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: msg.id,
+          text: msg.text,
+          fromMe: !isSystem && msg.userId === currentUser?.user_id,
+          at: time_hh_mm,
+          createdAt: msg.createdAt,
+          isSystem,
+        },
+      ]);
     };
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("pong", onPong);
-
-    // Fire a minimal connectivity test
-    socket.emit("ping", { echo: id });
+    socket.on(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
 
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("pong", onPong);
+      socket.off(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
     };
-  }, [id]);
+  }, [id, currentUser]);
+
+  const handleSendMessage = (text) => {
+    socket.emit(EVENTS.C2S.MESSAGE_SEND, {
+      chatId: id,
+      text,
+    });
+  };
 
   return (
     <Box
@@ -80,17 +131,6 @@ export const ChatRoom = () => {
             {title}
           </Typography>
 
-          {/* Small connection chip (does not alter your layout) */}
-          <Chip
-            size="small"
-            label={connected ? (lastPong ? `OK · ${lastPong}` : "OK") : "OFF"}
-            sx={{
-              mx: 1,
-              bgcolor: connected ? "success.light" : "error.light",
-              color: connected ? "success.contrastText" : "error.contrastText",
-            }}
-          />
-
           <IconButton
             onClick={() => navigate(`/route/${id}`)}
             aria-label="info"
@@ -114,7 +154,7 @@ export const ChatRoom = () => {
           "&::-webkit-scrollbar": { display: "none" },
         }}
       >
-        <MessageList items={[]} />
+        <MessageList items={messages} />
       </Box>
 
       <Box
@@ -128,9 +168,7 @@ export const ChatRoom = () => {
           px: 1,
         }}
       >
-        <MessageInput
-          onSend={(msg) => console.log(`SEND to chat ${id}:`, msg)}
-        />
+        <MessageInput onSend={handleSendMessage} />
       </Box>
     </Box>
   );

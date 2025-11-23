@@ -18,7 +18,7 @@ module.exports = (io) => {
           id: `sys-${Date.now()}-self-join`,
           chatId,
           userId: "system",
-          text: "Has entrado en la chat",
+          text: "Has entrado en el chat",
           createdAt: new Date().toISOString(),
         },
       });
