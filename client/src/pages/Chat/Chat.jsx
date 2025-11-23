@@ -140,7 +140,7 @@ export const Chat = () => {
     >
       {ordered.map((row) => {
         const title = `${row.starting_point} - ${row.ending_point}`;
-        const activityAt = row.last_activity ?? row.date;
+        const activityAt = row.lastActivity ?? row.route_date;
         const rightStamp = formatChatTimestamp(activityAt);
         const subtitle = formatChatSubtitle(activityAt);
 
