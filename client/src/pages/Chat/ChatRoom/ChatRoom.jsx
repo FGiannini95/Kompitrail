@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { Box, Divider, IconButton, Typography, Chip } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -14,6 +14,9 @@ import { socket } from "../../../helpers/chat";
 export const ChatRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const title = location.state?.title;
 
   // --- connectivity state (small, non-intrusive) ---
   const [connected, setConnected] = useState(socket.connected);
@@ -74,7 +77,7 @@ export const ChatRoom = () => {
           </IconButton>
 
           <Typography variant="h6" sx={{ flex: 1, textAlign: "center" }} noWrap>
-            Mi chat + nombre ruta
+            {title}
           </Typography>
 
           {/* Small connection chip (does not alter your layout) */}

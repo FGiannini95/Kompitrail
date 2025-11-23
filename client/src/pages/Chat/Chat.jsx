@@ -156,7 +156,13 @@ export const Chat = () => {
           >
             <ListItemButton
               sx={{ borderRadius: 2, py: 1, width: "100%" }}
-              onClick={() => navigate(`/chat/${row.route_id}`)}
+              onClick={() =>
+                navigate(`/chat/${row.route_id}`, {
+                  state: {
+                    title: `${row.starting_point} - ${row.ending_point}`,
+                  },
+                })
+              }
             >
               <ListItemAvatar sx={{ minWidth: 56 }}>
                 <Avatar>
