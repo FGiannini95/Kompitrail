@@ -115,8 +115,6 @@ export const Chat = () => {
   }, [currentUser?.user_id]);
   const ordered = useMemo(() => rooms.slice(), [rooms]);
 
-  console.log("[Chat] CHAT_URL =", CHAT_URL);
-
   if (loading) return <Loading />;
   if (!ordered.length)
     return (
