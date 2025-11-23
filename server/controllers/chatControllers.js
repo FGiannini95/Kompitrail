@@ -5,7 +5,6 @@ require("dotenv").config();
 
 class chatControllers {
   listUserRooms = (req, res) => {
-    console.log("Hello from listUserRooms");
     // Prefer authenticated user (prod), fallback to query param (local/dev)
     const userId = req.user?.user_id ?? req.query.user_id;
 
