@@ -80,53 +80,37 @@ class routesControllers {
           );
         }
 
-        // Ensure the creator is a participant, in order to see the chat in /chat/rooms in real time.
-        const sqlAddCreator = `
-          INSERT IGNORE INTO route_participant(user_id, route_id)
-            values ('${user_id}', '${routeId}')
-        `;
+        // Return the freshly created route (joined with creator name for convenience)
+        const sqlSelect = `
+        SELECT 
+          r.route_id, 
+          r.user_id, 
+          r.date, 
+          r.starting_point, 
+          r.ending_point,
+          r.level, 
+          r.distance, 
+          r.is_verified, 
+          r.suitable_motorbike_type,
+          r.estimated_time, 
+          r.max_participants, 
+          r.route_description, 
+          r.is_deleted,
+          u.name,
+          u.lastname
+        FROM route r
+          LEFT JOIN user u ON r.user_id = u.user_id
+        WHERE r.route_id = ?
+      `;
 
-        connection.query(sqlAddCreator, (errAdd) => {
-          if (errAdd) {
-            console.error(
-              "Failed to add creator as participant for route:",
-              routeId,
-              errAdd
-            );
+        connection.query(sqlSelect, [routeId], (error2, result2) => {
+          if (error2) {
+            return res.status(500).json({ error: error2 });
           }
-
-          // Return the freshly created route (joined with creator name for convenience)
-          const sqlSelect = `
-          SELECT 
-            r.route_id, 
-            r.user_id, 
-            r.date, 
-            r.starting_point, 
-            r.ending_point,
-            r.level, 
-            r.distance, 
-            r.is_verified, 
-            r.suitable_motorbike_type,
-            r.estimated_time, 
-            r.max_participants, 
-            r.route_description, 
-            r.is_deleted,
-            u.name,
-            u.lastname
-          FROM route r
-            LEFT JOIN user u ON r.user_id = u.user_id
-          WHERE r.route_id = ?
-          `;
-
-          connection.query(sqlSelect, [routeId], (error2, result2) => {
-            if (error2) {
-              return res.status(500).json({ error: error2 });
-            }
-            if (!result2 || result2.length === 0) {
-              return res.status(404).json({ error: "Ruta no encontrada" });
-            }
-            return res.status(200).json(result2[0]);
-          });
+          if (!result2 || result2.length === 0) {
+            return res.status(404).json({ error: "Ruta no encontrada" });
+          }
+          return res.status(200).json(result2[0]);
         });
       });
     });
