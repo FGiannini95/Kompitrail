@@ -143,41 +143,64 @@ export const Chat = () => {
         const activityAt = row.lastActivity ?? row.route_date;
         const rightStamp = formatChatTimestamp(activityAt);
         const subtitle = formatChatSubtitle(activityAt);
+        const lastMessageText = row.lastMessage?.text || "";
 
         return (
           <ListItem
             key={row.route_id}
-            sx={{ border: "2px solid #eeeeee", borderRadius: 2, p: 0 }}
+            sx={{
+              border: "2px solid #eeeeee",
+              borderRadius: 2,
+              p: 0,
+              alignItems: "flex-start",
+            }}
             disableGutters
-            secondaryAction={
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ whiteSpace: "nowrap", px: 1 }}
-              >
-                {rightStamp}
-              </Typography>
-            }
           >
             <ListItemButton
-              sx={{ borderRadius: 2, py: 1 }}
+              sx={{ borderRadius: 2, py: 1, width: "100%" }}
               onClick={() => navigate(`/chat/${row.route_id}`)}
             >
-              <ListItemAvatar>
+              <ListItemAvatar sx={{ minWidth: 56 }}>
                 <Avatar>
                   <ExploreOutlinedIcon />
                 </Avatar>
               </ListItemAvatar>
 
-              <ListItemText
-                primary={title}
-                secondary={subtitle}
-                primaryTypographyProps={{ noWrap: true }}
-                secondaryTypographyProps={{
-                  noWrap: true,
-                  color: "text.secondary",
+              <Box sx={{ flex: 1, minWidth: 0, pr: 1 }}>
+                <Typography variant="body1" noWrap sx={{ fontWeight: 500 }}>
+                  {title}
+                </Typography>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  noWrap
+                  sx={{ display: "block", fontSize: "0.7rem" }}
+                >
+                  {subtitle}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  noWrap
+                  sx={{ display: "block", minHeight: "1.5em" }}
+                >
+                  {lastMessageText}
+                </Typography>
+              </Box>
+
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  whiteSpace: "nowrap",
+                  alignSelf: "flex-end",
+                  flexShrink: 0,
                 }}
-              />
+              >
+                {rightStamp}
+              </Typography>
             </ListItemButton>
           </ListItem>
         );

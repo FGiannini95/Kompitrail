@@ -64,11 +64,11 @@ class chatControllers {
         starting_point: r.starting_point,
         ending_point: r.ending_point,
         route_date: r.date,
-        lastMessage: r.last_message_id
+        lastMessage: r.chat_message_id
           ? {
               id: r.last_message_id,
-              userId: r.last_user_id,
-              text: r.last_message_body,
+              userId: r.user_id,
+              text: r.body,
               isSystem: Boolean(r.last_is_system),
               createdAt: r.last_created_at,
             }
