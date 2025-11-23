@@ -1,12 +1,12 @@
 import React from "react";
 
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-import IconButton from "@mui/material/IconButton";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 
 import { getInitials } from "../../../helpers/utils";
 
@@ -84,7 +84,7 @@ export const EditUser = () => {
           onClick={handleConfirm}
           disabled={!save}
         >
-          Guardar
+          <SaveOutlinedIcon />
         </Button>
       </Grid>
       {/* Body */}

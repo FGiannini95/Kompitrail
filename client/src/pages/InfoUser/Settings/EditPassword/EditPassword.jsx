@@ -1,20 +1,17 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
-//MUI
-import Button from "@mui/material/Button";
+import { Button, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 
-//MUI-ICONS
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import IconButton from "@mui/material/IconButton";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
+// Utils
 import { RoutesString } from "../../../../routes/routes";
 import { getLocalStorage } from "../../../../helpers/localStorageUtils";
 import { USERS_URL } from "../../../../api";
@@ -123,7 +120,7 @@ export const EditPassword = () => {
           disabled={!isValid}
           onClick={handleSave}
         >
-          Guardar
+          <SaveOutlinedIcon />
         </Button>
       </Grid>
       <Grid item xs={12}>
