@@ -112,7 +112,9 @@ export const Chat = () => {
       cancelled = true;
     };
   }, [currentUser?.user_id]);
-  const ordered = useMemo(() => rooms.slice(), [rooms]);
+
+  // Newest first: lastActivity (if any) else route_date; stable tie-breakers.
+  const ordered = rooms; // or simply render `rooms` directly
 
   if (loading) return <Loading />;
   if (!ordered.length)
@@ -169,16 +171,40 @@ export const Chat = () => {
                 </Avatar>
               </ListItemAvatar>
 
-              <Box sx={{ flex: 1, minWidth: 0, pr: 1 }}>
-                <Typography variant="body1" noWrap sx={{ fontWeight: 500 }}>
+              <Box
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                  display: "grid",
+                  gridTemplateColumns: "1fr auto",
+                  gridAutoRows: "auto",
+                  columnGap: 1,
+                  pr: 0,
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{
+                    gridColumn: "1 / -1",
+                    fontWeight: 500,
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                  }}
+                >
                   {title}
                 </Typography>
 
                 <Typography
                   variant="caption"
                   color="text.secondary"
-                  noWrap
-                  sx={{ display: "block", fontSize: "0.7rem" }}
+                  sx={{
+                    gridColumn: "1 / -1",
+                    display: "block",
+                    fontSize: "0.7rem",
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    mt: 0.25,
+                  }}
                 >
                   {subtitle}
                 </Typography>
@@ -187,23 +213,27 @@ export const Chat = () => {
                   variant="body2"
                   color="text.secondary"
                   noWrap
-                  sx={{ display: "block", minHeight: "1.5em" }}
+                  sx={{
+                    gridColumn: "1 / 2",
+                    minHeight: "1.2em",
+                  }}
                 >
                   {lastMessageText}
                 </Typography>
-              </Box>
 
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{
-                  whiteSpace: "nowrap",
-                  alignSelf: "flex-end",
-                  flexShrink: 0,
-                }}
-              >
-                {rightStamp}
-              </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    gridColumn: "2 / 3",
+                    alignSelf: "center",
+                    whiteSpace: "nowrap",
+                    ml: 1,
+                  }}
+                >
+                  {rightStamp}
+                </Typography>
+              </Box>
             </ListItemButton>
           </ListItem>
         );
