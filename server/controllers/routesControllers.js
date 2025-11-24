@@ -68,38 +68,20 @@ class routesControllers {
 
       const routeId = result.insertId;
 
-      // Insert creator as partecipant
-      const sqlInsertParticipant = `
-       INSERT INTO route_participant (route_id, user_id) 
-       VALUES (?, ?)
-      `;
+      // Create also a chat_room, 1:1 with route
+      const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
 
-      connection.query(
-        sqlInsertParticipant,
-        [routeId, user_id],
-        (errorParticipant) => {
-          if (errorParticipant) {
-            console.error(
-              "Failed to add creator as participant",
-              errorParticipant
-            );
-            return res.status(500).json({ error: errorParticipant });
-          }
+      connection.query(sqlInsertChatRoom, (errorChat) => {
+        if (errorChat) {
+          console.error(
+            "Failed to create chat_room from route",
+            routeId,
+            errorChat
+          );
+        }
 
-          // Create also a chat_room, 1:1 with route
-          const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
-
-          connection.query(sqlInsertChatRoom, (errorChat) => {
-            if (errorChat) {
-              console.error(
-                "Failed to create chat_room from route",
-                routeId,
-                errorChat
-              );
-            }
-
-            // Return the freshly created route (joined with creator name for convenience)
-            const sqlSelect = `
+        // Return the freshly created route (joined with creator name for convenience)
+        const sqlSelect = `
               SELECT 
                 r.route_id, 
                 r.user_id, 
@@ -121,18 +103,16 @@ class routesControllers {
               WHERE r.route_id = ?
             `;
 
-            connection.query(sqlSelect, [routeId], (error2, result2) => {
-              if (error2) {
-                return res.status(500).json({ error: error2 });
-              }
-              if (!result2 || result2.length === 0) {
-                return res.status(404).json({ error: "Ruta no encontrada" });
-              }
-              return res.status(200).json(result2[0]);
-            });
-          });
-        }
-      );
+        connection.query(sqlSelect, [routeId], (error2, result2) => {
+          if (error2) {
+            return res.status(500).json({ error: error2 });
+          }
+          if (!result2 || result2.length === 0) {
+            return res.status(404).json({ error: "Ruta no encontrada" });
+          }
+          return res.status(200).json(result2[0]);
+        });
+      });
     });
   };
 
