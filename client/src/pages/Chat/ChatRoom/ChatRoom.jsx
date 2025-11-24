@@ -17,75 +17,11 @@ import { MessageInput } from "../MessageInput/MessageInput";
 
 import { EVENTS } from "@shared/chat-contract";
 
-import CircleIcon from "@mui/icons-material/Circle";
-
-// helper badge
-function ConnectedBadge({ connected, rttMs }) {
-  return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-      <CircleIcon
-        sx={{ fontSize: 10, color: connected ? "success.main" : "error.main" }}
-      />
-      <Typography variant="caption" color="text.secondary">
-        {connected
-          ? `Connected${rttMs != null ? ` ${rttMs}ms` : ""}`
-          : "Offline"}
-      </Typography>
-    </Box>
-  );
-}
-
 export const ChatRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { user: currentUser } = useContext(KompitrailContext);
-
-  // STATE
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [rttMs, setRttMs] = useState(null);
-
-  // EFFECT: socket connect/disconnect
-  useEffect(() => {
-    const onConnect = () => setIsConnected(true);
-    const onDisconnect = () => {
-      setIsConnected(false);
-      setRttMs(null);
-    };
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, []);
-
-  // EFFECT: ping/pong every 15s
-  useEffect(() => {
-    let timer;
-    const onPong = (payload) => {
-      // payload can be echo of sent ts; if not, just use Date.now()
-      const now = Date.now();
-      const sent = payload?.ts ? Number(payload.ts) : now;
-      setRttMs(Math.max(0, now - sent));
-    };
-
-    socket.on(EVENTS.S2C.PONG, onPong);
-
-    const sendPing = () => {
-      const ts = Date.now();
-      socket.emit(EVENTS.C2S.PING, { ts });
-    };
-
-    // send immediately then interval
-    sendPing();
-    timer = setInterval(sendPing, 15000);
-
-    return () => {
-      clearInterval(timer);
-      socket.off(EVENTS.S2C.PONG, onPong);
-    };
-  }, []);
 
   const title = location.state?.title || "Chat";
 
@@ -94,36 +30,61 @@ export const ChatRoom = () => {
   // Listen for new messages
   useEffect(() => {
     const handleNewMessage = (payload) => {
-      console.log("📩 Received message:", payload);
       if (payload.chatId !== id) return;
 
       const msg = payload.message;
       const isSystem = msg.userId === "system";
 
-      const { time_hh_mm } = formatDateTime(msg.createdAt, {
-        locale: "es-ES",
-        timeZone: "Europe/Madrid",
-      });
+      // dedupe: ignore if message id already present
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === msg.id)) return prev;
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: msg.id,
-          text: msg.text,
-          fromMe: !isSystem && msg.userId === currentUser?.user_id,
-          at: time_hh_mm,
-          createdAt: msg.createdAt,
-          isSystem,
-        },
-      ]);
+        const { time_hh_mm } = formatDateTime(msg.createdAt, {
+          locale: "es-ES",
+          timeZone: "Europe/Madrid",
+        });
+
+        return [
+          ...prev,
+          {
+            id: msg.id,
+            text: msg.text,
+            fromMe: !isSystem && msg.userId === currentUser?.user_id,
+            at: time_hh_mm,
+            createdAt: msg.createdAt,
+            isSystem,
+          },
+        ];
+      });
     };
 
     socket.on(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
+    return () => socket.off(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
+  }, [id, currentUser]);
+
+  // JOIN the room on mount (and on reconnect); LEAVE on unmount
+  useEffect(() => {
+    if (!id || !currentUser?.user_id) return;
+
+    const payload = { chatId: id, user: currentUser };
+
+    const join = () => {
+      // join the socket room for this route_id
+      socket.emit(EVENTS.C2S.ROOM_JOIN, payload);
+    };
+
+    // join immediately if already connected
+    if (socket.connected) join();
+
+    // re-join after any reconnect
+    socket.on("connect", join);
 
     return () => {
-      socket.off(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
+      socket.off("connect", join);
+      // leave when you exit the screen
+      socket.emit(EVENTS.C2S.ROOM_LEAVE, { chatId: id, user: currentUser });
     };
-  }, [id, currentUser]);
+  }, [id, currentUser?.user_id]);
 
   const handleSendMessage = (text) => {
     socket.emit(EVENTS.C2S.MESSAGE_SEND, {
@@ -176,7 +137,6 @@ export const ChatRoom = () => {
             <Typography variant="h6" noWrap title={title}>
               {title}
             </Typography>
-            <ConnectedBadge connected={isConnected} rttMs={rttMs} />
           </Box>
 
           <IconButton
