@@ -68,51 +68,71 @@ class routesControllers {
 
       const routeId = result.insertId;
 
-      // Create also a chat_room, 1:1 with route
-      const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
-
-      connection.query(sqlInsertChatRoom, (errorChat) => {
-        if (errorChat) {
-          console.error(
-            "Failed to create chat_room from route",
-            routeId,
-            errorChat
-          );
-        }
-
-        // Return the freshly created route (joined with creator name for convenience)
-        const sqlSelect = `
-        SELECT 
-          r.route_id, 
-          r.user_id, 
-          r.date, 
-          r.starting_point, 
-          r.ending_point,
-          r.level, 
-          r.distance, 
-          r.is_verified, 
-          r.suitable_motorbike_type,
-          r.estimated_time, 
-          r.max_participants, 
-          r.route_description, 
-          r.is_deleted,
-          u.name,
-          u.lastname
-        FROM route r
-          LEFT JOIN user u ON r.user_id = u.user_id
-        WHERE r.route_id = ?
+      // Insert creator as partecipant
+      const sqlInsertParticipant = `
+       INSERT INTO route_participant (route_id, user_id) 
+       VALUES (?, ?)
       `;
 
-        connection.query(sqlSelect, [routeId], (error2, result2) => {
-          if (error2) {
-            return res.status(500).json({ error: error2 });
+      connection.query(
+        sqlInsertParticipant,
+        [routeId, user_id],
+        (errorParticipant) => {
+          if (errorParticipant) {
+            console.error(
+              "Failed to add creator as participant",
+              errorParticipant
+            );
+            return res.status(500).json({ error: errorParticipant });
           }
-          if (!result2 || result2.length === 0) {
-            return res.status(404).json({ error: "Ruta no encontrada" });
-          }
-          return res.status(200).json(result2[0]);
-        });
-      });
+
+          // Create also a chat_room, 1:1 with route
+          const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
+
+          connection.query(sqlInsertChatRoom, (errorChat) => {
+            if (errorChat) {
+              console.error(
+                "Failed to create chat_room from route",
+                routeId,
+                errorChat
+              );
+            }
+
+            // Return the freshly created route (joined with creator name for convenience)
+            const sqlSelect = `
+              SELECT 
+                r.route_id, 
+                r.user_id, 
+                r.date, 
+                r.starting_point, 
+                r.ending_point,
+                r.level, 
+                r.distance, 
+                r.is_verified, 
+                r.suitable_motorbike_type,
+                r.estimated_time, 
+                r.max_participants, 
+                r.route_description, 
+                r.is_deleted,
+                u.name,
+                u.lastname
+              FROM route r
+                LEFT JOIN user u ON r.user_id = u.user_id
+              WHERE r.route_id = ?
+            `;
+
+            connection.query(sqlSelect, [routeId], (error2, result2) => {
+              if (error2) {
+                return res.status(500).json({ error: error2 });
+              }
+              if (!result2 || result2.length === 0) {
+                return res.status(404).json({ error: "Ruta no encontrada" });
+              }
+              return res.status(200).json(result2[0]);
+            });
+          });
+        }
+      );
     });
   };
 
