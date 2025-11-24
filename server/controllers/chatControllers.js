@@ -46,8 +46,13 @@ class chatControllers {
       ON last.chat_room_id = cr.chat_room_id
     WHERE r.is_deleted = 0
       AND (rp.user_id IS NOT NULL OR r.user_id = ?)
-    ORDER BY last_activity DESC;
-  `;
+    ORDER BY
+      CASE WHEN last.created_at IS NULL THEN 1 ELSE 0 END ASC,      -- with messages first
+      CASE WHEN last.created_at IS NULL THEN DATE(r.date) END DESC, -- no-msg: newer day first
+      CASE WHEN last.created_at IS NULL THEN TIME(r.date) END ASC,  -- no-msg same day: earliest time first
+      last.created_at DESC,                                         -- with-msg: newest message first
+      r.route_id DESC;   
+    `;
 
     connection.query(sql, [userId, userId], (err, rows) => {
       if (err) return res.status(500).json({ error: "Internal server error" });
