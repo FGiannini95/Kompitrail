@@ -38,24 +38,6 @@ export const ChatRoom = () => {
 
   const [messages, setMessages] = useState([]);
 
-  // Join room on mount
-  useEffect(() => {
-    if (!id || !currentUser) return;
-
-    socket.emit(EVENTS.C2S.ROOM_JOIN, {
-      chatId: id,
-      user: {
-        id: currentUser.user_id,
-        name: currentUser.name,
-      },
-    });
-
-    // Leave when unmounting
-    // return () => {
-    //   socket.emit(EVENTS.C2S.ROOM_LEAVE, { chatId: id });
-    // };
-  }, [id, currentUser]);
-
   // Listen for new messages
   useEffect(() => {
     const handleNewMessage = (payload) => {

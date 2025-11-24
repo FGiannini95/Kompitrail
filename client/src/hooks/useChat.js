@@ -55,7 +55,7 @@ export const useChat = (chatId) => {
     socket.on(EVENTS.S2C.MESSAGE_NEW, onMessageNew);
 
     // If already connect, join inmidiately
-    if (socket.conenct) join();
+    if (socket.connected) join();
 
     return () => {
       if (joinedRef.current) {

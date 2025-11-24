@@ -1,13 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Paper, Typography, Divider } from "@mui/material";
-
 import { formatDateTime } from "../../../helpers/utils";
 
 const formatDateDivider = (dateString) => {
   const date = new Date(dateString);
   const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
 
   const dateOnly = new Date(
     date.getFullYear(),
@@ -19,26 +16,14 @@ const formatDateDivider = (dateString) => {
     today.getMonth(),
     today.getDate()
   );
-  const yesterdayOnly = new Date(
-    yesterday.getFullYear(),
-    yesterday.getMonth(),
-    yesterday.getDate()
-  );
 
   if (dateOnly.getTime() === todayOnly.getTime()) {
     return "Hoy";
-  } else if (dateOnly.getTime() === yesterdayOnly.getTime()) {
-    return "Ayer";
   } else {
-    const { date_dd_mm_yyyy, weekday, isValid } = formatDateTime(dateString, {
-      locale: "es-ES",
-      timeZone: "Europe/Madrid",
-    });
-
-    if (!isValid) return "";
-
-    const weekdayCap = weekday.charAt(0).toUpperCase() + weekday.slice(1);
-    return `${weekdayCap} ${date_dd_mm_yyyy}`;
+    // Formato: "21 nov" o "24 sept"
+    const day = date.getDate();
+    const month = date.toLocaleDateString("es-ES", { month: "short" });
+    return `${day} ${month}`;
   }
 };
 
@@ -86,7 +71,7 @@ export const MessageList = ({ items = [] }) => {
         pb: 10,
         display: "flex",
         flexDirection: "column",
-        gap: 1,
+        gap: 0.5,
         backgroundColor: (t) => t.palette.background.default,
       }}
     >
@@ -99,7 +84,7 @@ export const MessageList = ({ items = [] }) => {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                my: 2,
+                my: 0.5,
               }}
             >
               <Divider sx={{ flex: 1 }} />
