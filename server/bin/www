@@ -42,7 +42,7 @@ const io = new Server(server, {
 
 app.set("io", io);
 
-require("../socket/chat")(io);
+require("../socket/socket")(io);
 
 /**
  * Listen on provided port, on all network interfaces.

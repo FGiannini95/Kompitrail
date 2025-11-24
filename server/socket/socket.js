@@ -50,18 +50,65 @@ module.exports = (io) => {
 
       // Check if the "enter" system message already exists for this (room,user)
       const checkSql = `
-        SELECT chat_message_id, created_at
-        FROM chat_message
-        WHERE chat_room_id = ? AND user_id = ?
-          AND is_system = 1 AND body LIKE '%entrado en el chat'
-        LIMIT 1
-      `;
+    SELECT chat_message_id, created_at
+    FROM chat_message
+    WHERE chat_room_id = ? AND user_id = ?
+      AND is_system = 1 AND body LIKE '%ha entrado en el chat'
+    LIMIT 1
+  `;
 
-      connection.query(checkSql, [chatRoomId, userId], (errCheck) => {
+      connection.query(checkSql, [chatRoomId, userId], (errCheck, rows) => {
         if (errCheck) {
           console.error("Check enter failed", errCheck);
           return;
         }
+
+        // Self-only confirmation line for the joiner
+        const emitSelfEnter = (id, createdAt) => {
+          socket.emit(EVENTS.S2C.MESSAGE_NEW, {
+            chatId,
+            message: {
+              id,
+              chatId,
+              userId: "system",
+              text: "Has entrado en el chat",
+              isSystem: true,
+              createdAt:
+                createdAt instanceof Date
+                  ? createdAt.toISOString()
+                  : new Date(createdAt).toISOString(),
+            },
+          });
+        };
+
+        if (rows && rows.length) {
+          // Msg already exists, just send it back to user (reuse same id)
+          const { chat_message_id, created_at } = rows[0];
+          emitSelfEnter(chat_message_id, created_at);
+          return;
+        }
+
+        // First entry ever → create the system message in DB (no broadcast here)
+        const bodyForOthers = `${displayName} ha entrado en el chat`;
+        const insertSql = `
+      INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+      VALUES (?, ?, ?, 1, NOW())
+    `;
+        connection.query(
+          insertSql,
+          [chatRoomId, userId, bodyForOthers],
+          (errIns, resIns) => {
+            if (errIns) {
+              console.error("Insert enter failed", errIns);
+              return;
+            }
+            const messageId = resIns.insertId;
+            const createdAtIso = new Date().toISOString();
+
+            // Self-only confirmation line for the joiner (reuse DB id)
+            emitSelfEnter(messageId, createdAtIso);
+          }
+        );
       });
     });
   });
