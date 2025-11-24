@@ -1,4 +1,5 @@
 // shared/chat-contract/index.js
+
 const EVENTS = {
   // Client ==> Server
   C2S: {

@@ -113,8 +113,7 @@ export const Chat = () => {
     };
   }, [currentUser?.user_id]);
 
-  // Newest first: lastActivity (if any) else route_date; stable tie-breakers.
-  const ordered = rooms; // or simply render `rooms` directly
+  const ordered = rooms;
 
   if (loading) return <Loading />;
   if (!ordered.length)

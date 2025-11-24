@@ -15,24 +15,77 @@ import { KompitrailContext } from "../../../context/KompitrailContext";
 import { MessageList } from "../MessageList/MessageList";
 import { MessageInput } from "../MessageInput/MessageInput";
 
-// Import contract events
-const EVENTS = {
-  C2S: {
-    ROOM_JOIN: "room:join",
-    ROOM_LEAVE: "room:leave",
-    MESSAGE_SEND: "message:send",
-  },
-  S2C: {
-    MESSAGE_NEW: "message:new",
-    MESSAGE_ACK: "message:ack",
-  },
-};
+import { EVENTS } from "@shared/chat-contract";
+
+import CircleIcon from "@mui/icons-material/Circle";
+
+// helper badge
+function ConnectedBadge({ connected, rttMs }) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+      <CircleIcon
+        sx={{ fontSize: 10, color: connected ? "success.main" : "error.main" }}
+      />
+      <Typography variant="caption" color="text.secondary">
+        {connected
+          ? `Connected${rttMs != null ? ` ${rttMs}ms` : ""}`
+          : "Offline"}
+      </Typography>
+    </Box>
+  );
+}
 
 export const ChatRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { user: currentUser } = useContext(KompitrailContext);
+
+  // STATE
+  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [rttMs, setRttMs] = useState(null);
+
+  // EFFECT: socket connect/disconnect
+  useEffect(() => {
+    const onConnect = () => setIsConnected(true);
+    const onDisconnect = () => {
+      setIsConnected(false);
+      setRttMs(null);
+    };
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, []);
+
+  // EFFECT: ping/pong every 15s
+  useEffect(() => {
+    let timer;
+    const onPong = (payload) => {
+      // payload can be echo of sent ts; if not, just use Date.now()
+      const now = Date.now();
+      const sent = payload?.ts ? Number(payload.ts) : now;
+      setRttMs(Math.max(0, now - sent));
+    };
+
+    socket.on(EVENTS.S2C.PONG, onPong);
+
+    const sendPing = () => {
+      const ts = Date.now();
+      socket.emit(EVENTS.C2S.PING, { ts });
+    };
+
+    // send immediately then interval
+    sendPing();
+    timer = setInterval(sendPing, 15000);
+
+    return () => {
+      clearInterval(timer);
+      socket.off(EVENTS.S2C.PONG, onPong);
+    };
+  }, []);
 
   const title = location.state?.title || "Chat";
 
@@ -41,6 +94,7 @@ export const ChatRoom = () => {
   // Listen for new messages
   useEffect(() => {
     const handleNewMessage = (payload) => {
+      console.log("📩 Received message:", payload);
       if (payload.chatId !== id) return;
 
       const msg = payload.message;
@@ -109,9 +163,21 @@ export const ChatRoom = () => {
             <ArrowBackIosIcon style={{ color: "black" }} />
           </IconButton>
 
-          <Typography variant="h6" sx={{ flex: 1, textAlign: "center" }} noWrap>
-            {title}
-          </Typography>
+          <Box
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              gap: 0.25,
+            }}
+          >
+            <Typography variant="h6" noWrap title={title}>
+              {title}
+            </Typography>
+            <ConnectedBadge connected={isConnected} rttMs={rttMs} />
+          </Box>
 
           <IconButton
             onClick={() => navigate(`/route/${id}`)}

@@ -14,8 +14,8 @@ Cleanup listeners on unmount.
 */
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { socket } from "../helpers/socket";
-import Contract from "@shared/chat-contract";
-const { EVENTS } = Contract;
+import { EVENTS } from "@shared/chat-contract";
+
 import { KompitrailContext } from "../context/KompitrailContext";
 
 export const useChat = (chatId) => {
