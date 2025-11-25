@@ -428,23 +428,39 @@ class routesControllers {
               ? String(userResult[0].name)
               : "Un usuario";
 
-          // Broadcast a system line to everyone currently in the room (OTHERS)
-          const payload = {
-            chatId: route_id,
-            message: {
-              id: `sys-${Date.now()}-others-join`,
+          const systemMessageText = `${displayName} ha abandonado el chat`;
+          const createdAt = new Date();
+          const messageId = `sys-${Date.now()}-leave`;
+
+          // Save system msg in the db
+          const insertMessageSql = `
+            INSERT INTO chat_message (chat_room_id, user_id, message_text, created_at)
+            SELECT chat_room_id, 'system', '${systemMessageText}', '${createdAt}'
+            FROM chat_room
+            WHERE route_id = '${route_id}'
+          `;
+
+          connection.query(insertMessageSql, (msgErr, msgResult) => {
+            if (msgErr) {
+              console.error("Error saving system message", msgErr);
+            }
+            const payload = {
               chatId: route_id,
-              userId: "system",
-              text: `${displayName} ha abandonado el chat`,
-              createdAt: new Date().toISOString(),
-            },
-          };
+              message: {
+                id: msgErr ? messageId : msgResult.insertId,
+                chatId: route_id,
+                userId: "system",
+                text: systemMessageText,
+                createdAt: createdAt.toISOString(),
+              },
+            };
 
-          io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
-
-          return res
-            .status(200)
-            .json({ message: "Inscripción cancelada", deleteResult });
+            // Broadcast a system line to everyone currently in the room (OTHERS)
+            io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
+            return res
+              .status(200)
+              .json({ message: "Inscripción cancelada", deleteResult });
+          });
         });
       });
     });

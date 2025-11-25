@@ -47,12 +47,12 @@ module.exports = (io) => {
 
       // Check if the "enter" system message already exists for this (room,user)
       const checkSql = `
-    SELECT chat_message_id, created_at
-    FROM chat_message
-    WHERE chat_room_id = ? AND user_id = ?
-      AND is_system = 1 AND body LIKE '%ha entrado en el chat'
-    LIMIT 1
-  `;
+        SELECT chat_message_id, created_at
+        FROM chat_message
+        WHERE chat_room_id = ? AND user_id = ?
+          AND is_system = 1 AND body LIKE '%ha entrado en el chat'
+        LIMIT 1
+      `;
 
       connection.query(checkSql, [chatRoomId, userId], (errCheck, rows) => {
         if (errCheck) {
