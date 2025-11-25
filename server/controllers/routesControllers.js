@@ -258,13 +258,13 @@ class routesControllers {
     const sql = `
     UPDATE route
     SET is_deleted = 1
-    WHERE route_id = "${route_id}"
-      AND user_id = "${user_id}"      
-      AND date >= NOW()                
-      AND is_deleted = 0           
+    WHERE route_id = ?
+      AND user_id = ?
+      AND date >= NOW()
+      AND is_deleted = 0
   `;
 
-    connection.query(sql, (err, deleteResult) => {
+    connection.query(sql, [route_id, user_id], (err, deleteResult) => {
       if (err) {
         return res.status(400).json({ err });
       }
@@ -275,42 +275,55 @@ class routesControllers {
           .json({ message: "La ruta no puede ser eliminada" });
       }
 
-      const displayName = req.user?.displayName || "System";
-      const systemMessageText = `${displayName} ha eliminado la ruta`;
-      const createdAt = new Date().toISOString();
-      const messageId = `sys-${Date.now()}-route-deleted`;
+      // Fetch creator's display name for the system message
+      const userSql = `SELECT name FROM user WHERE user_id = ? LIMIT 1`;
 
-      // Save system msg in the db
-      const insertMessageSql = `
-        INSERT INTO chat_message (chat_room_id, user_id, message_text, created_at)
-        SELECT chat_room_id, 'system', '${systemMessageText}', '${createdAt}'
+      connection.query(userSql, [user_id], (userError, userResult) => {
+        const displayName =
+          !userError && userResult?.[0]?.name
+            ? String(userResult[0].name)
+            : "Un usuario";
+
+        const systemMessageText = `${displayName} ha eliminado la ruta`;
+        const createdAt = new Date();
+        const messageId = `sys-${Date.now()}-route-deleted`;
+
+        // Save system msg in the db
+        const insertMessageSql = `
+        INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+        SELECT chat_room_id, ?, ?, 1, ?
         FROM chat_room
-        WHERE route_id = '${route_id}'
+        WHERE route_id = ?
       `;
 
-      connection.query(insertMessageSql, (msgErr, msgResult) => {
-        if (msgErr) {
-          console.error("Error saving system message:", msgErr);
-        }
+        connection.query(
+          insertMessageSql,
+          [user_id, systemMessageText, createdAt, route_id],
+          (msgErr, msgResult) => {
+            if (msgErr) {
+              console.error("Error saving system message:", msgErr);
+            }
 
-        try {
-          io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, {
-            chatId: route_id,
-            message: {
-              id: msgErr ? messageId : msgResult.insertId,
-              chatId: route_id,
-              userId: "system",
-              text: systemMessageText,
-              createdAt: createdAt,
-            },
-          });
-        } catch (_) {
-          // Ignore it
-        }
+            try {
+              io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, {
+                chatId: route_id,
+                message: {
+                  id: msgErr ? messageId : msgResult.insertId,
+                  chatId: route_id,
+                  userId: "system",
+                  text: systemMessageText,
+                  createdAt: createdAt.toISOString(),
+                },
+              });
+            } catch (_) {
+              // Ignore it
+            }
 
-        return res
-          .status(200)
-          .json({ message: "Ruta eliminada", deleteResult });
+            return res
+              .status(200)
+              .json({ message: "Ruta eliminada", deleteResult });
+          }
+        );
       });
     });
   };
@@ -373,14 +386,14 @@ class routesControllers {
             // Save system msg in the db
             const insertMessageSql = `
               INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
-              SELECT chat_room_id, 0, ?, 1, ?
+              SELECT chat_room_id, ?, ?, 1, ?
               FROM chat_room
               WHERE route_id = ?
             `;
 
             connection.query(
               insertMessageSql,
-              [systemMessageText, createdAt, route_id],
+              [user_id, systemMessageText, createdAt, route_id],
               (msgErr, msgResult) => {
                 if (msgErr) {
                   console.error("Error saving system message", msgErr);
@@ -422,28 +435,33 @@ class routesControllers {
     const io = req.app.get("io");
 
     // Check if the route is passed
-    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}"`;
-    connection.query(checkDateSql, (err, result) => {
+    let checkDateSql = `SELECT date FROM route WHERE route_id = ?`;
+    connection.query(checkDateSql, [route_id], (err, result) => {
       if (err) {
         return res.status(400).json({ err });
       }
+
+      if (!result || result.length === 0) {
+        return res.status(404).json({ message: "Ruta no encontrada" });
+      }
+
       const routeDate = new Date(result[0].date);
       const now = new Date();
 
       if (!routeDate || routeDate < now) {
-        return res.status(400).json({ message: "Rute already expired" });
+        return res.status(400).json({ message: "Ruta already expired" });
       }
 
-      let sql = `DELETE FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}';`;
-      connection.query(sql, (err2, deleteResult) => {
+      let sql = `DELETE FROM route_participant WHERE user_id = ? AND route_id = ?`;
+      connection.query(sql, [user_id, route_id], (err2, deleteResult) => {
         if (err2) {
           return res.status(400).json({ err: err2 });
         }
 
         // Fetch display name to compose the system line
-        const userSql = `SELECT name FROM user WHERE user_id='${user_id}' LIMIT 1`;
+        const userSql = `SELECT name FROM user WHERE user_id = ? LIMIT 1`;
 
-        connection.query(userSql, (userError, userResult) => {
+        connection.query(userSql, [user_id], (userError, userResult) => {
           const displayName =
             !userError && userResult?.[0]?.name
               ? String(userResult[0].name)
@@ -455,33 +473,39 @@ class routesControllers {
 
           // Save system msg in the db
           const insertMessageSql = `
-            INSERT INTO chat_message (chat_room_id, user_id, message_text, created_at)
-            SELECT chat_room_id, 'system', '${systemMessageText}', '${createdAt}'
-            FROM chat_room
-            WHERE route_id = '${route_id}'
-          `;
+          INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+          SELECT chat_room_id, ?, ?, 1, ?
+          FROM chat_room
+          WHERE route_id = ?
+        `;
 
-          connection.query(insertMessageSql, (msgErr, msgResult) => {
-            if (msgErr) {
-              console.error("Error saving system message", msgErr);
-            }
-            const payload = {
-              chatId: route_id,
-              message: {
-                id: msgErr ? messageId : msgResult.insertId,
+          connection.query(
+            insertMessageSql,
+            [user_id, systemMessageText, createdAt, route_id],
+            (msgErr, msgResult) => {
+              if (msgErr) {
+                console.error("Error saving system message:", msgErr);
+              }
+
+              const payload = {
                 chatId: route_id,
-                userId: "system",
-                text: systemMessageText,
-                createdAt: createdAt.toISOString(),
-              },
-            };
+                message: {
+                  id: msgErr ? messageId : msgResult.insertId,
+                  chatId: route_id,
+                  userId: "system",
+                  text: systemMessageText,
+                  createdAt: createdAt.toISOString(),
+                },
+              };
 
-            // Broadcast a system line to everyone currently in the room (OTHERS)
-            io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
-            return res
-              .status(200)
-              .json({ message: "Inscripción cancelada", deleteResult });
-          });
+              // Broadcast a system line to everyone currently in the room
+              io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
+
+              return res
+                .status(200)
+                .json({ message: "Inscripción cancelada", deleteResult });
+            }
+          );
         });
       });
     });
