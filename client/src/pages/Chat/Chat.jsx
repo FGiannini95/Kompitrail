@@ -165,8 +165,14 @@ export const Chat = () => {
               }
             >
               <ListItemAvatar sx={{ minWidth: 56 }}>
-                <Avatar>
-                  <ExploreOutlinedIcon />
+                <Avatar
+                  sx={{
+                    border: "2px solid black",
+                    color: "black",
+                    backgroundColor: "transparent",
+                  }}
+                >
+                  <ExploreOutlinedIcon sx={{}} />
                 </Avatar>
               </ListItemAvatar>
 
