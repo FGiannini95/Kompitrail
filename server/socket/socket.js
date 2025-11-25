@@ -21,8 +21,6 @@ module.exports = (io) => {
 
   // When a client connect
   io.on("connection", (socket) => {
-    console.log("New socket connected:", socket.id);
-
     //PING/PONG handshake => The FE periodically sends `ping` to check that connection is alive, BE respond with a `pong`
     socket.on("ping", (payload) => {
       socket.emit("pong", { echo: payload?.echo ?? null, ts: Date.now() });
@@ -42,7 +40,6 @@ module.exports = (io) => {
 
       // Join the logical Socket.IO room
       socket.join(chatId);
-      console.log(`${displayName} joined room ${chatId}`);
 
       // Find related chat_room_id in DB
       const chatRoomId = await getChatRoomIdByRoute(chatId);

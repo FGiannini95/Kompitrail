@@ -77,6 +77,53 @@ class chatControllers {
       return res.status(200).json(result);
     });
   };
+
+  getChatMessages = (req, res) => {
+    const { id: route_id } = req.params; // route id from URL (room name)
+    const { user_id } = req.query; // who is asking for messages
+
+    // Verify the user has access to the chat: either participant or creator
+    const checkAccessSql = `
+      SELECT 1
+      FROM route_participant
+      WHERE route_id = ? AND user_id = ?
+      UNION
+      SELECT 1
+      FROM route
+      WHERE route_id = ? and user_id = ?
+    `;
+
+    connection.query(
+      checkAccessSql,
+      [route_id, user_id, route_id, user_id],
+      (err, accessResult) => {
+        if (err || !accessResult || accessResult.length == 0) {
+          return res.status(403).json({ message: "Accesso denegado" });
+        }
+
+        // Restore all messages order by date
+        const sql = `
+          SELECT
+            cm.chat_message_id AS id,
+            cm.user_id AS userId,
+            cm.body AS text,
+            cm.is_system AS isSystem,
+            cm.created_at AS createdAt
+          FROM chat_message cm
+          INNER JOIN chat_room cr ON cm.chat_room_id = cr.chat_room_id
+          WHERE cr.route_id = ?
+          ORDER BY cm.created_at ASC
+        `;
+
+        connection.query(sql, [route_id], (err2, messages) => {
+          if (err2) {
+            return res.status(400).json({ err: err2 });
+          }
+          return res.status(200).json({ messages: messages || [] });
+        });
+      }
+    );
+  };
 }
 
 module.exports = new chatControllers();

@@ -346,19 +346,43 @@ class routesControllers {
                 ? String(userResult[0].name)
                 : "Un usuario";
 
-            // Broadcast a system line to everyone in this chat room (route_id)
-            const payloadOthers = {
-              chatId: route_id,
-              message: {
-                id: `sys-${Date.now()}-others-join`,
-                chatId: route_id,
-                userId: "system",
-                text: `${displayName} ha entrado en el chat`,
-                createdAt: new Date().toISOString(),
-              },
-            };
+            const systemMessageText = `${displayName} ha entrado en el chat`;
+            const createdAt = new Date();
 
-            io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payloadOthers);
+            // Save system msg in the db
+            const insertMessageSql = `
+              INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+              SELECT chat_room_id, 0, ?, 1, ?
+              FROM chat_room
+              WHERE route_id = ?
+            `;
+
+            connection.query(
+              insertMessageSql,
+              [systemMessageText, createdAt, route_id],
+              (msgErr, msgResult) => {
+                if (msgErr) {
+                  console.error("Error saving system message", msgErr);
+                }
+
+                const messageId = msgErr
+                  ? `sys-${Date.now()}-join`
+                  : msgResult.insertId;
+
+                const payload = {
+                  chatId: route_id,
+                  message: {
+                    id: messageId,
+                    chatId: route_id,
+                    userId: "system",
+                    text: systemMessageText,
+                    createdAt: createdAt.toISOString(),
+                  },
+                };
+                // Broadcast a system line to everyone in this chat room (route_id)
+                io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
+              }
+            );
 
             res.status(201).json({
               message: "Inscripción completada",
@@ -405,7 +429,7 @@ class routesControllers {
               : "Un usuario";
 
           // Broadcast a system line to everyone currently in the room (OTHERS)
-          const payloadOthers = {
+          const payload = {
             chatId: route_id,
             message: {
               id: `sys-${Date.now()}-others-join`,
@@ -416,7 +440,7 @@ class routesControllers {
             },
           };
 
-          io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payloadOthers);
+          io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
 
           return res
             .status(200)
