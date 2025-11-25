@@ -1,72 +1,102 @@
-/*
-Join/leave the room for a given routeId.
-Emit/send:
-chat:message { routeId, body }
-chat:typing { routeId, isTyping } (debounced in the hook)
-chat:read { routeId, lastSeenMessageId }
-Listen/handle:
-chat:message (append to UI)
-system:message (join/leave/delete notices)
-chat:typing (drive TypingIndicator)
-chat:read (update double checks)
-chat:locked (disable MessageInput)
-Cleanup listeners on unmount.
-*/
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState, useCallback } from "react";
 import { socket } from "../helpers/socket";
 import { EVENTS } from "@shared/chat-contract";
-
 import { KompitrailContext } from "../context/KompitrailContext";
+import { formatDateTime } from "../helpers/utils";
 
 export const useChat = (chatId) => {
   const [messages, setMessages] = useState([]);
-  const joinedRef = useRef(false); // Avoid duplicate join on fast renders
+  const joinedRef = useRef(false);
   const { user: currentUser } = useContext(KompitrailContext);
 
-  // Append new message
-  const pushMessage = useMemo(
-    () => (msg) => setMessages((prev) => [...prev, msg]),
-    []
+  // Format and add message to state
+  const handleNewMessage = useCallback(
+    (payload) => {
+      if (!payload || payload.chatId !== chatId) return;
+
+      const msg = payload.message;
+      const isSystem = msg.userId === "system";
+
+      setMessages((prev) => {
+        // Dedupe: ignore if message id already present
+        if (prev.some((m) => m.id === msg.id)) return prev;
+
+        const { time_hh_mm } = formatDateTime(msg.createdAt, {
+          locale: "es-ES",
+          timeZone: "Europe/Madrid",
+        });
+
+        return [
+          ...prev,
+          {
+            id: msg.id,
+            text: msg.text,
+            fromMe: !isSystem && msg.userId === currentUser?.user_id,
+            at: time_hh_mm,
+            createdAt: msg.createdAt,
+            isSystem,
+          },
+        ];
+      });
+    },
+    [chatId, currentUser?.user_id]
   );
 
-  useEffect(() => {
-    if (!chatId) return;
+  // Send message function
+  const sendMessage = useCallback(
+    (text) => {
+      if (!chatId || !text?.trim()) return;
 
-    // Join after socket is connect
+      socket.emit(EVENTS.C2S.MESSAGE_SEND, {
+        chatId,
+        text,
+      });
+    },
+    [chatId]
+  );
+
+  // Join/leave room management
+  useEffect(() => {
+    if (!chatId || !currentUser?.user_id) return;
+
+    const payload = { chatId, user: currentUser };
+
     const join = () => {
       if (joinedRef.current) return;
-      socket.emit(EVENTS.C2S.ROOM_JOIN, { chatId, user: currentUser });
+      socket.emit(EVENTS.C2S.ROOM_JOIN, payload);
       joinedRef.current = true;
     };
 
     const onConnect = () => join();
+
     const onDisconnect = () => {
       joinedRef.current = false;
-    };
-
-    const onMessageNew = (payload) => {
-      if (!payload || payload.chatId !== chatId) return;
-      pushMessage(payload.message);
     };
 
     // Register listeners
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.on(EVENTS.S2C.MESSAGE_NEW, onMessageNew);
+    socket.on(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
 
-    // If already connect, join inmidiately
+    // If already connected, join immediately
     if (socket.connected) join();
 
     return () => {
       if (joinedRef.current) {
-        socket.emit(EVENTS.C2S.ROOM_LEAVE, { chatId });
+        socket.emit(EVENTS.C2S.ROOM_LEAVE, {
+          chatId,
+          user: currentUser,
+        });
         joinedRef.current = false;
       }
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.off(EVENTS.S2C.MESSAGE_NEW, onMessageNew);
+      socket.off(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
     };
-  }, [chatId, currentUser, pushMessage]);
+  }, [chatId, currentUser, handleNewMessage]);
 
-  return { messages };
+  return {
+    messages,
+    sendMessage,
+  };
 };
