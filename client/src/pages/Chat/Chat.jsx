@@ -147,7 +147,7 @@ export const Chat = () => {
           <ListItem
             key={row.route_id}
             sx={{
-              border: "2px solid #eeeeee",
+              backgroundColor: "#eeeeee",
               borderRadius: 2,
               p: 0,
               alignItems: "flex-start",
