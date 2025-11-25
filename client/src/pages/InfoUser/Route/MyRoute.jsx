@@ -48,15 +48,14 @@ export const MyRoute = () => {
   };
 
   const handleDeleteRoute = (route_id) => {
-    axios
-      .put(`${ROUTES_URL}/deleteroute/${route_id}`)
+    deleteRoute(route_id, user.user_id)
       .then(() => {
-        deleteRoute(route_id);
         showSnackbar("Ruta eliminada con éxito");
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al eliminar la ruta", "error");
+        const msg = err?.response?.data?.message || "Error al eliminar la ruta";
+        showSnackbar(msg, "error");
       });
   };
 

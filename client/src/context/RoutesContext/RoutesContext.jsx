@@ -90,15 +90,16 @@ export const RoutesProvider = ({ children }) => {
   }, []);
 
   // DELETE action
-  const deleteRoute = useCallback((route_id) => {
+  const deleteRoute = useCallback((route_id, user_id) => {
     return axios
-      .put(`${ROUTES_URL}/deleteroute/${route_id}`)
+      .put(`${ROUTES_URL}/deleteroute/${route_id}`, { user_id })
       .then(() => {
         setAllRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
         setUserRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
       })
       .catch((err) => {
         console.log(err);
+        throw err;
       });
   }, []);
 

@@ -239,6 +239,14 @@ class routesControllers {
     });
   };
 
+  showOneRoute = (req, res) => {
+    const { id: route_id } = req.params;
+    let sql = `SELECT * FROM route WHERE route_id ='${route_id}' AND is_deleted = 0`;
+    connection.query(sql, (err, result) => {
+      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    });
+  };
+
   deleteRoute = (req, res) => {
     const { id: route_id } = req.params;
     const { user_id } = req.body; // Must be the route creator
@@ -267,30 +275,43 @@ class routesControllers {
           .json({ message: "La ruta no puede ser eliminada" });
       }
 
-      try {
-        io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, {
-          chatId: route_id,
-          message: {
-            id: `sys-${Date.now()}-route-deleted`,
+      const displayName = req.user?.displayName || "System";
+      const systemMessageText = `${displayName} ha eliminado la ruta`;
+      const createdAt = new Date().toISOString();
+      const messageId = `sys-${Date.now()}-route-deleted`;
+
+      // Save system msg in the db
+      const insertMessageSql = `
+        INSERT INTO chat_message (chat_room_id, user_id, message_text, created_at)
+        SELECT chat_room_id, 'system', '${systemMessageText}', '${createdAt}'
+        FROM chat_room
+        WHERE route_id = '${route_id}'
+      `;
+
+      connection.query(insertMessageSql, (msgErr, msgResult) => {
+        if (msgErr) {
+          console.error("Error saving system message:", msgErr);
+        }
+
+        try {
+          io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, {
             chatId: route_id,
-            userId: "system",
-            text: "La ruta ha sido eliminada por el creador",
-            createdAt: new Date().toISOString(),
-          },
-        });
-      } catch (_) {
-        // Ignore it
-      }
+            message: {
+              id: msgErr ? messageId : msgResult.insertId,
+              chatId: route_id,
+              userId: "system",
+              text: systemMessageText,
+              createdAt: createdAt,
+            },
+          });
+        } catch (_) {
+          // Ignore it
+        }
 
-      return res.status(200).json({ message: "Ruta eliminada", deleteResult });
-    });
-  };
-
-  showOneRoute = (req, res) => {
-    const { id: route_id } = req.params;
-    let sql = `SELECT * FROM route WHERE route_id ='${route_id}' AND is_deleted = 0`;
-    connection.query(sql, (err, result) => {
-      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+        return res
+          .status(200)
+          .json({ message: "Ruta eliminada", deleteResult });
+      });
     });
   };
 
