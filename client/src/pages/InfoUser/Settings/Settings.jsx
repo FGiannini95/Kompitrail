@@ -81,12 +81,18 @@ export const Settings = () => {
         }}
       >
         <List disablePadding>
-          {/* Change Password Option */}
+          <SettingsRow
+            action="language"
+            onClick={() => navigate(RoutesString.language)}
+          />
+          <SettingsRow
+            action="theme"
+            onClick={() => navigate(RoutesString.theme)}
+          />
           <SettingsRow
             action="changePassword"
             onClick={() => navigate(RoutesString.editPassword)}
           />
-          {/* Delete Account Option */}
           <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
         </List>
       </Box>

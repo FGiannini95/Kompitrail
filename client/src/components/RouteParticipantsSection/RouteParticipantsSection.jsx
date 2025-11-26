@@ -80,7 +80,7 @@ export const RouteParticipantsSection = forwardRef(
       !isJoiningRoute(route_id);
 
     const handleDelete = () => {
-      return deleteRoute(route_id)
+      return deleteRoute(route_id, currentUser?.user_id)
         .then(() => {
           showSnackbar("Ruta eliminada con éxito");
           closeDialog();

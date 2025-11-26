@@ -32,7 +32,8 @@ export const TopBar = () => {
       RoutesString.editRoute,
       RoutesString.route,
     ].includes(location.pathname) ||
-    location.pathname.startsWith("/route/");
+    location.pathname.startsWith("/route/") ||
+    location.pathname.startsWith("/chat/");
 
   useEffect(() => {
     if (location.pathname === RoutesString.home) {

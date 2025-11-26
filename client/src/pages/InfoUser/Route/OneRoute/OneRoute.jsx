@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 import {
@@ -56,6 +56,7 @@ export const OneRoute = () => {
     routeId: route_id,
   });
   const { allRoutes, loadAllRoutes } = useRoutes();
+  const navigate = useNavigate();
 
   const [fetched, setFetched] = useState(null);
 
@@ -356,6 +357,13 @@ export const OneRoute = () => {
               aria-hidden
             />
           }
+          onClick={() => {
+            navigate(`/chat/${route_id}`, {
+              state: {
+                title: `${starting_point} - ${ending_point}`,
+              },
+            });
+          }}
         />
       </Stack>
       <Card

@@ -1,6 +1,12 @@
 const connection = require("../config/db");
 const { connect } = require("../routes/motorbikes");
 require("dotenv").config();
+const path = require("path");
+const Contract = require(path.resolve(
+  __dirname,
+  "../../shared/chat-contract/index"
+));
+const { EVENTS } = Contract;
 
 class routesControllers {
   createRoute = (req, res) => {
@@ -33,7 +39,7 @@ class routesControllers {
       return res.status(400).json({ error: "Faltan campos requeridos." });
     }
 
-    const sql = `
+    const sqlInsertRoute = `
     INSERT INTO route (
       user_id, date, starting_point, ending_point, level, distance,
       is_verified, suitable_motorbike_type, estimated_time, max_participants,
@@ -55,41 +61,57 @@ class routesControllers {
     );
   `;
 
-    connection.query(sql, (error, result) => {
+    connection.query(sqlInsertRoute, (error, result) => {
       if (error) {
         return res.status(500).json({ error });
       }
 
-      const sqlSelect = `
-      SELECT 
-        r.route_id, 
-        r.user_id, 
-        r.date, 
-        r.starting_point, 
-        r.ending_point,
-        r.level, 
-        r.distance, 
-        r.is_verified, 
-        r.suitable_motorbike_type,
-        r.estimated_time, 
-        r.max_participants, 
-        r.route_description, 
-        r.is_deleted,
-        u.name,
-        u.lastname
-      FROM route r
-      LEFT JOIN user u ON r.user_id = u.user_id
-      WHERE r.route_id = ?
-    `;
+      const routeId = result.insertId;
 
-      connection.query(sqlSelect, [result.insertId], (error2, result2) => {
-        if (error2) {
-          return res.status(500).json({ error: error2 });
+      // Create also a chat_room, 1:1 with route
+      const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
+
+      connection.query(sqlInsertChatRoom, (errorChat) => {
+        if (errorChat) {
+          console.error(
+            "Failed to create chat_room from route",
+            routeId,
+            errorChat
+          );
         }
-        if (!result2 || result2.length === 0) {
-          return res.status(404).json({ error: "Ruta no encontrada" });
-        }
-        return res.status(200).json(result2[0]);
+
+        // Return the freshly created route (joined with creator name for convenience)
+        const sqlSelect = `
+              SELECT 
+                r.route_id, 
+                r.user_id, 
+                r.date, 
+                r.starting_point, 
+                r.ending_point,
+                r.level, 
+                r.distance, 
+                r.is_verified, 
+                r.suitable_motorbike_type,
+                r.estimated_time, 
+                r.max_participants, 
+                r.route_description, 
+                r.is_deleted,
+                u.name,
+                u.lastname
+              FROM route r
+                LEFT JOIN user u ON r.user_id = u.user_id
+              WHERE r.route_id = ?
+            `;
+
+        connection.query(sqlSelect, [routeId], (error2, result2) => {
+          if (error2) {
+            return res.status(500).json({ error: error2 });
+          }
+          if (!result2 || result2.length === 0) {
+            return res.status(404).json({ error: "Ruta no encontrada" });
+          }
+          return res.status(200).json(result2[0]);
+        });
       });
     });
   };
@@ -217,17 +239,6 @@ class routesControllers {
     });
   };
 
-  deleteRoute = (req, res) => {
-    const { id: route_id } = req.params;
-
-    let sql = `UPDATE route SET is_deleted = 1 WHERE route_id = "${route_id}" AND date >= NOW()`;
-    connection.query(sql, (err, deleteResult) => {
-      err
-        ? res.status(400).json({ err })
-        : res.status(200).json({ message: "Ruta eliminada", deleteResult });
-    });
-  };
-
   showOneRoute = (req, res) => {
     const { id: route_id } = req.params;
     let sql = `SELECT * FROM route WHERE route_id ='${route_id}' AND is_deleted = 0`;
@@ -236,9 +247,93 @@ class routesControllers {
     });
   };
 
-  joinRoute = (req, res) => {
+  deleteRoute = (req, res) => {
     const { id: route_id } = req.params;
-    const { user_id } = req.body;
+    const { user_id } = req.body; // Must be the route creator
+
+    if (!user_id) {
+      return res.status(400).json({ message: "Missing user_id" });
+    }
+
+    const sql = `
+    UPDATE route
+    SET is_deleted = 1
+    WHERE route_id = ?
+      AND user_id = ?
+      AND date >= NOW()
+      AND is_deleted = 0
+  `;
+
+    connection.query(sql, [route_id, user_id], (err, deleteResult) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+
+      if (!deleteResult || deleteResult.affectedRows === 0) {
+        return res
+          .status(403)
+          .json({ message: "La ruta no puede ser eliminada" });
+      }
+
+      // Fetch creator's display name for the system message
+      const userSql = `SELECT name FROM user WHERE user_id = ? LIMIT 1`;
+
+      connection.query(userSql, [user_id], (userError, userResult) => {
+        const displayName =
+          !userError && userResult?.[0]?.name
+            ? String(userResult[0].name)
+            : "Un usuario";
+
+        const systemMessageText = `${displayName} ha eliminado la ruta`;
+        const createdAt = new Date();
+        const messageId = `sys-${Date.now()}-route-deleted`;
+
+        // Save system msg in the db
+        const insertMessageSql = `
+        INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+        SELECT chat_room_id, ?, ?, 1, ?
+        FROM chat_room
+        WHERE route_id = ?
+      `;
+
+        connection.query(
+          insertMessageSql,
+          [user_id, systemMessageText, createdAt, route_id],
+          (msgErr, msgResult) => {
+            if (msgErr) {
+              console.error("Error saving system message:", msgErr);
+            }
+
+            try {
+              io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, {
+                chatId: route_id,
+                message: {
+                  id: msgErr ? messageId : msgResult.insertId,
+                  chatId: route_id,
+                  userId: "system",
+                  text: systemMessageText,
+                  createdAt: createdAt.toISOString(),
+                },
+              });
+            } catch (_) {
+              // Ignore it
+            }
+
+            return res
+              .status(200)
+              .json({ message: "Ruta eliminada", deleteResult });
+          }
+        );
+      });
+    });
+  };
+
+  joinRoute = (req, res) => {
+    const { id: route_id } = req.params; // route id from URL (room name)
+    const { user_id } = req.body; // who is joining
+
+    // Access Socket.io instance
+    const io = req.app.get("io");
 
     // Check if the route is passed
     let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}"`;
@@ -249,36 +344,84 @@ class routesControllers {
       const routeDate = new Date(result[0].date);
       const now = new Date();
 
-      if (routeDate < now) {
+      if (!routeDate || routeDate < now) {
         return res.status(400).json({ message: "Ruta ya pasada" });
       }
 
       // Avoid duplicate entry error
       let checkSql = `SELECT * FROM route_participant WHERE user_id = "${user_id}" AND route_id = "${route_id}"`;
 
-      connection.query(checkSql, (err, result) => {
-        if (err) {
-          return res.status(400).json({ err });
+      connection.query(checkSql, (err2, result2) => {
+        if (err2) {
+          return res.status(400).json({ err: err2 });
         }
 
         // If user is already enrolled, return error
-        if (result.length > 0) {
+        if (result2.length > 0) {
           return res.status(409).json({
             error: "Usuario ya inscrito",
           });
         }
 
         // If not enrolled, proceed with INSERT
-        let sql = `INSERT INTO route_participant (user_id, route_id) VALUES ("${user_id}", "${route_id}")`;
+        let insertSql = `INSERT INTO route_participant (user_id, route_id) VALUES ("${user_id}", "${route_id}")`;
 
-        connection.query(sql, (err, deleteResult) => {
-          if (err) {
-            return res.status(400).json({ err });
+        connection.query(insertSql, (err3, insertRes) => {
+          if (err3) {
+            return res.status(400).json({ err: err3 });
           }
 
-          res.status(201).json({
-            message: "Inscripción completada",
-            route_participant_id: deleteResult.insertId,
+          // Fetch user display name for the system message
+          const userSql = `SELECT name FROM user WHERE user_id='${user_id}' LIMIT 1`;
+
+          connection.query(userSql, (userError, userResult) => {
+            const displayName =
+              !userError && userResult?.[0]?.name
+                ? String(userResult[0].name)
+                : "Un usuario";
+
+            const systemMessageText = `${displayName} ha entrado en el chat`;
+            const createdAt = new Date();
+
+            // Save system msg in the db
+            const insertMessageSql = `
+              INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+              SELECT chat_room_id, ?, ?, 1, ?
+              FROM chat_room
+              WHERE route_id = ?
+            `;
+
+            connection.query(
+              insertMessageSql,
+              [user_id, systemMessageText, createdAt, route_id],
+              (msgErr, msgResult) => {
+                if (msgErr) {
+                  console.error("Error saving system message", msgErr);
+                }
+
+                const messageId = msgErr
+                  ? `sys-${Date.now()}-join`
+                  : msgResult.insertId;
+
+                const payload = {
+                  chatId: route_id,
+                  message: {
+                    id: messageId,
+                    chatId: route_id,
+                    userId: "system",
+                    text: systemMessageText,
+                    createdAt: createdAt.toISOString(),
+                  },
+                };
+                // Broadcast a system line to everyone in this chat room (route_id)
+                io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
+              }
+            );
+
+            res.status(201).json({
+              message: "Inscripción completada",
+              route_participant_id: insertRes.insertId,
+            });
           });
         });
       });
@@ -286,29 +429,84 @@ class routesControllers {
   };
 
   leaveRoute = (req, res) => {
-    const { id: route_id } = req.params;
+    const { id: route_id } = req.params; // room name = route_id
     const { user_id } = req.body;
 
+    const io = req.app.get("io");
+
     // Check if the route is passed
-    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}"`;
-    connection.query(checkDateSql, (err, result) => {
+    let checkDateSql = `SELECT date FROM route WHERE route_id = ?`;
+    connection.query(checkDateSql, [route_id], (err, result) => {
       if (err) {
         return res.status(400).json({ err });
       }
+
+      if (!result || result.length === 0) {
+        return res.status(404).json({ message: "Ruta no encontrada" });
+      }
+
       const routeDate = new Date(result[0].date);
       const now = new Date();
 
-      if (routeDate < now) {
-        return res.status(400).json({ message: "Rute already expired" });
+      if (!routeDate || routeDate < now) {
+        return res.status(400).json({ message: "Ruta already expired" });
       }
 
-      let sql = `DELETE FROM route_participant WHERE user_id = '${user_id}' AND route_id = '${route_id}';`;
-      connection.query(sql, (err, deleteResult) => {
-        err
-          ? res.status(400).json({ err })
-          : res
-              .status(200)
-              .json({ message: "Inscripción cancelada", deleteResult });
+      let sql = `DELETE FROM route_participant WHERE user_id = ? AND route_id = ?`;
+      connection.query(sql, [user_id, route_id], (err2, deleteResult) => {
+        if (err2) {
+          return res.status(400).json({ err: err2 });
+        }
+
+        // Fetch display name to compose the system line
+        const userSql = `SELECT name FROM user WHERE user_id = ? LIMIT 1`;
+
+        connection.query(userSql, [user_id], (userError, userResult) => {
+          const displayName =
+            !userError && userResult?.[0]?.name
+              ? String(userResult[0].name)
+              : "Un usuario";
+
+          const systemMessageText = `${displayName} ha abandonado el chat`;
+          const createdAt = new Date();
+          const messageId = `sys-${Date.now()}-leave`;
+
+          // Save system msg in the db
+          const insertMessageSql = `
+          INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+          SELECT chat_room_id, ?, ?, 1, ?
+          FROM chat_room
+          WHERE route_id = ?
+        `;
+
+          connection.query(
+            insertMessageSql,
+            [user_id, systemMessageText, createdAt, route_id],
+            (msgErr, msgResult) => {
+              if (msgErr) {
+                console.error("Error saving system message:", msgErr);
+              }
+
+              const payload = {
+                chatId: route_id,
+                message: {
+                  id: msgErr ? messageId : msgResult.insertId,
+                  chatId: route_id,
+                  userId: "system",
+                  text: systemMessageText,
+                  createdAt: createdAt.toISOString(),
+                },
+              };
+
+              // Broadcast a system line to everyone currently in the room
+              io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
+
+              return res
+                .status(200)
+                .json({ message: "Inscripción cancelada", deleteResult });
+            }
+          );
+        });
       });
     });
   };
