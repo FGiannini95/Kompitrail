@@ -153,7 +153,7 @@ export const OneRoute = () => {
 
   const data = state ?? fetched;
 
-  const {
+  let {
     date,
     starting_point,
     ending_point,
@@ -170,6 +170,10 @@ export const OneRoute = () => {
     create_name,
     user_img,
   } = data || {};
+
+  if (isOwner == null) {
+    isOwner = currentUser?.user_id === user_id;
+  }
 
   const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } =
     formatDateTime(date);
