@@ -101,7 +101,7 @@ export const RouteParticipantsSection = forwardRef(
     };
 
     const handleJoin = (e) => {
-      e.stopPropagation();
+      e?.stopPropagation();
       if (!canJoinRoute) return;
 
       joinRoute(route_id, currentUser.user_id)
