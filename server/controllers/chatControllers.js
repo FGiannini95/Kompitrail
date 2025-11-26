@@ -61,7 +61,7 @@ class chatControllers {
         route_id: r.route_id,
         starting_point: r.starting_point,
         ending_point: r.ending_point,
-        route_date: r.route_date,
+        route_date: r.date,
         lastMessage: r.last_message_id
           ? {
               id: r.last_message_id,

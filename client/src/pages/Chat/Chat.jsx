@@ -140,7 +140,7 @@ export const Chat = () => {
         const title = `${row.starting_point} - ${row.ending_point}`;
         const activityAt = row.lastActivity ?? row.route_date;
         const rightStamp = formatChatTimestamp(activityAt);
-        const subtitle = formatChatSubtitle(activityAt);
+        const subtitle = formatChatSubtitle(row.route_date);
         const lastMessageText = row.lastMessage?.text || "";
 
         return (
