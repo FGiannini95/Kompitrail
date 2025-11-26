@@ -95,9 +95,9 @@ export const OneRoute = () => {
               ? (userRaw[0] ?? {})
               : (userRaw ?? {});
 
-            create_name =
-              create_name ??
-              `${user?.name ?? ""} ${user?.lastname ?? ""}`.trim();
+            const firstName = (user?.name ?? "").trim();
+
+            create_name = create_name ?? firstName;
             user_img = user_img ?? user?.img ?? null;
           } catch (e) {
             // Non-blocking: keep page working even if this fails
