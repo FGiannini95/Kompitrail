@@ -9,6 +9,8 @@ import {
   Stack,
   Typography,
   Divider,
+  Tooltip,
+  Box,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -186,6 +188,8 @@ export const OneRoute = () => {
   const currentParticipants = 1 + participants.length;
   const isRouteFull = currentParticipants >= max_participants;
 
+  const canAccessChat = isCurrentUserEnrolled || isOwner;
+
   const now = new Date();
   const routeDate = new Date(date);
   const isPastRoute = routeDate < now;
@@ -353,6 +357,7 @@ export const OneRoute = () => {
             />
           }
         />
+
         <OutlinedButton
           text={"Chat"}
           icon={
@@ -361,13 +366,18 @@ export const OneRoute = () => {
               aria-hidden
             />
           }
-          onClick={() => {
-            navigate(`/chat/${route_id}`, {
-              state: {
-                title: `${starting_point} - ${ending_point}`,
-              },
-            });
-          }}
+          disabled={!canAccessChat}
+          onClick={
+            !canAccessChat
+              ? undefined
+              : () => {
+                  navigate(`/chat/${route_id}`, {
+                    state: {
+                      title: `${starting_point} - ${ending_point}`,
+                    },
+                  });
+                }
+          }
         />
       </Stack>
       <Card
