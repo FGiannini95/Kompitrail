@@ -17,6 +17,8 @@ import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import ColorLensOutlinedIcon from "@mui/icons-material/ColorLensOutlined";
+import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 
 const ACTION_CONFIG = {
   changePassword: {
@@ -56,6 +58,14 @@ const ACTION_CONFIG = {
   logout: {
     label: "Log out",
     icon: <LogoutIcon fontSize="large" sx={{ color: "black" }} />,
+  },
+  language: {
+    label: "Idioma",
+    icon: <LanguageOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+  },
+  theme: {
+    label: "Tema",
+    icon: <ColorLensOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
   },
 };
 

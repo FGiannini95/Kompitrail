@@ -10,6 +10,7 @@ const usersRouter = require("./routes/users");
 const motorbikesRouter = require("./routes/motorbikes");
 const routesRouter = require("./routes/route");
 const authRouter = require("./routes/auth");
+const chatRouter = require("./routes/chat");
 
 var app = express();
 
@@ -36,6 +37,7 @@ app.use("/users", usersRouter);
 app.use("/motorbikes", motorbikesRouter);
 app.use("/routes", routesRouter);
 app.use("/auth", authRouter);
+app.use("/chat", chatRouter);
 
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 

@@ -6,6 +6,7 @@ export const RoutesString = {
   register: "/register",
   login: "/login",
   chat: "/chat",
+  chatDetail: "/chat/:id",
   landing: "/landing",
   infouser: "/infouser",
   editUser: "/editUser",
@@ -14,4 +15,6 @@ export const RoutesString = {
   editPassword: "/editPassword",
   route: "/route",
   routeDetail: "/route/:id",
+  theme: "/theme",
+  language: "/language",
 };

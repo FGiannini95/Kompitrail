@@ -26,6 +26,7 @@ import { MotorbikesProvider } from "../context/MotorbikesContext/MotorbikesConte
 import { RoutesProvider } from "../context/RoutesContext/RoutesContext";
 import { ScrollToTop } from "../components/ScrollToTop/ScrollToTop";
 import { CaptureAndForward } from "../auth/CaptureAndForward/CaptureAndForward";
+import { ChatRoom } from "../pages/Chat/ChatRoom/ChatRoom";
 
 export const GlobalRouter = () => {
   const { user, token, isLoading } = useContext(KompitrailContext);
@@ -53,6 +54,10 @@ export const GlobalRouter = () => {
                     <Route path={RoutesString.home} element={<Home />} />
                     <Route path={RoutesString.search} element={<Search />} />
                     <Route path={RoutesString.chat} element={<Chat />} />
+                    <Route
+                      path={RoutesString.chatDetail}
+                      element={<ChatRoom />}
+                    />
                     <Route
                       path={RoutesString.otherProfile}
                       element={<Profile />}
