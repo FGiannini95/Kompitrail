@@ -81,7 +81,6 @@ export const Chat = () => {
         const uid = currentUser?.user_id;
         if (!uid) {
           if (!cancelled) {
-            console.warn("[Chat] No user_id yet — skipping fetch");
             setRooms([]);
             setLoading(false);
           }
@@ -99,7 +98,6 @@ export const Chat = () => {
         }
       } catch (err) {
         if (!cancelled) {
-          console.error("Failed to load chat rooms:", err);
           setRooms([]);
         }
       } finally {
@@ -140,7 +138,7 @@ export const Chat = () => {
         const title = `${row.starting_point} - ${row.ending_point}`;
         const activityAt = row.lastActivity ?? row.route_date;
         const rightStamp = formatChatTimestamp(activityAt);
-        const subtitle = formatChatSubtitle(activityAt);
+        const subtitle = formatChatSubtitle(row.route_date);
         const lastMessageText = row.lastMessage?.text || "";
 
         return (

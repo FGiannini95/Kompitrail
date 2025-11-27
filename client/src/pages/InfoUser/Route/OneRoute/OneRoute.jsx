@@ -95,9 +95,9 @@ export const OneRoute = () => {
               ? (userRaw[0] ?? {})
               : (userRaw ?? {});
 
-            create_name =
-              create_name ??
-              `${user?.name ?? ""} ${user?.lastname ?? ""}`.trim();
+            const firstName = (user?.name ?? "").trim();
+
+            create_name = create_name ?? firstName;
             user_img = user_img ?? user?.img ?? null;
           } catch (e) {
             // Non-blocking: keep page working even if this fails
@@ -153,7 +153,7 @@ export const OneRoute = () => {
 
   const data = state ?? fetched;
 
-  const {
+  let {
     date,
     starting_point,
     ending_point,
@@ -171,6 +171,10 @@ export const OneRoute = () => {
     user_img,
   } = data || {};
 
+  if (isOwner == null) {
+    isOwner = currentUser?.user_id === user_id;
+  }
+
   const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } =
     formatDateTime(date);
   const weekdayCap = isValid ? capitalizeFirstLetter(weekday) : "";
@@ -182,14 +186,37 @@ export const OneRoute = () => {
   const currentParticipants = 1 + participants.length;
   const isRouteFull = currentParticipants >= max_participants;
 
+  const canAccessChat = isCurrentUserEnrolled || isOwner;
+
   const now = new Date();
-  const routeDate = new Date(date);
-  const isPastRoute = routeDate < now;
+  const routeStart = new Date(date);
+  const ONE_HOUR_MS = 60 * 60 * 1000;
+  const routeDurationMs = (Number(estimated_time) || 0) * ONE_HOUR_MS;
+
+  const routeEnd = new Date(routeStart.getTime() + routeDurationMs);
+  const enrollmentDeadline = new Date(routeStart.getTime() - ONE_HOUR_MS);
+  const isPastRoute = now >= routeEnd;
+  // isEnrollmentClosed is true from 1h before the start till the end of the route
+  const isEnrollmentClosed = now >= enrollmentDeadline && now < routeEnd;
+
+  const isRouteLocked = isPastRoute || isEnrollmentClosed;
 
   const buttonConfig = useMemo(() => {
+    // Rute is finished
     if (isPastRoute) {
       return {
         text: "Ruta finalizada",
+        onClick: undefined,
+        danger: false,
+        disabled: true,
+        show: true,
+      };
+    }
+
+    // Inscription closed but rute still in progress
+    if (isEnrollmentClosed) {
+      return {
+        text: "Inscripción terminada",
         onClick: undefined,
         danger: false,
         disabled: true,
@@ -235,9 +262,15 @@ export const OneRoute = () => {
         show: true,
       };
     }
-  }, [isOwner, isCurrentUserEnrolled, isRouteFull, isPastRoute]);
+  }, [
+    isOwner,
+    isCurrentUserEnrolled,
+    isRouteFull,
+    isPastRoute,
+    isEnrollmentClosed,
+  ]);
 
-  const handleOpenCalendar = !isPastRoute
+  const handleOpenCalendar = !isRouteLocked
     ? () =>
         openCalendar({
           starting_point,
@@ -328,7 +361,7 @@ export const OneRoute = () => {
             } /* Will have data via state OR cache fallback */
             max_participants={max_participants}
             isOwner={isOwner}
-            isPastRoute={isPastRoute}
+            isRouteLocked={isRouteLocked}
           />
         </CardContent>
       </Card>
@@ -348,7 +381,9 @@ export const OneRoute = () => {
               aria-hidden
             />
           }
+          disabled={!canAccessChat || isRouteLocked}
         />
+
         <OutlinedButton
           text={"Chat"}
           icon={
@@ -357,13 +392,18 @@ export const OneRoute = () => {
               aria-hidden
             />
           }
-          onClick={() => {
-            navigate(`/chat/${route_id}`, {
-              state: {
-                title: `${starting_point} - ${ending_point}`,
-              },
-            });
-          }}
+          disabled={!canAccessChat || isRouteLocked}
+          onClick={
+            !canAccessChat
+              ? undefined
+              : () => {
+                  navigate(`/chat/${route_id}`, {
+                    state: {
+                      title: `${starting_point} - ${ending_point}`,
+                    },
+                  });
+                }
+          }
         />
       </Stack>
       <Card

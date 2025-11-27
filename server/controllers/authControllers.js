@@ -8,8 +8,6 @@ const crypto = require("crypto");
 class authControllers {
   authGoogle = async (req, res) => {
     const idToken = req.body?.id_token || req.body?.credential;
-    console.log("id_token", idToken);
-
     // 1. Check we receive the token from the FE
     if (!idToken) {
       return res.status(400).json({ message: "Google token no disponible" });

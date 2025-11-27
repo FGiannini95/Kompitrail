@@ -19,7 +19,7 @@ export const BadgeAvatar = ({
   badgeContent = "x",
   onBadgeClick,
   showBadge = true,
-  isPastRoute,
+  isRouteLocked,
 }) => {
   const { user } = useContext(KompitrailContext);
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export const BadgeAvatar = ({
     return getInitials(firstName, lastName);
   }, [firstName, lastName]);
 
-  const shouldShowBadge = showBadge && isCurrentUser && !isPastRoute;
+  const shouldShowBadge = showBadge && isCurrentUser && !isRouteLocked;
 
   const photoUrl = useMemo(() => normalizeImg(targetUserImg), [targetUserImg]);
 
