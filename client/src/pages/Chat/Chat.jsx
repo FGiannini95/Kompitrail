@@ -81,7 +81,6 @@ export const Chat = () => {
         const uid = currentUser?.user_id;
         if (!uid) {
           if (!cancelled) {
-            console.warn("[Chat] No user_id yet — skipping fetch");
             setRooms([]);
             setLoading(false);
           }
@@ -99,7 +98,6 @@ export const Chat = () => {
         }
       } catch (err) {
         if (!cancelled) {
-          console.error("Failed to load chat rooms:", err);
           setRooms([]);
         }
       } finally {
