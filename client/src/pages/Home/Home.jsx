@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -8,6 +8,11 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Providers & Hooks
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
+// Utils
+import {
+  getLocalStorage,
+  saveLocalStorage,
+} from "../../helpers/localStorageUtils";
 // Components
 import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
 import { EmptyState } from "../../components/EmptyState/EmptyState";
@@ -17,6 +22,8 @@ import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRou
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { RouteCreateDialog } from "../InfoUser/Route/RouteCreateDialog/RouteCreateDialog";
 
+const LAST_ROUTES_VISIT_KEY = "kompitrail.routes.lastVisit";
+
 export const Home = () => {
   const {
     loadAllRoutes,
@@ -25,10 +32,29 @@ export const Home = () => {
     openDialog: openCreateEditDialog,
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
+  const [lastRoutesVisit, setLastRoutesVisit] = useState(null);
 
   useEffect(() => {
     loadAllRoutes();
   }, [loadAllRoutes]);
+
+  // Handle new routes
+  useEffect(() => {
+    // Read previous visit from storage
+    const storedVisit = getLocalStorage(LAST_ROUTES_VISIT_KEY);
+
+    // If there is a value convert it to Date and store it
+    if (storedVisit) {
+      const previousVisit = new Date(storedVisit);
+      setLastRoutesVisit(previousVisit);
+    } else {
+      setLastRoutesVisit(null);
+    }
+
+    // Save the new value in the storage
+    const newVisit = new Date().toISOString();
+    saveLocalStorage(LAST_ROUTES_VISIT_KEY, newVisit);
+  }, []);
 
   const openCreateDialog = () => {
     openCreateEditDialog({ mode: "create" });
@@ -79,6 +105,8 @@ export const Home = () => {
                 <RouteCard
                   {...route}
                   isOwner={route.user_id === user.user_id}
+                  lastRoutesVisit={lastRoutesVisit}
+                  enableNewBadge={true}
                 />
               </Grid>
             );

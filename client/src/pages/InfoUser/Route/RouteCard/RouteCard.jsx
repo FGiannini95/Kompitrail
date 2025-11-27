@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import {
@@ -18,6 +18,7 @@ import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import ForwardOutlinedIcon from "@mui/icons-material/ForwardOutlined";
+import FiberNewOutlinedIcon from "@mui/icons-material/FiberNewOutlined";
 
 // Utils
 import { formatDateTime } from "../../../../helpers/utils";
@@ -43,9 +44,49 @@ export const RouteCard = ({
   user_img,
   isOwner,
   showActions = true,
+  created_at,
+  lastRoutesVisit,
+  enableNewBadge = false,
 }) => {
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const navigate = useNavigate();
+
+  // Decide if this route should be considered "new" based on created_at and lastRoutesVisit
+  const isNew = (() => {
+    if (!enableNewBadge) return false;
+    if (!created_at) return false;
+
+    // Convert the value in a date object to have more consistency
+    const createdAtDate = new Date(created_at);
+    // Only compute if created_at is a valid date
+    if (Number.isNaN(createdAtDate.getTime())) return false;
+
+    // If there is no stored last visit, treat the route as new
+    if (!lastRoutesVisit) {
+      return true;
+    }
+
+    // Otherwise compare creation time to last visit
+    return createdAtDate > lastRoutesVisit;
+  })();
+
+  const [showNewIcon, setShowNewIcon] = useState(() => isNew);
+
+  // If the route is considered new, show the icon for 3s
+  useEffect(() => {
+    if (!isNew) {
+      setShowNewIcon(false);
+      return;
+    }
+
+    setShowNewIcon(true);
+
+    const timeoutId = setTimeout(() => {
+      setShowNewIcon(false);
+    }, 3000);
+
+    return () => clearTimeout(timeoutId);
+  }, [isNew]);
 
   const participantsSectionRef = useRef();
 
@@ -107,6 +148,20 @@ export const RouteCard = ({
             color: isRouteLocked ? "text.disabled" : "text.primary",
           }}
         >
+          <Box
+            sx={{
+              display: showNewIcon ? "flex" : "none",
+              justifyContent: "flex-end",
+              alignItems: "flex-start",
+            }}
+          >
+            <FiberNewOutlinedIcon
+              fontSize="large"
+              aria-hidden
+              sx={{ color: "green" }}
+            />
+          </Box>
+
           <Stack direction="row" alignItems="center" spacing={1}>
             <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
             <Typography>{starting_point}</Typography>

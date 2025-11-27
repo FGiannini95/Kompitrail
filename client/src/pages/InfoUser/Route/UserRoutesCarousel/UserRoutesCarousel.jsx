@@ -80,6 +80,7 @@ export const UserRoutesCarousel = ({
               <RouteCard
                 {...route}
                 isOwner={Number(route.user_id) === ownerUserId}
+                enableNewBadge={false}
               />
             </Box>
           ))}

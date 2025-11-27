@@ -86,6 +86,7 @@ class routesControllers {
                 r.route_id, 
                 r.user_id, 
                 r.date, 
+                r.created_at,
                 r.starting_point, 
                 r.ending_point,
                 r.level, 
