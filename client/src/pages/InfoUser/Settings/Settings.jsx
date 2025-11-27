@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
@@ -19,12 +19,14 @@ import { KompitrailContext } from "../../../context/KompitrailContext";
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 // Components
 import { SettingsRow } from "./SettingsRow/SettingsRow";
+import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
 
 export const Settings = () => {
   const navigate = useNavigate();
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const tokenLocalStorage = getLocalStorage("token");
   const { openDialog } = useConfirmationDialog();
+  const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
 
   const deleteProfile = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -56,6 +58,9 @@ export const Settings = () => {
     });
   };
 
+  const handleOpenThemeDialog = () => setIsThemeDialogOpen(true);
+  const handleCloseThemeDialog = () => setIsThemeDialogOpen(false);
+
   return (
     <Grid container direction="column" spacing={2}>
       {/* Header */}
@@ -85,10 +90,7 @@ export const Settings = () => {
             action="language"
             onClick={() => navigate(RoutesString.language)}
           />
-          <SettingsRow
-            action="theme"
-            onClick={() => navigate(RoutesString.theme)}
-          />
+          <SettingsRow action="theme" onClick={handleOpenThemeDialog} />
           <SettingsRow
             action="changePassword"
             onClick={() => navigate(RoutesString.editPassword)}
@@ -96,6 +98,10 @@ export const Settings = () => {
           <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
         </List>
       </Box>
+      <ModeToggleDialog
+        open={isThemeDialogOpen}
+        onClose={handleCloseThemeDialog}
+      />
     </Grid>
   );
 };

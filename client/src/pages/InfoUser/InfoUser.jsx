@@ -87,26 +87,6 @@ export const InfoUser = () => {
         />
       </Grid>
       <UserAvatar />
-      {/* <Stack
-        direction="row"
-        spacing={2}
-        justifyContent="center"
-        sx={{ p: "10px" }}
-      >
-        <Button
-          type="button"
-          variant="contained"
-          sx={{
-            color: "black",
-            boxShadow: "none",
-            backgroundColor: "#eeeeee",
-            "&:hover": { backgroundColor: "#dddddd" },
-          }}
-          fullWidth
-        >
-          Ir a premium
-        </Button>
-      </Stack> */}
       <Section title="Mi cuenta">
         <SettingsRow
           action="editAccount"
