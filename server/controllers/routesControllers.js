@@ -96,8 +96,8 @@ class routesControllers {
                 r.max_participants, 
                 r.route_description, 
                 r.is_deleted,
-                u.name,
-                u.lastname
+                u.name AS create_name,
+                u.img  AS user_img
               FROM route r
                 LEFT JOIN user u ON r.user_id = u.user_id
               WHERE r.route_id = ?
