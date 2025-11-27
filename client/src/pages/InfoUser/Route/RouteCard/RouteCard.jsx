@@ -50,8 +50,17 @@ export const RouteCard = ({
   const participantsSectionRef = useRef();
 
   const now = new Date();
-  const routeDate = new Date(date);
-  const isPastRoute = routeDate < now;
+  const routeStart = new Date(date);
+  const ONE_HOUR_MS = 60 * 60 * 1000;
+  const routeDurationMs = (Number(estimated_time) || 0) * ONE_HOUR_MS;
+
+  const routeEnd = new Date(routeStart.getTime() + routeDurationMs);
+  const enrollmentDeadline = new Date(routeStart.getTime() - ONE_HOUR_MS);
+  const isPastRoute = now >= routeEnd;
+  // isEnrollmentClosed is true from 1h before the start till the end of the route
+  const isEnrollmentClosed = now >= enrollmentDeadline && now < routeEnd;
+
+  const isRouteLocked = isPastRoute || isEnrollmentClosed;
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -87,7 +96,7 @@ export const RouteCard = ({
         borderRadius: 2,
         display: "flex",
         flexDirection: "column",
-        disabled: { isPastRoute },
+        disabled: { isRouteLocked },
       }}
     >
       <CardContent>
@@ -95,7 +104,7 @@ export const RouteCard = ({
           onClick={handleOpenDetails}
           sx={{
             cursor: "pointer",
-            color: isPastRoute ? "text.disabled" : "text.primary",
+            color: isRouteLocked ? "text.disabled" : "text.primary",
           }}
         >
           <Stack direction="row" alignItems="center" spacing={1}>
@@ -122,10 +131,10 @@ export const RouteCard = ({
           participants={participants}
           max_participants={max_participants}
           isOwner={isOwner}
-          isPastRoute={isPastRoute}
+          isRouteLocked={isRouteLocked}
         />
       </CardContent>
-      {showActions && !isPastRoute && (
+      {showActions && !isRouteLocked && (
         <CardActions disableSpacing>
           {isOwner && (
             <>
