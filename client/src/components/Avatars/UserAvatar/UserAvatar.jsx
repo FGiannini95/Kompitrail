@@ -30,14 +30,15 @@ export const UserAvatar = ({ user: userProp }) => {
         <Avatar
           src={photoUrl || undefined}
           imgProps={{ referrerPolicy: "no-referrer" }}
-          sx={{
+          sx={(theme) => ({
             width: 96,
             height: 96,
             fontSize: 32,
-            border: "2px solid black",
-            color: "black",
-            backgroundColor: "transparent",
-          }}
+            border: `2px solid ${theme.palette.text.primary}`,
+            color: theme.palette.text.primary,
+            bgcolor: theme.palette.background.paper,
+            cursor: "pointer",
+          })}
           onClick={handleOpenImg}
         >
           {!photoUrl && initials}
@@ -52,6 +53,7 @@ export const UserAvatar = ({ user: userProp }) => {
               whiteSpace: "normal",
               wordBreak: "break-word",
               overflowWrap: "break-word",
+              color: "text.primary",
             }}
           >
             {fullName}

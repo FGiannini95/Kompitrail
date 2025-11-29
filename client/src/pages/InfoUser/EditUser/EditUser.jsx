@@ -75,17 +75,26 @@ export const EditUser = () => {
       {/* Header */}
       <Grid container alignItems="center" justifyContent="space-between">
         <IconButton onClick={handleCancel}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
-        <Typography variant="h6">Modificar perfil</Typography>
-        <Button
+        <Typography variant="h6" color="text.primary">
+          Modificar perfil
+        </Typography>
+        <IconButton
           variant="text"
-          color="black"
           onClick={handleConfirm}
           disabled={!save}
+          sx={(theme) => ({
+            color: theme.palette.text.primary,
+          })}
         >
-          <SaveOutlinedIcon />
-        </Button>
+          <SaveOutlinedIcon aria-hidden />
+        </IconButton>
       </Grid>
       {/* Body */}
       <Grid
@@ -98,16 +107,16 @@ export const EditUser = () => {
         {/* Photo Section */}
         <Box sx={{ position: "relative" }}>
           <Grid
-            sx={{
+            sx={(theme) => ({
               width: 120,
               height: 120,
-              border: "2px solid black",
+              border: `2px solid ${theme.palette.primary}`,
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               overflow: "hidden",
-            }}
+            })}
           >
             {photoPreview ? (
               <img
@@ -135,13 +144,13 @@ export const EditUser = () => {
             <IconButton
               component="label"
               size="small"
-              sx={{
-                backgroundColor: "white",
-                border: "1px solid black",
+              sx={(theme) => ({
+                backgroundColor: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.text.primary}`,
                 "&:hover": {
-                  backgroundColor: "#f5f5f5",
+                  backgroundColor: theme.palette.action.hover,
                 },
-              }}
+              })}
             >
               <EditOutlinedIcon fontSize="small" aria-hidden />
               <input
@@ -155,13 +164,13 @@ export const EditUser = () => {
               <IconButton
                 size="small"
                 onClick={handleRemovePhoto}
-                sx={{
-                  backgroundColor: "white",
-                  border: "1px solid black",
+                sx={(theme) => ({
+                  backgroundColor: theme.palette.background.paper,
+                  border: `1px solid ${theme.palette.text.primary}`,
                   "&:hover": {
-                    backgroundColor: "#ffebee",
+                    backgroundColor: theme.palette.action.hover,
                   },
-                }}
+                })}
               >
                 <DeleteOutlineIcon fontSize="small" aria-hidden color="error" />
               </IconButton>

@@ -131,14 +131,14 @@ export const RouteCard = ({
 
   return (
     <Card
-      sx={{
+      sx={(theme) => ({
         width: "100%",
-        bgcolor: "#eeeeee",
+        bgcolor: theme.palette.kompitrail.card,
         borderRadius: 2,
         display: "flex",
         flexDirection: "column",
         disabled: { isRouteLocked },
-      }}
+      })}
     >
       <CardContent>
         <Box
@@ -200,7 +200,10 @@ export const RouteCard = ({
               >
                 <EditOutlinedIcon
                   fontSize="medium"
-                  style={{ color: "black" }}
+                  aria-hidden
+                  sx={(theme) => ({
+                    color: theme.palette.text.primary,
+                  })}
                 />
               </IconButton>
               <IconButton
@@ -210,7 +213,10 @@ export const RouteCard = ({
               >
                 <DeleteOutlineIcon
                   fontSize="medium"
-                  style={{ color: "black" }}
+                  aria-hidden
+                  sx={(theme) => ({
+                    color: theme.palette.text.primary,
+                  })}
                 />
               </IconButton>
             </>

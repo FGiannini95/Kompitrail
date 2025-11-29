@@ -10,12 +10,15 @@ export const ContainedButton = forwardRef(
         variant="contained"
         fullWidth
         onClick={onClick}
-        sx={{
-          color: "black",
+        sx={(theme) => ({
+          backgroundColor: theme.palette.kompitrail.card,
+          color: theme.palette.getContrastText(theme.palette.kompitrail.card),
           boxShadow: "none",
-          backgroundColor: "#eeeeee",
-          "&:hover": { backgroundColor: "#dddddd" },
-        }}
+          "&:hover": {
+            backgroundColor: theme.palette.kompitrail.page,
+            boxShadow: "none",
+          },
+        })}
         {...rest}
       >
         {text}

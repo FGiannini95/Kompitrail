@@ -168,10 +168,16 @@ export const Login = () => {
                       <Button onClick={displayPassword}>
                         {showPassword ? (
                           <VisibilityOffOutlinedIcon
-                            sx={{ color: "#aaaaaa" }}
+                            sx={(theme) => ({
+                              color: theme.palette.text.secondary,
+                            })}
                           />
                         ) : (
-                          <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
+                          <VisibilityOutlinedIcon
+                            sx={(theme) => ({
+                              color: theme.palette.text.secondary,
+                            })}
+                          />
                         )}
                       </Button>
                     ),
@@ -193,12 +199,14 @@ export const Login = () => {
                     type="submit"
                     variant="contained"
                     fullWidth
-                    sx={{
-                      color: "black",
+                    sx={(theme) => ({
+                      color: theme.palette.text.primary,
                       boxShadow: "none",
-                      backgroundColor: "#eeeeee",
-                      "&:hover": { backgroundColor: "#dddddd" },
-                    }}
+                      backgroundColor: theme.palette.kompitrail.card,
+                      "&:hover": {
+                        backgroundColor: theme.palette.kompitrail.page,
+                      },
+                    })}
                   >
                     ACEPTAR
                   </Button>
@@ -208,15 +216,15 @@ export const Login = () => {
                   <Button
                     type="button"
                     variant="outlined"
-                    sx={{
-                      color: "black",
-                      borderColor: "#eeeeee",
+                    sx={(theme) => ({
+                      color: theme.palette.text.primary,
+                      borderColor: theme.palette.kompitrail.card,
                       borderWidth: "2px",
                       "&:hover": {
-                        borderColor: "#dddddd",
+                        borderColor: theme.palette.kompitrail.page,
                         borderWidth: "2px",
                       },
-                    }}
+                    })}
                     fullWidth
                     onClick={handleCancel}
                   >
@@ -230,7 +238,9 @@ export const Login = () => {
                   ¿Aún no tienes un perfil? ¡Regístrate{" "}
                   <Link
                     onClick={() => navigate(buildUrl(RoutesString.register))}
-                    color="#777777"
+                    sx={(theme) => ({
+                      color: theme.palette.text.secondary,
+                    })}
                     underline="hover"
                   >
                     aquí
@@ -244,7 +254,9 @@ export const Login = () => {
                   ¿Has olvidado tu contraseña? Pincha{" "}
                   <Link
                     onClick={() => setOpenRestorePasswordDialog(true)}
-                    color="#777777"
+                    sx={(theme) => ({
+                      color: theme.palette.text.secondary,
+                    })}
                     underline="hover"
                   >
                     aquí

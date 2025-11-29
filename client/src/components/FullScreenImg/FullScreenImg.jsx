@@ -14,12 +14,12 @@ export const FullScreenImg = ({ open, onClose, img, initials }) => {
       aria-labelledby="motorbike-image-modal"
     >
       <Box
-        sx={{
+        sx={(theme) => ({
           position: "fixed",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          backgroundColor: "white",
+          backgroundColor: theme.palette.background.paper,
           boxShadow: 24,
           p: 2,
           maxWidth: "95%",
@@ -29,23 +29,23 @@ export const FullScreenImg = ({ open, onClose, img, initials }) => {
           alignItems: "center",
           justifyContent: "center",
           borderRadius: "10px",
-        }}
+        })}
       >
         <IconButton
           onClick={onClose}
-          sx={{
+          sx={(theme) => ({
             position: "absolute",
             top: 10,
             right: 10,
-            color: "black",
-          }}
+            color: theme.palette.primary,
+          })}
         >
           <CloseIcon />
         </IconButton>
 
         <Box
           role="img"
-          sx={{
+          sx={(theme) => ({
             width: "60vmin",
             height: "60vmin",
             maxWidth: 480,
@@ -53,7 +53,7 @@ export const FullScreenImg = ({ open, onClose, img, initials }) => {
             minWidth: 240,
             minHeight: 240,
             borderRadius: "50%",
-            border: "4px solid black",
+            border: `4px solid ${theme.palette.primary}`,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -65,19 +65,19 @@ export const FullScreenImg = ({ open, onClose, img, initials }) => {
               backgroundSize: "cover",
               backgroundPosition: "center",
             }),
-          }}
+          })}
         >
           {!hasImage && (
             <Typography
               variant="h1"
-              sx={{
+              sx={(theme) => ({
                 fontSize: "18vmin",
                 lineHeight: 1,
-                color: "black",
+                color: theme.palette.primary,
                 fontWeight: 700,
                 letterSpacing: 2,
                 textTransform: "uppercase",
-              }}
+              })}
             >
               {initials}
             </Typography>

@@ -21,15 +21,18 @@ import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 function Section({ title, children }) {
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         mt: "30px",
         p: "10px",
-        bgcolor: "#eeeeee",
+        bgcolor: theme.palette.kompitrail.card,
         mx: "10px",
         borderRadius: "20px",
-      }}
+      })}
     >
-      <Typography variant="h6" sx={{ fontWeight: "bold", pb: 1 }}>
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: "bold", pb: 1, color: "text.primary" }}
+      >
         {title}
       </Typography>
       <List disablePadding>{children}</List>
@@ -75,14 +78,18 @@ export const InfoUser = () => {
 
   return (
     <Box
-      sx={{
-        backgroundColor: "#fafafa",
-        paddingTop: "25px",
-      }}
+      sx={(theme) => ({
+        backgroundColor: theme.palette.kompitrail.page,
+        py: "25px",
+      })}
     >
       <Grid>
         <CloseOutlinedIcon
-          sx={{ paddingLeft: "20px", cursor: "pointer" }}
+          sx={(theme) => ({
+            paddingLeft: "20px",
+            cursor: "pointer",
+            color: theme.palette.text.primary,
+          })}
           onClick={handleClose}
         />
       </Grid>

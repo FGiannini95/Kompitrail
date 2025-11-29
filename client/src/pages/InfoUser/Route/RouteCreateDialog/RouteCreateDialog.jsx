@@ -94,147 +94,152 @@ export const RouteCreateDialog = () => {
   };
 
   return (
-    <Dialog open={isOpen} onClose={cleanDialog} fullWidth maxWidth="md">
+    <Dialog
+      open={isOpen}
+      onClose={cleanDialog}
+      fullWidth
+      maxWidth="md"
+      PaperProps={{
+        sx: (theme) => ({
+          bgcolor: theme.palette.kompitrail.card,
+          color: theme.palette.text.primary,
+          borderRadius: 2,
+        }),
+      }}
+    >
       <DialogTitle>Crear ruta</DialogTitle>
       <DialogContent>
-        <Box
-          style={{
-            backgroundColor: "#fafafa",
-            paddingTop: "25px",
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid size={12}>
-              <FormTextfield
-                label="Salida"
-                name="starting_point"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-              />
-            </Grid>
-            <Grid size={12}>
-              <FormTextfield
-                label="Llegada"
-                name="ending_point"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-              />
-            </Grid>
-            <Grid size={12}>
-              <FormDataPicker
-                label="Fecha"
-                name="date"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-              />
-            </Grid>
-            <Grid size={6}>
-              <FormTextfield
-                label="Km"
-                name="distance"
-                type="number"
-                preventInvalidkey
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-              />
-            </Grid>
-            <Grid size={6}>
-              <FormTextfield
-                label="Duración"
-                name="estimated_time"
-                type="number"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-              />
-            </Grid>
-            <Grid size={6}>
-              <FormAutocomplete
-                name="level"
-                label="Nivel"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-                options={ROUTE_LEVELS}
-                optionLabelKey="name"
-                optionValueKey="name"
-                disablePortal
-              />
-            </Grid>
-            <Grid size={6}>
-              <FormAutocomplete
-                name="max_participants"
-                label="Pilotos"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-                options={PARTICIPANTS}
-                optionLabelKey="name"
-                optionValueKey="name"
-                disablePortal
-              />
-            </Grid>
-            <Grid size={12}>
-              <FormAutocomplete
-                label="Motos aptas"
-                name="suitable_motorbike_type"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-                options={MOTORBIKE_TYPES}
-                optionLabelKey="name"
-                optionValueKey="name"
-                multiple
-                disablePortal
-              />
-            </Grid>
-            <Grid
-              size={12}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Typography>¿Primera vez en esta ruta?</Typography>
-              <Checkbox
-                inputProps={{ "aria-label": "controlled" }}
-                color="default"
-                checked={createOneRoute?.is_verified === 1}
-                onChange={(event) =>
-                  setCreateOneRoute((prevState) => ({
-                    ...prevState,
-                    is_verified: event.target.checked ? 1 : 0,
-                  }))
-                }
-              />
-            </Grid>
-            <Grid size={12}>
-              <FormTextfield
-                label="Descripción"
-                name="route_description"
-                errors={errors}
-                setErrors={setErrors}
-                form={createOneRoute}
-                setForm={setCreateOneRoute}
-                multiline
-                maxLength={250}
-              />
-            </Grid>
+        <Grid container spacing={2}>
+          <Grid size={12}>
+            <FormTextfield
+              label="Salida"
+              name="starting_point"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+            />
           </Grid>
-        </Box>
+          <Grid size={12}>
+            <FormTextfield
+              label="Llegada"
+              name="ending_point"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+            />
+          </Grid>
+          <Grid size={12}>
+            <FormDataPicker
+              label="Fecha"
+              name="date"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+            />
+          </Grid>
+          <Grid size={6}>
+            <FormTextfield
+              label="Km"
+              name="distance"
+              type="number"
+              preventInvalidkey
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+            />
+          </Grid>
+          <Grid size={6}>
+            <FormTextfield
+              label="Duración"
+              name="estimated_time"
+              type="number"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+            />
+          </Grid>
+          <Grid size={6}>
+            <FormAutocomplete
+              name="level"
+              label="Nivel"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+              options={ROUTE_LEVELS}
+              optionLabelKey="name"
+              optionValueKey="name"
+              disablePortal
+            />
+          </Grid>
+          <Grid size={6}>
+            <FormAutocomplete
+              name="max_participants"
+              label="Pilotos"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+              options={PARTICIPANTS}
+              optionLabelKey="name"
+              optionValueKey="name"
+              disablePortal
+            />
+          </Grid>
+          <Grid size={12}>
+            <FormAutocomplete
+              label="Motos aptas"
+              name="suitable_motorbike_type"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+              options={MOTORBIKE_TYPES}
+              optionLabelKey="name"
+              optionValueKey="name"
+              multiple
+              disablePortal
+            />
+          </Grid>
+          <Grid
+            size={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography>¿Primera vez en esta ruta?</Typography>
+            <Checkbox
+              inputProps={{ "aria-label": "controlled" }}
+              color="default"
+              checked={createOneRoute?.is_verified === 1}
+              onChange={(event) =>
+                setCreateOneRoute((prevState) => ({
+                  ...prevState,
+                  is_verified: event.target.checked ? 1 : 0,
+                }))
+              }
+            />
+          </Grid>
+          <Grid size={12}>
+            <FormTextfield
+              label="Descripción"
+              name="route_description"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+              multiline
+              maxLength={250}
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">

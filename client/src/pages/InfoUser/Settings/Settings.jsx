@@ -21,7 +21,7 @@ import { useConfirmationDialog } from "../../../context/ConfirmationDialogContex
 import { SettingsRow } from "./SettingsRow/SettingsRow";
 import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
 
-export const Settings = () => {
+export const Settings = ({ toggleMode }) => {
   const navigate = useNavigate();
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const tokenLocalStorage = getLocalStorage("token");
@@ -61,29 +61,39 @@ export const Settings = () => {
   const handleOpenThemeDialog = () => setIsThemeDialogOpen(true);
   const handleCloseThemeDialog = () => setIsThemeDialogOpen(false);
 
+  const handleConfirmThemeChange = () => {
+    toggleMode();
+    setIsThemeDialogOpen(false);
+  };
+
   return (
     <Grid container direction="column" spacing={2}>
       {/* Header */}
       <Grid item container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon sx={{ color: "black" }} />
-          <Typography variant="h6" sx={{ color: "black" }}>
-            Ajustes
-          </Typography>
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
+        <Typography variant="h6" color="text.primary">
+          Ajustes
+        </Typography>
       </Grid>
       {/* Settings Card */}
       <Box
-        sx={{
+        sx={(theme) => ({
           mt: 2,
           mx: 2,
           p: 2,
           pl: 3,
-          bgcolor: "#eeeeee",
+          bgcolor: theme.palette.kompitrail.card,
           borderRadius: 2,
           boxSizing: "border-box",
           width: "calc(100% - 22px)",
-        }}
+        })}
       >
         <List disablePadding>
           <SettingsRow
@@ -101,6 +111,7 @@ export const Settings = () => {
       <ModeToggleDialog
         open={isThemeDialogOpen}
         onClose={handleCloseThemeDialog}
+        onConfirm={handleConfirmThemeChange}
       />
     </Grid>
   );

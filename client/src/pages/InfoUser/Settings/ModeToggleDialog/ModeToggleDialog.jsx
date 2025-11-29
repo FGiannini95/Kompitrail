@@ -6,15 +6,25 @@ import {
   DialogContent,
   DialogTitle,
   Switch,
-  Typography,
+  FormControlLabel,
 } from "@mui/material";
+
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 export const ModeToggleDialog = ({ open, onClose, onConfirm }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Cambiar tema</DialogTitle>
       <DialogContent>
-        <Switch /> <Typography>dark or ligh</Typography>
+        <FormControlLabel
+          control={
+            <Switch
+              icon={<LightModeIcon />} // icon when OFF
+              checkedIcon={<DarkModeIcon />} // icon when ON
+            />
+          }
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="error">

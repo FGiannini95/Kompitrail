@@ -39,27 +39,28 @@ export const LandingPage = () => {
           type="button"
           variant="outlined"
           onClick={handleRegister}
-          sx={{
-            color: "black",
-            borderColor: "#eeeeee",
+          sx={(theme) => ({
+            color: theme.palette.text.primary,
+            borderColor: theme.palette.kompitrail.card,
             borderWidth: "2px",
             "&:hover": {
-              borderColor: "#dddddd",
+              borderColor: theme.palette.kompitrail.page,
               borderWidth: "2px",
+              backgroundColor: "transparent",
             },
-          }}
+          })}
         >
           Registro
         </Button>
         <Button
           type="button"
           variant="contained"
-          sx={{
-            color: "black",
+          sx={(theme) => ({
+            color: theme.palette.text.primary,
+            backgroundColor: theme.palette.kompitrail.card,
             boxShadow: "none",
-            backgroundColor: "#eeeeee",
-            "&:hover": { backgroundColor: "#dddddd" },
-          }}
+            "&:hover": { backgroundColor: theme.palette.kompitrail.page },
+          })}
           onClick={handleLogin}
         >
           {" "}

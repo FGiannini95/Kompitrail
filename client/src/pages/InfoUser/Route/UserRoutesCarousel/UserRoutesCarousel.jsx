@@ -53,8 +53,8 @@ export const UserRoutesCarousel = ({
   const isOne = userRoutes.length === 1;
 
   return (
-    <Box sx={{ mb: 2 }}>
-      <Typography>{title}</Typography>
+    <Box sx={{ mb: 2, my: 2 }}>
+      <Typography color="text.primary">{title}</Typography>
       {userRoutes.length > 0 ? (
         <Box
           sx={{

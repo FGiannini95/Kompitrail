@@ -48,7 +48,12 @@ export const ChatRoom = () => {
           sx={{ px: 1, py: 1 }}
         >
           <IconButton onClick={() => navigate(-1)} aria-label="back">
-            <ArrowBackIosIcon style={{ color: "black" }} />
+            <ArrowBackIosIcon
+              aria-hidden
+              sx={(theme) => ({
+                color: theme.palette.text.primary,
+              })}
+            />
           </IconButton>
 
           <Box
@@ -61,7 +66,7 @@ export const ChatRoom = () => {
               gap: 0.25,
             }}
           >
-            <Typography variant="h6" noWrap title={title}>
+            <Typography variant="h6" color="text.primary" noWrap title={title}>
               {title}
             </Typography>
           </Box>

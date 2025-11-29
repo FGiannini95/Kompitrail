@@ -281,17 +281,22 @@ export const OneRoute = () => {
     : undefined;
 
   return (
-    <Grid container direction="column" spacing={2} sx={{ overflowX: "auto" }}>
+    <Grid
+      container
+      direction="column"
+      spacing={2}
+      sx={{ overflowX: "auto", paddingBottom: 3 }}
+    >
       <Header onShare={handleShare} isCopied={isCopied} />
       <Card
-        sx={{
+        sx={(theme) => ({
           width: "95%",
           ml: "10px",
-          bgcolor: "#eeeeee",
+          bgcolor: theme.palette.kompitrail.card,
           borderRadius: "2",
           display: "flex",
           flexDirection: "column",
-        }}
+        })}
       >
         <CardContent sx={{ padding: 3 }}>
           <Grid
@@ -327,6 +332,7 @@ export const OneRoute = () => {
             alignItems: "center",
             gap: 0.75,
           }}
+          color="text.primary"
         >
           {is_verified === 0 ? (
             <VerifiedOutlinedIcon fontSize="medium" aria-hidden />
@@ -340,14 +346,14 @@ export const OneRoute = () => {
       </Stack>
 
       <Card
-        sx={{
+        sx={(theme) => ({
           width: "95%",
           ml: "10px",
-          bgcolor: "#eeeeee",
+          bgcolor: theme.palette.kompitrail.card,
           borderRadius: "2",
           display: "flex",
           flexDirection: "column",
-        }}
+        })}
       >
         <CardContent sx={{ padding: 3 }}>
           <RouteParticipantsSection
@@ -407,14 +413,14 @@ export const OneRoute = () => {
         />
       </Stack>
       <Card
-        sx={{
+        sx={(theme) => ({
           width: "95%",
           ml: "10px",
-          bgcolor: "#eeeeee",
+          bgcolor: theme.palette.kompitrail.card,
           borderRadius: "2",
           display: "flex",
           flexDirection: "column",
-        }}
+        })}
       >
         <CardContent sx={{ padding: 3 }}>
           <Typography>Aqui va en enlace para maps</Typography>
@@ -422,18 +428,42 @@ export const OneRoute = () => {
       </Card>
 
       <Stack sx={{ pl: 2 }}>
-        <Typography sx={{ fontWeight: "bold" }}>Información general</Typography>
+        <Typography sx={{ fontWeight: "bold" }} color="text.primary">
+          Información general
+        </Typography>
         <Stack direction="row" spacing={0.75}>
-          <Groups2OutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{`Max. ${max_participants} pilotos`} </Typography>
+          <Groups2OutlinedIcon
+            fontSize="medium"
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
+          <Typography color="text.primary">
+            {`Max. ${max_participants} pilotos`}{" "}
+          </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
-          <TwoWheelerOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{`Motos aptas: ${suitable_motorbike_type}`} </Typography>
+          <TwoWheelerOutlinedIcon
+            fontSize="medium"
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
+          <Typography color="text.primary">
+            {`Motos aptas: ${suitable_motorbike_type}`}{" "}
+          </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
-          <DescriptionOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography>{route_description} </Typography>
+          <DescriptionOutlinedIcon
+            fontSize="medium"
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
+          <Typography color="text.primary">{route_description} </Typography>
         </Stack>
       </Stack>
 
@@ -445,11 +475,15 @@ export const OneRoute = () => {
             fullWidth
             disabled={buttonConfig.disabled}
             onClick={buttonConfig.disabled ? undefined : buttonConfig.onClick}
-            sx={{
-              color: buttonConfig.danger ? "error.main" : "black",
-              borderColor: buttonConfig.danger ? "error.main" : "#eeeeee",
+            sx={(theme) => ({
+              color: buttonConfig.danger
+                ? theme.palette.error.main
+                : theme.palette.text.primary,
+              borderColor: buttonConfig.danger
+                ? theme.palette.error.main
+                : theme.palette.kompitrail.card,
               borderWidth: buttonConfig.danger ? "1px" : "2px",
-            }}
+            })}
           >
             {buttonConfig.text}
           </Button>

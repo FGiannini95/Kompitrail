@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // MUI
 import { useTheme } from "@mui/material/styles";
@@ -7,13 +7,18 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { KompitrailProvider } from "../src/context/KompitrailContext";
 import { GlobalRouter } from "./routes/GlobalRouter";
-import { ThemeKompitrail } from "./ThemeKompitrail";
+import { ThemeProvider } from "./ThemeProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export function App() {
   // The useTheme hook in Material-UI is used to access the overall theme of the application, which includes design settings such as breakpoints
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [mode, setMode] = useState("light");
+
+  const toggleMode = () => {
+    setMode((prev) => (prev === "light" ? "dark" : "light"));
+  };
 
   if (!isMobile) {
     return (
@@ -28,11 +33,11 @@ export function App() {
   return (
     <>
       <GoogleOAuthProvider clientId={CLIENT_ID}>
-        <ThemeKompitrail>
+        <ThemeProvider mode={mode}>
           <KompitrailProvider>
-            <GlobalRouter />
+            <GlobalRouter toggleMode={toggleMode} />
           </KompitrailProvider>
-        </ThemeKompitrail>
+        </ThemeProvider>
       </GoogleOAuthProvider>
     </>
   );

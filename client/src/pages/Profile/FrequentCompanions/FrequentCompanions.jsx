@@ -67,13 +67,13 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
         return (
           <Card
             key={companion.user_id}
-            sx={{
+            sx={(theme) => ({
               minWidth: isTwoOrLess ? "calc(50% - 8px)" : "calc(45% - 8px)",
               maxWidth: isTwoOrLess ? "calc(50% - 8px)" : "calc(45% - 8px)",
-              bgcolor: "#eeeeee",
+              bgcolor: theme.palette.kompitrail.card,
               borderRadius: 2,
               flexShrink: 0,
-            }}
+            })}
             onClick={handleCardClick(companion)}
           >
             <CardContent
@@ -88,13 +88,13 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
               <Avatar
                 src={photoUrl}
                 alt={`${companion.name ?? ""}`}
-                sx={{
+                sx={(theme) => ({
                   width: 56,
                   height: 56,
-                  border: "1px solid black",
-                  color: "black",
+                  border: `1px solid ${theme.palette.text.primary}`,
+                  color: theme.palette.text.primary,
                   backgroundColor: "transparent",
-                }}
+                })}
               />
               <Typography fontWeight={600}>{companion.name}</Typography>
               <Typography>{companion.shared_routes} rutas en común</Typography>

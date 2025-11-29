@@ -126,10 +126,10 @@ export const Profile = () => {
 
   return (
     <Box
-      style={{
-        backgroundColor: "#fafafa",
+      sx={(theme) => ({
+        backgroundColor: theme.palette.kompitrail.page,
         paddingTop: "25px",
-      }}
+      })}
     >
       {isOtherProfile && (
         <Header title="Perfil" onShare={handleShare} isCopied={isCopied} />
@@ -194,7 +194,9 @@ export const Profile = () => {
       </Grid>
 
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
-        <Typography>Personas con las que viajas más</Typography>
+        <Typography color="text.primary">
+          Personas con las que viajas más
+        </Typography>
         <FrequentCompanions companions={displayCompanions} />
       </Grid>
       <RouteEditDialog />
