@@ -89,6 +89,7 @@ export const InfoUser = () => {
             paddingLeft: "20px",
             cursor: "pointer",
             color: theme.palette.text.primary,
+            fontSize: 40,
           })}
           onClick={handleClose}
         />

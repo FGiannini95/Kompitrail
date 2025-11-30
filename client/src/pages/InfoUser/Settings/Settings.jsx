@@ -21,7 +21,7 @@ import { useConfirmationDialog } from "../../../context/ConfirmationDialogContex
 import { SettingsRow } from "./SettingsRow/SettingsRow";
 import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
 
-export const Settings = ({ toggleMode }) => {
+export const Settings = ({ toggleMode, mode }) => {
   const navigate = useNavigate();
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const tokenLocalStorage = getLocalStorage("token");
@@ -60,11 +60,6 @@ export const Settings = ({ toggleMode }) => {
 
   const handleOpenThemeDialog = () => setIsThemeDialogOpen(true);
   const handleCloseThemeDialog = () => setIsThemeDialogOpen(false);
-
-  const handleConfirmThemeChange = () => {
-    toggleMode();
-    setIsThemeDialogOpen(false);
-  };
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -111,7 +106,8 @@ export const Settings = ({ toggleMode }) => {
       <ModeToggleDialog
         open={isThemeDialogOpen}
         onClose={handleCloseThemeDialog}
-        onConfirm={handleConfirmThemeChange}
+        onToggle={toggleMode}
+        currentMode={mode}
       />
     </Grid>
   );

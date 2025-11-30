@@ -29,7 +29,7 @@ import { CaptureAndForward } from "../auth/CaptureAndForward/CaptureAndForward";
 import { ChatRoom } from "../pages/Chat/ChatRoom/ChatRoom";
 import { Box } from "@mui/material";
 
-export const GlobalRouter = ({ toggleMode }) => {
+export const GlobalRouter = ({ toggleMode, mode }) => {
   const { user, token, isLoading } = useContext(KompitrailContext);
 
   if (isLoading) {
@@ -90,7 +90,9 @@ export const GlobalRouter = ({ toggleMode }) => {
                       />
                       <Route
                         path={RoutesString.settings}
-                        element={<Settings toggleMode={toggleMode} />}
+                        element={
+                          <Settings toggleMode={toggleMode} mode={mode} />
+                        }
                       />
                       <Route path={RoutesString.route} element={<MyRoute />} />
                       <Route

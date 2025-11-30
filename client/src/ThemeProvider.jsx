@@ -3,6 +3,7 @@ import {
   createTheme,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 
 export const ThemeProvider = ({ children, mode = "light" }) => {
   const theme = React.useMemo(
@@ -20,5 +21,11 @@ export const ThemeProvider = ({ children, mode = "light" }) => {
     [mode]
   );
 
-  return <MuiThemeProvider theme={theme}>{children}</MuiThemeProvider>;
+  return (
+    <MuiThemeProvider theme={theme}>
+      {/* CssBaseline applies global resets using the current theme */}
+      <CssBaseline />
+      {children}
+    </MuiThemeProvider>
+  );
 };
