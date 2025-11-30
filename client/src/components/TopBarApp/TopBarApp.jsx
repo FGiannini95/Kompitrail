@@ -107,14 +107,14 @@ export const TopBar = () => {
   return (
     <AppBar
       position="fixed"
-      style={{
-        color: "black",
+      sx={(theme) => ({
+        backgroundColor: theme.palette.kompitrail.card,
+        color: theme.palette.text.primary,
         boxShadow: "none",
-        backgroundColor: "#eeeeee",
         height: noDesign ? "0px" : "64px",
         display: noDesign ? "none" : "flex",
         justifyContent: "center",
-      }}
+      })}
     >
       <Toolbar>
         <Box

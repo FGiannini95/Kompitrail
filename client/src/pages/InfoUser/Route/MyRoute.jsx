@@ -79,9 +79,16 @@ export const MyRoute = () => {
     <Grid container direction="column" spacing={2}>
       <Grid container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
-        <Typography variant="h6">Mis rutas</Typography>
+        <Typography variant="h6" color="text.primary">
+          Mis rutas
+        </Typography>
       </Grid>
       <Box sx={{ maxWidth: 480, mx: "auto", px: 2, minWidth: 310 }}>
         {userRoutes.length > 0 ? (

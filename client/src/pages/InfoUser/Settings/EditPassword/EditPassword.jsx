@@ -111,20 +111,22 @@ export const EditPassword = () => {
     <Grid container direction="column" spacing={2}>
       <Grid item container alignItems="center" justifyContent="space-between">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
-        <Typography variant="h6">Modificar contraseña</Typography>
-        <Button
-          variant="text"
-          color="black"
-          disabled={!isValid}
-          onClick={handleSave}
-        >
-          <SaveOutlinedIcon />
+        <Typography variant="h6" color="text.primary">
+          Modificar contraseña
+        </Typography>
+        <Button variant="text" disabled={!isValid} onClick={handleSave}>
+          <SaveOutlinedIcon aria-hidden />
         </Button>
       </Grid>
       <Grid item xs={12}>
-        <Typography>
+        <Typography color="text.primary">
           La nueva contraseña debe tener al menos 8 caracteres y un carácter
           especial.
         </Typography>
@@ -145,9 +147,17 @@ export const EditPassword = () => {
             endAdornment: (
               <Button onClick={displayPassword}>
                 {showPassword ? (
-                  <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
+                  <VisibilityOffOutlinedIcon
+                    sx={(theme) => ({
+                      color: theme.palette.text.secondary,
+                    })}
+                  />
                 ) : (
-                  <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
+                  <VisibilityOutlinedIcon
+                    sx={(theme) => ({
+                      color: theme.palette.text.secondary,
+                    })}
+                  />
                 )}
               </Button>
             ),
@@ -170,9 +180,17 @@ export const EditPassword = () => {
             endAdornment: (
               <Button onClick={displayConfirmPassword}>
                 {showPassword ? (
-                  <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
+                  <VisibilityOffOutlinedIcon
+                    sx={(theme) => ({
+                      color: theme.palette.text.secondary,
+                    })}
+                  />
                 ) : (
-                  <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
+                  <VisibilityOutlinedIcon
+                    sx={(theme) => ({
+                      color: theme.palette.text.secondary,
+                    })}
+                  />
                 )}
               </Button>
             ),

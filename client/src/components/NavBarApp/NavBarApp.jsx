@@ -52,14 +52,14 @@ export const NavBarApp = ({ children }) => {
       </Box>
       <AppBar
         position="fixed"
-        sx={{
-          backgroundColor: "#eeeeee",
-          color: "black",
+        sx={(theme) => ({
+          backgroundColor: theme.palette.kompitrail.card,
+          color: theme.palette.text.primary,
           boxShadow: "none",
           top: "auto",
           bottom: 0,
           display: noDesign ? "none" : "flex",
-        }}
+        })}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-around" }}>
           <IconButton

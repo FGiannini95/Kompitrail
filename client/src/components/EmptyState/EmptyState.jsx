@@ -21,13 +21,13 @@ export const EmptyState = () => {
 
   return (
     <Card
-      sx={{
+      sx={(theme) => ({
         width: "100%",
-        backgroundColor: "#eeeeee",
+        backgroundColor: theme.palette.kompitrail.card,
         borderRadius: "20px",
         p: 3,
         textAlign: "center",
-      }}
+      })}
     >
       <CardContent>
         <Box display="flex" flexDirection="column" alignItems="center" gap={2}>

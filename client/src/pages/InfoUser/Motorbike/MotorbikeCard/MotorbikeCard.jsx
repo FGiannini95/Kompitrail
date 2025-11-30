@@ -29,13 +29,13 @@ export const MotorbikeCard = ({
   return (
     <>
       <Card
-        sx={{
+        sx={(theme) => ({
           width: "100%",
-          bgcolor: "#eeeeee",
+          bgcolor: theme.palette.kompitrail.card,
           borderRadius: 2,
           display: "flex",
           flexDirection: "column",
-        }}
+        })}
       >
         <CardMedia
           component="img"
@@ -48,18 +48,33 @@ export const MotorbikeCard = ({
           <Typography gutterBottom variant="h5" component="div">
             {brand}
           </Typography>
-          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+          <Typography
+            variant="body2"
+            sx={(theme) => ({
+              color: theme.palette.text.secondary,
+            })}
+          >
             {model}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
           <IconButton onClick={() => onEdit?.(motorbike_id)}>
-            <EditOutlinedIcon fontSize="medium" style={{ color: "black" }} />
+            <EditOutlinedIcon
+              fontSize="medium"
+              aria-hidden
+              sx={(theme) => ({
+                color: theme.palette.text.primary,
+              })}
+            />
           </IconButton>
           <IconButton onClick={() => onDelete?.(motorbike_id)}>
             <DeleteOutlineIcon
               fontSize="medium"
-              style={{ color: "black", ml: 0 }}
+              aria-hidden
+              sx={(theme) => ({
+                color: theme.palette.text.primary,
+                ml: 0,
+              })}
             />
           </IconButton>
         </CardActions>

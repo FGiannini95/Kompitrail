@@ -24,9 +24,20 @@ export const Header = ({
       sx={{ px: 1, mb: 1 }}
     >
       <IconButton onClick={handleBack} aria-label="Volver">
-        <ArrowBackIosIcon style={{ color: "black" }} />
+        <ArrowBackIosIcon
+          aria-hidden
+          sx={(theme) => ({
+            color: theme.palette.text.primary,
+          })}
+        />
       </IconButton>
-      {title ? <Typography variant="h6">{title}</Typography> : <span />}
+      {title ? (
+        <Typography variant="h6" color="text.primary">
+          {title}
+        </Typography>
+      ) : (
+        <span />
+      )}
       <Tooltip
         title={tooltipText}
         open={isCopied}
@@ -35,7 +46,12 @@ export const Header = ({
         placement="bottom"
       >
         <IconButton onClick={onShare} aria-label="Share">
-          <ShareOutlinedIcon style={{ color: "black" }} />
+          <ShareOutlinedIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
       </Tooltip>
     </Grid>

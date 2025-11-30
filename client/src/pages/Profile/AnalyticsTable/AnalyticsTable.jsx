@@ -11,10 +11,10 @@ import {
 import { styled } from "@mui/material/styles";
 import { Loading } from "../../../components/Loading/Loading";
 
-const StyledTableCell = styled(TableCell)(() => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#eeeeee",
-    color: "inherit",
+    backgroundColor: theme.palette.kompitrail.card,
+    color: theme.palette.text.primary,
     fontSize: 16,
     padding: "8px",
   },
@@ -24,10 +24,10 @@ const StyledTableCell = styled(TableCell)(() => ({
   },
 }));
 
-const StyledTableRow = styled(TableRow)(() => ({
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: "transparent",
-    border: "2px solid #eeeeee",
+    border: `2px solid ${theme.palette.kompitrail.card}`,
   },
 }));
 

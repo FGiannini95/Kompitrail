@@ -118,7 +118,12 @@ export const Chat = () => {
     return (
       <Grid container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
         <EmptyState />
       </Grid>
@@ -144,12 +149,12 @@ export const Chat = () => {
         return (
           <ListItem
             key={row.route_id}
-            sx={{
-              backgroundColor: "#eeeeee",
+            sx={(theme) => ({
+              backgroundColor: theme.palette.kompitrail.card,
               borderRadius: 2,
               p: 0,
               alignItems: "flex-start",
-            }}
+            })}
             disableGutters
           >
             <ListItemButton
@@ -164,13 +169,18 @@ export const Chat = () => {
             >
               <ListItemAvatar sx={{ minWidth: 56 }}>
                 <Avatar
-                  sx={{
-                    border: "2px solid black",
-                    color: "black",
+                  sx={(theme) => ({
+                    border: `2px solid ${theme.palette.primary}`,
+                    color: theme.palette.primary,
                     backgroundColor: "transparent",
-                  }}
+                  })}
                 >
-                  <ExploreOutlinedIcon sx={{}} />
+                  <ExploreOutlinedIcon
+                    aria-hidden
+                    sx={(theme) => ({
+                      color: theme.palette.text.primary,
+                    })}
+                  />
                 </Avatar>
               </ListItemAvatar>
 
@@ -188,6 +198,7 @@ export const Chat = () => {
                 <Typography
                   variant="body1"
                   sx={{
+                    color: "text.primary",
                     gridColumn: "1 / -1",
                     fontWeight: 500,
                     whiteSpace: "normal",

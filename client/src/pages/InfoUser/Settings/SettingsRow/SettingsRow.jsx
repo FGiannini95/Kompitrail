@@ -23,7 +23,15 @@ import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 const ACTION_CONFIG = {
   changePassword: {
     label: "Modificar contraseña",
-    icon: <LockOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <LockOutlinedIcon
+        fontSize="large"
+        aria-hidden
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   deleteAccount: {
     label: "Eliminar cuenta",
@@ -32,40 +40,101 @@ const ACTION_CONFIG = {
   editAccount: {
     label: "Modificar perfil",
     icon: (
-      <PersonOutlineOutlinedIcon fontSize="large" sx={{ color: "black" }} />
+      <PersonOutlineOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
     ),
   },
   addMotorbike: {
     label: "Mis motos",
-    icon: <TwoWheelerOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <TwoWheelerOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   addRoute: {
     label: "Mis rutas",
-    icon: <RouteOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <RouteOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   changeSettings: {
     label: "Ajustes",
-    icon: <SettingsOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <SettingsOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   chatbot: {
     label: "Chat bot",
-    icon: <TextsmsOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <TextsmsOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   privacy: {
     label: "Política de privacidad",
-    icon: <InfoOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <InfoOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   logout: {
     label: "Log out",
-    icon: <LogoutIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <LogoutIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   language: {
     label: "Idioma",
-    icon: <LanguageOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <LanguageOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   theme: {
     label: "Tema",
-    icon: <ColorLensOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <ColorLensOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
 };
 
@@ -76,16 +145,31 @@ export const SettingsRow = ({ action, onClick }) => {
     <ListItem disablePadding>
       <ListItemButton onClick={onClick}>
         <ListItemIcon
-          sx={{ color: action === "deleteAccount" && "error.main" }}
+          sx={(theme) => ({
+            color:
+              action === "deleteAccount"
+                ? theme.palette.error.main
+                : theme.palette.text.primary,
+          })}
         >
           {config.icon}
         </ListItemIcon>
         <ListItemText
           primary={config.label}
-          sx={{ color: action === "deleteAccount" && "error.main" }}
+          sx={(theme) => ({
+            color:
+              action === "deleteAccount"
+                ? theme.palette.error.main
+                : theme.palette.text.primary,
+          })}
         />
         <ArrowForwardIosIcon
-          sx={{ color: action === "deleteAccount" && "error.main" }}
+          sx={(theme) => ({
+            color:
+              action === "deleteAccount"
+                ? theme.palette.error.main
+                : theme.palette.text.primary,
+          })}
         />
       </ListItemButton>
     </ListItem>

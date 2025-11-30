@@ -90,11 +90,11 @@ export const MessageList = ({ items = [] }) => {
               <Divider sx={{ flex: 1 }} />
               <Typography
                 variant="caption"
-                sx={{
+                sx={(theme) => ({
                   px: 2,
-                  color: "text.secondary",
+                  color: theme.palette.text.secondary,
                   fontWeight: 500,
-                }}
+                })}
               >
                 {formatDateDivider(item.date)}
               </Typography>
@@ -116,13 +116,13 @@ export const MessageList = ({ items = [] }) => {
             >
               <Typography
                 variant="caption"
-                sx={{
+                sx={(theme) => ({
                   px: 2,
                   py: 0.5,
-                  bgcolor: "action.hover",
+                  bgcolor: theme.palette.action.hover,
                   borderRadius: 2,
-                  color: "text.secondary",
-                }}
+                  color: theme.palette.text.secondary,
+                })}
               >
                 {item.text}
               </Typography>

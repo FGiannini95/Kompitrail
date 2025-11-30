@@ -10,16 +10,18 @@ export const OutlinedButton = forwardRef(
         variant="outlined"
         fullWidth
         onClick={onClick}
-        sx={{
-          color: "black",
-          borderColor: "#eeeeee",
+        sx={(theme) => ({
+          backgroundColor: "transparent",
+          color: theme.palette.text.primary,
+          borderColor: theme.palette.kompitrail.card,
           borderWidth: "2px",
           "&:hover": {
-            borderColor: "#dddddd",
+            backgroundColor: theme.palette.kompitrail.card,
+            borderColor: theme.palette.kompitrail.card,
             borderWidth: "2px",
           },
           ...sx,
-        }}
+        })}
         {...rest}
       >
         {text}

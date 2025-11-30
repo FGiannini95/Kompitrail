@@ -76,14 +76,14 @@ export const BadgeAvatar = ({
         <Avatar
           src={photoUrl || undefined}
           imgProps={{ referrerPolicy: "no-referrer" }}
-          sx={{
+          sx={(theme) => ({
             width: size,
             height: size,
             fontSize: Math.round(size * 0.35),
-            border: "1px solid black",
-            color: "black",
+            border: `1px solid ${theme.palette.text.primary}`,
+            color: theme.palette.text.primary,
             backgroundColor: "transparent",
-          }}
+          })}
           onClick={handleAvarClick}
         >
           {initials}

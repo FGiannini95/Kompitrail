@@ -88,9 +88,16 @@ export const Motorbike = () => {
     <Grid container direction="column" spacing={2}>
       <Grid container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
-        <Typography variant="h6">Mis motos</Typography>
+        <Typography variant="h6" color="text.primary">
+          Mis motos
+        </Typography>
       </Grid>
       <Box sx={{ maxWidth: 480, mx: "auto", px: 2, minWidth: 310 }}>
         {allMotorbikes.length > 0 ? (
@@ -123,8 +130,12 @@ export const Motorbike = () => {
           text={"Añadir moto"}
           icon={
             <AddOutlinedIcon
-              style={{ paddingLeft: "5px", width: "20px" }}
               aria-hidden
+              sx={(theme) => ({
+                color: theme.palette.text.primary,
+                paddingLeft: "5px",
+                width: "20px",
+              })}
             />
           }
         />

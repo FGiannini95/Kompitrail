@@ -4,13 +4,13 @@ import { Card, CardContent, Typography } from "@mui/material";
 export const CardPlaceholder = ({ text }) => {
   return (
     <Card
-      sx={{
+      sx={(theme) => ({
         width: "100%",
-        bgcolor: "#eeeeee",
+        bgcolor: theme.palette.kompitrail.card,
         borderRadius: 2,
         display: "flex",
         flexDirection: "row",
-      }}
+      })}
     >
       <CardContent
         sx={{

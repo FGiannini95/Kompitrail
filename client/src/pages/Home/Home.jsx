@@ -89,7 +89,7 @@ export const Home = () => {
         }
       />
       <Grid sx={{ pt: 2 }}>
-        <Typography>Rutas disponibles</Typography>
+        <Typography color="text.primary">Rutas disponibles</Typography>
       </Grid>
       {futureRoutes.length > 0 ? (
         futureRoutes

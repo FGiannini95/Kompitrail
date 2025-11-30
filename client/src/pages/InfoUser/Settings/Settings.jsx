@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
@@ -19,12 +19,14 @@ import { KompitrailContext } from "../../../context/KompitrailContext";
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 // Components
 import { SettingsRow } from "./SettingsRow/SettingsRow";
+import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
 
-export const Settings = () => {
+export const Settings = ({ toggleMode, mode }) => {
   const navigate = useNavigate();
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const tokenLocalStorage = getLocalStorage("token");
   const { openDialog } = useConfirmationDialog();
+  const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
 
   const deleteProfile = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -56,39 +58,44 @@ export const Settings = () => {
     });
   };
 
+  const handleOpenThemeDialog = () => setIsThemeDialogOpen(true);
+  const handleCloseThemeDialog = () => setIsThemeDialogOpen(false);
+
   return (
     <Grid container direction="column" spacing={2}>
       {/* Header */}
       <Grid item container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon sx={{ color: "black" }} />
-          <Typography variant="h6" sx={{ color: "black" }}>
-            Ajustes
-          </Typography>
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
+        <Typography variant="h6" color="text.primary">
+          Ajustes
+        </Typography>
       </Grid>
       {/* Settings Card */}
       <Box
-        sx={{
+        sx={(theme) => ({
           mt: 2,
           mx: 2,
           p: 2,
           pl: 3,
-          bgcolor: "#eeeeee",
+          bgcolor: theme.palette.kompitrail.card,
           borderRadius: 2,
           boxSizing: "border-box",
           width: "calc(100% - 22px)",
-        }}
+        })}
       >
         <List disablePadding>
           <SettingsRow
             action="language"
             onClick={() => navigate(RoutesString.language)}
           />
-          <SettingsRow
-            action="theme"
-            onClick={() => navigate(RoutesString.theme)}
-          />
+          <SettingsRow action="theme" onClick={handleOpenThemeDialog} />
           <SettingsRow
             action="changePassword"
             onClick={() => navigate(RoutesString.editPassword)}
@@ -96,6 +103,12 @@ export const Settings = () => {
           <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
         </List>
       </Box>
+      <ModeToggleDialog
+        open={isThemeDialogOpen}
+        onClose={handleCloseThemeDialog}
+        onToggle={toggleMode}
+        currentMode={mode}
+      />
     </Grid>
   );
 };
