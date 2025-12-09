@@ -99,7 +99,7 @@ export const Motorbike = () => {
           Mis motos
         </Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, minWidth: 310 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
         {allMotorbikes.length > 0 ? (
           allMotorbikes.map((motorbike) => (
             <Grid
@@ -123,8 +123,6 @@ export const Motorbike = () => {
             <EmptyState />
           </Grid>
         )}
-      </Box>
-      <Grid>
         <OutlinedButton
           onClick={openCreateDialog}
           text={"Añadir moto"}
@@ -134,12 +132,13 @@ export const Motorbike = () => {
               sx={(theme) => ({
                 color: theme.palette.text.primary,
                 paddingLeft: "5px",
-                width: "20px",
+                marginBottom: "5px",
               })}
             />
           }
+          sx={{ mb: 2 }}
         />
-      </Grid>
+      </Box>
       <MotorbikeCreateDialog />
       <MotorbikeEditDialog />
       <FullScreenImg

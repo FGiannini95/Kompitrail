@@ -125,7 +125,9 @@ export const Chat = () => {
             })}
           />
         </IconButton>
-        <EmptyState />
+        <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
+          <EmptyState />
+        </Box>
       </Grid>
     );
 

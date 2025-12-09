@@ -2,7 +2,14 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import { TextField, Button, Link, Typography } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Button,
+  Link,
+  Typography,
+  IconButton,
+} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -125,160 +132,187 @@ export const Login = () => {
     <>
       {showLoading && <Loading />}
       {!showLoading && (
-        <>
-          <form onSubmit={handleSubmit}>
-            <Grid container spacing={2} direction="column" alignItems="stretch">
-              <Grid xs={12}>
-                <Typography variant="h4" textAlign="center">
-                  Login
-                </Typography>
-              </Grid>
+        <Box
+          sx={{
+            pt: 4,
+            width: "100%",
+            textAlign: "center",
+          }}
+        >
+          <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
+            <form onSubmit={handleSubmit}>
+              <Grid
+                container
+                spacing={2}
+                direction="column"
+                alignItems="stretch"
+              >
+                <Grid size={12}>
+                  <Typography variant="h5">Login</Typography>
+                </Grid>
 
-              <Grid xs={12}>
-                <TextField
-                  label="Email"
-                  name="email"
-                  fullWidth
-                  onChange={handleChange}
-                  error={!!msgError.email}
-                  helperText={msgError.email}
-                  autoComplete="email"
-                  inputProps={{
-                    inputMode: "email", // mobile keyboard with @
-                    autoCapitalize: "none", // avoid capitalizing emails
-                    autoCorrect: "off", // no autocorrect on emails
-                  }}
-                />
-              </Grid>
+                <Grid size={12}>
+                  <TextField
+                    label="Email"
+                    name="email"
+                    fullWidth
+                    onChange={handleChange}
+                    error={!!msgError.email}
+                    helperText={msgError.email}
+                    autoComplete="email"
+                    inputProps={{
+                      inputMode: "email", // mobile keyboard with @
+                      autoCapitalize: "none", // avoid capitalizing emails
+                      autoCorrect: "off", // no autocorrect on emails
+                    }}
+                  />
+                </Grid>
 
-              <Grid xs={12}>
-                <TextField
-                  label="Contraseña"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  fullWidth
-                  onChange={handleChange}
-                  error={!!msgError.password}
-                  helperText={msgError.password}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  autoComplete="current-password" //required for login
-                  InputProps={{
-                    endAdornment: (
-                      <Button onClick={displayPassword}>
-                        {showPassword ? (
-                          <VisibilityOffOutlinedIcon
-                            sx={(theme) => ({
-                              color: theme.palette.text.secondary,
-                            })}
-                          />
-                        ) : (
-                          <VisibilityOutlinedIcon
-                            sx={(theme) => ({
-                              color: theme.palette.text.secondary,
-                            })}
-                          />
-                        )}
-                      </Button>
-                    ),
-                  }}
-                />
-              </Grid>
+                <Grid size={12}>
+                  <TextField
+                    label="Contraseña"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    fullWidth
+                    onChange={handleChange}
+                    error={!!msgError.password}
+                    helperText={msgError.password}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    autoComplete="current-password"
+                    InputProps={{
+                      endAdornment: (
+                        <IconButton
+                          onClick={displayPassword}
+                          disableRipple
+                          sx={(theme) => ({
+                            color: theme.palette.text.secondary,
+                            padding: 0.5,
+                            // background when hovered with mouse
+                            "&:hover": {
+                              backgroundColor: theme.palette.kompitrail.card,
+                            },
+                            // background when focused via keyboard (TAB)
+                            "&.Mui-focusVisible": {
+                              backgroundColor: theme.palette.kompitrail.card,
+                            },
+                          })}
+                        >
+                          {showPassword ? (
+                            <VisibilityOffOutlinedIcon
+                              sx={(theme) => ({
+                                color: theme.palette.text.secondary,
+                              })}
+                            />
+                          ) : (
+                            <VisibilityOutlinedIcon
+                              sx={(theme) => ({
+                                color: theme.palette.text.secondary,
+                              })}
+                            />
+                          )}
+                        </IconButton>
+                      ),
+                    }}
+                  />
+                </Grid>
 
-              {msgError.global && (
-                <Grid xs={12}>
-                  <Typography color="error" align="center">
-                    {msgError.global}
+                {msgError.global && (
+                  <Grid size={12}>
+                    <Typography color="error" align="center">
+                      {msgError.global}
+                    </Typography>
+                  </Grid>
+                )}
+
+                <Grid container xs={12} spacing={2} justifyContent="center">
+                  <Grid xs={6}>
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      sx={(theme) => ({
+                        color: theme.palette.text.primary,
+                        borderColor: theme.palette.kompitrail.card,
+                        borderWidth: "2px",
+                        "&:hover": {
+                          borderColor: theme.palette.kompitrail.page,
+                          borderWidth: "2px",
+                        },
+                      })}
+                      fullWidth
+                      onClick={handleCancel}
+                    >
+                      CANCELAR
+                    </Button>
+                  </Grid>
+                  <Grid xs={6}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      fullWidth
+                      sx={(theme) => ({
+                        color: theme.palette.text.primary,
+                        boxShadow: "none",
+                        backgroundColor: theme.palette.kompitrail.card,
+                        "&:hover": {
+                          backgroundColor: theme.palette.kompitrail.page,
+                        },
+                      })}
+                    >
+                      ACEPTAR
+                    </Button>
+                  </Grid>
+                </Grid>
+
+                <Grid size={12}>
+                  <Typography textAlign="center">
+                    ¿Aún no tienes un perfil? ¡Regístrate{" "}
+                    <Link
+                      onClick={() => navigate(buildUrl(RoutesString.register))}
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                      underline="hover"
+                    >
+                      aquí
+                    </Link>
+                    !
                   </Typography>
                 </Grid>
-              )}
 
-              <Grid container xs={12} spacing={2} justifyContent="center">
-                <Grid xs={6}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    fullWidth
-                    sx={(theme) => ({
-                      color: theme.palette.text.primary,
-                      boxShadow: "none",
-                      backgroundColor: theme.palette.kompitrail.card,
-                      "&:hover": {
-                        backgroundColor: theme.palette.kompitrail.page,
-                      },
-                    })}
-                  >
-                    ACEPTAR
-                  </Button>
+                <Grid size={12}>
+                  <Typography>
+                    ¿Has olvidado tu contraseña? Pincha{" "}
+                    <Link
+                      onClick={() => setOpenRestorePasswordDialog(true)}
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                      underline="hover"
+                    >
+                      aquí
+                    </Link>
+                    !
+                  </Typography>
                 </Grid>
 
-                <Grid xs={6}>
-                  <Button
-                    type="button"
-                    variant="outlined"
-                    sx={(theme) => ({
-                      color: theme.palette.text.primary,
-                      borderColor: theme.palette.kompitrail.card,
-                      borderWidth: "2px",
-                      "&:hover": {
-                        borderColor: theme.palette.kompitrail.page,
-                        borderWidth: "2px",
-                      },
-                    })}
-                    fullWidth
-                    onClick={handleCancel}
-                  >
-                    CANCELAR
-                  </Button>
-                </Grid>
+                <RestorePasswordDialog
+                  openRestorePasswordDialog={openRestorePasswordDialog}
+                  handleCloseDialog={handleCloseDialog}
+                />
               </Grid>
-
-              <Grid xs={12}>
-                <Typography textAlign="center">
-                  ¿Aún no tienes un perfil? ¡Regístrate{" "}
-                  <Link
-                    onClick={() => navigate(buildUrl(RoutesString.register))}
-                    sx={(theme) => ({
-                      color: theme.palette.text.secondary,
-                    })}
-                    underline="hover"
-                  >
-                    aquí
-                  </Link>
-                  !
-                </Typography>
-              </Grid>
-
-              <Grid xs={12}>
-                <Typography textAlign="center">
-                  ¿Has olvidado tu contraseña? Pincha{" "}
-                  <Link
-                    onClick={() => setOpenRestorePasswordDialog(true)}
-                    sx={(theme) => ({
-                      color: theme.palette.text.secondary,
-                    })}
-                    underline="hover"
-                  >
-                    aquí
-                  </Link>
-                  !
-                </Typography>
-              </Grid>
-
-              <RestorePasswordDialog
-                openRestorePasswordDialog={openRestorePasswordDialog}
-                handleCloseDialog={handleCloseDialog}
+            </form>
+            <Box sx={{ mt: 3, mb: 2 }}>
+              <SocialAuthButtons
+                onAuthSuccess={() => {
+                  setRedirectRequested(true);
+                  handlePostAuthRedirect();
+                }}
               />
-            </Grid>
-          </form>
-        </>
+            </Box>
+          </Box>
+        </Box>
       )}
-      <SocialAuthButtons
-        onAuthSuccess={() => {
-          setRedirectRequested(true);
-          handlePostAuthRedirect();
-        }}
-      />
     </>
   );
 };

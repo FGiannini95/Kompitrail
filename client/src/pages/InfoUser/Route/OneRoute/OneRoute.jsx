@@ -325,6 +325,7 @@ export const OneRoute = () => {
           </Grid>
         </CardContent>
       </Card>
+
       <Stack sx={{ pl: 2 }}>
         <Typography
           sx={{
@@ -412,6 +413,7 @@ export const OneRoute = () => {
           }
         />
       </Stack>
+
       <Card
         sx={(theme) => ({
           width: "95%",
@@ -468,7 +470,7 @@ export const OneRoute = () => {
       </Stack>
 
       {buttonConfig.show && (
-        <Grid>
+        <Stack sx={{ px: 1 }}>
           <Button
             type="button"
             variant="outlined"
@@ -487,7 +489,7 @@ export const OneRoute = () => {
           >
             {buttonConfig.text}
           </Button>
-        </Grid>
+        </Stack>
       )}
     </Grid>
   );

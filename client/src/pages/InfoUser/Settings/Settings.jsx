@@ -21,6 +21,26 @@ import { useConfirmationDialog } from "../../../context/ConfirmationDialogContex
 import { SettingsRow } from "./SettingsRow/SettingsRow";
 import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
 
+function Section({ title, children }) {
+  return (
+    <Box
+      sx={(theme) => ({
+        p: "10px",
+        bgcolor: theme.palette.kompitrail.card,
+        mx: "10px",
+        borderRadius: "20px",
+      })}
+    >
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: "bold", pb: 1, color: "text.primary" }}
+      >
+        {title}
+      </Typography>
+      <List disablePadding>{children}</List>
+    </Box>
+  );
+}
 export const Settings = ({ toggleMode, mode }) => {
   const navigate = useNavigate();
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
@@ -77,32 +97,20 @@ export const Settings = ({ toggleMode, mode }) => {
           Ajustes
         </Typography>
       </Grid>
-      {/* Settings Card */}
-      <Box
-        sx={(theme) => ({
-          mt: 2,
-          mx: 2,
-          p: 2,
-          pl: 3,
-          bgcolor: theme.palette.kompitrail.card,
-          borderRadius: 2,
-          boxSizing: "border-box",
-          width: "calc(100% - 22px)",
-        })}
-      >
-        <List disablePadding>
-          <SettingsRow
-            action="language"
-            onClick={() => navigate(RoutesString.language)}
-          />
-          <SettingsRow action="theme" onClick={handleOpenThemeDialog} />
-          <SettingsRow
-            action="changePassword"
-            onClick={() => navigate(RoutesString.editPassword)}
-          />
-          <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
-        </List>
-      </Box>
+
+      <Section>
+        <SettingsRow
+          action="language"
+          onClick={() => navigate(RoutesString.language)}
+        />
+        <SettingsRow action="theme" onClick={handleOpenThemeDialog} />
+        <SettingsRow
+          action="changePassword"
+          onClick={() => navigate(RoutesString.editPassword)}
+        />
+        <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
+      </Section>
+
       <ModeToggleDialog
         open={isThemeDialogOpen}
         onClose={handleCloseThemeDialog}

@@ -87,6 +87,9 @@ export const Home = () => {
             aria-hidden
           />
         }
+        sx={{
+          mt: futureRoutes.length === 0 ? 2 : 0,
+        }}
       />
       <Grid sx={{ pt: 2 }}>
         <Typography color="text.primary">Rutas disponibles</Typography>

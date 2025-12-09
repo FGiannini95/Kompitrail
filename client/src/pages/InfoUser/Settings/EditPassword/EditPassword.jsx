@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-import { Button, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -125,78 +125,79 @@ export const EditPassword = () => {
           <SaveOutlinedIcon aria-hidden />
         </Button>
       </Grid>
-      <Grid item xs={12}>
+
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
         <Typography color="text.primary">
           La nueva contraseña debe tener al menos 8 caracteres y un carácter
           especial.
         </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          label="Nueva contraseña"
-          name="password"
-          type={showPassword ? "text" : "password"}
-          fullWidth
-          value={password}
-          onChange={handlePasswordChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          error={!!error}
-          helperText={error}
-          InputProps={{
-            endAdornment: (
-              <Button onClick={displayPassword}>
-                {showPassword ? (
-                  <VisibilityOffOutlinedIcon
-                    sx={(theme) => ({
-                      color: theme.palette.text.secondary,
-                    })}
-                  />
-                ) : (
-                  <VisibilityOutlinedIcon
-                    sx={(theme) => ({
-                      color: theme.palette.text.secondary,
-                    })}
-                  />
-                )}
-              </Button>
-            ),
-          }}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          label="Confirmar contraseña"
-          name="confirmPassword"
-          type={showConfirmPassword ? "text" : "password"}
-          fullWidth
-          value={confirmPassword}
-          onChange={handleConfirmPassword}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          error={!!error}
-          helperText={error}
-          InputProps={{
-            endAdornment: (
-              <Button onClick={displayConfirmPassword}>
-                {showPassword ? (
-                  <VisibilityOffOutlinedIcon
-                    sx={(theme) => ({
-                      color: theme.palette.text.secondary,
-                    })}
-                  />
-                ) : (
-                  <VisibilityOutlinedIcon
-                    sx={(theme) => ({
-                      color: theme.palette.text.secondary,
-                    })}
-                  />
-                )}
-              </Button>
-            ),
-          }}
-        />
-      </Grid>
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            label="Nueva contraseña"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            fullWidth
+            value={password}
+            onChange={handlePasswordChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            error={!!error}
+            helperText={error}
+            InputProps={{
+              endAdornment: (
+                <Button onClick={displayPassword}>
+                  {showPassword ? (
+                    <VisibilityOffOutlinedIcon
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                    />
+                  ) : (
+                    <VisibilityOutlinedIcon
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                    />
+                  )}
+                </Button>
+              ),
+            }}
+          />
+        </Box>
+        <Box item xs={12}>
+          <TextField
+            label="Confirmar contraseña"
+            name="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            fullWidth
+            value={confirmPassword}
+            onChange={handleConfirmPassword}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            error={!!error}
+            helperText={error}
+            InputProps={{
+              endAdornment: (
+                <Button onClick={displayConfirmPassword}>
+                  {showPassword ? (
+                    <VisibilityOffOutlinedIcon
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                    />
+                  ) : (
+                    <VisibilityOutlinedIcon
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                    />
+                  )}
+                </Button>
+              ),
+            }}
+          />
+        </Box>
+      </Box>
     </Grid>
   );
 };
