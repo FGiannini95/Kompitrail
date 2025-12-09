@@ -110,7 +110,7 @@ export const EditUser = () => {
             sx={(theme) => ({
               width: 120,
               height: 120,
-              border: `2px solid ${theme.palette.primary}`,
+              border: `2px solid ${theme.palette.text.primary}`,
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",

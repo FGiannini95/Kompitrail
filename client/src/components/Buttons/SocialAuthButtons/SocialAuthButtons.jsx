@@ -2,8 +2,7 @@ import React, { useContext, useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
-import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import AppleIcon from "@mui/icons-material/Apple";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 
 import { AUTH_URL } from "../../../api";
 import { saveLocalStorage } from "../../../helpers/localStorageUtils";
@@ -94,13 +93,6 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
           {errMsg}
         </Typography>
       )}
-
-      {/* Apple Auth */}
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Button variant="outlined" startIcon={<AppleIcon />}>
-          Sign in with Apple
-        </Button>
-      </Box>
     </Stack>
   );
 };

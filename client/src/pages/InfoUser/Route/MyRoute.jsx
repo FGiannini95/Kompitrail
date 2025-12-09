@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -10,7 +9,6 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
-import { ROUTES_URL } from "../../../api";
 // Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
@@ -90,7 +88,7 @@ export const MyRoute = () => {
           Mis rutas
         </Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, minWidth: 310 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
         {userRoutes.length > 0 ? (
           userRoutes.map((route) => (
             <Grid
@@ -112,8 +110,6 @@ export const MyRoute = () => {
             <EmptyState />
           </Grid>
         )}
-      </Box>
-      <Grid>
         <OutlinedButton
           onClick={openCreateDialog}
           text={"Crear ruta"}
@@ -124,7 +120,7 @@ export const MyRoute = () => {
             />
           }
         />
-      </Grid>
+      </Box>
       <RouteEditDialog />
       <RouteCreateDialog />
     </Grid>

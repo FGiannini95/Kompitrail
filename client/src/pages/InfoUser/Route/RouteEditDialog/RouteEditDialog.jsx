@@ -231,7 +231,7 @@ export const RouteEditDialog = () => {
               }
             />
           </Grid>
-          <Grid size={12}>
+          <Grid size={12} sx={{ mb: 5 }}>
             <FormTextfield
               label="Descripción"
               name="route_description"
