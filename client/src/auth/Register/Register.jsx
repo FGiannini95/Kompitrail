@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 
 import {
   TextField,
@@ -261,17 +261,23 @@ export const Register = () => {
 
                 <Grid size xs={12}>
                   <Typography textAlign="center">
-                    ¿Ya tienes un perfil? ¡Haz el login{" "}
-                    <Link
-                      onClick={() => navigate(buildUrl(RoutesString.login))}
-                      sx={(theme) => ({
-                        color: theme.palette.text.secondary,
-                      })}
-                      underline="hover"
-                    >
-                      aquí
-                    </Link>
-                    !
+                    <Trans
+                      i18nKey="haveAccountLoginText"
+                      ns="general"
+                      components={{
+                        1: (
+                          <Link
+                            onClick={() =>
+                              navigate(buildUrl(RoutesString.login))
+                            }
+                            sx={(theme) => ({
+                              color: theme.palette.text.secondary,
+                            })}
+                            underline="hover"
+                          />
+                        ),
+                      }}
+                    />
                   </Typography>
                 </Grid>
               </Grid>

@@ -18,8 +18,8 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 export const ModeToggleDialog = ({ open, onClose, onToggle, currentMode }) => {
   const isDark = currentMode === "dark";
-  const themeLabel = isDark ? "Modo oscuro" : "Modo claro";
-  const { t } = useTranslation(["dialogs", "buttons"]);
+  const { t } = useTranslation(["dialogs", "buttons", "settings"]);
+  const themeLabel = isDark ? t("settings:darkMode") : t("settings:lightMode");
 
   return (
     <Dialog

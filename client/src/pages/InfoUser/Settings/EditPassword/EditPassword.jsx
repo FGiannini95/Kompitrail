@@ -26,7 +26,7 @@ export const EditPassword = () => {
   const [, setIsPasswordSelected] = useState(false);
   const [error, setError] = useState("");
   const tokenLocalStorage = getLocalStorage("token");
-  const { t } = useTranslation(["settings", "forms"]);
+  const { t } = useTranslation(["settings", "forms", "general"]);
 
   const navigate = useNavigate();
 
@@ -129,10 +129,7 @@ export const EditPassword = () => {
       </Grid>
 
       <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
-        <Typography color="text.primary">
-          La nueva contraseña debe tener al menos 8 caracteres y un carácter
-          especial.
-        </Typography>
+        <Typography color="text.primary">{t("general:newPassText")}</Typography>
         <Box sx={{ mb: 2 }}>
           <TextField
             label={t("forms:newPassLabel")}

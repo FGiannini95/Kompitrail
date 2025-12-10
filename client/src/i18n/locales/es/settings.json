@@ -2,10 +2,6 @@
   "language": "Idioma",
   "theme": "Tema",
   "changePassword": "Modificar contraseña",
-  "deleteAccount": "Eliminar cuenta",
-  "deleteAccountMessage": "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?",
-  "deleteAccountTitle": "Eliminar cuenta",
-
   "actions": {
     "changePassword": "Modificar contraseña",
     "deleteAccount": "Eliminar cuenta",
@@ -18,5 +14,10 @@
     "logout": "Log out",
     "language": "Idioma",
     "theme": "Tema"
-  }
+  },
+  "darkMode": "Modo oscuro",
+  "lightMode": "Modo claro",
+  "spanish": "Español",
+  "english": "Inglés",
+  "italian": "Italiano"
 }

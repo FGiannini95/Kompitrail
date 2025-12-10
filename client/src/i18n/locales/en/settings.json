@@ -1,11 +1,7 @@
 {
-  "title": "Settings",
   "language": "Language",
   "theme": "Mode",
   "changePassword": "Change password",
-  "deleteAccount": "Delete account",
-  "deleteAccountMessage": "This action is irreversible. Are you sure you want to delete your account?",
-  "deleteAccountTitle": "Delete account",
   "actions": {
     "changePassword": "Change password",
     "deleteAccount": "Delete account",
@@ -18,5 +14,10 @@
     "logout": "Log out",
     "language": "Language",
     "theme": "Mode"
-  }
+  },
+  "darkMode": "Dark mode",
+  "lightMode": "Light mode",
+  "spanish": "Spanish",
+  "english": "English",
+  "italian": "Italian"
 }

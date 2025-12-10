@@ -49,7 +49,7 @@ export const ChangeLanguageDialog = ({
   language,
   changeLanguage,
 }) => {
-  const { t } = useTranslation(["dialogs", "buttons"]);
+  const { t } = useTranslation(["dialogs", "buttons", "settings"]);
 
   // Handle language selection
   const handleSelectLanguage = (lang) => {
@@ -111,9 +111,9 @@ export const ChangeLanguageDialog = ({
 
       <DialogContent>
         <Stack sx={{ mt: 1 }} spacing={1}>
-          {renderLanguageOption("Español", "es", "ES")}
-          {renderLanguageOption("Inglés", "en", "GB")}
-          {renderLanguageOption("Italiano", "it", "IT")}
+          {renderLanguageOption(t("settings:spanish"), "es", "ES")}
+          {renderLanguageOption(t("settings:english"), "en", "GB")}
+          {renderLanguageOption(t("settings:italian"), "it", "IT")}
         </Stack>
       </DialogContent>
 

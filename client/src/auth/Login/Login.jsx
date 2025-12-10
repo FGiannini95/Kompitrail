@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 
 import {
   TextField,
@@ -271,33 +271,43 @@ export const Login = () => {
 
                 <Grid size={12}>
                   <Typography textAlign="center">
-                    ¿Aún no tienes un perfil? ¡Regístrate{" "}
-                    <Link
-                      onClick={() => navigate(buildUrl(RoutesString.register))}
-                      sx={(theme) => ({
-                        color: theme.palette.text.secondary,
-                      })}
-                      underline="hover"
-                    >
-                      aquí
-                    </Link>
-                    !
+                    <Trans
+                      i18nKey="noAccountRegisterText"
+                      ns="general"
+                      components={{
+                        1: (
+                          <Link
+                            onClick={() =>
+                              navigate(buildUrl(RoutesString.register))
+                            }
+                            sx={(theme) => ({
+                              color: theme.palette.text.secondary,
+                            })}
+                            underline="hover"
+                          />
+                        ),
+                      }}
+                    />
                   </Typography>
                 </Grid>
 
                 <Grid size={12}>
-                  <Typography>
-                    ¿Has olvidado tu contraseña? Pincha{" "}
-                    <Link
-                      onClick={() => setOpenRestorePasswordDialog(true)}
-                      sx={(theme) => ({
-                        color: theme.palette.text.secondary,
-                      })}
-                      underline="hover"
-                    >
-                      aquí
-                    </Link>
-                    !
+                  <Typography textAlign="center">
+                    <Trans
+                      i18nKey="forgotPasswordText"
+                      ns="general"
+                      components={{
+                        1: (
+                          <Link
+                            onClick={() => setOpenRestorePasswordDialog(true)}
+                            sx={(theme) => ({
+                              color: theme.palette.text.secondary,
+                            })}
+                            underline="hover"
+                          />
+                        ),
+                      }}
+                    />
                   </Typography>
                 </Grid>
 

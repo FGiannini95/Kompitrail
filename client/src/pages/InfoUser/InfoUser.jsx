@@ -62,7 +62,7 @@ export const InfoUser = () => {
   const handleLogOut = () => {
     openDialog({
       title: t("dialogs:logoutTitle"),
-      message: "¿Estás seguro de querer cerrar sessión?",
+      message: t("dialogs:logoutText"),
       onConfirm: () => logOut(),
     });
   };

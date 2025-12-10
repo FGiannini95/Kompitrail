@@ -219,7 +219,7 @@ export const RouteEditDialog = () => {
               justifyContent: "center",
             }}
           >
-            <Typography>¿Primera vez en esta ruta?</Typography>
+            <Typography>{t("forms:checkbox")}</Typography>
             <Checkbox
               inputProps={{ "aria-label": "controlled" }}
               color="default"

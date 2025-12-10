@@ -14,5 +14,13 @@
   "settingsTitle": "Impostazioni",
   "loginTitle": "Accesso",
   "registerTitle": "Registro",
-  "landingTitle": "Benvenuti a Kompitrail"
+  "landingTitle": "Benvenuti a Kompitrail",
+  "tableFirstHeader": "Nº di moto",
+  "tableSecondtHeader": "Percorsi creati",
+  "tableThirdHeader": "Percorsi completati",
+  "newPassText": "La nuova password deve contenere almeno 8 caratteri e un carattere speciale.",
+  "haveAccountLoginText": "Hai già un profilo? Accedi <1>qui</1>!",
+  "noAccountRegisterText": "Non hai ancora un profilo? Registrati <1>qui</1>!",
+  "forgotPasswordText": "Hai dimenticato la password? Clicca <1>qui</1>!",
+  "introLanding": "Connettetevi con altri motociclisti: condividete i vostri percorsi, pianificate avventure e godetevi la strada insieme. Che siate alla ricerca di compagni di viaggio per un weekend o vogliate esplorare nuovi percorsi, la nostra app vi permette di trovare e unirvi a biker che condividono la vostra stessa passione. Non viaggiate da soli, unitevi alla comunità di Kompitrail e trasformate ogni viaggio in un'esperienza indimenticabile!"
 }

@@ -16,5 +16,6 @@
   "levelLabel": "Level",
   "maxParticipantsLabel": "Pilots",
   "motorbikeTypeLabel": "Suitable motorbikes",
-  "descriptionLabel": "Description"
+  "descriptionLabel": "Description",
+  "checkbox": "First time on this route?"
 }
