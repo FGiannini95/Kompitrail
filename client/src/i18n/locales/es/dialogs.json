@@ -1,7 +1,4 @@
 {
-  "cancelActionButton": "Cancelar",
-  "confirmActionButton": "Confirmar",
-  "closeActionButton": "Cerrar",
   "routeCreateTitle": "Crear ruta",
   "routeEditTitle": "Editar ruta",
   "routeDeleteTitle": "Eliminar ruta",

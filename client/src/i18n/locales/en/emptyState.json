@@ -1,7 +1,7 @@
 {
-  "emptyStateNoMotorbike": "You have not added any motorcycles yet.",
-  "emptyStateNoRoute": "You have not yet created a route.",
-  "emptyStateNoChat": "You have not joined any route yet",
+  "emptyStateNoMotorbike": "No motorbikes added yet.",
+  "emptyStateNoRoute": "No route craeted yet.",
+  "emptyStateNoChat": "You have not joined any route yet.",
   "emptyState": "No route available.",
   "carrouselPlaceholder": "You don't have any saved routes yet. Sign up or create one.",
   "frequentCompanionPlaceholder": "You don't have any travel companions yet."

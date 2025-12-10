@@ -254,7 +254,7 @@ export const Register = () => {
                         },
                       })}
                     >
-                      {t("buttons:createProfile")}
+                      {t("buttons:confirmar")}
                     </Button>
                   </Grid>
                 </Grid>

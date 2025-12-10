@@ -5,7 +5,7 @@
   "createMotorbike": "Añadir moto",
   "register": "Registro",
   "login": "Login",
-  "createProfile": "Crear",
+  "confirmar": "Confirmar",
   "cancel": "Cancelar",
-  "accept": "Acceptar"
+  "close": "Cerrar"
 }

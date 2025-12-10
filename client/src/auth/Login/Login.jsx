@@ -264,7 +264,7 @@ export const Login = () => {
                         },
                       })}
                     >
-                      {t("buttons:accept")}
+                      {t("buttons:confirmar")}
                     </Button>
                   </Grid>
                 </Grid>

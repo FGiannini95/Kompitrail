@@ -1,9 +1,6 @@
 {
-  "cancelActionButton": "Cancel",
-  "confirmActionButton": "Confirm",
   "routeCreateTitle": "Create route",
   "routeEditTitle": "Edit route",
-  "closeActionButton": "Close",
   "routeDeleteTitle": "Delete route",
   "motorbikeCreateTitle": "Add motorbike",
   "motorbikeEditTitle": "Edit motorbike",

@@ -5,7 +5,7 @@
   "createMotorbike": "Add motorbike",
   "register": "Registration",
   "login": "Login",
-  "createProfile": "Create",
+  "confirmar": "Confirm",
   "cancel": "Cancel",
-  "accept": "Accept"
+  "close": "Close"
 }
