@@ -6,18 +6,21 @@ import buttonsES from "./locales/es/buttons.json";
 import generalEs from "./locales/es/general.json";
 import emptyStateEs from "./locales/es/emptyState.json";
 import formseEs from "./locales/es/forms.json";
+import dialogsEs from "./locales/es/dialogs.json";
 
 import settingsEn from "./locales/en/settings.json";
 import buttonsEn from "./locales/en/buttons.json";
 import generalEn from "./locales/en/general.json";
 import emptyStateEn from "./locales/en/emptyState.json";
 import formseEn from "./locales/en/forms.json";
+import dialogsEn from "./locales/en/dialogs.json";
 
 import settingsIt from "./locales/it/settings.json";
 import buttonsIt from "./locales/it/buttons.json";
 import generalIt from "./locales/it/general.json";
 import emptyStateIt from "./locales/it/emptyState.json";
 import formseIt from "./locales/It/forms.json";
+import dialogsIt from "./locales/it/dialogs.json";
 
 // i18n global configuration
 i18n.use(initReactI18next).init({
@@ -28,6 +31,7 @@ i18n.use(initReactI18next).init({
       general: generalEs,
       emptyState: emptyStateEs,
       forms: formseEs,
+      dialogs: dialogsEs,
     },
     en: {
       settings: settingsEn,
@@ -35,6 +39,7 @@ i18n.use(initReactI18next).init({
       general: generalEn,
       emptyState: emptyStateEn,
       forms: formseEn,
+      dialogs: dialogsEn,
     },
     it: {
       settings: settingsIt,
@@ -42,12 +47,13 @@ i18n.use(initReactI18next).init({
       general: generalIt,
       emptyState: emptyStateIt,
       forms: formseIt,
+      dialogs: dialogsIt,
     },
   },
 
   lng: "es",
   fallbackLng: "es",
-  ns: ["settings", "buttons", "general", "emptyState", "forms"],
+  ns: ["settings", "buttons", "general", "emptyState", "forms", "dialogs"],
   defaultNS: "settings",
   interpolation: {
     escapeValue: false,

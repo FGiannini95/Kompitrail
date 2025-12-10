@@ -1,0 +1,15 @@
+{
+  "cancelActionButton": "Cancelar",
+  "confirmActionButton": "Confirmar",
+  "closeActionButton": "Cerrar",
+  "routeCreateTitle": "Crear ruta",
+  "routeEditTitle": "Editar ruta",
+  "routeDeleteTitle": "Eliminar ruta",
+  "motorbikeCreateTitle": "Añadir moto",
+  "motorbikeEditTitle": "Editar moto",
+  "motorbikeDeleteTitle": "Eliminar moto",
+  "logoutTitle": "Cerrar sessión",
+  "accountDeleteTitle": "Eliminar cuenta",
+  "modeChangeTitle": "Cambiar tema",
+  "languageChangeTitle": "Cambiar idioma"
+}

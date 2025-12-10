@@ -1,5 +1,6 @@
 import React from "react";
 import ReactCountryFlag from "react-country-flag";
+import { useTranslation } from "react-i18next";
 
 import {
   Box,
@@ -48,6 +49,8 @@ export const ChangeLanguageDialog = ({
   language,
   changeLanguage,
 }) => {
+  const { t } = useTranslation("dialogs");
+
   // Handle language selection
   const handleSelectLanguage = (lang) => {
     if (!["es", "en", "it"].includes(lang)) return;
@@ -104,7 +107,7 @@ export const ChangeLanguageDialog = ({
       disableScrollLock
       keepMounted
     >
-      <DialogTitle>Cambiar idioma</DialogTitle>
+      <DialogTitle>{t("dialogs:languageChangeTitle")}</DialogTitle>
 
       <DialogContent>
         <Stack sx={{ mt: 1 }} spacing={1}>
@@ -115,7 +118,10 @@ export const ChangeLanguageDialog = ({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cerrar</Button>
+        <Button onClick={onClose} color="text.primary">
+          {" "}
+          {t("dialogs:closeActionButton")}
+        </Button>
       </DialogActions>
     </Dialog>
   );

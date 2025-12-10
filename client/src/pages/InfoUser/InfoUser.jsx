@@ -46,7 +46,7 @@ export const InfoUser = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [iframe, setiIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
-  const { t } = useTranslation("general");
+  const { t } = useTranslation(["general", "dialogs"]);
 
   const navigate = useNavigate();
   const { openDialog } = useConfirmationDialog();
@@ -61,7 +61,7 @@ export const InfoUser = () => {
 
   const handleLogOut = () => {
     openDialog({
-      title: "Cerrar sessión",
+      title: t("dialogs:logoutTitle"),
       message: "¿Estás seguro de querer cerrar sessión?",
       onConfirm: () => logOut(),
     });

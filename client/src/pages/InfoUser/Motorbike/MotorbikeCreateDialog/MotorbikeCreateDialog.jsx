@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import {
   Button,
@@ -30,6 +31,7 @@ export const MotorbikeCreateDialog = () => {
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createMotorbike, dialog, closeDialog } = useMotorbikes();
+  const { t } = useTranslation(["dialogs", "forms"]);
 
   const isOpen = dialog.isOpen && dialog.mode === "create";
 
@@ -97,7 +99,7 @@ export const MotorbikeCreateDialog = () => {
 
   return (
     <Dialog open={isOpen} onClose={cleanDialog}>
-      <DialogTitle>Añadir moto</DialogTitle>
+      <DialogTitle>{t("dialogs:motorbikeCreateTitle")}</DialogTitle>
       <DialogContent>
         <Button
           variant="text"
@@ -117,7 +119,7 @@ export const MotorbikeCreateDialog = () => {
           />
         </Button>
         <TextField
-          label="Marca"
+          label={t("forms:brandLabel")}
           fullWidth
           margin="normal"
           name="brand"
@@ -127,7 +129,7 @@ export const MotorbikeCreateDialog = () => {
           helperText={msgError}
         />
         <TextField
-          label="Modelo"
+          label={t("forms:modelLabel")}
           fullWidth
           margin="normal"
           name="model"
@@ -139,10 +141,10 @@ export const MotorbikeCreateDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">
-          Cancelar
+          {t("dialogs:cancelActionButton")}
         </Button>
         <Button onClick={handleConfirm} color="success">
-          Confirmar
+          {t("dialogs:confirmActionButton")}
         </Button>
       </DialogActions>
     </Dialog>

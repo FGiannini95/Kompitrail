@@ -51,7 +51,7 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
   const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
   const [isLanguageDialogOpen, setIsLanguageDialogOpen] = useState(false);
 
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(["settings", "dialogs"]);
 
   const deleteProfile = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -76,7 +76,7 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
 
   const handleDeleteProfile = () => {
     openDialog({
-      title: "Eliminar cuenta",
+      title: t("dialogs:accountDeleteTitle"),
       message:
         "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?",
       onConfirm: () => deleteProfile(),
