@@ -1,0 +1,22 @@
+{
+  "title": "Settings",
+  "language": "Language",
+  "theme": "Mode",
+  "changePassword": "Change password",
+  "deleteAccount": "Delete account",
+  "deleteAccountMessage": "This action is irreversible. Are you sure you want to delete your account?",
+  "deleteAccountTitle": "Delete account",
+  "actions": {
+    "changePassword": "Change password",
+    "deleteAccount": "Delete account",
+    "editAccount": "Edit profile",
+    "addMotorbike": "My motorbikes",
+    "addRoute": "My routes",
+    "changeSettings": "Settings",
+    "chatbot": "Chat bot",
+    "privacy": "Privacy Policy",
+    "logout": "Log out",
+    "language": "Language",
+    "theme": "Mode"
+  }
+}

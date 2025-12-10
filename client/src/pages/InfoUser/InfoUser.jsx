@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Box, Typography, List } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -45,6 +46,7 @@ export const InfoUser = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [iframe, setiIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
+  const { t } = useTranslation("general");
 
   const navigate = useNavigate();
   const { openDialog } = useConfirmationDialog();
@@ -95,7 +97,7 @@ export const InfoUser = () => {
         />
       </Grid>
       <UserAvatar />
-      <Section title="Mi cuenta">
+      <Section title={t("general:titleSection1")}>
         <SettingsRow
           action="editAccount"
           onClick={() => navigate(RoutesString.editUser)}
@@ -114,7 +116,7 @@ export const InfoUser = () => {
         />
       </Section>
 
-      <Section title="Ayuda y Soporte">
+      <Section title={t("general:titleSection2")}>
         <SettingsRow
           action="chatbot"
           onClick={() => navigate(RoutesString.settings)}
@@ -122,7 +124,7 @@ export const InfoUser = () => {
         <SettingsRow action="privacy" onClick={() => handleToggleIframe(url)} />
       </Section>
 
-      <Section title="Desconectar perfil">
+      <Section title={t("general:titleSection3")}>
         <SettingsRow action="logout" onClick={handleLogOut} />
       </Section>
       <PrivacyDialog

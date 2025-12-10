@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { AppBar, Box, Toolbar, Typography, IconButton } from "@mui/material";
 
@@ -16,6 +17,7 @@ export const TopBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(KompitrailContext);
+  const { t } = useTranslation("general");
 
   const matchProfile = useMatch("/profile/:id");
 
@@ -75,14 +77,14 @@ export const TopBar = () => {
             />
           </Box>
         );
-      case `${RoutesString.search}`:
-        return <Typography variant="h6">Buscar</Typography>;
       case `${RoutesString.createTrip}`:
         return <Typography variant="h6">Crear ruta</Typography>;
       case `${RoutesString.chat}`:
-        return <Typography variant="h6">Chat</Typography>;
+        return <Typography variant="h6">{t("general:titleChat")}</Typography>;
       case `${RoutesString.profile}`:
-        return <Typography variant="h6">Perfil</Typography>;
+        return (
+          <Typography variant="h6">{t("general:titleProfile")}</Typography>
+        );
       default:
         return null;
     }

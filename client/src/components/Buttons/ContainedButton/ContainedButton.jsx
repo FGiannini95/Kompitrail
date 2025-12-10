@@ -2,7 +2,7 @@ import React, { forwardRef } from "react";
 import { Button } from "@mui/material";
 
 export const ContainedButton = forwardRef(
-  ({ onClick, text, icon, ...rest }, ref) => {
+  ({ onClick, text, icon, children, ...rest }, ref) => {
     return (
       <Button
         ref={ref}
@@ -21,8 +21,13 @@ export const ContainedButton = forwardRef(
         })}
         {...rest}
       >
-        {text}
-        {icon}
+        {/* If children are provided, render them. Otherwise fallback to text + icon */}
+        {children ?? (
+          <>
+            {text}
+            {icon}
+          </>
+        )}
       </Button>
     );
   }

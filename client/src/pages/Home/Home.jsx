@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -33,6 +34,7 @@ export const Home = () => {
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
   const [lastRoutesVisit, setLastRoutesVisit] = useState(null);
+  const { t } = useTranslation(["buttons", "general"]);
 
   useEffect(() => {
     loadAllRoutes();
@@ -73,14 +75,14 @@ export const Home = () => {
       {futureRoutes.length > 0 && (
         <UserRoutesCarousel
           allRoutes={futureRoutes}
-          title={"Tus próximas rutas"}
+          title={t("general:upComingNextRoutesText")}
           showOnlyFuture={true}
           sortOrder="asc"
         />
       )}
       <OutlinedButton
         onClick={openCreateDialog}
-        text={"Crear ruta"}
+        text={t("buttons:createRoute")}
         icon={
           <AddOutlinedIcon
             style={{ paddingLeft: "5px", width: "20px" }}
@@ -92,7 +94,9 @@ export const Home = () => {
         }}
       />
       <Grid sx={{ pt: 2 }}>
-        <Typography color="text.primary">Rutas disponibles</Typography>
+        <Typography color="text.primary">
+          {t("general:yourRoutesText")}
+        </Typography>
       </Grid>
       {futureRoutes.length > 0 ? (
         futureRoutes

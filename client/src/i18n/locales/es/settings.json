@@ -1,0 +1,22 @@
+{
+  "language": "Idioma",
+  "theme": "Tema",
+  "changePassword": "Cambiar contraseña",
+  "deleteAccount": "Eliminar cuenta",
+  "deleteAccountMessage": "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?",
+  "deleteAccountTitle": "Eliminar cuenta",
+
+  "actions": {
+    "changePassword": "Modificar contraseña",
+    "deleteAccount": "Eliminar cuenta",
+    "editAccount": "Modificar perfil",
+    "addMotorbike": "Mis motos",
+    "addRoute": "Mis rutas",
+    "changeSettings": "Ajustes",
+    "chatbot": "Chat bot",
+    "privacy": "Política de privacidad",
+    "logout": "Log out",
+    "language": "Idioma",
+    "theme": "Tema"
+  }
+}

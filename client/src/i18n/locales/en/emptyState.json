@@ -1,0 +1,6 @@
+{
+  "emptyStateNoMotorbike": "You have not added any motorcycles yet.",
+  "emptyStateNoRoute": "You have not yet created a route.",
+  "emptyStateNoChat": "You have not joined any route yet",
+  "emptyState": "No route available."
+}

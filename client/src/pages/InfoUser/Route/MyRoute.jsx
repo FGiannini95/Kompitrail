@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 import { Typography, IconButton, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -35,6 +36,7 @@ export const MyRoute = () => {
     loading,
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
+  const { t } = useTranslation(["buttons", "general"]);
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -85,7 +87,7 @@ export const MyRoute = () => {
           />
         </IconButton>
         <Typography variant="h6" color="text.primary">
-          Mis rutas
+          {t("general:routesTitle")}
         </Typography>
       </Grid>
       <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
@@ -112,7 +114,7 @@ export const MyRoute = () => {
         )}
         <OutlinedButton
           onClick={openCreateDialog}
-          text={"Crear ruta"}
+          text={t("buttons:createRoute")}
           icon={
             <AddOutlinedIcon
               style={{ paddingLeft: "5px", width: "20px" }}

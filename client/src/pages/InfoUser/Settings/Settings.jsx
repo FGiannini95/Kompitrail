@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Box, Typography, IconButton, List } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -20,6 +21,7 @@ import { useConfirmationDialog } from "../../../context/ConfirmationDialogContex
 // Components
 import { SettingsRow } from "./SettingsRow/SettingsRow";
 import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
+import { ChangeLanguageDialog } from "./ChangeLanguageDialog/ChangeLanguageDialog";
 
 function Section({ title, children }) {
   return (
@@ -41,12 +43,15 @@ function Section({ title, children }) {
     </Box>
   );
 }
-export const Settings = ({ toggleMode, mode }) => {
+export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
   const navigate = useNavigate();
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const tokenLocalStorage = getLocalStorage("token");
   const { openDialog } = useConfirmationDialog();
   const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
+  const [isLanguageDialogOpen, setIsLanguageDialogOpen] = useState(false);
+
+  const { t } = useTranslation("settings");
 
   const deleteProfile = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -81,6 +86,9 @@ export const Settings = ({ toggleMode, mode }) => {
   const handleOpenThemeDialog = () => setIsThemeDialogOpen(true);
   const handleCloseThemeDialog = () => setIsThemeDialogOpen(false);
 
+  const handleOpenLanguageDialog = () => setIsLanguageDialogOpen(true);
+  const handleCloseLanguageDialog = () => setIsLanguageDialogOpen(false);
+
   return (
     <Grid container direction="column" spacing={2}>
       {/* Header */}
@@ -94,15 +102,12 @@ export const Settings = ({ toggleMode, mode }) => {
           />
         </IconButton>
         <Typography variant="h6" color="text.primary">
-          Ajustes
+          {t("title")}
         </Typography>
       </Grid>
 
       <Section>
-        <SettingsRow
-          action="language"
-          onClick={() => navigate(RoutesString.language)}
-        />
+        <SettingsRow action="language" onClick={handleOpenLanguageDialog} />
         <SettingsRow action="theme" onClick={handleOpenThemeDialog} />
         <SettingsRow
           action="changePassword"
@@ -116,6 +121,13 @@ export const Settings = ({ toggleMode, mode }) => {
         onClose={handleCloseThemeDialog}
         onToggle={toggleMode}
         currentMode={mode}
+      />
+
+      <ChangeLanguageDialog
+        open={isLanguageDialogOpen}
+        onClose={handleCloseLanguageDialog}
+        language={language}
+        changeLanguage={changeLanguage}
       />
     </Grid>
   );

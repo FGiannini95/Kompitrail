@@ -1,0 +1,22 @@
+{
+  "title": "Impostazioni",
+  "language": "Lingua",
+  "theme": "Tema",
+  "changePassword": "Modificare la password",
+  "deleteAccount": "Elliminare l'account",
+  "deleteAccountMessage": "Questa azione è irreversibile, sei sicuro di voler elliminare il tuo account?",
+  "deleteAccountTitle": "Elliminare l'account",
+  "actions": {
+    "changePassword": "Modifica password",
+    "deleteAccount": "Ellimina l'account",
+    "editAccount": "Modifica profilo",
+    "addMotorbike": "Le mie moto",
+    "addRoute": "I miei percorsi",
+    "changeSettings": "Impostazioni",
+    "chatbot": "Chat bot",
+    "privacy": "Informativa sulla privacy",
+    "logout": "Disconnettersi",
+    "language": "Lingua",
+    "theme": "Tema"
+  }
+}
