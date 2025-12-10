@@ -1,4 +1,6 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
+
 import { Autocomplete, TextField } from "@mui/material";
 
 // To understand better how it works
@@ -23,6 +25,8 @@ export const FormAutocomplete = ({
   disablePortal = true,
   ...autocompleteProps
 }) => {
+  const { t } = useTranslation("errors");
+
   const current = form?.[name] ?? (multiple ? [] : "");
 
   const getLabel = (opt) => opt?.[optionLabelKey] ?? "";
@@ -60,6 +64,9 @@ export const FormAutocomplete = ({
     }
   };
 
+  const errorKey = errors?.[name];
+  const helperText = errorKey ? t(errorKey) : "";
+
   return (
     <Autocomplete
       options={options}
@@ -79,8 +86,8 @@ export const FormAutocomplete = ({
         <TextField
           {...params}
           label={label}
-          error={!!errors?.[name]}
-          helperText={errors?.[name] ?? ""}
+          error={!!errorKey}
+          helperText={helperText}
           inputProps={{ ...params.inputProps, readOnly: readOnly }}
         />
       )}

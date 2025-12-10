@@ -1,0 +1,17 @@
+{
+  "motorbike": {
+    "brandRequired": "È necessario inserire un marchio",
+    "modelRequired": "È necessario inserire un modello"
+  },
+  "route": {
+    "startingPointRequired": "Punto di partenza richiesto",
+    "endingPointRequired": "Punto di arrivo richiesto",
+    "dateRequired": "Data richiesta",
+    "distanceRequired": "Distanza richiesta",
+    "levelRequired": "Livello richiesto",
+    "estimatedTimeRequired": "Durata richiesta",
+    "maxParticipantsRequired": "Nº di piloti richiesti",
+    "motorbikeTypeRequired": "Moto idonee richieste",
+    "descriptionRequired": "Descrizione richiesta"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "motorbike": {
+    "brandRequired": "You have to insert a mark",
+    "modelRequired": "You have to insert a model"
+  },
+  "route": {
+    "startingPointRequired": "Starting point required",
+    "endingPointRequired": "Arrival point required",
+    "dateRequired": "Date required",
+    "distanceRequired": "Distance required",
+    "levelRequired": "Level required",
+    "estimatedTimeRequired": "Duration required ",
+    "maxParticipantsRequired": "No. of pilots required",
+    "motorbikeTypeRequired": "Suitable motorbikes required",
+    "descriptionRequired": "Description required"
+  }
+}

@@ -27,11 +27,14 @@ const initialValue = {
 
 export const MotorbikeCreateDialog = () => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
-  const [msgError, setMsgError] = useState("");
+  const [errors, setErrors] = useState({
+    brand: "",
+    model: "",
+  });
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createMotorbike, dialog, closeDialog } = useMotorbikes();
-  const { t } = useTranslation(["dialogs", "forms", "buttons"]);
+  const { t } = useTranslation(["dialogs", "forms", "buttons", "errors"]);
 
   const isOpen = dialog.isOpen && dialog.mode === "create";
 
@@ -40,6 +43,11 @@ export const MotorbikeCreateDialog = () => {
     setCreateOneMotorbike((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+    // Reset error for this field
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
     }));
   };
 
@@ -54,20 +62,32 @@ export const MotorbikeCreateDialog = () => {
   const cleanDialog = () => {
     closeDialog();
     setCreateOneMotorbike(initialValue);
-    setMsgError("");
+    setErrors({ brand: "", model: "" });
   };
 
   const handleConfirm = (e) => {
     e.preventDefault();
+
+    // Validate all fields
+    const newErrors = {
+      brand: "",
+      model: "",
+    };
+
     // According to the ddbb, the brand is mandatory
     if (!createOneMotorbike.brand) {
-      setMsgError("Tienes que insertar una marca");
-      return;
+      newErrors.brand = t("errors:motorbike.brandRequired");
     }
     if (!createOneMotorbike.model) {
-      setMsgError("Tienes que insertar un modelo");
+      newErrors.model = t("errors:motorbike.modelRequired");
+    }
+
+    // If there are errors, set them and stop
+    if (newErrors.brand || newErrors.model) {
+      setErrors(newErrors);
       return;
     }
+
     // We use this interface in order to pass data throught the HTTP protocol
     const newFormData = new FormData();
     // The append method add a new field to the interface
@@ -125,8 +145,8 @@ export const MotorbikeCreateDialog = () => {
           name="brand"
           value={createOneMotorbike.brand}
           onChange={handleChange}
-          error={!!msgError}
-          helperText={msgError}
+          error={!!errors.brand}
+          helperText={errors.brand}
         />
         <TextField
           label={t("forms:modelLabel")}
@@ -135,8 +155,8 @@ export const MotorbikeCreateDialog = () => {
           name="model"
           value={createOneMotorbike.model}
           onChange={handleChange}
-          error={!!msgError}
-          helperText={msgError}
+          error={!!errors.model}
+          helperText={errors.model}
         />
       </DialogContent>
       <DialogActions>
