@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   Dialog,
@@ -26,6 +27,7 @@ export const ConfirmationDialogProvider = ({ children }) => {
     message: "",
     onConfirm: null,
   });
+  const { t } = useTranslation("dialogs");
 
   const openDialog = useCallback(({ title, message, onConfirm }) => {
     setConfig({ title, message, onConfirm });
@@ -62,10 +64,10 @@ export const ConfirmationDialogProvider = ({ children }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDialog} color="error">
-            Cancelar
+            {t("buttons:cancel")}
           </Button>
           <Button color="success" onClick={handleConfirm}>
-            Confirmar
+            {t("buttons:confirmar")}
           </Button>
         </DialogActions>
       </Dialog>

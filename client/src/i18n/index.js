@@ -7,6 +7,7 @@ import generalEs from "./locales/es/general.json";
 import emptyStateEs from "./locales/es/emptyState.json";
 import formseEs from "./locales/es/forms.json";
 import dialogsEs from "./locales/es/dialogs.json";
+import snackbarsEs from "./locales/es/snackbars.json";
 
 import settingsEn from "./locales/en/settings.json";
 import buttonsEn from "./locales/en/buttons.json";
@@ -14,6 +15,7 @@ import generalEn from "./locales/en/general.json";
 import emptyStateEn from "./locales/en/emptyState.json";
 import formseEn from "./locales/en/forms.json";
 import dialogsEn from "./locales/en/dialogs.json";
+import snackbarsEn from "./locales/en/snackbars.json";
 
 import settingsIt from "./locales/it/settings.json";
 import buttonsIt from "./locales/it/buttons.json";
@@ -21,6 +23,7 @@ import generalIt from "./locales/it/general.json";
 import emptyStateIt from "./locales/it/emptyState.json";
 import formseIt from "./locales/It/forms.json";
 import dialogsIt from "./locales/it/dialogs.json";
+import snackbarsIt from "./locales/it/snackbars.json";
 
 // i18n global configuration
 i18n.use(initReactI18next).init({
@@ -32,6 +35,7 @@ i18n.use(initReactI18next).init({
       emptyState: emptyStateEs,
       forms: formseEs,
       dialogs: dialogsEs,
+      snackbars: snackbarsEs,
     },
     en: {
       settings: settingsEn,
@@ -40,6 +44,7 @@ i18n.use(initReactI18next).init({
       emptyState: emptyStateEn,
       forms: formseEn,
       dialogs: dialogsEn,
+      snackbars: snackbarsEn,
     },
     it: {
       settings: settingsIt,
@@ -48,12 +53,21 @@ i18n.use(initReactI18next).init({
       emptyState: emptyStateIt,
       forms: formseIt,
       dialogs: dialogsIt,
+      snackbars: snackbarsIt,
     },
   },
 
   lng: "es",
   fallbackLng: "es",
-  ns: ["settings", "buttons", "general", "emptyState", "forms", "dialogs"],
+  ns: [
+    "settings",
+    "buttons",
+    "general",
+    "emptyState",
+    "forms",
+    "dialogs",
+    "snackbars",
+  ],
   defaultNS: "settings",
   interpolation: {
     escapeValue: false,

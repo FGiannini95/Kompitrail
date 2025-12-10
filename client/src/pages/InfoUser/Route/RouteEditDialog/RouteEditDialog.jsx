@@ -41,7 +41,7 @@ export const RouteEditDialog = () => {
 
   const isOpen = dialog.isOpen && dialog.mode === "edit";
   const route_id = dialog.selectedId;
-  const { t } = useTranslation(["dialogs", "forms", "dialogs"]);
+  const { t } = useTranslation(["dialogs", "forms", "snackbars"]);
 
   useEffect(() => {
     if (isOpen && route_id) {
@@ -87,13 +87,13 @@ export const RouteEditDialog = () => {
       .then(({ data }) => {
         const update = Array.isArray(data) ? data[0] : data;
         updateRoute(update);
-        showSnackbar("Ruta actualizada con éxito");
+        showSnackbar(t("snackbars:routeUpdatedSuccess"));
         closeDialog();
         setErrors({});
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al actualizar la ruta", "error");
+        showSnackbar(t("snackbars:routeUpdatedError"), "error");
       });
   };
 

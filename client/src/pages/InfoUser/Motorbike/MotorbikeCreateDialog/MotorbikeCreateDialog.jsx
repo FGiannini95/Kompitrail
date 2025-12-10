@@ -88,12 +88,12 @@ export const MotorbikeCreateDialog = () => {
       .post(`${MOTORBIKES_URL}/createmotorbike`, newFormData)
       .then(({ data }) => {
         createMotorbike(data);
-        showSnackbar("Moto añadida con éxito");
+        showSnackbar(t("snackbars:motorbikeCreatedSuccess"));
         cleanDialog();
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al añadir la moto", "error");
+        showSnackbar(t("snackbars:motorbikeCreatedError"), "error");
       });
   };
 

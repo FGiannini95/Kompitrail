@@ -41,7 +41,7 @@ export const RouteCreateDialog = () => {
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createRoute, dialog, closeDialog } = useRoutes();
-  const { t } = useTranslation(["dialogs", "forms", "buttons"]);
+  const { t } = useTranslation(["dialogs", "forms", "buttons", "snackbars"]);
 
   const navigate = useNavigate();
   const isOpen = dialog.isOpen && dialog.mode === "create";
@@ -84,13 +84,13 @@ export const RouteCreateDialog = () => {
       .post(`${ROUTES_URL}/createroute`, newFormData)
       .then(({ data }) => {
         createRoute(data);
-        showSnackbar("Ruata añadida con éxito");
+        showSnackbar(t("snackbars:routeCreatedSuccess"));
         navigate(RoutesString.home);
         cleanDialog();
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al añadir la ruta", "error");
+        showSnackbar(t("snackbars:routeCreatedError"), "error");
       });
   };
 

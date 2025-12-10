@@ -32,7 +32,7 @@ export const MotorbikeEditDialog = () => {
     dialog,
     closeDialog,
   } = useMotorbikes();
-  const { t } = useTranslation(["forms", "buttons", "dialogs"]);
+  const { t } = useTranslation(["forms", "buttons", "dialogs", "snackbars"]);
 
   const isOpen = dialog.isOpen && dialog.mode === "edit";
   const motorbike_id = dialog.selectedId;
@@ -104,12 +104,12 @@ export const MotorbikeEditDialog = () => {
       .then(({ data }) => {
         const update = Array.isArray(data) ? data[0] : data;
         updateMotorbike(update);
-        showSnackbar("Moto actualizada con éxito");
+        showSnackbar(t("snackbars:motorbikeUpdatedSuccess"));
         closeDialog();
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al actualizar la moto", "error");
+        showSnackbar(t("snackbars:motorbikeUpdatedError"), "error");
       });
   };
 

@@ -42,7 +42,7 @@ export const Logout = () => {
     <Dialog open={openDialog} onClose={handleCloseDialog}>
       <DialogTitle>{t("dialogs:logoutTitle")}</DialogTitle>
       <DialogContent>
-        <Typography>¿Estás seguro de querer cerrar sesión?</Typography>
+        <Typography>{t("dialogs:logoutText")}</Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialog} color="error">

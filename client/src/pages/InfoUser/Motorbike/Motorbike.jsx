@@ -42,7 +42,7 @@ export const Motorbike = () => {
     openDialog: openCreateEditDialog,
     loading,
   } = useMotorbikes();
-  const { t } = useTranslation(["buttons", "general"]);
+  const { t } = useTranslation(["buttons", "general", "dialogs", "snackbars"]);
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -54,18 +54,18 @@ export const Motorbike = () => {
       .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
       .then(() => {
         deleteMotorbike(motorbike_id);
-        showSnackbar("Moto eliminada con éxito");
+        showSnackbar(t("snackbars:motorbikeDeleteSuccess"));
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al eliminar la moto", "error");
+        showSnackbar(t("snackbars:motorbikeDeleteError"), "error");
       });
   };
 
   const handleOpenDeleteDialog = (motorbike_id) => {
     openDialog({
-      title: "Eliminar moto",
-      message: "¿Quieres eliminar la moto de tu perfil?",
+      title: t("dialogs:motorbikeDeleteTitle"),
+      message: t("dialogs:motorbikeDeleteText"),
       onConfirm: () => handleDeleteMotorbike(motorbike_id),
     });
   };
