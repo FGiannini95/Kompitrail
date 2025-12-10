@@ -2,5 +2,7 @@
   "emptyStateNoMotorbike": "Nessuna moto aggiunta.",
   "emptyStateNoRoute": "Nessun percorso creato.",
   "emptyStateNoChat": "Non ti sei ancora unito a nessun percorso.",
-  "emptyState": "Nessun percorso disponibile."
+  "emptyState": "Nessun percorso disponibile.",
+  "carrouselPlaceholder": "Non ci sono ancora percorsi salvati. Iscriviti o creane uno.",
+  "frequentCompanionPlaceholder": "Non hai ancora nessun compagno di viaggio."
 }

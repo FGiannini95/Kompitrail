@@ -2,5 +2,10 @@
   "createRoute": "Crear ruta",
   "editProfile": "Modificar",
   "shareProfile": "Compartir",
-  "createMotorbike": "Añadir moto"
+  "createMotorbike": "Añadir moto",
+  "register": "Registro",
+  "login": "Login",
+  "createProfile": "Crear",
+  "cancel": "Cancelar",
+  "accept": "Acceptar"
 }

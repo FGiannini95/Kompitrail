@@ -1,7 +1,7 @@
 {
   "language": "Idioma",
   "theme": "Tema",
-  "changePassword": "Cambiar contraseña",
+  "changePassword": "Modificar contraseña",
   "deleteAccount": "Eliminar cuenta",
   "deleteAccountMessage": "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?",
   "deleteAccountTitle": "Eliminar cuenta",

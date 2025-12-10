@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import {
-  Box,
   Checkbox,
   Typography,
   Button,
@@ -41,6 +41,7 @@ export const RouteCreateDialog = () => {
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createRoute, dialog, closeDialog } = useRoutes();
+  const { t } = useTranslation("forms");
 
   const navigate = useNavigate();
   const isOpen = dialog.isOpen && dialog.mode === "create";
@@ -112,7 +113,7 @@ export const RouteCreateDialog = () => {
         <Grid container spacing={2}>
           <Grid size={12}>
             <FormTextfield
-              label="Salida"
+              label={t("forms:startingPointLabel")}
               name="starting_point"
               errors={errors}
               setErrors={setErrors}
@@ -122,7 +123,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={12}>
             <FormTextfield
-              label="Llegada"
+              label={t("forms:endingPointLabel")}
               name="ending_point"
               errors={errors}
               setErrors={setErrors}
@@ -132,7 +133,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={12}>
             <FormDataPicker
-              label="Fecha"
+              label={t("forms:dateLabel")}
               name="date"
               errors={errors}
               setErrors={setErrors}
@@ -142,7 +143,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={6}>
             <FormTextfield
-              label="Km"
+              label={t("forms:kmLabel")}
               name="distance"
               type="number"
               preventInvalidkey
@@ -154,7 +155,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={6}>
             <FormTextfield
-              label="Duración"
+              label={t("forms:estimatedTimeLable")}
               name="estimated_time"
               type="number"
               errors={errors}
@@ -165,8 +166,8 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={6}>
             <FormAutocomplete
+              label={t("forms:levelLabel")}
               name="level"
-              label="Nivel"
               errors={errors}
               setErrors={setErrors}
               form={createOneRoute}
@@ -180,7 +181,7 @@ export const RouteCreateDialog = () => {
           <Grid size={6}>
             <FormAutocomplete
               name="max_participants"
-              label="Pilotos"
+              label={t("forms:maxParticipantsLabel")}
               errors={errors}
               setErrors={setErrors}
               form={createOneRoute}
@@ -193,7 +194,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={12}>
             <FormAutocomplete
-              label="Motos aptas"
+              label={t("forms:motorbikeTypeLabel")}
               name="suitable_motorbike_type"
               errors={errors}
               setErrors={setErrors}
@@ -229,7 +230,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={12} sx={{ mb: 5 }}>
             <FormTextfield
-              label="Descripción"
+              label={t("forms:descriptionLabel")}
               name="route_description"
               errors={errors}
               setErrors={setErrors}

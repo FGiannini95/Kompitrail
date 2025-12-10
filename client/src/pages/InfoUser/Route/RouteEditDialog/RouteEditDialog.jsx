@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import {
-  Box,
   Button,
   Checkbox,
   Dialog,
@@ -41,6 +41,7 @@ export const RouteEditDialog = () => {
 
   const isOpen = dialog.isOpen && dialog.mode === "edit";
   const route_id = dialog.selectedId;
+  const { t } = useTranslation("forms");
 
   useEffect(() => {
     if (isOpen && route_id) {
@@ -115,7 +116,7 @@ export const RouteEditDialog = () => {
         <Grid container spacing={2}>
           <Grid size={12}>
             <FormTextfield
-              label="Salida"
+              label={t("forms:startingPointLabel")}
               name="starting_point"
               errors={errors}
               setErrors={setErrors}
@@ -125,7 +126,7 @@ export const RouteEditDialog = () => {
           </Grid>
           <Grid size={12}>
             <FormTextfield
-              label="Llegada"
+              label={t("forms:endingPointLabel")}
               name="ending_point"
               errors={errors}
               setErrors={setErrors}
@@ -135,7 +136,7 @@ export const RouteEditDialog = () => {
           </Grid>
           <Grid size={12}>
             <FormDataPicker
-              label="Fecha"
+              label={t("forms:dateLabel")}
               name="date"
               errors={errors}
               setErrors={setErrors}
@@ -145,7 +146,7 @@ export const RouteEditDialog = () => {
           </Grid>
           <Grid size={6}>
             <FormTextfield
-              label="Km"
+              label={t("forms:kmLabel")}
               name="distance"
               type="number"
               preventInvalidkey
@@ -157,7 +158,7 @@ export const RouteEditDialog = () => {
           </Grid>
           <Grid size={6}>
             <FormTextfield
-              label="Duración"
+              label={t("forms:estimatedTimeLable")}
               name="estimated_time"
               type="number"
               errors={errors}
@@ -169,7 +170,7 @@ export const RouteEditDialog = () => {
           <Grid size={6}>
             <FormAutocomplete
               name="level"
-              label="Nivel"
+              label={t("forms:levelLabel")}
               errors={errors}
               setErrors={setErrors}
               form={editRoute}
@@ -183,7 +184,7 @@ export const RouteEditDialog = () => {
           <Grid size={6}>
             <FormAutocomplete
               name="max_participants"
-              label="Pilotos"
+              label={t("forms:maxParticipantsLabel")}
               errors={errors}
               setErrors={setErrors}
               form={editRoute}
@@ -201,7 +202,7 @@ export const RouteEditDialog = () => {
               errors={errors}
               setErrors={setErrors}
               name="suitable_motorbike_type"
-              label="Motos aptas"
+              label={t("forms:motorbikeTypeLabel")}
               options={MOTORBIKE_TYPES}
               optionLabelKey="name"
               optionValueKey="name"
@@ -233,7 +234,7 @@ export const RouteEditDialog = () => {
           </Grid>
           <Grid size={12} sx={{ mb: 5 }}>
             <FormTextfield
-              label="Descripción"
+              label={t("forms:descriptionLabel")}
               name="route_description"
               multiline
               maxLength={250}

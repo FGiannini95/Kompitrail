@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import {
   TextField,
@@ -31,6 +32,7 @@ export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
   const [redirectRequested, setRedirectRequested] = useState(false);
+  const { t } = useTranslation(["buttons", "general", "forms"]);
 
   const navigate = useNavigate();
   const { buildUrl } = useRedirectParam();
@@ -101,7 +103,10 @@ export const Register = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={2} justifyContent="center">
                 <Grid size={12} align="center">
-                  <Typography variant="h5">Registro</Typography>
+                  <Typography variant="h5">
+                    {" "}
+                    {t("general:registerTitle")}
+                  </Typography>
                 </Grid>
                 <Grid size={12}>
                   <TextField
@@ -113,7 +118,7 @@ export const Register = () => {
                       },
                       setValueAs: (v) => capitalizeFirstLetter(v),
                     })}
-                    label="Nombre"
+                    label={t("forms:nameLabel")}
                     fullWidth
                     error={!!errors.name}
                     helperText={errors.name?.message}
@@ -130,7 +135,7 @@ export const Register = () => {
                       },
                       setValueAs: (v) => capitalizeFirstLetter(v),
                     })}
-                    label="Apellidos"
+                    label={t("forms:lastNameLabel")}
                     variant="outlined"
                     fullWidth
                     error={!!errors.lastname}
@@ -147,7 +152,7 @@ export const Register = () => {
                         message: "Ingrese un correo válido",
                       },
                     })}
-                    label="Correo"
+                    label={t("forms:emailLabel")}
                     variant="outlined"
                     fullWidth
                     error={!!errors.email}
@@ -164,7 +169,7 @@ export const Register = () => {
                         message: "La contraseña no es suficientemente fuerte",
                       },
                     })}
-                    label="Contraseña"
+                    label={t("forms:passwordLabel")}
                     type={showPassword ? "text" : "password"}
                     variant="outlined"
                     fullWidth
@@ -231,7 +236,7 @@ export const Register = () => {
                       fullWidth
                       onClick={handleCancel}
                     >
-                      CANCELAR
+                      {t("buttons:cancel")}
                     </Button>
                   </Grid>
                   <Grid xs={6}>
@@ -249,7 +254,7 @@ export const Register = () => {
                         },
                       })}
                     >
-                      {isSubmitting ? "Cargando..." : "Crear"}
+                      {t("buttons:createProfile")}
                     </Button>
                   </Grid>
                 </Grid>

@@ -11,5 +11,8 @@
   "editProfilTitle": "Modifica profilo",
   "motorbikeTitle": "Le mie moto",
   "routesTitle": "I miei percorsi",
-  "settingsTitle": "Regolazioni"
+  "settingsTitle": "Regolazioni",
+  "loginTitle": "Accesso",
+  "registerTitle": "Registro",
+  "landingTitle": "Benvenuti a Kompitrail"
 }

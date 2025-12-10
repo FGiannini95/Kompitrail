@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 import { Box, IconButton, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -25,6 +26,7 @@ export const EditUser = () => {
     handleConfirm,
     handleCancel,
   } = useEditUserForm();
+  const { t } = useTranslation(["general", "forms"]);
 
   if (isLoading) {
     return <Loading />;
@@ -83,7 +85,7 @@ export const EditUser = () => {
           />
         </IconButton>
         <Typography variant="h6" color="text.primary">
-          Modificar perfil
+          {t("general:editProfilTitle")}
         </Typography>
         <IconButton
           variant="text"
@@ -182,7 +184,7 @@ export const EditUser = () => {
       {/* Name & lastname section */}
       <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
         <TextField
-          label="Nombre"
+          label={t("forms:nameLabel")}
           name="name"
           variant="outlined"
           fullWidth
@@ -192,7 +194,7 @@ export const EditUser = () => {
       </Grid>
       <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
         <TextField
-          label="Apellidos"
+          label={t("forms:lastNameLabel")}
           name="lastname"
           variant="outlined"
           fullWidth

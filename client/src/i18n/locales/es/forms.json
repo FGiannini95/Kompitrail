@@ -1,0 +1,20 @@
+{
+  "nameLabel": "Nombre",
+  "lastNameLabel": "Apellidos",
+  "emailLabel": "Correo",
+  "passwordLabel": "Contraseña",
+  "brandLabel": "Marca",
+  "modelLabel": "Modelo",
+  "pictureLabel": "Foto",
+  "newPassLabel": "Nueva contraseña",
+  "confirmPassLabel": "Confirmar contraseña",
+  "startingPointLabel": "Salida",
+  "endingPointLabel": "Llegada",
+  "dateLabel": "Fecha",
+  "kmLabel": "Km",
+  "estimatedTimeLable": "Duración",
+  "levelLabel": "Nivel",
+  "maxParticipantsLabel": "Pilotos",
+  "motorbikeTypeLabel": "Motos aptas",
+  "descriptionLabel": "Descripción"
+}

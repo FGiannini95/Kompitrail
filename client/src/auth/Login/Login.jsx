@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import {
   TextField,
@@ -46,6 +47,7 @@ export const Login = () => {
   const [openRestorePasswordDialog, setOpenRestorePasswordDialog] =
     useState(false);
   const [redirectRequested, setRedirectRequested] = useState(false);
+  const { t } = useTranslation(["buttons", "general", "forms"]);
 
   const navigate = useNavigate();
   const { buildUrl } = useRedirectParam();
@@ -148,12 +150,15 @@ export const Login = () => {
                 alignItems="stretch"
               >
                 <Grid size={12}>
-                  <Typography variant="h5">Login</Typography>
+                  <Typography variant="h5">
+                    {" "}
+                    {t("general:loginTitle")}
+                  </Typography>
                 </Grid>
 
                 <Grid size={12}>
                   <TextField
-                    label="Email"
+                    label={t("forms:emailLabel")}
                     name="email"
                     fullWidth
                     onChange={handleChange}
@@ -170,7 +175,7 @@ export const Login = () => {
 
                 <Grid size={12}>
                   <TextField
-                    label="Contraseña"
+                    label={t("forms:passwordLabel")}
                     name="password"
                     type={showPassword ? "text" : "password"}
                     fullWidth
@@ -242,7 +247,7 @@ export const Login = () => {
                       fullWidth
                       onClick={handleCancel}
                     >
-                      CANCELAR
+                      {t("buttons:cancel")}
                     </Button>
                   </Grid>
                   <Grid xs={6}>
@@ -259,7 +264,7 @@ export const Login = () => {
                         },
                       })}
                     >
-                      ACEPTAR
+                      {t("buttons:accept")}
                     </Button>
                   </Grid>
                 </Grid>

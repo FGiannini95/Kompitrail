@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Button, Box, Typography } from "@mui/material";
 
@@ -7,6 +8,8 @@ import { RoutesString } from "../../routes/routes";
 import { useRedirectParam } from "../../hooks/useRedirectParam";
 
 export const LandingPage = () => {
+  const { t } = useTranslation(["buttons", "general"]);
+
   const navigate = useNavigate();
   const { navigateWithRedirect } = useRedirectParam();
 
@@ -25,7 +28,7 @@ export const LandingPage = () => {
     >
       <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
         <Typography variant="h5" fontWeight="bold">
-          Bienvenid@ a Kompitrail
+          {t("general:landingTitle")}
         </Typography>
         <Typography paddingTop={4}>
           Conéctate con otros moteros: comparte tus rutas, planifica aventuras y
@@ -57,7 +60,7 @@ export const LandingPage = () => {
               },
             })}
           >
-            Registro
+            {t("buttons:register")}
           </Button>
           <Button
             type="button"
@@ -71,7 +74,7 @@ export const LandingPage = () => {
             onClick={handleLogin}
           >
             {" "}
-            Log in
+            {t("buttons:login")}
           </Button>
         </Box>
       </Box>

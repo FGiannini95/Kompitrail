@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 import { Box, Button, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -25,6 +26,7 @@ export const EditPassword = () => {
   const [, setIsPasswordSelected] = useState(false);
   const [error, setError] = useState("");
   const tokenLocalStorage = getLocalStorage("token");
+  const { t } = useTranslation(["settings", "forms"]);
 
   const navigate = useNavigate();
 
@@ -119,7 +121,7 @@ export const EditPassword = () => {
           />
         </IconButton>
         <Typography variant="h6" color="text.primary">
-          Modificar contraseña
+          {t("settings:changePassword")}
         </Typography>
         <Button variant="text" disabled={!isValid} onClick={handleSave}>
           <SaveOutlinedIcon aria-hidden />
@@ -133,7 +135,7 @@ export const EditPassword = () => {
         </Typography>
         <Box sx={{ mb: 2 }}>
           <TextField
-            label="Nueva contraseña"
+            label={t("forms:newPassLabel")}
             name="password"
             type={showPassword ? "text" : "password"}
             fullWidth
@@ -166,7 +168,7 @@ export const EditPassword = () => {
         </Box>
         <Box item xs={12}>
           <TextField
-            label="Confirmar contraseña"
+            label={t("forms:confirmPassLabel")}
             name="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
             fullWidth
