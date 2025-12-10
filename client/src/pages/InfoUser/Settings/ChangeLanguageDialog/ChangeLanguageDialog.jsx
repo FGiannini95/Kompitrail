@@ -49,7 +49,7 @@ export const ChangeLanguageDialog = ({
   language,
   changeLanguage,
 }) => {
-  const { t } = useTranslation("dialogs");
+  const { t } = useTranslation(["dialogs", "buttons"]);
 
   // Handle language selection
   const handleSelectLanguage = (lang) => {
@@ -120,7 +120,7 @@ export const ChangeLanguageDialog = ({
       <DialogActions>
         <Button onClick={onClose} color="text.primary">
           {" "}
-          {t("dialogs:closeActionButton")}
+          {t("buttons:close")}
         </Button>
       </DialogActions>
     </Dialog>

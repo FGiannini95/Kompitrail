@@ -19,7 +19,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 export const ModeToggleDialog = ({ open, onClose, onToggle, currentMode }) => {
   const isDark = currentMode === "dark";
   const themeLabel = isDark ? "Modo oscuro" : "Modo claro";
-  const { t } = useTranslation("dialogs");
+  const { t } = useTranslation(["dialogs", "buttons"]);
 
   return (
     <Dialog
@@ -66,7 +66,7 @@ export const ModeToggleDialog = ({ open, onClose, onToggle, currentMode }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="text.primary">
-          {t("dialogs:closeActionButton")}
+          {t("buttons:close")}
         </Button>
       </DialogActions>
     </Dialog>

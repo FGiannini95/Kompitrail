@@ -31,7 +31,7 @@ export const MotorbikeCreateDialog = () => {
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createMotorbike, dialog, closeDialog } = useMotorbikes();
-  const { t } = useTranslation(["dialogs", "forms"]);
+  const { t } = useTranslation(["dialogs", "forms", "buttons"]);
 
   const isOpen = dialog.isOpen && dialog.mode === "create";
 
@@ -141,10 +141,10 @@ export const MotorbikeCreateDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">
-          {t("dialogs:cancelActionButton")}
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirm} color="success">
-          {t("dialogs:confirmActionButton")}
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>

@@ -32,7 +32,7 @@ export const MotorbikeEditDialog = () => {
     dialog,
     closeDialog,
   } = useMotorbikes();
-  const { t } = useTranslation("forms");
+  const { t } = useTranslation(["forms", "buttons", "dialogs"]);
 
   const isOpen = dialog.isOpen && dialog.mode === "edit";
   const motorbike_id = dialog.selectedId;
@@ -160,10 +160,10 @@ export const MotorbikeEditDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">
-          {t("dialogs:cancelActionButton")}
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirm} color="success">
-          {t("dialogs:confirmActionButton")}
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>

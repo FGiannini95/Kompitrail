@@ -19,7 +19,7 @@ export const Logout = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
-  const { t } = useTranslation("dialogs");
+  const { t } = useTranslation(["dialogs", "buttons"]);
 
   const logOut = () => {
     delLocalStorage("token");
@@ -46,10 +46,10 @@ export const Logout = () => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialog} color="error">
-          {t("dialogs:cancelActionButton")}
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirmation} color="success">
-          {t("dialogs:confirmActionButton")}
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>

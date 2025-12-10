@@ -41,7 +41,7 @@ export const RouteEditDialog = () => {
 
   const isOpen = dialog.isOpen && dialog.mode === "edit";
   const route_id = dialog.selectedId;
-  const { t } = useTranslation(["dialogs", "forms"]);
+  const { t } = useTranslation(["dialogs", "forms", "dialogs"]);
 
   useEffect(() => {
     if (isOpen && route_id) {
@@ -248,10 +248,10 @@ export const RouteEditDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">
-          {t("dialogs:cancelActionButton")}
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirm} color="success">
-          {t("dialogs:confirmActionButton")}
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>

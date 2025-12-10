@@ -41,7 +41,7 @@ export const RouteCreateDialog = () => {
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createRoute, dialog, closeDialog } = useRoutes();
-  const { t } = useTranslation(["dialogs", "forms"]);
+  const { t } = useTranslation(["dialogs", "forms", "buttons"]);
 
   const navigate = useNavigate();
   const isOpen = dialog.isOpen && dialog.mode === "create";
@@ -244,10 +244,10 @@ export const RouteCreateDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">
-          {t("dialogs:cancelActionButton")}
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirm} color="success">
-          {t("dialogs:confirmActionButton")}
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>
