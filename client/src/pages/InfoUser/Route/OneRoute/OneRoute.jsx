@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import {
   Button,
@@ -57,6 +58,7 @@ export const OneRoute = () => {
   });
   const { allRoutes, loadAllRoutes } = useRoutes();
   const navigate = useNavigate();
+  const { t } = useTranslation(["buttons", "oneRoute"]);
 
   const [fetched, setFetched] = useState(null);
 
@@ -205,7 +207,7 @@ export const OneRoute = () => {
     // Rute is finished
     if (isPastRoute) {
       return {
-        text: "Ruta finalizada",
+        text: t("buttons:pastRoute"),
         onClick: undefined,
         danger: false,
         disabled: true,
@@ -216,7 +218,7 @@ export const OneRoute = () => {
     // Inscription closed but rute still in progress
     if (isEnrollmentClosed) {
       return {
-        text: "Inscripción terminada",
+        text: t("buttons:enrollmentClosed"),
         onClick: undefined,
         danger: false,
         disabled: true,
@@ -226,7 +228,7 @@ export const OneRoute = () => {
 
     if (isOwner) {
       return {
-        text: "Eliminar ruta",
+        text: t("buttons:deleteRoute"),
         onClick: () => participantsSectionRef.current?.handleOpenDeleteDialog(),
         danger: true,
         disabled: false,
@@ -236,7 +238,7 @@ export const OneRoute = () => {
 
     if (isCurrentUserEnrolled) {
       return {
-        text: "Cancelar Inscripción",
+        text: t("buttons:cancelEnrollment"),
         onClick: () => participantsSectionRef.current?.handleOpenLeaveRoute(),
         danger: true,
         disabled: false,
@@ -246,7 +248,7 @@ export const OneRoute = () => {
 
     if (!isRouteFull && !isOwner && !isCurrentUserEnrolled) {
       return {
-        text: "Únete",
+        text: t("buttons:joinRoute"),
         onClick: () => participantsSectionRef.current?.handleJoin(),
         danger: false,
         disabled: false,
@@ -256,7 +258,7 @@ export const OneRoute = () => {
 
     if (isRouteFull && !isOwner && !isCurrentUserEnrolled) {
       return {
-        text: "Ruta completa",
+        text: t("buttons:fullRoute"),
         danger: false,
         disabled: true,
         show: true,
@@ -319,9 +321,15 @@ export const OneRoute = () => {
             spacing={2}
             sx={{ textAlign: "center", justifyContent: "center" }}
           >
-            <InfoItem label="Distancia" value={`${distance} km`} />
-            <InfoItem label="Duración" value={`${estimated_time} h`} />
-            <InfoItem label="Nivel" value={level} />
+            <InfoItem
+              label={t("oneRoute:info.kmLabel")}
+              value={`${distance} km`}
+            />
+            <InfoItem
+              label={t("oneRoute:info.estimatedTimeLable")}
+              value={`${estimated_time} h`}
+            />
+            <InfoItem label={t("oneRoute:info.levelLabel")} value={level} />
           </Grid>
         </CardContent>
       </Card>
@@ -341,8 +349,8 @@ export const OneRoute = () => {
             <NewReleasesOutlinedIcon fontSize="medium" aria-hidden />
           )}
           {is_verified === 0
-            ? "Ruta conocida — ya probada"
-            : "Ruta nueva — a la aventura"}
+            ? t("oneRoute:status.knownRoute")
+            : t("oneRoute:status.newRoute")}
         </Typography>
       </Stack>
 
@@ -381,7 +389,7 @@ export const OneRoute = () => {
       >
         <ContainedButton
           onClick={handleOpenCalendar}
-          text={"Calendario"}
+          text={t("oneRoute:calendar")}
           icon={
             <CalendarMonthIcon
               style={{ paddingLeft: "5px", width: "20px" }}
@@ -392,7 +400,7 @@ export const OneRoute = () => {
         />
 
         <OutlinedButton
-          text={"Chat"}
+          text={t("oneRoute:chat")}
           icon={
             <ChatIcon
               style={{ paddingLeft: "5px", width: "20px" }}
@@ -431,7 +439,7 @@ export const OneRoute = () => {
 
       <Stack sx={{ pl: 2 }}>
         <Typography sx={{ fontWeight: "bold" }} color="text.primary">
-          Información general
+          {t("oneRoute:info.generalInfoTitle")}
         </Typography>
         <Stack direction="row" spacing={0.75}>
           <Groups2OutlinedIcon
@@ -442,7 +450,9 @@ export const OneRoute = () => {
             })}
           />
           <Typography color="text.primary">
-            {`Max. ${max_participants} pilotos`}{" "}
+            {t("oneRoute:info.maxParticipantsLabel", {
+              count: max_participants,
+            })}
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
@@ -454,7 +464,9 @@ export const OneRoute = () => {
             })}
           />
           <Typography color="text.primary">
-            {`Motos aptas: ${suitable_motorbike_type}`}{" "}
+            {t("oneRoute:info.motorbikeTypeLabel", {
+              types: suitable_motorbike_type,
+            })}{" "}
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>

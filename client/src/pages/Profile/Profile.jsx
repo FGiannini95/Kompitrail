@@ -158,7 +158,7 @@ export const Profile = () => {
               }
             />
             <Tooltip
-              title="URL copiada"
+              title={t("general:urlText")}
               open={isCopied} // Display the tooltip only if isCopied is true
               disableInteractive // It doesn't appear with the interaction of the mouse
               arrow // Display the arrow

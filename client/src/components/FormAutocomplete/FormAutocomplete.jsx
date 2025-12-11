@@ -28,9 +28,12 @@ export const FormAutocomplete = ({
   const { t } = useTranslation("errors");
 
   const current = form?.[name] ?? (multiple ? [] : "");
+  const { getOptionLabel: customGetOptionLabel, ...restAutocompleteProps } =
+    autocompleteProps;
 
-  const getLabel = (opt) => opt?.[optionLabelKey] ?? "";
-
+  const getLabel = customGetOptionLabel
+    ? customGetOptionLabel
+    : (opt) => opt?.[optionLabelKey] ?? "";
   const isEqual = (a, b) => a?.[optionValueKey] === b?.[optionValueKey];
 
   // In Autocomplete, the value is not a string or boolean (except when freeSolo)
@@ -81,7 +84,7 @@ export const FormAutocomplete = ({
       isOptionEqualToValue={isEqual}
       getOptionLabel={getLabel}
       openOnFocus
-      {...autocompleteProps}
+      {...restAutocompleteProps}
       renderInput={(params) => (
         <TextField
           {...params}

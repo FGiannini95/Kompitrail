@@ -14,6 +14,12 @@
   "kmLabel": "Km",
   "estimatedTimeLable": "Duration",
   "levelLabel": "Level",
+  "level": {
+    "beginner": "Beginner",
+    "intermediate ": "Medium",
+    "advanced": "Advanced",
+    "expert": "Expert"
+  },
   "maxParticipantsLabel": "Pilots",
   "motorbikeTypeLabel": "Suitable motorbikes",
   "descriptionLabel": "Description",

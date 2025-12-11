@@ -22,5 +22,7 @@
   "haveAccountLoginText": "¿Ya tienes un perfil? ¡Haz el login <1>aquí</1>!",
   "noAccountRegisterText": "¿Aún no tienes un perfil? ¡Regístrate <1>aquí</1>!",
   "forgotPasswordText": "¿Has olvidado tu contraseña? Pincha <1>aquí</1>!",
-  "introLanding": "Conéctate con otros moteros: comparte tus rutas, planifica aventuras y disfruta del camino en compañía. Ya sea que busques compañeros para una escapada de fin de semana o quieras explorar nuevas rutas, nuestraapp te permite encontrar y unirte a moteros que comparten tu pasión. ¡No viajes solo, únete a la comunidad de Kompitrail y transforma cada viaje en una experiencia inolvidable!"
+  "introLanding": "Conéctate con otros moteros: comparte tus rutas, planifica aventuras y disfruta del camino en compañía. Ya sea que busques compañeros para una escapada de fin de semana o quieras explorar nuevas rutas, nuestraapp te permite encontrar y unirte a moteros que comparten tu pasión. ¡No viajes solo, únete a la comunidad de Kompitrail y transforma cada viaje en una experiencia inolvidable!",
+  "urlText": "Url copiada",
+  "plusAvatarText": "Únete"
 }

@@ -178,6 +178,7 @@ export const RouteEditDialog = () => {
               options={ROUTE_LEVELS}
               optionLabelKey="name"
               optionValueKey="name"
+              getOptionLabel={(opt) => t(`forms:level.${opt.name}`)}
               disablePortal
             />
           </Grid>

@@ -1,0 +1,20 @@
+{
+  "date": {
+    "dateLabel": "{{giorno della settimana}} {{date}} - {{ora}}",
+    "unavailable": "Data non disponibile"
+  },
+  "info": {
+    "kmLabel": "Distanza",
+    "estimatedTimeLable": "Durata",
+    "levelLabel": "Livello",
+    "generalInfoTitle": "Informazioni generali",
+    "maxParticipantsLabel": "Max. Piloti {{count}}",
+    "motorbikeTypeLabel": "Moto ammissibili: {{tipologia}}"
+  },
+  "status": {
+    "knownRoute": "Percorso noto - già testato",
+    "newRoute": "Un nuovo percorso - un'avventura"
+  },
+  "calendar": "Calendario",
+  "chat": "Chat"
+}

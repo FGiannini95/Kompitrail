@@ -7,5 +7,11 @@
   "login": "Login",
   "confirmar": "Confermare",
   "cancel": "Cancellare",
-  "close": "Chiudere"
+  "close": "Chiudere",
+  "pastRoute": "Percorso completato",
+  "enrollmentClosed": "Registrazione completata",
+  "deleteRoute": "Elliminare il percorso",
+  "cancelEnrollment": "Annullare l'inscrizione",
+  "joinRoute": "Unirsi",
+  "fullRoute": "Percorso completo"
 }
