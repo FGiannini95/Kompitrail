@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import {
   Avatar,
@@ -49,27 +50,21 @@ const formatChatTimestamp = (activityAt) => {
   return date_dd_mm_yyyy;
 };
 
-// Return Tuesday 22/11/2024 at 10:45
-const formatChatSubtitle = (activityAt) => {
-  const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } = formatDateTime(
-    activityAt,
-    { locale: "es-ES", timeZone: "Europe/Madrid" }
-  );
-
-  if (!isValid) return "";
-
-  const weekdayCap = weekday
-    ? weekday.charAt(0).toUpperCase() + weekday.slice(1)
-    : "";
-
-  return `${weekdayCap} ${date_dd_mm_yyyy} a las ${time_hh_mm}`;
-};
-
 export const Chat = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user: currentUser } = useContext(KompitrailContext);
+  const { t, i18n } = useTranslation("chat");
+
+  const localeMap = {
+    es: "es-ES",
+    en: "en-GB",
+    it: "it-IT",
+  };
+
+  const currentLang = i18n.language?.slice(0, 2) || "es";
+  const locale = localeMap[currentLang] ?? "es-ES";
 
   useEffect(() => {
     let cancelled = false;
@@ -145,7 +140,24 @@ export const Chat = () => {
         const title = `${row.starting_point} - ${row.ending_point}`;
         const activityAt = row.lastActivity ?? row.route_date;
         const rightStamp = formatChatTimestamp(activityAt);
-        const subtitle = formatChatSubtitle(row.route_date);
+
+        // Return Tuesday 22/11/2024 at 10:45
+        const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } =
+          formatDateTime(row.route_date, { locale, timeZone: "Europe/Madrid" });
+
+        const weekdayCap =
+          isValid && weekday
+            ? weekday.charAt(0).toUpperCase() + weekday.slice(1)
+            : "";
+
+        const subtitle = isValid
+          ? t("subtitle", {
+              weekday: weekdayCap,
+              date: date_dd_mm_yyyy,
+              time: time_hh_mm,
+            })
+          : "";
+
         const lastMessageText = row.lastMessage?.text || "";
 
         return (

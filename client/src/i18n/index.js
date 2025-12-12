@@ -10,6 +10,7 @@ import dialogsEs from "./locales/es/dialogs.json";
 import snackbarsEs from "./locales/es/snackbars.json";
 import errorsEs from "./locales/es/errors.json";
 import oneRouteEs from "./locales/es/oneRoute.json";
+import chatEs from "./locales/es/chat.json";
 
 import settingsEn from "./locales/en/settings.json";
 import buttonsEn from "./locales/en/buttons.json";
@@ -20,6 +21,7 @@ import dialogsEn from "./locales/en/dialogs.json";
 import snackbarsEn from "./locales/en/snackbars.json";
 import errorsEn from "./locales/en/errors.json";
 import oneRouteEn from "./locales/en/oneRoute.json";
+import chatEn from "./locales/en/chat.json";
 
 import settingsIt from "./locales/it/settings.json";
 import buttonsIt from "./locales/it/buttons.json";
@@ -30,6 +32,7 @@ import dialogsIt from "./locales/it/dialogs.json";
 import snackbarsIt from "./locales/it/snackbars.json";
 import errorsIt from "./locales/it/errors.json";
 import oneRouteIt from "./locales/it/oneRoute.json";
+import chatIt from "./locales/it/chat.json";
 
 // i18n global configuration
 i18n.use(initReactI18next).init({
@@ -44,6 +47,7 @@ i18n.use(initReactI18next).init({
       snackbars: snackbarsEs,
       errors: errorsEs,
       oneRoute: oneRouteEs,
+      chat: chatEs,
     },
     en: {
       settings: settingsEn,
@@ -55,6 +59,7 @@ i18n.use(initReactI18next).init({
       snackbars: snackbarsEn,
       errors: errorsEn,
       oneRoute: oneRouteEn,
+      chat: chatEn,
     },
     it: {
       settings: settingsIt,
@@ -66,6 +71,7 @@ i18n.use(initReactI18next).init({
       snackbars: snackbarsIt,
       errors: errorsIt,
       oneRoute: oneRouteIt,
+      chat: chatIt,
     },
   },
 
@@ -81,6 +87,7 @@ i18n.use(initReactI18next).init({
     "snackbars",
     "errors",
     "oneRoute",
+    "chat",
   ],
   defaultNS: "settings",
   interpolation: {
