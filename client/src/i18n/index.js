@@ -27,7 +27,7 @@ import settingsIt from "./locales/it/settings.json";
 import buttonsIt from "./locales/it/buttons.json";
 import generalIt from "./locales/it/general.json";
 import emptyStateIt from "./locales/it/emptyState.json";
-import formseIt from "./locales/It/forms.json";
+import formseIt from "./locales/it/forms.json";
 import dialogsIt from "./locales/it/dialogs.json";
 import snackbarsIt from "./locales/it/snackbars.json";
 import errorsIt from "./locales/it/errors.json";
