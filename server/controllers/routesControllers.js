@@ -4,7 +4,7 @@ require("dotenv").config();
 const path = require("path");
 const Contract = require(path.resolve(
   __dirname,
-  "../../shared/chat-contract/index"
+  "../../../shared/chat-contract/index"
 ));
 const { EVENTS } = Contract;
 
