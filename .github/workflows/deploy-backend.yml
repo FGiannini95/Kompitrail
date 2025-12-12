@@ -13,15 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # From your GitHub Secrets (you already set these)
+      # From GitHub Secrets
       SSH_HOST: ${{ secrets.SSH_HOST }} # 46.224.44.56
       SSH_USER: ${{ secrets.SSH_USER }} # federico
       SSH_PORT: ${{ secrets.SSH_PORT }} # 22
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+
       DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # /var/www/kompitrail
       BACKEND_SUBDIR: ${{ secrets.BACKEND_SUBDIR }} # server
       BACKEND_SERVICE: ${{ secrets.BACKEND_SERVICE }} # kompitrail-backend
+
+      # Release ID univoco per ogni run
       RELEASE: ${{ github.run_id }}-${{ github.run_number }}
 
     steps:
@@ -29,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2) Setup Node for lockfile hashing (we install on the server, not here)
+      # 2) Setup Node (serve solo per cache lockfile, le deps si installano sul server)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -39,7 +42,7 @@ jobs:
             ${{ env.BACKEND_SUBDIR }}/package-lock.json
             ${{ env.BACKEND_SUBDIR }}/package.json
 
-      # 3) Prepare SSH client (uses ed25519 key + strict host key)
+      # 3) Configura SSH (chiave ed25519 + known_hosts)
       - name: Prepare SSH
         run: |
           set -euo pipefail
@@ -53,14 +56,14 @@ jobs:
           fi
           chmod 644 ~/.ssh/known_hosts
 
-      # 4) Fail-fast if SSH/auth is wrong (this used to be your 255)
+      # 4) Test SSH (fallisce subito se credenziali/host non vanno)
       - name: SSH smoke test
         run: |
           set -euo pipefail
           ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
             "echo SSH-OK && whoami && hostname"
 
-      # 5) Ensure shared (env+logs) as your unit expects: /var/www/kompitrail/shared/*
+      # 5) Assicura la dir shared + log per il backend
       - name: Ensure shared dir (env + logs)
         run: |
           set -euo pipefail
@@ -70,7 +73,7 @@ jobs:
              sudo -n touch '${DEPLOY_BASE}/shared/backend.log' '${DEPLOY_BASE}/shared/backend.err.log'; \
              sudo -n chown deploy:deploy '${DEPLOY_BASE}/shared/backend.log' '${DEPLOY_BASE}/shared/backend.err.log' || true"
 
-      # 6) Create release dir (release root; your current/backend symlink points to release root)
+      # 6) Crea la cartella release sul server
       - name: Create release dir
         run: |
           set -euo pipefail
@@ -78,7 +81,7 @@ jobs:
             "set -euo pipefail; \
              sudo -n install -d -o ${SSH_USER} -g ${SSH_USER} '${DEPLOY_BASE}/releases/${RELEASE}'"
 
-      # 7) Rsync backend source (no node_modules; ship only app code)
+      # 7) Rsync del codice backend (senza node_modules, niente roba inutile)
       - name: Rsync backend source
         run: |
           set -euo pipefail
@@ -88,7 +91,7 @@ jobs:
             "${BACKEND_SUBDIR}/" \
             "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/"
 
-      # 8) Install production deps ON THE SERVER (clean + deterministic)
+      # 8) Installa le deps in production direttamente sul server
       - name: Install prod deps on server
         run: |
           set -euo pipefail
@@ -99,7 +102,7 @@ jobs:
              npm ci --omit=dev; \
              npm run -s build || echo 'No build script, skipping'"
 
-      # 9) Systemd runs as User=deploy → ensure deploy owns the release
+      # 9) Dai proprietà al user 'deploy' (quello usato da systemd)
       - name: Fix ownership for systemd user (deploy)
         run: |
           set -euo pipefail
@@ -107,7 +110,7 @@ jobs:
             "set -euo pipefail; \
              sudo -n chown -R deploy:deploy '${DEPLOY_BASE}/releases/${RELEASE}'"
 
-      # 10) Activate release: point current/backend -> release root (your existing layout)
+      # 10) ATTIVA la release: aggiorna symlink current/backend -> nuova release
       - name: Activate release
         run: |
           set -euo pipefail
@@ -117,7 +120,7 @@ jobs:
              sudo -n ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}' '${DEPLOY_BASE}/current/backend'; \
              ls -l '${DEPLOY_BASE}/current'"
 
-      # 11) Restart systemd unit and surface logs on failure
+      # 11) Riavvia il servizio backend e stampa log se va giù
       - name: Restart backend (systemd)
         run: |
           set -euo pipefail
