@@ -1,6 +1,6 @@
 {
   "date": {
-    "dateLabel": "{{giorno della settimana}} {{date}} - {{ora}}",
+    "dateLabel": "{{weekday}} {{date}} - {{time}}",
     "unavailable": "Data non disponibile"
   },
   "info": {
@@ -9,7 +9,7 @@
     "levelLabel": "Livello",
     "generalInfoTitle": "Informazioni generali",
     "maxParticipantsLabel": "Max. Piloti {{count}}",
-    "motorbikeTypeLabel": "Moto ammissibili: {{tipologia}}"
+    "motorbikeTypeLabel": "Moto idonee: {{types}}"
   },
   "status": {
     "knownRoute": "Percorso noto - già testato",

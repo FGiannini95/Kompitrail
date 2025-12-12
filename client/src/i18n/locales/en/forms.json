@@ -16,7 +16,7 @@
   "levelLabel": "Level",
   "level": {
     "beginner": "Beginner",
-    "intermediate ": "Medium",
+    "intermediate": "Medium",
     "advanced": "Advanced",
     "expert": "Expert"
   },

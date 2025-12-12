@@ -58,7 +58,15 @@ export const OneRoute = () => {
   });
   const { allRoutes, loadAllRoutes } = useRoutes();
   const navigate = useNavigate();
-  const { t } = useTranslation(["buttons", "oneRoute"]);
+  const { t, i18n } = useTranslation(["buttons", "oneRoute", "forms"]);
+
+  const localeMap = {
+    es: "es-ES",
+    en: "en-GB",
+    it: "it-IT",
+  };
+  const currentLang = i18n.language?.slice(0, 2) || "es";
+  const locale = localeMap[currentLang] ?? "es-ES";
 
   const [fetched, setFetched] = useState(null);
 
@@ -177,8 +185,10 @@ export const OneRoute = () => {
     isOwner = currentUser?.user_id === user_id;
   }
 
-  const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } =
-    formatDateTime(date);
+  const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } = formatDateTime(
+    date,
+    { locale }
+  );
   const weekdayCap = isValid ? capitalizeFirstLetter(weekday) : "";
 
   const isCurrentUserEnrolled = useMemo(() => {
@@ -310,8 +320,12 @@ export const OneRoute = () => {
             <InfoItem
               value={
                 isValid
-                  ? `${weekdayCap} ${date_dd_mm_yyyy} - ${time_hh_mm}`
-                  : "Fecha no disponible"
+                  ? t("oneRoute:date.dateLabel", {
+                      weekday: weekdayCap,
+                      date: date_dd_mm_yyyy,
+                      time: time_hh_mm,
+                    })
+                  : t("oneRoute:date.unavailable")
               }
             />
           </Grid>
@@ -329,7 +343,10 @@ export const OneRoute = () => {
               label={t("oneRoute:info.estimatedTimeLable")}
               value={`${estimated_time} h`}
             />
-            <InfoItem label={t("oneRoute:info.levelLabel")} value={level} />
+            <InfoItem
+              label={t("oneRoute:info.levelLabel")}
+              value={t(`forms:level.${level}`)}
+            />
           </Grid>
         </CardContent>
       </Card>
