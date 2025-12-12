@@ -13,5 +13,27 @@
     "maxParticipantsRequired": "Nº di piloti richiesti",
     "motorbikeTypeRequired": "Moto idonee richieste",
     "descriptionRequired": "Descrizione richiesta"
+  },
+  "login": {
+    "emailRequired": "L'email è obbligatoria",
+    "passwordRequired": "La password è obbligatoria",
+    "invalidCredentials": "Errore sconosciuto durante l'accesso."
+  },
+  "register": {
+    "nameRequired": "Il nome è obbligatorio",
+    "nameMinLength": "Il nome deve essere lungo almeno 2 caratteri",
+    "lastNameRequired": "Il cognome è obbligatorio",
+    "lastNameMinLength": "Il cognome deve essere lunghi almeno 2 caratteri.",
+    "emailRequired": "L'email è obbligatoria",
+    "emailInvalid": "Inserire un indirizzo email valido",
+    "passwordRequired": "La password è obbligatoria",
+    "passwordWeak": "La password non è abbastanza forte",
+    "genericError": "Errore sconosciuto.",
+    "genericError2": "Si è verificato un errore imprevisto. Si prega di riprovare."
+  },
+  "google": {
+    "invalidCredentials": "Mancanza di credenziali.",
+    "invalidToken": "Errore nel token o nell'utente",
+    "genericError": "Impossibile accedere con Google."
   }
 }

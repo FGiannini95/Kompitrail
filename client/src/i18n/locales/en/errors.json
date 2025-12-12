@@ -13,5 +13,27 @@
     "maxParticipantsRequired": "No. of pilots required",
     "motorbikeTypeRequired": "Suitable motorbikes required",
     "descriptionRequired": "Description required"
+  },
+  "login": {
+    "emailRequired": "Mailing is mandatory",
+    "passwordRequired": "Password is mandatory",
+    "invalidCredentials": "Unknown error when logging in."
+  },
+  "register": {
+    "nameRequired": "The name is required",
+    "nameMinLength": "The name must have at least 2 characters",
+    "lastNameRequired": "Last names are required",
+    "lastNameMinLength": "Last names must be at least 2 characters long",
+    "emailRequired": "Mailing is mandatory",
+    "emailInvalid": "Enter a valid email address",
+    "passwordRequired": "Password is mandatory",
+    "passwordWeak": "Password is not strong enough",
+    "genericError": "Unknown error.",
+    "genericError2": "An unexpected error has occurred. Please try again."
+  },
+  "google": {
+    "invalidCredentials": "Lack of credentials.",
+    "invalidToken": "Error in the token or in the user",
+    "genericError": "Could not sign in with Google."
   }
 }

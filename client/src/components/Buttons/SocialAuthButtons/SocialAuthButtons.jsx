@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import { Box, Divider, Stack, Typography } from "@mui/material";
 
@@ -13,12 +14,13 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+  const { t } = useTranslation("errors");
 
   const handleGoogleSuccess = async (credentialResponse) => {
     if (isGoogleLoading) return;
     const idToken = credentialResponse?.credential;
     if (!idToken) {
-      setErrMsg("Falta de credenciales");
+      setErrMsg(t("errors:google.invalidCredentials"));
       return;
     }
 
@@ -34,7 +36,7 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
       // Return the same data object as the login
       const { token, user } = res.data || {};
       if (!token || !user) {
-        throw new Error("Error en el token o en el usuario");
+        throw new Error(t("errors:google.invalidToken"));
       }
 
       setToken(token);
@@ -45,14 +47,14 @@ export const SocialAuthButtons = ({ onAuthSuccess }) => {
       onAuthSuccess?.();
     } catch (e) {
       console.log("Autenticación fallida", e);
-      setErrMsg("No se pudo iniciar sesión con Google.");
+      setErrMsg(t("errors:google.genericError"));
     } finally {
       setIsGoogleLoading(false);
     }
   };
 
   const handleGoogleError = () => {
-    setErrMsg("No se pudo iniciar sesión con Google.");
+    setErrMsg(t("errors:google.genericError"));
   };
 
   return (

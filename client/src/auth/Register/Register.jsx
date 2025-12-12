@@ -32,7 +32,7 @@ export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
   const [redirectRequested, setRedirectRequested] = useState(false);
-  const { t } = useTranslation(["buttons", "general", "forms"]);
+  const { t } = useTranslation(["buttons", "general", "forms", "errors"]);
 
   const navigate = useNavigate();
   const { buildUrl } = useRedirectParam();
@@ -58,11 +58,12 @@ export const Register = () => {
       // Mostrar un mensaje de error más claro si el correo ya está en uso
       if (error.response && error.response.status === 400) {
         setError("root", {
-          message: error.response.data.message || "Error desconocido.",
+          message:
+            error.response.data.message || t("errors:register.genericError"),
         });
       } else {
         setError("root", {
-          message: "Ha ocurrido un error inesperado. Intenta nuevamente.",
+          message: t("errors:register.genericError2"),
         });
       }
     }
@@ -111,10 +112,10 @@ export const Register = () => {
                 <Grid size={12}>
                   <TextField
                     {...register("name", {
-                      required: "El nombre es obligatorio",
+                      required: t("errors:register.nameRequired"),
                       minLength: {
                         value: 2,
-                        message: "El nombre debe tener al menos 2 caracteres",
+                        message: t("errors:register.nameMinLength"),
                       },
                       setValueAs: (v) => capitalizeFirstLetter(v),
                     })}
@@ -127,11 +128,10 @@ export const Register = () => {
                 <Grid size={12}>
                   <TextField
                     {...register("lastname", {
-                      required: "Los apellidos son obligatorio",
+                      required: t("errors:register.lastNameRequired"),
                       minLength: {
                         value: 2,
-                        message:
-                          "Los apellidos deben tener al menos 2 caracteres",
+                        message: t("errors:register.lastNameMinLength"),
                       },
                       setValueAs: (v) => capitalizeFirstLetter(v),
                     })}
@@ -145,11 +145,11 @@ export const Register = () => {
                 <Grid size={12}>
                   <TextField
                     {...register("email", {
-                      required: "El correo es obligatorio",
+                      required: t("errors:register.emailRequired"),
                       pattern: {
                         value:
                           /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "Ingrese un correo válido",
+                        message: t("errors:register.emailInvalid"),
                       },
                     })}
                     label={t("forms:emailLabel")}
@@ -162,11 +162,11 @@ export const Register = () => {
                 <Grid size={12}>
                   <TextField
                     {...register("password", {
-                      required: "La contraseña es obligatoria",
+                      required: t("errors:register.passwordRequired"),
                       pattern: {
                         // Password with 8 caracteres and on of the has to be a special one
                         value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                        message: "La contraseña no es suficientemente fuerte",
+                        message: t("errors:register.passwordWeak"),
                       },
                     })}
                     label={t("forms:passwordLabel")}

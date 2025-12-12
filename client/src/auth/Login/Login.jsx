@@ -47,7 +47,7 @@ export const Login = () => {
   const [openRestorePasswordDialog, setOpenRestorePasswordDialog] =
     useState(false);
   const [redirectRequested, setRedirectRequested] = useState(false);
-  const { t } = useTranslation(["buttons", "general", "forms"]);
+  const { t } = useTranslation(["buttons", "general", "forms", "errors"]);
 
   const navigate = useNavigate();
   const { buildUrl } = useRedirectParam();
@@ -80,10 +80,10 @@ export const Login = () => {
     // Validation before the submit
     const errors = {};
     if (login.email === "") {
-      errors.email = "El correo es obligatorio";
+      errors.email = t("errors:login.emailRequired");
     }
     if (login.password === "") {
-      errors.password = "La contraseña es obligatoria";
+      errors.password = t("errors:login.passwordRequired");
     }
     // This method extracts all the keys from the errors object and returns them as an array
     if (Object.keys(errors).length > 0) {
@@ -107,7 +107,7 @@ export const Login = () => {
         setMsgError({
           email: "",
           password: "",
-          global: err.response?.data || "Error desconocido al iniciar sesión",
+          global: err.response?.data || t("errors:login.invalidCredentials"),
         });
       });
   };
