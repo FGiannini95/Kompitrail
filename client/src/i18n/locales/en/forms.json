@@ -1,0 +1,27 @@
+{
+  "nameLabel": "Name",
+  "lastNameLabel": "Surname",
+  "emailLabel": "Mail",
+  "passwordLabel": "Password",
+  "brandLabel": "Brand",
+  "modelLabel": "Model",
+  "pictureLabel": "Photo",
+  "newPassLabel": "New password",
+  "confirmPassLabel": "Confirm password",
+  "startingPointLabel": "Departure",
+  "endingPointLabel": "Arrival",
+  "dateLabel": "Date",
+  "kmLabel": "Km",
+  "estimatedTimeLable": "Duration",
+  "levelLabel": "Level",
+  "level": {
+    "beginner": "Beginner",
+    "intermediate": "Medium",
+    "advanced": "Advanced",
+    "expert": "Expert"
+  },
+  "maxParticipantsLabel": "Pilots",
+  "motorbikeTypeLabel": "Suitable motorbikes",
+  "descriptionLabel": "Description",
+  "checkbox": "First time on this route?"
+}

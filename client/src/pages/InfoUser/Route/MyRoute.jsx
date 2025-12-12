@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 import { Typography, IconButton, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -35,6 +36,7 @@ export const MyRoute = () => {
     loading,
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
+  const { t } = useTranslation(["buttons", "general", "dialogs"]);
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -48,19 +50,20 @@ export const MyRoute = () => {
   const handleDeleteRoute = (route_id) => {
     deleteRoute(route_id, user.user_id)
       .then(() => {
-        showSnackbar("Ruta eliminada con éxito");
+        showSnackbar(t("snackbars:routeDeleteSuccess"));
       })
       .catch((err) => {
         console.log(err);
-        const msg = err?.response?.data?.message || "Error al eliminar la ruta";
+        const msg =
+          err?.response?.data?.message || t("snackbars:routeDeleteError");
         showSnackbar(msg, "error");
       });
   };
 
   const handleOpenDeleteDialog = (route_id) => {
     openDialog({
-      title: "Eliminar ruta",
-      message: "¿Quieres eliminar la ruta de tu perfil?",
+      title: t("dialogs:routeDeleteTitle"),
+      message: t("dialogs:routeDeleteText"),
       onConfirm: () => handleDeleteRoute(route_id),
     });
   };
@@ -85,7 +88,7 @@ export const MyRoute = () => {
           />
         </IconButton>
         <Typography variant="h6" color="text.primary">
-          Mis rutas
+          {t("general:routesTitle")}
         </Typography>
       </Grid>
       <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
@@ -112,7 +115,7 @@ export const MyRoute = () => {
         )}
         <OutlinedButton
           onClick={openCreateDialog}
-          text={"Crear ruta"}
+          text={t("buttons:createRoute")}
           icon={
             <AddOutlinedIcon
               style={{ paddingLeft: "5px", width: "20px" }}

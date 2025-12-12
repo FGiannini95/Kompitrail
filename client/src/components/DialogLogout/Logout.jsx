@@ -1,12 +1,14 @@
 import React, { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-// MUI
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +19,7 @@ export const Logout = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation(["dialogs", "buttons"]);
 
   const logOut = () => {
     delLocalStorage("token");
@@ -37,16 +40,16 @@ export const Logout = () => {
 
   return (
     <Dialog open={openDialog} onClose={handleCloseDialog}>
-      <DialogTitle>Cerrar sesión</DialogTitle>
+      <DialogTitle>{t("dialogs:logoutTitle")}</DialogTitle>
       <DialogContent>
-        <Typography>¿Estás seguro de querer cerrar sesión?</Typography>
+        <Typography>{t("dialogs:logoutText")}</Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialog} color="error">
-          Cancelar
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirmation} color="success">
-          Confirmar
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>

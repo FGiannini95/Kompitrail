@@ -1,0 +1,18 @@
+{
+  "routeCreatedSuccess": "Route successfully added",
+  "routeCreatedError": "Error when adding the route",
+  "routeUpdatedSuccess": "Route successfully updated",
+  "routeUpdatedError": "Error updating the route",
+  "routeDeleteSuccess": "Route successfully eliminated",
+  "routeDeleteError": "Error deleting path",
+  "routeJoinSuccess": "Registration completed",
+  "routeJoinError": "Error while registering",
+  "routeUnjoinSuccess": "Registration cancelled",
+  "routeUnjoinError": "Error during cancellation",
+  "motorbikeCreatedSuccess": "Motorbike successfully added",
+  "motorbikeCreatedError": "Error when adding the motorbike",
+  "motorbikeUpdatedSuccess": "Motorbike successfully upgraded",
+  "motorbikeUpdatedError": "Error when updating the motorbike",
+  "motorbikeDeleteSuccess": "Motorbike successfully removed",
+  "motorbikeDeleteError": "Error when deleting the motorbike"
+}

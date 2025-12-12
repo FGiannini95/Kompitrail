@@ -1,0 +1,23 @@
+{
+  "language": "Lingua",
+  "theme": "Tema",
+  "changePassword": "Modificare la password",
+  "actions": {
+    "changePassword": "Modifica password",
+    "deleteAccount": "Ellimina l'account",
+    "editAccount": "Modifica profilo",
+    "addMotorbike": "Le mie moto",
+    "addRoute": "I miei percorsi",
+    "changeSettings": "Impostazioni",
+    "chatbot": "Chat bot",
+    "privacy": "Informativa sulla privacy",
+    "logout": "Disconnettersi",
+    "language": "Lingua",
+    "theme": "Tema"
+  },
+  "darkMode": "Modalità scura",
+  "lightMode": "Modalità chiara",
+  "spanish": "Spagnolo",
+  "english": "Inglese",
+  "italian": "Italiano"
+}

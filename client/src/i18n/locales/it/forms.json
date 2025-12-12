@@ -1,0 +1,27 @@
+{
+  "nameLabel": "Nome",
+  "lastNameLabel": "Cognome",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "brandLabel": "Marchio",
+  "modelLabel": "Modello",
+  "pictureLabel": "Foto",
+  "newPassLabel": "Nuova password",
+  "confirmPassLabel": "Confermare la password",
+  "startingPointLabel": "Partenza",
+  "endingPointLabel": "Arrivo",
+  "dateLabel": "Data",
+  "kmLabel": "Km",
+  "estimatedTimeLable": "Durata",
+  "levelLabel": "Livello",
+  "level": {
+    "beginner": "Principiante",
+    "intermediate": "Medio",
+    "advanced": "Avanzato",
+    "expert": "Esperto"
+  },
+  "maxParticipantsLabel": "Piloti",
+  "motorbikeTypeLabel": "Moto idonee",
+  "descriptionLabel": "Descrizione",
+  "checkbox": "Prima volta su questo percorso?"
+}

@@ -1,4 +1,6 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
+
 import {
   Table,
   TableBody,
@@ -37,6 +39,8 @@ export const AnalyticsTable = ({
   joinedRoutes,
   loading,
 }) => {
+  const { t } = useTranslation("general");
+
   return (
     <TableContainer
       style={{
@@ -49,9 +53,15 @@ export const AnalyticsTable = ({
       <Table>
         <TableHead>
           <TableRow>
-            <StyledTableCell align="center">Nº de motos</StyledTableCell>
-            <StyledTableCell align="center">Rutas creadas</StyledTableCell>
-            <StyledTableCell align="center">Rutas completadas</StyledTableCell>
+            <StyledTableCell align="center">
+              {t("general:tableFirstHeader")}
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              {t("general:tableSecondtHeader")}
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              {t("general:tableThirdHeader")}
+            </StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>

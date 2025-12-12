@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 
 import {
   TextField,
@@ -31,6 +32,7 @@ export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
   const [redirectRequested, setRedirectRequested] = useState(false);
+  const { t } = useTranslation(["buttons", "general", "forms", "errors"]);
 
   const navigate = useNavigate();
   const { buildUrl } = useRedirectParam();
@@ -56,11 +58,12 @@ export const Register = () => {
       // Mostrar un mensaje de error más claro si el correo ya está en uso
       if (error.response && error.response.status === 400) {
         setError("root", {
-          message: error.response.data.message || "Error desconocido.",
+          message:
+            error.response.data.message || t("errors:register.genericError"),
         });
       } else {
         setError("root", {
-          message: "Ha ocurrido un error inesperado. Intenta nuevamente.",
+          message: t("errors:register.genericError2"),
         });
       }
     }
@@ -101,19 +104,22 @@ export const Register = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={2} justifyContent="center">
                 <Grid size={12} align="center">
-                  <Typography variant="h5">Registro</Typography>
+                  <Typography variant="h5">
+                    {" "}
+                    {t("general:registerTitle")}
+                  </Typography>
                 </Grid>
                 <Grid size={12}>
                   <TextField
                     {...register("name", {
-                      required: "El nombre es obligatorio",
+                      required: t("errors:register.nameRequired"),
                       minLength: {
                         value: 2,
-                        message: "El nombre debe tener al menos 2 caracteres",
+                        message: t("errors:register.nameMinLength"),
                       },
                       setValueAs: (v) => capitalizeFirstLetter(v),
                     })}
-                    label="Nombre"
+                    label={t("forms:nameLabel")}
                     fullWidth
                     error={!!errors.name}
                     helperText={errors.name?.message}
@@ -122,15 +128,14 @@ export const Register = () => {
                 <Grid size={12}>
                   <TextField
                     {...register("lastname", {
-                      required: "Los apellidos son obligatorio",
+                      required: t("errors:register.lastNameRequired"),
                       minLength: {
                         value: 2,
-                        message:
-                          "Los apellidos deben tener al menos 2 caracteres",
+                        message: t("errors:register.lastNameMinLength"),
                       },
                       setValueAs: (v) => capitalizeFirstLetter(v),
                     })}
-                    label="Apellidos"
+                    label={t("forms:lastNameLabel")}
                     variant="outlined"
                     fullWidth
                     error={!!errors.lastname}
@@ -140,14 +145,14 @@ export const Register = () => {
                 <Grid size={12}>
                   <TextField
                     {...register("email", {
-                      required: "El correo es obligatorio",
+                      required: t("errors:register.emailRequired"),
                       pattern: {
                         value:
                           /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "Ingrese un correo válido",
+                        message: t("errors:register.emailInvalid"),
                       },
                     })}
-                    label="Correo"
+                    label={t("forms:emailLabel")}
                     variant="outlined"
                     fullWidth
                     error={!!errors.email}
@@ -157,14 +162,14 @@ export const Register = () => {
                 <Grid size={12}>
                   <TextField
                     {...register("password", {
-                      required: "La contraseña es obligatoria",
+                      required: t("errors:register.passwordRequired"),
                       pattern: {
                         // Password with 8 caracteres and on of the has to be a special one
                         value: /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                        message: "La contraseña no es suficientemente fuerte",
+                        message: t("errors:register.passwordWeak"),
                       },
                     })}
-                    label="Contraseña"
+                    label={t("forms:passwordLabel")}
                     type={showPassword ? "text" : "password"}
                     variant="outlined"
                     fullWidth
@@ -231,7 +236,7 @@ export const Register = () => {
                       fullWidth
                       onClick={handleCancel}
                     >
-                      CANCELAR
+                      {t("buttons:cancel")}
                     </Button>
                   </Grid>
                   <Grid xs={6}>
@@ -249,24 +254,30 @@ export const Register = () => {
                         },
                       })}
                     >
-                      {isSubmitting ? "Cargando..." : "Crear"}
+                      {t("buttons:confirmar")}
                     </Button>
                   </Grid>
                 </Grid>
 
                 <Grid size xs={12}>
                   <Typography textAlign="center">
-                    ¿Ya tienes un perfil? ¡Haz el login{" "}
-                    <Link
-                      onClick={() => navigate(buildUrl(RoutesString.login))}
-                      sx={(theme) => ({
-                        color: theme.palette.text.secondary,
-                      })}
-                      underline="hover"
-                    >
-                      aquí
-                    </Link>
-                    !
+                    <Trans
+                      i18nKey="haveAccountLoginText"
+                      ns="general"
+                      components={{
+                        1: (
+                          <Link
+                            onClick={() =>
+                              navigate(buildUrl(RoutesString.login))
+                            }
+                            sx={(theme) => ({
+                              color: theme.palette.text.secondary,
+                            })}
+                            underline="hover"
+                          />
+                        ),
+                      }}
+                    />
                   </Typography>
                 </Grid>
               </Grid>

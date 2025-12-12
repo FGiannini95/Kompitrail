@@ -1,4 +1,6 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
+
 import { InputAdornment, TextField } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 
@@ -18,6 +20,9 @@ export const FormTextfield = ({
   maxLength,
 }) => {
   const value = form?.[name] ?? "";
+  const { t } = useTranslation("errors");
+  const errorKey = errors?.[name];
+  const helperText = errorKey ? t(errorKey) : "";
 
   // Calculate the remaining worlds in the textarea
   const remaining = maxLength ? maxLength - value.length : null;
@@ -72,8 +77,8 @@ export const FormTextfield = ({
         type={type}
         multiline={multiline}
         onKeyDown={handleKeyDown}
-        error={!!errors?.[name]}
-        helperText={errors?.[name] ?? ""}
+        error={!!errorKey}
+        helperText={helperText}
         inputProps={{ readOnly, maxLength }}
         InputProps={{
           endAdornment:

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -42,6 +43,7 @@ export const Profile = () => {
     otherUserId,
     currentUserId: currentUser?.user_id,
   });
+  const { t } = useTranslation(["buttons", "general"]);
 
   useEffect(() => {
     loadAllRoutes();
@@ -147,7 +149,7 @@ export const Profile = () => {
           >
             <OutlinedButton
               onClick={() => navigate(RoutesString.editUser)}
-              text={"Modificar"}
+              text={t("editProfile")}
               icon={
                 <EditOutlinedIcon
                   style={{ paddingLeft: "5px", width: "20px" }}
@@ -156,14 +158,14 @@ export const Profile = () => {
               }
             />
             <Tooltip
-              title="URL copiada"
+              title={t("general:urlText")}
               open={isCopied} // Display the tooltip only if isCopied is true
               disableInteractive // It doesn't appear with the interaction of the mouse
               arrow // Display the arrow
             >
               <ContainedButton
                 onClick={handleShare}
-                text={"Compartir"}
+                text={t("shareProfile")}
                 icon={
                   <ShareOutlinedIcon
                     style={{ paddingLeft: "5px", width: "20px" }}
@@ -187,7 +189,7 @@ export const Profile = () => {
         <UserRoutesCarousel
           allRoutes={displayRoutes}
           profileUserId={profileUserId}
-          title={"Rutas"}
+          title={t("general:routesText")}
           showOnlyFuture={false}
           sortOrder="desc"
         />
@@ -195,7 +197,7 @@ export const Profile = () => {
 
       <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
         <Typography color="text.primary">
-          Personas con las que viajas más
+          {t("general:frequentCompanionText")}
         </Typography>
         <FrequentCompanions companions={displayCompanions} />
       </Grid>

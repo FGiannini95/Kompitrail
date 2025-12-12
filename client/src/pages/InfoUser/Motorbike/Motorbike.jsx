@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Typography, IconButton, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -41,6 +42,7 @@ export const Motorbike = () => {
     openDialog: openCreateEditDialog,
     loading,
   } = useMotorbikes();
+  const { t } = useTranslation(["buttons", "general", "dialogs", "snackbars"]);
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -52,18 +54,18 @@ export const Motorbike = () => {
       .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
       .then(() => {
         deleteMotorbike(motorbike_id);
-        showSnackbar("Moto eliminada con éxito");
+        showSnackbar(t("snackbars:motorbikeDeleteSuccess"));
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al eliminar la moto", "error");
+        showSnackbar(t("snackbars:motorbikeDeleteError"), "error");
       });
   };
 
   const handleOpenDeleteDialog = (motorbike_id) => {
     openDialog({
-      title: "Eliminar moto",
-      message: "¿Quieres eliminar la moto de tu perfil?",
+      title: t("dialogs:motorbikeDeleteTitle"),
+      message: t("dialogs:motorbikeDeleteText"),
       onConfirm: () => handleDeleteMotorbike(motorbike_id),
     });
   };
@@ -96,7 +98,7 @@ export const Motorbike = () => {
           />
         </IconButton>
         <Typography variant="h6" color="text.primary">
-          Mis motos
+          {t("general:motorbikeTitle")}
         </Typography>
       </Grid>
       <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
@@ -125,7 +127,7 @@ export const Motorbike = () => {
         )}
         <OutlinedButton
           onClick={openCreateDialog}
-          text={"Añadir moto"}
+          text={t("buttons:createMotorbike")}
           icon={
             <AddOutlinedIcon
               aria-hidden

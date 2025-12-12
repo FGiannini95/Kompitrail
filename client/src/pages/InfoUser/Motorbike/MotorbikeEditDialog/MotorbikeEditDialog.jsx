@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 // Utils
@@ -29,6 +32,7 @@ export const MotorbikeEditDialog = () => {
     dialog,
     closeDialog,
   } = useMotorbikes();
+  const { t } = useTranslation(["forms", "buttons", "dialogs", "snackbars"]);
 
   const isOpen = dialog.isOpen && dialog.mode === "edit";
   const motorbike_id = dialog.selectedId;
@@ -100,18 +104,18 @@ export const MotorbikeEditDialog = () => {
       .then(({ data }) => {
         const update = Array.isArray(data) ? data[0] : data;
         updateMotorbike(update);
-        showSnackbar("Moto actualizada con éxito");
+        showSnackbar(t("snackbars:motorbikeUpdatedSuccess"));
         closeDialog();
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al actualizar la moto", "error");
+        showSnackbar(t("snackbars:motorbikeUpdatedError"), "error");
       });
   };
 
   return (
     <Dialog open={isOpen} onClose={cleanDialog}>
-      <DialogTitle>Editar moto</DialogTitle>
+      <DialogTitle>{t("dialogs:motorbikeEditTitle")}</DialogTitle>
       <DialogContent>
         <Button
           variant="text"
@@ -138,7 +142,7 @@ export const MotorbikeEditDialog = () => {
           />
         </Button>
         <TextField
-          label="Marca"
+          label={t("forms:brandLabel")}
           fullWidth
           margin="normal"
           name="brand"
@@ -146,7 +150,7 @@ export const MotorbikeEditDialog = () => {
           onChange={handleChange}
         />
         <TextField
-          label="Modelo"
+          label={t("forms:modelLabel")}
           fullWidth
           margin="normal"
           name="model"
@@ -156,10 +160,10 @@ export const MotorbikeEditDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">
-          Cancelar
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirm} color="success">
-          Confirmar
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>

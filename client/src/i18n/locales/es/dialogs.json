@@ -1,0 +1,18 @@
+{
+  "routeCreateTitle": "Crear ruta",
+  "routeEditTitle": "Editar ruta",
+  "routeDeleteTitle": "Eliminar ruta",
+  "routeDeleteText": "¿Quieres eliminar la ruta de la plataforma?",
+  "routeJoinTitle": "Cancelar inscripción",
+  "routeJoinText": "¿Quieres cancelar la inscripción a esta ruta?",
+  "motorbikeCreateTitle": "Añadir moto",
+  "motorbikeEditTitle": "Editar moto",
+  "motorbikeDeleteTitle": "Eliminar moto",
+  "motorbikeDeleteText": "¿Quieres eliminar la moto de tu perfil?",
+  "logoutTitle": "Cerrar sessión",
+  "logoutText": "¿Estás seguro de querer cerrar sesión?",
+  "accountDeleteTitle": "Eliminar cuenta",
+  "accountDeleteText": "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?",
+  "modeChangeTitle": "Cambiar tema",
+  "languageChangeTitle": "Cambiar idioma"
+}

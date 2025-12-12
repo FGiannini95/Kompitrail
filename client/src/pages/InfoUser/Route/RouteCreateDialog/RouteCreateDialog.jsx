@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import {
-  Box,
   Checkbox,
   Typography,
   Button,
@@ -41,6 +41,7 @@ export const RouteCreateDialog = () => {
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createRoute, dialog, closeDialog } = useRoutes();
+  const { t } = useTranslation(["dialogs", "forms", "buttons", "snackbars"]);
 
   const navigate = useNavigate();
   const isOpen = dialog.isOpen && dialog.mode === "create";
@@ -83,13 +84,13 @@ export const RouteCreateDialog = () => {
       .post(`${ROUTES_URL}/createroute`, newFormData)
       .then(({ data }) => {
         createRoute(data);
-        showSnackbar("Ruata añadida con éxito");
+        showSnackbar(t("snackbars:routeCreatedSuccess"));
         navigate(RoutesString.home);
         cleanDialog();
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al añadir la ruta", "error");
+        showSnackbar(t("snackbars:routeCreatedError"), "error");
       });
   };
 
@@ -107,12 +108,12 @@ export const RouteCreateDialog = () => {
         }),
       }}
     >
-      <DialogTitle>Crear ruta</DialogTitle>
+      <DialogTitle>{t("dialogs:routeCreateTitle")}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid size={12}>
             <FormTextfield
-              label="Salida"
+              label={t("forms:startingPointLabel")}
               name="starting_point"
               errors={errors}
               setErrors={setErrors}
@@ -122,7 +123,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={12}>
             <FormTextfield
-              label="Llegada"
+              label={t("forms:endingPointLabel")}
               name="ending_point"
               errors={errors}
               setErrors={setErrors}
@@ -132,7 +133,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={12}>
             <FormDataPicker
-              label="Fecha"
+              label={t("forms:dateLabel")}
               name="date"
               errors={errors}
               setErrors={setErrors}
@@ -142,7 +143,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={6}>
             <FormTextfield
-              label="Km"
+              label={t("forms:kmLabel")}
               name="distance"
               type="number"
               preventInvalidkey
@@ -154,7 +155,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={6}>
             <FormTextfield
-              label="Duración"
+              label={t("forms:estimatedTimeLable")}
               name="estimated_time"
               type="number"
               errors={errors}
@@ -165,8 +166,8 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={6}>
             <FormAutocomplete
+              label={t("forms:levelLabel")}
               name="level"
-              label="Nivel"
               errors={errors}
               setErrors={setErrors}
               form={createOneRoute}
@@ -174,13 +175,14 @@ export const RouteCreateDialog = () => {
               options={ROUTE_LEVELS}
               optionLabelKey="name"
               optionValueKey="name"
+              getOptionLabel={(opt) => t(`forms:level.${opt.name}`)}
               disablePortal
             />
           </Grid>
           <Grid size={6}>
             <FormAutocomplete
               name="max_participants"
-              label="Pilotos"
+              label={t("forms:maxParticipantsLabel")}
               errors={errors}
               setErrors={setErrors}
               form={createOneRoute}
@@ -193,7 +195,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={12}>
             <FormAutocomplete
-              label="Motos aptas"
+              label={t("forms:motorbikeTypeLabel")}
               name="suitable_motorbike_type"
               errors={errors}
               setErrors={setErrors}
@@ -214,7 +216,7 @@ export const RouteCreateDialog = () => {
               justifyContent: "center",
             }}
           >
-            <Typography>¿Primera vez en esta ruta?</Typography>
+            <Typography>{t("forms:checkbox")}</Typography>
             <Checkbox
               inputProps={{ "aria-label": "controlled" }}
               color="default"
@@ -229,7 +231,7 @@ export const RouteCreateDialog = () => {
           </Grid>
           <Grid size={12} sx={{ mb: 5 }}>
             <FormTextfield
-              label="Descripción"
+              label={t("forms:descriptionLabel")}
               name="route_description"
               errors={errors}
               setErrors={setErrors}
@@ -243,10 +245,10 @@ export const RouteCreateDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">
-          Cancelar
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirm} color="success">
-          Confirmar
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>

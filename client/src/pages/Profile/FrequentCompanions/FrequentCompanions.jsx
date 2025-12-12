@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
 
@@ -21,6 +22,7 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
   const companions = companionsProp ?? myCompanions;
   const navigate = useNavigate();
   const { user } = useContext(KompitrailContext);
+  const { t } = useTranslation("emptyState");
 
   if (loading) {
     return <Loading />;
@@ -31,7 +33,7 @@ export const FrequentCompanions = ({ companions: companionsProp }) => {
   }
 
   if (!Array.isArray(companions) || companions.length === 0) {
-    return <CardPlaceholder text={"Aún no tienes compañeros de viaje."} />;
+    return <CardPlaceholder text={t("frequentCompanionPlaceholder")} />;
   }
 
   const isTwoOrLess = companions.length <= 2;

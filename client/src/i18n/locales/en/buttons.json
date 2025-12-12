@@ -1,0 +1,17 @@
+{
+  "createRoute": "Create route",
+  "editProfile": "Edit",
+  "shareProfile": "Share",
+  "createMotorbike": "Add motorbike",
+  "register": "Registration",
+  "login": "Login",
+  "confirmar": "Confirm",
+  "cancel": "Cancel",
+  "close": "Close",
+  "pastRoute": "Route completed",
+  "enrollmentClosed": "Registration completed",
+  "deleteRoute": "Delete route",
+  "cancelEnrollment": "Cancel registration",
+  "joinRoute": "Join",
+  "fullRoute": "Route complete"
+}

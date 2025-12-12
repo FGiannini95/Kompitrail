@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Box, Typography } from "@mui/material";
 
@@ -15,6 +16,7 @@ export const UserRoutesCarousel = ({
   sortOrder,
 }) => {
   const { user: currentUser } = useContext(KompitrailContext);
+  const { t } = useTranslation("emptyState");
 
   // Viewed user id: used ONLY for filtering which routes to show in the carousel
   const targetUserId = Number(profileUserId || currentUser?.user_id);
@@ -86,9 +88,7 @@ export const UserRoutesCarousel = ({
           ))}
         </Box>
       ) : (
-        <CardPlaceholder
-          text={"Aún no tienes rutas guardadas. Apúntate o crea una."}
-        />
+        <CardPlaceholder text={t("carrouselPlaceholder")} />
       )}
     </Box>
   );

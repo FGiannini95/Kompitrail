@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   Button,
@@ -17,7 +18,8 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 export const ModeToggleDialog = ({ open, onClose, onToggle, currentMode }) => {
   const isDark = currentMode === "dark";
-  const themeLabel = isDark ? "Modo oscuro" : "Modo claro";
+  const { t } = useTranslation(["dialogs", "buttons", "settings"]);
+  const themeLabel = isDark ? t("settings:darkMode") : t("settings:lightMode");
 
   return (
     <Dialog
@@ -27,7 +29,7 @@ export const ModeToggleDialog = ({ open, onClose, onToggle, currentMode }) => {
       maxWidth="sm"
       disableScrollLock
     >
-      <DialogTitle>Cambiar tema</DialogTitle>
+      <DialogTitle>{t("dialogs:modeChangeTitle")}</DialogTitle>
       <DialogContent>
         <Stack
           direction="column"
@@ -64,7 +66,7 @@ export const ModeToggleDialog = ({ open, onClose, onToggle, currentMode }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="text.primary">
-          Cerrar
+          {t("buttons:close")}
         </Button>
       </DialogActions>
     </Dialog>

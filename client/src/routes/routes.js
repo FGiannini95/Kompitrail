@@ -1,6 +1,5 @@
 export const RoutesString = {
   home: "/",
-  search: "/search",
   profile: "/profile",
   otherProfile: "/profile/:id",
   register: "/register",

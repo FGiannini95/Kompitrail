@@ -1,0 +1,18 @@
+{
+  "routeCreateTitle": "Create route",
+  "routeEditTitle": "Edit route",
+  "routeDeleteTitle": "Delete route",
+  "motorbikeCreateTitle": "Add motorbike",
+  "motorbikeEditTitle": "Edit motorbike",
+  "motorbikeDeleteTitle": "Eliminate motorbike",
+  "logoutTitle": "Close session",
+  "accountDeleteTitle": "Delete account",
+  "modeChangeTitle": "Change mode",
+  "languageChangeTitle": "Change language",
+  "routeDeleteText": "Do you want to remove the route from the platform?",
+  "motorbikeDeleteText": "Do you want to remove the motorcycle from your profile?",
+  "logoutText": "Are you sure you want to log out?",
+  "accountDeleteText": "This action is irreversible. Are you sure you want to delete your account?",
+  "routeJoinTitle": "Cancel registration",
+  "routeJoinText": "Do you want to unsubscribe from this route?"
+}

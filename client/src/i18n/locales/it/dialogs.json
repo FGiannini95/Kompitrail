@@ -1,0 +1,18 @@
+{
+  "routeCreateTitle": "Creare un percorso",
+  "routeEditTitle": "Modifica percorso",
+  "routeDeleteTitle": "Elliminare il percorso",
+  "motorbikeCreateTitle": "Aggiungi moto",
+  "motorbikeEditTitle": "Modifica moto",
+  "motorbikeDeleteTitle": "Rimuovere la moto",
+  "logoutTitle": "Disconnettersi",
+  "accountDeleteTitle": "Elliminare l'account",
+  "modeChangeTitle": "Cambiare modalità",
+  "languageChangeTitle": "Cambiare la lingua",
+  "routeDeleteText": "Vuoi rimuovere il percorso dalla piattaforma?",
+  "motorbikeDeleteText": "Vuoi rimuovere la moto dal tuo profilo?",
+  "logoutText": "Sei sicuro di volerti disconnettere?",
+  "accountDeleteText": "Questa azione è irreversibile, sei sicuro di voler elliminare il tuo account?",
+  "routeJoinTitle": "Annullamento della registrazione",
+  "routeJoinText": "Vuoi annullare l'iscrizione a questo percorso?"
+}

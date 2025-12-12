@@ -19,6 +19,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ColorLensOutlinedIcon from "@mui/icons-material/ColorLensOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
+import { useTranslation } from "react-i18next";
 
 const ACTION_CONFIG = {
   changePassword: {
@@ -141,6 +142,14 @@ const ACTION_CONFIG = {
 export const SettingsRow = ({ action, onClick }) => {
   const config = ACTION_CONFIG[action];
   if (!config) throw new Error(`Action desconocida: ${action}`);
+
+  const { t } = useTranslation("settings");
+
+  // Use translation; fallback to config.label if translation is missing
+  const label = t(`actions.${action}`, {
+    defaultValue: config.label ?? action,
+  });
+
   return (
     <ListItem disablePadding>
       <ListItemButton onClick={onClick}>
@@ -155,7 +164,7 @@ export const SettingsRow = ({ action, onClick }) => {
           {config.icon}
         </ListItemIcon>
         <ListItemText
-          primary={config.label}
+          primary={label}
           sx={(theme) => ({
             color:
               action === "deleteAccount"

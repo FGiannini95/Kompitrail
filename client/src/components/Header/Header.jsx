@@ -1,4 +1,6 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
+
 import { IconButton, Tooltip, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -11,10 +13,12 @@ export const Header = ({
   title,
   onShare,
   isCopied,
-  tooltipText = "URL copiada",
+  tooltipText,
   fallbackPath = "/",
 }) => {
   const handleBack = useSafeBack(fallbackPath);
+  const { t } = useTranslation("general");
+  const finalTooltipText = tooltipText ?? t("general:urlText");
 
   return (
     <Grid
@@ -39,7 +43,7 @@ export const Header = ({
         <span />
       )}
       <Tooltip
-        title={tooltipText}
+        title={finalTooltipText}
         open={isCopied}
         disableInteractive
         arrow

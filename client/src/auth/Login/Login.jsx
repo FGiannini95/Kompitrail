@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 
 import {
   TextField,
@@ -46,6 +47,7 @@ export const Login = () => {
   const [openRestorePasswordDialog, setOpenRestorePasswordDialog] =
     useState(false);
   const [redirectRequested, setRedirectRequested] = useState(false);
+  const { t } = useTranslation(["buttons", "general", "forms", "errors"]);
 
   const navigate = useNavigate();
   const { buildUrl } = useRedirectParam();
@@ -78,10 +80,10 @@ export const Login = () => {
     // Validation before the submit
     const errors = {};
     if (login.email === "") {
-      errors.email = "El correo es obligatorio";
+      errors.email = t("errors:login.emailRequired");
     }
     if (login.password === "") {
-      errors.password = "La contraseña es obligatoria";
+      errors.password = t("errors:login.passwordRequired");
     }
     // This method extracts all the keys from the errors object and returns them as an array
     if (Object.keys(errors).length > 0) {
@@ -105,7 +107,7 @@ export const Login = () => {
         setMsgError({
           email: "",
           password: "",
-          global: err.response?.data || "Error desconocido al iniciar sesión",
+          global: err.response?.data || t("errors:login.invalidCredentials"),
         });
       });
   };
@@ -148,12 +150,15 @@ export const Login = () => {
                 alignItems="stretch"
               >
                 <Grid size={12}>
-                  <Typography variant="h5">Login</Typography>
+                  <Typography variant="h5">
+                    {" "}
+                    {t("general:loginTitle")}
+                  </Typography>
                 </Grid>
 
                 <Grid size={12}>
                   <TextField
-                    label="Email"
+                    label={t("forms:emailLabel")}
                     name="email"
                     fullWidth
                     onChange={handleChange}
@@ -170,7 +175,7 @@ export const Login = () => {
 
                 <Grid size={12}>
                   <TextField
-                    label="Contraseña"
+                    label={t("forms:passwordLabel")}
                     name="password"
                     type={showPassword ? "text" : "password"}
                     fullWidth
@@ -242,7 +247,7 @@ export const Login = () => {
                       fullWidth
                       onClick={handleCancel}
                     >
-                      CANCELAR
+                      {t("buttons:cancel")}
                     </Button>
                   </Grid>
                   <Grid xs={6}>
@@ -259,40 +264,50 @@ export const Login = () => {
                         },
                       })}
                     >
-                      ACEPTAR
+                      {t("buttons:confirmar")}
                     </Button>
                   </Grid>
                 </Grid>
 
                 <Grid size={12}>
                   <Typography textAlign="center">
-                    ¿Aún no tienes un perfil? ¡Regístrate{" "}
-                    <Link
-                      onClick={() => navigate(buildUrl(RoutesString.register))}
-                      sx={(theme) => ({
-                        color: theme.palette.text.secondary,
-                      })}
-                      underline="hover"
-                    >
-                      aquí
-                    </Link>
-                    !
+                    <Trans
+                      i18nKey="noAccountRegisterText"
+                      ns="general"
+                      components={{
+                        1: (
+                          <Link
+                            onClick={() =>
+                              navigate(buildUrl(RoutesString.register))
+                            }
+                            sx={(theme) => ({
+                              color: theme.palette.text.secondary,
+                            })}
+                            underline="hover"
+                          />
+                        ),
+                      }}
+                    />
                   </Typography>
                 </Grid>
 
                 <Grid size={12}>
-                  <Typography>
-                    ¿Has olvidado tu contraseña? Pincha{" "}
-                    <Link
-                      onClick={() => setOpenRestorePasswordDialog(true)}
-                      sx={(theme) => ({
-                        color: theme.palette.text.secondary,
-                      })}
-                      underline="hover"
-                    >
-                      aquí
-                    </Link>
-                    !
+                  <Typography textAlign="center">
+                    <Trans
+                      i18nKey="forgotPasswordText"
+                      ns="general"
+                      components={{
+                        1: (
+                          <Link
+                            onClick={() => setOpenRestorePasswordDialog(true)}
+                            sx={(theme) => ({
+                              color: theme.palette.text.secondary,
+                            })}
+                            underline="hover"
+                          />
+                        ),
+                      }}
+                    />
                   </Typography>
                 </Grid>
 
