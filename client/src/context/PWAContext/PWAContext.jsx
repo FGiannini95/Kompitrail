@@ -6,11 +6,11 @@ import React, {
   useState,
 } from "react";
 
-export const PWAContext = createContext();
+export const PwaContext = createContext();
 // Helpful for debugging with ReactDev Tools
-PWAContext.displayName = "PWAContext";
+PwaContext.displayName = "PwaContext";
 
-export const PWAProvider = ({ children }) => {
+export const PwaProvider = ({ children }) => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isInstallable, setIsInstallable] = useState(false);
 
@@ -61,11 +61,11 @@ export const PWAProvider = ({ children }) => {
     triggerInstall,
   };
 
-  return <PWAContext.Provider value={value}>{children}</PWAContext.Provider>;
+  return <PwaContext.Provider value={value}>{children}</PwaContext.Provider>;
 };
 
-export const usePWA = () => {
-  const ctx = useContext(PWAContext);
+export const usePwa = () => {
+  const ctx = useContext(PwaContext);
   if (!ctx) {
     throw new Error("usePWA must be used within PWAProvider");
   }

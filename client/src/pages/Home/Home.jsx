@@ -9,6 +9,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Providers & Hooks
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
+import { usePwaPrompt } from "../../hooks/usePwaPrompt.js";
 // Utils
 import {
   getLocalStorage,
@@ -35,6 +36,11 @@ export const Home = () => {
   const { user } = useContext(KompitrailContext);
   const [lastRoutesVisit, setLastRoutesVisit] = useState(null);
   const { t } = useTranslation(["buttons", "general"]);
+
+  // We consider the user authenticated cause Home is only rendered when token && user are present
+  const isAuthenticated = Boolean(user);
+  const { isPopupOpen, handleAccept, handleDismiss } =
+    usePwaPrompt(isAuthenticated);
 
   useEffect(() => {
     loadAllRoutes();
