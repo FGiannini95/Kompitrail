@@ -9,3 +9,17 @@ createRoot(document.getElementById("root")).render(
     <App />
   </StrictMode>
 );
+
+// Register the service worker in production
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then((registration) => {
+        console.log("[SW] Registered:", registration);
+      })
+      .catch((error) => {
+        console.error("[SW] Registration failed:", error);
+      });
+  });
+}
