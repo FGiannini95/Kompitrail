@@ -13,7 +13,8 @@
     "privacy": "Privacy Policy",
     "logout": "Log out",
     "language": "Language",
-    "theme": "Mode"
+    "theme": "Mode",
+    "pwa": "Create shortcut"
   },
   "darkMode": "Dark mode",
   "lightMode": "Light mode",

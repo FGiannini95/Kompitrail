@@ -50,6 +50,7 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
   const { openDialog } = useConfirmationDialog();
   const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
   const [isLanguageDialogOpen, setIsLanguageDialogOpen] = useState(false);
+  const [isPWADialogOpen, setIsPWADialogOpen] = useState(false);
 
   const { t } = useTranslation(["general", "dialogs"]);
 
@@ -88,6 +89,9 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
   const handleOpenLanguageDialog = () => setIsLanguageDialogOpen(true);
   const handleCloseLanguageDialog = () => setIsLanguageDialogOpen(false);
 
+  const handleOpenPWADialog = () => setIsPWADialogOpen(true);
+  const handleClosePWADialog = () => setIsPWADialogOpen(false);
+
   return (
     <Grid container direction="column" spacing={2}>
       {/* Header */}
@@ -108,6 +112,8 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
       <Section>
         <SettingsRow action="language" onClick={handleOpenLanguageDialog} />
         <SettingsRow action="theme" onClick={handleOpenThemeDialog} />
+        <SettingsRow action="pwa" onClick={handleOpenPWADialog} />
+
         <SettingsRow
           action="changePassword"
           onClick={() => navigate(RoutesString.editPassword)}
