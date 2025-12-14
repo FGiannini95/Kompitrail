@@ -13,7 +13,7 @@ const PWA_INSTALL_ACCEPTED_KEY = "pwaInstallAccepted";
 // This hook decides if the popup should be shown
 export const usePwaPrompt = (isAuthenticated) => {
   const { isInstallable, triggerInstall } = usePwa();
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [IsPwaDialogOpen, setIsPwaDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -27,7 +27,7 @@ export const usePwaPrompt = (isAuthenticated) => {
       getLocalStorage(PWA_INSTALL_DISMISSED_KEY) === "true";
     if (alreadyDismissed) return;
 
-    setIsPopupOpen(true);
+    setIsPwaDialogOpen(true);
   }, [isAuthenticated, isInstallable]);
 
   const handleAccept = useCallback(async () => {
@@ -37,22 +37,23 @@ export const usePwaPrompt = (isAuthenticated) => {
     if (outcome === "accepted") {
       saveLocalStorage(PWA_INSTALL_ACCEPTED_KEY, "true");
       delLocalStorage(PWA_INSTALL_DISMISSED_KEY);
-      setIsPopupOpen(false);
-      return;
+      setIsPwaDialogOpen(false);
+      return { outcome };
     }
 
     // If the user saw the native prompt but dismissed it,
     saveLocalStorage(PWA_INSTALL_DISMISSED_KEY, "true");
-    setIsPopupOpen(false);
+    setIsPwaDialogOpen(false);
+    return { outcome };
   }, [triggerInstall]);
 
   const handleDismiss = useCallback(() => {
     saveLocalStorage(PWA_INSTALL_DISMISSED_KEY, "true");
-    setIsPopupOpen(false);
+    setIsPwaDialogOpen(false);
   }, []);
 
   return {
-    isPopupOpen,
+    IsPwaDialogOpen,
     handleAccept,
     handleDismiss,
   };

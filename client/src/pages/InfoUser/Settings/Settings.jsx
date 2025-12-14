@@ -22,6 +22,7 @@ import { useConfirmationDialog } from "../../../context/ConfirmationDialogContex
 import { SettingsRow } from "./SettingsRow/SettingsRow";
 import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
 import { ChangeLanguageDialog } from "./ChangeLanguageDialog/ChangeLanguageDialog";
+import { DialogPwa } from "../../../components/Dialogs/DialogPwa/DialogPwa";
 
 function Section({ title, children }) {
   return (
@@ -50,7 +51,7 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
   const { openDialog } = useConfirmationDialog();
   const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
   const [isLanguageDialogOpen, setIsLanguageDialogOpen] = useState(false);
-  const [isPWADialogOpen, setIsPWADialogOpen] = useState(false);
+  const [isPwaDialogOpen, setIsPwaDialogOpen] = useState(false);
 
   const { t } = useTranslation(["general", "dialogs"]);
 
@@ -89,8 +90,8 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
   const handleOpenLanguageDialog = () => setIsLanguageDialogOpen(true);
   const handleCloseLanguageDialog = () => setIsLanguageDialogOpen(false);
 
-  const handleOpenPWADialog = () => setIsPWADialogOpen(true);
-  const handleClosePWADialog = () => setIsPWADialogOpen(false);
+  const handleOpenPwaDialog = () => setIsPwaDialogOpen(true);
+  const handleClosePwaDialog = () => setIsPwaDialogOpen(false);
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -112,7 +113,7 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
       <Section>
         <SettingsRow action="language" onClick={handleOpenLanguageDialog} />
         <SettingsRow action="theme" onClick={handleOpenThemeDialog} />
-        <SettingsRow action="pwa" onClick={handleOpenPWADialog} />
+        <SettingsRow action="pwa" onClick={handleOpenPwaDialog} />
 
         <SettingsRow
           action="changePassword"
@@ -134,6 +135,8 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
         language={language}
         changeLanguage={changeLanguage}
       />
+
+      <DialogPwa open={isPwaDialogOpen} onClose={handleClosePwaDialog} />
     </Grid>
   );
 };

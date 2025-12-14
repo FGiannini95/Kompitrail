@@ -9,7 +9,6 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Providers & Hooks
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
-import { usePwaPrompt } from "../../hooks/usePwaPrompt.js";
 // Utils
 import {
   getLocalStorage,
@@ -23,6 +22,7 @@ import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDial
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { RouteCreateDialog } from "../InfoUser/Route/RouteCreateDialog/RouteCreateDialog";
+import { DialogPwa } from "../../components/Dialogs/DialogPwa/DialogPwa";
 
 const LAST_ROUTES_VISIT_KEY = "kompitrail.routes.lastVisit";
 
@@ -36,11 +36,6 @@ export const Home = () => {
   const { user } = useContext(KompitrailContext);
   const [lastRoutesVisit, setLastRoutesVisit] = useState(null);
   const { t } = useTranslation(["buttons", "general"]);
-
-  // We consider the user authenticated cause Home is only rendered when token && user are present
-  const isAuthenticated = Boolean(user);
-  const { isPopupOpen, handleAccept, handleDismiss } =
-    usePwaPrompt(isAuthenticated);
 
   useEffect(() => {
     loadAllRoutes();
@@ -78,6 +73,7 @@ export const Home = () => {
 
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
+      <DialogPwa />
       {futureRoutes.length > 0 && (
         <UserRoutesCarousel
           allRoutes={futureRoutes}

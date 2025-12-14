@@ -16,5 +16,7 @@
   "routeJoinTitle": "Cancel registration",
   "routeJoinText": "Do you want to unsubscribe from this route?",
   "pwaTitle": "Create shortcut",
-  "pwaText": "Do you want to install the application for a better experience?"
+  "pwaText": "Do you want to install the application for a better experience?",
+  "pwaTitleIos": "Add to home screen",
+  "pwaTextIos": "Open the share menu and choose 'Add to home screen' to install Kompitrail"
 }
