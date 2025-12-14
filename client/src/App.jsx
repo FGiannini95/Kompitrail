@@ -9,6 +9,7 @@ import { useTheme } from "@mui/material/styles";
 
 import { KompitrailProvider } from "../src/context/KompitrailContext";
 import { ThemeProvider } from "./ThemeProvider";
+import { PwaProvider } from "./context/PwaContext/PwaContext";
 import { GlobalRouter } from "./routes/GlobalRouter";
 import { getLocalStorage, saveLocalStorage } from "./helpers/localStorageUtils";
 
@@ -81,12 +82,14 @@ export function App() {
       <GoogleOAuthProvider clientId={CLIENT_ID}>
         <ThemeProvider mode={mode}>
           <KompitrailProvider>
-            <GlobalRouter
-              toggleMode={toggleMode}
-              mode={mode}
-              language={language}
-              changeLanguage={changeLanguage}
-            />
+            <PwaProvider>
+              <GlobalRouter
+                toggleMode={toggleMode}
+                mode={mode}
+                language={language}
+                changeLanguage={changeLanguage}
+              />
+            </PwaProvider>
           </KompitrailProvider>
         </ThemeProvider>
       </GoogleOAuthProvider>

@@ -14,5 +14,9 @@
   "accountDeleteTitle": "Eliminar cuenta",
   "accountDeleteText": "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?",
   "modeChangeTitle": "Cambiar tema",
-  "languageChangeTitle": "Cambiar idioma"
+  "languageChangeTitle": "Cambiar idioma",
+  "pwaTitle": "Crear acceso directo",
+  "pwaText": "¿Quiere instalar la aplicación para una experiencia mejor?",
+  "pwaTitleIos": "Añadir a la pantalla de inicio",
+  "pwaTextIos": "Abre el menú de compartir y elige ‘Añadir a la pantalla de inicio’ para instalar Kompitrail"
 }

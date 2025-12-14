@@ -19,6 +19,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ColorLensOutlinedIcon from "@mui/icons-material/ColorLensOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
+import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
 import { useTranslation } from "react-i18next";
 
 const ACTION_CONFIG = {
@@ -130,6 +131,17 @@ const ACTION_CONFIG = {
     label: "Tema",
     icon: (
       <ColorLensOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
+  },
+  pwa: {
+    label: "Crear acceso directo",
+    icon: (
+      <WidgetsOutlinedIcon
         fontSize="large"
         sx={(theme) => ({
           color: theme.palette.text.primary,

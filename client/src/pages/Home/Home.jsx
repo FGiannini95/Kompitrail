@@ -22,6 +22,7 @@ import { RouteEditDialog } from "../InfoUser/Route/RouteEditDialog/RouteEditDial
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { RouteCreateDialog } from "../InfoUser/Route/RouteCreateDialog/RouteCreateDialog";
+import { DialogPwa } from "../../components/Dialogs/DialogPwa/DialogPwa";
 
 const LAST_ROUTES_VISIT_KEY = "kompitrail.routes.lastVisit";
 
@@ -72,6 +73,7 @@ export const Home = () => {
 
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
+      <DialogPwa />
       {futureRoutes.length > 0 && (
         <UserRoutesCarousel
           allRoutes={futureRoutes}

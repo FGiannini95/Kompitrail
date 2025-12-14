@@ -14,5 +14,9 @@
   "logoutText": "Are you sure you want to log out?",
   "accountDeleteText": "This action is irreversible. Are you sure you want to delete your account?",
   "routeJoinTitle": "Cancel registration",
-  "routeJoinText": "Do you want to unsubscribe from this route?"
+  "routeJoinText": "Do you want to unsubscribe from this route?",
+  "pwaTitle": "Create shortcut",
+  "pwaText": "Do you want to install the application for a better experience?",
+  "pwaTitleIos": "Add to home screen",
+  "pwaTextIos": "Open the share menu and choose 'Add to home screen' to install Kompitrail"
 }

@@ -13,7 +13,8 @@
     "privacy": "Política de privacidad",
     "logout": "Log out",
     "language": "Idioma",
-    "theme": "Tema"
+    "theme": "Tema",
+    "pwa": "Crear acceso directo"
   },
   "darkMode": "Modo oscuro",
   "lightMode": "Modo claro",
