@@ -17,27 +17,56 @@ export const KompitrailProvider = ({ children }) => {
 
   useEffect(() => {
     setToken(tokenLocalStorage);
-    if (tokenLocalStorage) {
-      const { user_id } = jwtDecode(tokenLocalStorage).user;
-      axios
-        .get(`${USERS_URL}/oneuser/${user_id}`)
-        .then((res) => {
-          setUser(res.data);
-          setIsLogged(true);
-        })
-        .catch((err) => {
-          console.error(err);
-          setUser(null);
-          setIsLogged(false);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
+
+    // No token → user is logged out
+    if (!tokenLocalStorage) {
+      setUser(null);
       setIsLoading(false);
+      setIsLogged(false);
+      return;
+    }
+
+    let decodedToken;
+
+    try {
+      decodedToken = jwtDecode(tokenLocalStorage);
+    } catch (error) {
+      console.error("Invalid JWT token", error);
+      setUser(null);
+      setIsLoading(false);
+      setIsLogged(false);
+      setToken(undefined);
+      return;
+    }
+
+    // Extract user_id from decoded token payload
+    const user_id = decodedToken?.user?.user_id;
+
+    // If user_id is missing, treat as invalid auth state
+    if (!user_id) {
+      console.error("Decoded token does not contain user_id:", decodedToken);
       setUser(null);
       setIsLogged(false);
+      setIsLoading(false);
+      setToken(undefined);
+      return;
     }
+
+    // Fetch data
+    axios
+      .get(`${USERS_URL}/oneuser/${user_id}`)
+      .then((res) => {
+        setUser(res.data);
+        setIsLogged(true);
+      })
+      .catch((err) => {
+        console.error("Error fetching user from /oneuser:", err);
+        setUser(null);
+        setIsLogged(false);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   return (
