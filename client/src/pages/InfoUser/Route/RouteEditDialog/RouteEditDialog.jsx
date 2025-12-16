@@ -112,7 +112,7 @@ export const RouteEditDialog = () => {
       }}
     >
       <DialogTitle>{t("dialogs:routeEditTitle")}</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ overflow: "visible" }}>
         <Grid container spacing={2}>
           <Grid size={12}>
             <FormTextfield
@@ -233,7 +233,7 @@ export const RouteEditDialog = () => {
               }
             />
           </Grid>
-          <Grid size={12} sx={{ mb: 5 }}>
+          <Grid size={12} sx={{ mb: 2 }}>
             <FormTextfield
               label={t("forms:descriptionLabel")}
               name="route_description"

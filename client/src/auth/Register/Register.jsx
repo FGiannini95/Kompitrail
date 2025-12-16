@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 
@@ -46,6 +46,7 @@ export const Register = () => {
     setError,
     formState: { errors, isSubmitting },
     reset,
+    control,
   } = useForm();
 
   const onSubmit = async (data) => {
@@ -110,36 +111,65 @@ export const Register = () => {
                   </Typography>
                 </Grid>
                 <Grid size={12}>
-                  <TextField
-                    {...register("name", {
+                  <Controller
+                    name="name"
+                    control={control}
+                    rules={{
                       required: t("errors:register.nameRequired"),
                       minLength: {
                         value: 2,
                         message: t("errors:register.nameMinLength"),
                       },
-                      setValueAs: (v) => capitalizeFirstLetter(v),
-                    })}
-                    label={t("forms:nameLabel")}
-                    fullWidth
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label={t("forms:nameLabel")}
+                        fullWidth
+                        error={!!errors.name}
+                        helperText={errors.name?.message}
+                        value={field.value ?? ""}
+                        onChange={(e) => {
+                          const rawValue = e.target.value;
+                          const formattedValue =
+                            capitalizeFirstLetter(rawValue);
+
+                          // Normalize the name before storing it in the form state
+                          field.onChange(formattedValue);
+                        }}
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid size={12}>
-                  <TextField
-                    {...register("lastname", {
+                  <Controller
+                    name="lastname"
+                    control={control}
+                    rules={{
                       required: t("errors:register.lastNameRequired"),
                       minLength: {
                         value: 2,
                         message: t("errors:register.lastNameMinLength"),
                       },
-                      setValueAs: (v) => capitalizeFirstLetter(v),
-                    })}
-                    label={t("forms:lastNameLabel")}
-                    variant="outlined"
-                    fullWidth
-                    error={!!errors.lastname}
-                    helperText={errors.lastname?.message}
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label={t("forms:lastNameLabel")}
+                        fullWidth
+                        error={!!errors.lastname}
+                        helperText={errors.lastname?.message}
+                        value={field.value ?? ""}
+                        onChange={(e) => {
+                          const rawValue = e.target.value;
+                          const formattedValue =
+                            capitalizeFirstLetter(rawValue);
+
+                          // Normalize the name before storing it in the form state
+                          field.onChange(formattedValue);
+                        }}
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid size={12}>
