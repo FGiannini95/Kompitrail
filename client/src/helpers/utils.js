@@ -9,12 +9,10 @@ export const getInitials = (name, lastname) => {
 // Capitalize the first letter of a given string
 export const capitalizeFirstLetter = (string) => {
   if (typeof string !== "string") return "";
-  const trimmedValue = string.trim();
-  if (!trimmedValue) return "";
+  if (!string) return "";
 
-  // Split by spaces; inside each word, also split by hyphen and title-case each part
-  return trimmedValue
-    .split(/\s+/)
+  return string
+    .split(" ") // preserve all spaces (no trim, no collapse)
     .map((word) =>
       word
         .split("-")

@@ -9,6 +9,7 @@ import { USER_INITIAL_VALUE } from "../constants/userConstants";
 import { RoutesString } from "../routes/routes";
 import { API_BASE } from "../api";
 import { normalizeImg } from "../helpers/normalizeImg";
+import { capitalizeFirstLetter } from "../helpers/utils";
 // Hooks & Providers
 import { KompitrailContext } from "../context/KompitrailContext";
 
@@ -46,18 +47,15 @@ export const useEditUserForm = () => {
   }, [user_id]);
 
   const handleChange = (e) => {
-    if (e && e.target) {
-      // React event
-      const { name, value } = e.target;
+    if (!e?.target) return;
 
-      const nextValue =
-        typeof value === "string" && value.length > 0
-          ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
-          : value;
-      setEditUser((prevState) => ({ ...prevState, [name]: nextValue }));
-    } else {
-      setEditUser((prevState) => ({ ...prevState }));
-    }
+    const { name, value } = e.target;
+    const formatted = capitalizeFirstLetter(value);
+
+    setEditUser((prev) => ({
+      ...prev,
+      [name]: formatted,
+    }));
   };
 
   const handleConfirm = (e) => {

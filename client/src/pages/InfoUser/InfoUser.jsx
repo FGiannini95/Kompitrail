@@ -82,7 +82,7 @@ export const InfoUser = () => {
     <Box
       sx={(theme) => ({
         backgroundColor: theme.palette.kompitrail.page,
-        py: "25px",
+        pb: "25px",
       })}
     >
       <Grid>

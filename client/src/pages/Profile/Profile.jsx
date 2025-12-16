@@ -130,7 +130,7 @@ export const Profile = () => {
     <Box
       sx={(theme) => ({
         backgroundColor: theme.palette.kompitrail.page,
-        paddingTop: "25px",
+        pb: "25px",
       })}
     >
       {isOtherProfile && (
