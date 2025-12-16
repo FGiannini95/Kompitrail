@@ -71,10 +71,30 @@ class usersControllers {
   };
 
   oneUser = (req, res) => {
-    const { id: user_id } = req.params;
-    let sql = `SELECT * FROM user WHERE user_id = ${user_id} AND is_deleted = 0`;
-    connection.query(sql, (err, result) => {
-      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    const { id } = req.params;
+
+    // Basic validation of user id
+    const userId = Number(id);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      // Log invalid param for debugging
+      console.error("oneUser: invalid user id param", { id });
+      return res.status(400).json({ message: "Invalid user id" });
+    }
+
+    const sql = "SELECT * FROM user WHERE user_id = ? AND is_deleted = 0";
+
+    connection.query(sql, [userId], (err, result) => {
+      if (err) {
+        console.error("oneUser: DB error", err);
+        return res.status(500).json({ message: "Error fetching user data" });
+      }
+
+      if (!result || result.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Success
+      return res.status(200).json(result[0]);
     });
   };
 
