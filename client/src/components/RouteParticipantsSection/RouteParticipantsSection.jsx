@@ -5,6 +5,7 @@ import React, {
   useMemo,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Box } from "@mui/material";
 
@@ -28,7 +29,7 @@ export const RouteParticipantsSection = forwardRef(
       participants = [],
       max_participants,
       isOwner,
-      isPastRoute,
+      isRouteLocked,
     },
     ref
   ) => {
@@ -44,6 +45,7 @@ export const RouteParticipantsSection = forwardRef(
     const { showSnackbar } = useSnackbar();
     const { openDialog } = useConfirmationDialog();
     const navigate = useNavigate();
+    const { t } = useTranslation(["dialogs", "snackbars"]);
 
     const enrollmentInfo = useMemo(() => {
       // Creator + enrolled user
@@ -80,38 +82,38 @@ export const RouteParticipantsSection = forwardRef(
       !isJoiningRoute(route_id);
 
     const handleDelete = () => {
-      return deleteRoute(route_id)
+      return deleteRoute(route_id, currentUser?.user_id)
         .then(() => {
-          showSnackbar("Ruta eliminada con éxito");
+          showSnackbar(t("snackbars:routeDeleteSuccess"));
           closeDialog();
           navigate(RoutesString.home);
         })
         .catch((err) => {
           console.log(err);
-          showSnackbar("Error al eliminar la ruta", "error");
+          showSnackbar(t("snackbars:routeDeleteError"), "error");
         });
     };
 
     const handleOpenDeleteDialog = () => {
       openDialog({
-        title: "Eliminar ruta",
-        message: "¿Quieres eliminar la ruta de la plataforma?",
+        title: t("dialogs:routeDeleteTitle"),
+        message: t("dialogs:routeDeleteText"),
         onConfirm: () => handleDelete(),
       });
     };
 
     const handleJoin = (e) => {
-      e.stopPropagation();
+      e?.stopPropagation();
       if (!canJoinRoute) return;
 
       joinRoute(route_id, currentUser.user_id)
         .then(() => {
-          showSnackbar("Inscripción completada");
+          showSnackbar(t("snackbars:routeJoinSuccess"));
           navigate(RoutesString.home);
         })
         .catch((err) => {
           console.log(err);
-          showSnackbar("Error al inscribirte", "error");
+          showSnackbar(t("snackbars:routeJoinError"), "error");
         });
     };
 
@@ -119,19 +121,19 @@ export const RouteParticipantsSection = forwardRef(
       e?.stopPropagation();
       leaveRoute(route_id, currentUser.user_id)
         .then(() => {
-          showSnackbar("Inscripción cancelada");
+          showSnackbar(t("snackbars:routeUnjoinSuccess"));
           navigate(RoutesString.home);
         })
         .catch((err) => {
           console.log(err);
-          showSnackbar("Error durante la cancelación", "error");
+          showSnackbar(t("snackbars:routeUnjoinError"), "error");
         });
     };
 
     const handleOpenLeaveRoute = () => {
       openDialog({
-        title: "Cancelar inscripción",
-        message: "¿Quieres cancelar la inscripción a esta ruta?",
+        title: t("dialogs:routeJoinTitle"),
+        message: t("dialogs:routeJoinText"),
         onConfirm: () => handleLeave(),
       });
     };
@@ -159,7 +161,7 @@ export const RouteParticipantsSection = forwardRef(
           size={40}
           showName
           onBadgeClick={() => handleOpenDeleteDialog(route_id)}
-          isPastRoute={isPastRoute}
+          isRouteLocked={isRouteLocked}
         />
 
         {/* 2. ENROLLED PARTICIPANTS */}
@@ -175,7 +177,7 @@ export const RouteParticipantsSection = forwardRef(
               size={40}
               showName
               onBadgeClick={isCurrentUser ? handleOpenLeaveRoute : undefined}
-              isPastRoute={isPastRoute}
+              isRouteLocked={isRouteLocked}
             />
           );
         })}
@@ -186,7 +188,7 @@ export const RouteParticipantsSection = forwardRef(
             key={`empty-slot-${i}`}
             size={40}
             onClick={handleJoin}
-            disabled={!canJoinRoute || isPastRoute}
+            disabled={!canJoinRoute || isRouteLocked}
           />
         ))}
       </Box>

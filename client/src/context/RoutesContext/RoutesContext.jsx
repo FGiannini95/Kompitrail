@@ -20,6 +20,8 @@ export const RoutesProvider = ({ children }) => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [expandedRouteId, setExpandedRouteId] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Track if initial load has completed
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   // Track per route ids to block double clicks
   const [joiningRouteId, setJoiningRouteId] = useState(() => new Set());
   const location = useLocation();
@@ -43,8 +45,14 @@ export const RoutesProvider = ({ children }) => {
     setDialog({ isOpen: false, mode: null, selectedId: null });
   }, []);
 
-  const loadAllRoutes = useCallback(() => {
-    setLoading(true);
+  const loadAllRoutes = useCallback((options = { silent: false }) => {
+    const { silent } = options;
+
+    // Only show loading spinner if this is not a silent refresh
+    if (!silent) {
+      setLoading(true);
+    }
+
     axios
       .get(`${ROUTES_URL}/showallroutes`)
       .then((res) => setAllRoutes(res.data))
@@ -52,7 +60,10 @@ export const RoutesProvider = ({ children }) => {
         console.log(err);
       })
       .finally(() => {
-        setLoading(false);
+        if (!silent) {
+          setLoading(false);
+        }
+        setHasLoadedOnce(true); // track that we loaded at least once
       });
   }, []);
 
@@ -72,6 +83,19 @@ export const RoutesProvider = ({ children }) => {
       });
   }, []);
 
+  // Poll routes periodically, every 15s, to keep all clients in sync
+  useEffect(() => {
+    // First load: show spinner
+    loadAllRoutes();
+
+    const interval = setInterval(() => {
+      // Background refresh: no spinner, no visual flicker
+      loadAllRoutes({ silent: true });
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [loadAllRoutes]);
+
   // CREATE action
   const createRoute = useCallback((route) => {
     setUserRoutes((prev) => [route, ...prev]);
@@ -90,15 +114,16 @@ export const RoutesProvider = ({ children }) => {
   }, []);
 
   // DELETE action
-  const deleteRoute = useCallback((route_id) => {
+  const deleteRoute = useCallback((route_id, user_id) => {
     return axios
-      .put(`${ROUTES_URL}/deleteroute/${route_id}`)
+      .put(`${ROUTES_URL}/deleteroute/${route_id}`, { user_id })
       .then(() => {
         setAllRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
         setUserRoutes((prev) => prev.filter((r) => r.route_id !== route_id));
       })
       .catch((err) => {
         console.log(err);
+        throw err;
       });
   }, []);
 
@@ -115,7 +140,7 @@ export const RoutesProvider = ({ children }) => {
       return axios
         .post(`${ROUTES_URL}/join/${route_id}`, { user_id })
         .then(() => {
-          loadAllRoutes();
+          loadAllRoutes({ silent: true });
         })
         .catch((err) => {
           console.log(err);
@@ -133,9 +158,7 @@ export const RoutesProvider = ({ children }) => {
 
   // Helper to know if a specific route is currently joining
   const isJoiningRoute = useCallback(
-    (route_id) => {
-      joiningRouteId.has(route_id);
-    },
+    (route_id) => joiningRouteId.has(route_id), // <-- return the boolean
     [joiningRouteId]
   );
 
@@ -147,7 +170,7 @@ export const RoutesProvider = ({ children }) => {
           data: { user_id },
         })
         .then(() => {
-          loadAllRoutes();
+          loadAllRoutes({ silent: true });
         })
         .catch((err) => {
           console.log(err);

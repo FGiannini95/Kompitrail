@@ -21,10 +21,14 @@ export const PrivacyDialog = ({ openIframe, handleCloseIframe, iframeUrl }) => {
             position: "absolute",
             right: 8,
             top: 12,
-            color: "black",
           }}
         >
-          <CloseOutlinedIcon />
+          <CloseOutlinedIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
       </DialogTitle>
       <DialogContent style={{ padding: 0 }}>

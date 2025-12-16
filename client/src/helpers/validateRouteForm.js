@@ -1,32 +1,41 @@
 export const validateRouteForm = (routeData) => {
   const errors = {};
+
   if (routeData.starting_point === "") {
-    errors.starting_point = "Punto de salida requerido";
+    errors.starting_point = "route.startingPointRequired";
   }
+
   if (routeData.ending_point === "") {
-    errors.ending_point = "Punto de llegada requerido";
+    errors.ending_point = "route.endingPointRequired";
   }
+
   if (!routeData.date) {
-    routeData.date = "Fecha requerida";
+    errors.date = "route.dateRequired";
   }
+
   if (!routeData.distance) {
-    errors.distance = "Distancia requerida";
+    errors.distance = "route.distanceRequired";
   }
+
   if (!routeData.level) {
-    errors.level = "Nivel requerido";
+    errors.level = "route.levelRequired";
   }
+
   if (!routeData.estimated_time) {
-    errors.estimated_time = "Duración requerida";
+    errors.estimated_time = "route.estimatedTimeRequired";
   }
+
   if (!routeData.max_participants) {
-    errors.max_participants = "Nº de pilotos requerido";
+    errors.max_participants = "route.maxParticipantsRequired";
   }
 
   if (!routeData.suitable_motorbike_type) {
-    errors.suitable_motorbike_type = "Motos aptas requeridas";
+    errors.suitable_motorbike_type = "route.motorbikeTypeRequired";
   }
+
   if (routeData.route_description === "") {
-    errors.route_description = "Descripción requerida";
+    errors.route_description = "route.descriptionRequired";
   }
+
   return errors;
 };

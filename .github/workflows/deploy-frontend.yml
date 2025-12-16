@@ -1,0 +1,77 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "client/**"
+      - ".github/workflows/deploy-frontend.yml"
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }} # es. federico
+      SSH_PORT: ${{ secrets.SSH_PORT }} # es. 22
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # es. /var/www/kompitrail
+      FRONTEND_SUBDIR: ${{ secrets.FRONTEND_SUBDIR }} # es. client
+      RELEASE: ${{ github.run_id }}-${{ github.run_number }}
+      BUILD_DIR: dist # output vite
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: |
+            ${{ env.FRONTEND_SUBDIR }}/package-lock.json
+            ${{ env.FRONTEND_SUBDIR }}/package.json
+
+      - name: Install
+        working-directory: ${{ env.FRONTEND_SUBDIR }}
+        run: npm ci
+
+      - name: Build
+        working-directory: ${{ env.FRONTEND_SUBDIR }}
+        run: npm run build
+
+      - name: Prepare SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      # Crea la directory della release con sudo -n (senza password)
+      - name: Create release dir
+        run: |
+          ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
+            "set -euo pipefail; sudo -n mkdir -p '${DEPLOY_BASE}/releases/${RELEASE}/frontend'"
+
+      # Copia i file buildati dentro la release (usa sudo -n rsync)
+      - name: Rsync build
+        run: |
+          rsync -az --delete -e "ssh -p ${SSH_PORT}" \
+            --rsync-path="sudo -n rsync" \
+            "${FRONTEND_SUBDIR}/${BUILD_DIR}/" \
+            "${SSH_USER}@${SSH_HOST}:${DEPLOY_BASE}/releases/${RELEASE}/frontend/"
+
+      # Aggiorna il symlink 'current/frontend' alla nuova release (sudo -n)
+      - name: Activate release
+        run: |
+          ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
+            "set -euo pipefail; \
+             sudo -n mkdir -p '${DEPLOY_BASE}/current'; \
+             sudo -n test -d '${DEPLOY_BASE}/releases/${RELEASE}/frontend' || { echo 'Missing release/frontend'; exit 1; }; \
+             sudo -n ln -sfn '${DEPLOY_BASE}/releases/${RELEASE}/frontend' '${DEPLOY_BASE}/current/frontend'; \
+             sudo -n ls -l '${DEPLOY_BASE}/current'"

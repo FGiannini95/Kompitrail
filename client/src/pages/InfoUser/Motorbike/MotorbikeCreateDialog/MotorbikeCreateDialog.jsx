@@ -1,12 +1,15 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 // Utils
@@ -24,10 +27,14 @@ const initialValue = {
 
 export const MotorbikeCreateDialog = () => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
-  const [msgError, setMsgError] = useState("");
+  const [errors, setErrors] = useState({
+    brand: "",
+    model: "",
+  });
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createMotorbike, dialog, closeDialog } = useMotorbikes();
+  const { t } = useTranslation(["dialogs", "forms", "buttons", "errors"]);
 
   const isOpen = dialog.isOpen && dialog.mode === "create";
 
@@ -36,6 +43,11 @@ export const MotorbikeCreateDialog = () => {
     setCreateOneMotorbike((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+    // Reset error for this field
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
     }));
   };
 
@@ -50,20 +62,32 @@ export const MotorbikeCreateDialog = () => {
   const cleanDialog = () => {
     closeDialog();
     setCreateOneMotorbike(initialValue);
-    setMsgError("");
+    setErrors({ brand: "", model: "" });
   };
 
   const handleConfirm = (e) => {
     e.preventDefault();
+
+    // Validate all fields
+    const newErrors = {
+      brand: "",
+      model: "",
+    };
+
     // According to the ddbb, the brand is mandatory
     if (!createOneMotorbike.brand) {
-      setMsgError("Tienes que insertar una marca");
-      return;
+      newErrors.brand = t("errors:motorbike.brandRequired");
     }
     if (!createOneMotorbike.model) {
-      setMsgError("Tienes que insertar un modelo");
+      newErrors.model = t("errors:motorbike.modelRequired");
+    }
+
+    // If there are errors, set them and stop
+    if (newErrors.brand || newErrors.model) {
+      setErrors(newErrors);
       return;
     }
+
     // We use this interface in order to pass data throught the HTTP protocol
     const newFormData = new FormData();
     // The append method add a new field to the interface
@@ -84,18 +108,18 @@ export const MotorbikeCreateDialog = () => {
       .post(`${MOTORBIKES_URL}/createmotorbike`, newFormData)
       .then(({ data }) => {
         createMotorbike(data);
-        showSnackbar("Moto añadida con éxito");
+        showSnackbar(t("snackbars:motorbikeCreatedSuccess"));
         cleanDialog();
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al añadir la moto", "error");
+        showSnackbar(t("snackbars:motorbikeCreatedError"), "error");
       });
   };
 
   return (
     <Dialog open={isOpen} onClose={cleanDialog}>
-      <DialogTitle>Añadir moto</DialogTitle>
+      <DialogTitle>{t("dialogs:motorbikeCreateTitle")}</DialogTitle>
       <DialogContent>
         <Button
           variant="text"
@@ -115,32 +139,32 @@ export const MotorbikeCreateDialog = () => {
           />
         </Button>
         <TextField
-          label="Marca"
+          label={t("forms:brandLabel")}
           fullWidth
           margin="normal"
           name="brand"
           value={createOneMotorbike.brand}
           onChange={handleChange}
-          error={!!msgError}
-          helperText={msgError}
+          error={!!errors.brand}
+          helperText={errors.brand}
         />
         <TextField
-          label="Modelo"
+          label={t("forms:modelLabel")}
           fullWidth
           margin="normal"
           name="model"
           value={createOneMotorbike.model}
           onChange={handleChange}
-          error={!!msgError}
-          helperText={msgError}
+          error={!!errors.model}
+          helperText={errors.model}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">
-          Cancelar
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirm} color="success">
-          Confirmar
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>

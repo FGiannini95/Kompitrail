@@ -1,19 +1,24 @@
 import React, { useContext, useMemo, useState } from "react";
-import { Stack, Typography, Avatar, Box } from "@mui/material";
-import { getInitials } from "../../../helpers/utils";
-import { KompitrailContext } from "../../../context/KompitrailContext";
-import { FullScreenImg } from "../../FullScreenImg/FullScreenImg";
-import { API_BASE } from "../../../api";
 
-export const UserAvatar = () => {
-  const { user } = useContext(KompitrailContext);
+import { Stack, Typography, Avatar, Box } from "@mui/material";
+
+import { KompitrailContext } from "../../../context/KompitrailContext";
+import { getInitials } from "../../../helpers/utils";
+import { normalizeImg } from "../../../helpers/normalizeImg";
+import { FullScreenImg } from "../../FullScreenImg/FullScreenImg";
+
+export const UserAvatar = ({ user: userProp }) => {
+  const { user: ctxUser } = useContext(KompitrailContext);
+  // Choose the user coming from props if present; otherwise use context.
+  const user = userProp ?? ctxUser;
+
   const initials = useMemo(
     () => getInitials(user?.name ?? "", user?.lastname ?? ""),
     [user?.name, user?.lastname]
   );
-  const fullName = `${user.name ?? ""} ${user.lastname ?? ""}`.trim();
+  const fullName = `${user?.name ?? ""} ${user?.lastname ?? ""}`.trim();
 
-  const photoUrl = user?.img ? `${API_BASE}/images/users/${user.img}` : null;
+  const photoUrl = useMemo(() => normalizeImg(user?.img), [user?.img]);
 
   const [openImg, setOpenImg] = useState(false);
   const handleOpenImg = () => setOpenImg(true);
@@ -24,14 +29,16 @@ export const UserAvatar = () => {
       <Stack alignItems="center" spacing={1} sx={{ mx: "auto" }}>
         <Avatar
           src={photoUrl || undefined}
-          sx={{
+          imgProps={{ referrerPolicy: "no-referrer" }}
+          sx={(theme) => ({
             width: 96,
             height: 96,
             fontSize: 32,
-            border: "2px solid black",
-            color: "black",
-            backgroundColor: "transparent",
-          }}
+            border: `2px solid ${theme.palette.text.primary}`,
+            color: theme.palette.text.primary,
+            bgcolor: theme.palette.background.paper,
+            cursor: "pointer",
+          })}
           onClick={handleOpenImg}
         >
           {!photoUrl && initials}
@@ -46,15 +53,19 @@ export const UserAvatar = () => {
               whiteSpace: "normal",
               wordBreak: "break-word",
               overflowWrap: "break-word",
+              color: "text.primary",
             }}
           >
             {fullName}
           </Typography>
         </Box>
       </Stack>
-      {photoUrl && (
-        <FullScreenImg open={openImg} onClose={handleCloseImg} img={photoUrl} />
-      )}
+      <FullScreenImg
+        open={openImg}
+        onClose={handleCloseImg}
+        img={photoUrl}
+        initials={initials}
+      />
     </>
   );
 };

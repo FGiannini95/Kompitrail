@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
@@ -7,9 +7,11 @@ import axios from "axios";
 import { getLocalStorage } from "../helpers/localStorageUtils";
 import { USER_INITIAL_VALUE } from "../constants/userConstants";
 import { RoutesString } from "../routes/routes";
+import { API_BASE } from "../api";
+import { normalizeImg } from "../helpers/normalizeImg";
+import { capitalizeFirstLetter } from "../helpers/utils";
 // Hooks & Providers
 import { KompitrailContext } from "../context/KompitrailContext";
-import { API_BASE } from "../api";
 
 export const useEditUserForm = () => {
   const [editUser, setEditUser] = useState(USER_INITIAL_VALUE);
@@ -32,7 +34,7 @@ export const useEditUserForm = () => {
           setInitialValue(res.data);
 
           if (res.data.img) {
-            setPhotoPreview(`${API_BASE}/images/users/${res.data.img}`);
+            setPhotoPreview(normalizeImg(res.data.img));
           }
         })
         .catch((err) => {
@@ -45,54 +47,79 @@ export const useEditUserForm = () => {
   }, [user_id]);
 
   const handleChange = (e) => {
-    if (e && e.target) {
-      // React event
-      const { name, value } = e.target;
+    if (!e?.target) return;
 
-      const nextValue =
-        typeof value === "string" && value.length > 0 && name !== "phonenumber"
-          ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
-          : value;
-      setEditUser((prevState) => ({ ...prevState, [name]: nextValue }));
-    } else {
-      // Direct value - PhoneInput
-      setEditUser((prevState) => ({ ...prevState, phonenumber: e }));
-    }
+    const { name, value } = e.target;
+    const formatted = capitalizeFirstLetter(value);
+
+    setEditUser((prev) => ({
+      ...prev,
+      [name]: formatted,
+    }));
   };
 
   const handleConfirm = (e) => {
     e.preventDefault();
-    setUser((prev) =>
-      prev
-        ? { ...prev, name: editUser.name, lastname: editUser.lastname }
-        : prev
-    );
+    if (
+      (editUser.name || "").trim().length < 2 ||
+      (editUser.lastname || "").trim().length < 2
+    ) {
+      return;
+    }
 
+    // Create FormData object to send both JSON data and file
     const newFormData = new FormData();
-    newFormData.append(
-      "editUser",
-      JSON.stringify({
-        name: editUser.name,
-        lastname: editUser.lastname,
-        phonenumber: editUser.phonenumber,
-        removePhoto: editUser.removePhoto,
-      })
-    );
 
+    // Prepare the user data object
+    const editUserData = {
+      name: editUser.name.trim(),
+      lastname: editUser.lastname.trim(),
+      removePhoto: editUser.removePhoto || false,
+    };
+
+    // Add the JSON data as a string to FormData
+    newFormData.append("editUser", JSON.stringify(editUserData));
+
+    // Add the file only if user selected a new photo
     if (editUser.photo) {
       newFormData.append("file", editUser.photo);
     }
 
     axios
-      .put(`${API_BASE}/users/edituser/${user_id}`, newFormData)
+      .put(`${API_BASE}/users/edituser/${user_id}`, newFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Required for file uploads
+        },
+      })
       .then((res) => {
-        setEditUser(res.data);
-        setInitialValue(res.data);
+        // Normalize the received data to ensure consistent state
+        const normalizedData = {
+          user_id: res.data.user_id,
+          name: res.data.name || "",
+          lastname: res.data.lastname || "",
+          email: res.data.email || "",
+          img: res.data.img || null,
+          removePhoto: false, // Reset to false after successful save
+          photo: null, // Reset to null after successful save
+        };
+
+        setEditUser(normalizedData);
+        setInitialValue(normalizedData);
         setUser(res.data);
+
+        // Update photo preview based on server response
+        if (res.data.img) {
+          setPhotoPreview(normalizeImg(res.data.img));
+        } else {
+          setPhotoPreview(null);
+        }
+
+        // Navigate back to profile page
         navigate(RoutesString.profile, { replace: true });
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error al actualizar el usuario:", err);
+        console.error("Error:", err.response?.data);
       });
   };
 
@@ -108,25 +135,17 @@ export const useEditUserForm = () => {
       return;
     }
 
-    // Don't compare if data not loaded yet
-    if (
-      !editUser.name ||
-      !initialValue.name ||
-      editUser === USER_INITIAL_VALUE ||
-      initialValue === USER_INITIAL_VALUE
-    ) {
-      setSave(false);
-      return;
-    }
-
     const hasChange =
       editUser.name !== initialValue.name ||
       editUser.lastname !== initialValue.lastname ||
-      editUser.phonenumber !== initialValue.phonenumber ||
       editUser.removePhoto !== initialValue.removePhoto ||
       editUser.img !== initialValue.img;
 
-    setSave(hasChange);
+    const nameOk = (editUser.name || "").trim().length >= 2;
+    const lastNameOk = (editUser.lastname || "").trim().length >= 2;
+    const isValid = nameOk && lastNameOk;
+
+    setSave(hasChange && isValid);
   }, [editUser, initialValue, isLoading]);
 
   return {

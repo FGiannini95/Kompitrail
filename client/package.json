@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint . --quiet && echo All checks passed || echo Linting errors found",
     "test": "jest",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "translate": "node scripts/translate.cjs"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -16,15 +17,21 @@
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.2",
     "@mui/x-date-pickers": "^7.29.4",
+    "@react-oauth/google": "^0.12.2",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "dayjs": "^1.11.18",
+    "dotenv": "^17.2.3",
+    "i18next": "^25.7.2",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
+    "react-country-flag": "^3.1.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.2",
+    "react-i18next": "^16.4.0",
     "react-international-phone": "^4.4.0",
-    "react-router-dom": "^6.26.2"
+    "react-router-dom": "^6.26.2",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 import { Typography, IconButton, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -9,9 +9,7 @@ import Grid from "@mui/material/Grid2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Utils
-import { RoutesString } from "../../../routes/routes";
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
-import { ROUTES_URL } from "../../../api";
 // Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
@@ -23,6 +21,7 @@ import { EmptyState } from "../../../components/EmptyState/EmptyState";
 import { RouteEditDialog } from "./RouteEditDialog/RouteEditDialog";
 import { Loading } from "../../../components/Loading/Loading";
 import { OutlinedButton } from "../../../components/Buttons/OutlinedButton/OutlinedButton";
+import { RouteCreateDialog } from "./RouteCreateDialog/RouteCreateDialog";
 
 export const MyRoute = () => {
   const navigate = useNavigate();
@@ -37,33 +36,34 @@ export const MyRoute = () => {
     loading,
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
+  const { t } = useTranslation(["buttons", "general", "dialogs"]);
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     loadUserRoutes(user_id);
   }, [tokenLocalStorage, loadUserRoutes]);
 
-  const handleOpenCreateRoute = () => {
-    navigate(RoutesString.createTrip);
+  const openCreateDialog = () => {
+    openCreateEditDialog({ mode: "create" });
   };
 
   const handleDeleteRoute = (route_id) => {
-    axios
-      .put(`${ROUTES_URL}/deleteroute/${route_id}`)
+    deleteRoute(route_id, user.user_id)
       .then(() => {
-        deleteRoute(route_id);
-        showSnackbar("Ruta eliminada con éxito");
+        showSnackbar(t("snackbars:routeDeleteSuccess"));
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al eliminar la ruta", "error");
+        const msg =
+          err?.response?.data?.message || t("snackbars:routeDeleteError");
+        showSnackbar(msg, "error");
       });
   };
 
   const handleOpenDeleteDialog = (route_id) => {
     openDialog({
-      title: "Eliminar ruta",
-      message: "¿Quieres eliminar la ruta de tu perfil?",
+      title: t("dialogs:routeDeleteTitle"),
+      message: t("dialogs:routeDeleteText"),
       onConfirm: () => handleDeleteRoute(route_id),
     });
   };
@@ -80,11 +80,18 @@ export const MyRoute = () => {
     <Grid container direction="column" spacing={2}>
       <Grid container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
-        <Typography variant="h6">Mis rutas</Typography>
+        <Typography variant="h6" color="text.primary">
+          {t("general:routesTitle")}
+        </Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, minWidth: 310 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
         {userRoutes.length > 0 ? (
           userRoutes.map((route) => (
             <Grid
@@ -106,11 +113,9 @@ export const MyRoute = () => {
             <EmptyState />
           </Grid>
         )}
-      </Box>
-      <Grid>
         <OutlinedButton
-          onClick={handleOpenCreateRoute}
-          text={"Crear ruta"}
+          onClick={openCreateDialog}
+          text={t("buttons:createRoute")}
           icon={
             <AddOutlinedIcon
               style={{ paddingLeft: "5px", width: "20px" }}
@@ -118,8 +123,9 @@ export const MyRoute = () => {
             />
           }
         />
-      </Grid>
+      </Box>
       <RouteEditDialog />
+      <RouteCreateDialog />
     </Grid>
   );
 };

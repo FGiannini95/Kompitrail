@@ -11,8 +11,13 @@ node_modules
 dist-ssr
 *.local
 
+<<<<<<< HEAD
 .env
 .env.*
+=======
+# env & secrets
+.env
+>>>>>>> main
 .env.local
 .env.*.local
 

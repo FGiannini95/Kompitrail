@@ -17,11 +17,23 @@ import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import ColorLensOutlinedIcon from "@mui/icons-material/ColorLensOutlined";
+import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
+import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
+import { useTranslation } from "react-i18next";
 
 const ACTION_CONFIG = {
   changePassword: {
     label: "Modificar contraseña",
-    icon: <LockOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <LockOutlinedIcon
+        fontSize="large"
+        aria-hidden
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   deleteAccount: {
     label: "Eliminar cuenta",
@@ -30,52 +42,155 @@ const ACTION_CONFIG = {
   editAccount: {
     label: "Modificar perfil",
     icon: (
-      <PersonOutlineOutlinedIcon fontSize="large" sx={{ color: "black" }} />
+      <PersonOutlineOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
     ),
   },
   addMotorbike: {
     label: "Mis motos",
-    icon: <TwoWheelerOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <TwoWheelerOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   addRoute: {
     label: "Mis rutas",
-    icon: <RouteOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <RouteOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   changeSettings: {
     label: "Ajustes",
-    icon: <SettingsOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <SettingsOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   chatbot: {
     label: "Chat bot",
-    icon: <TextsmsOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <TextsmsOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   privacy: {
     label: "Política de privacidad",
-    icon: <InfoOutlinedIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <InfoOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
   logout: {
     label: "Log out",
-    icon: <LogoutIcon fontSize="large" sx={{ color: "black" }} />,
+    icon: (
+      <LogoutIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
+  },
+  language: {
+    label: "Idioma",
+    icon: (
+      <LanguageOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
+  },
+  theme: {
+    label: "Tema",
+    icon: (
+      <ColorLensOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
+  },
+  pwa: {
+    label: "Crear acceso directo",
+    icon: (
+      <WidgetsOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
   },
 };
 
 export const SettingsRow = ({ action, onClick }) => {
   const config = ACTION_CONFIG[action];
   if (!config) throw new Error(`Action desconocida: ${action}`);
+
+  const { t } = useTranslation("settings");
+
+  // Use translation; fallback to config.label if translation is missing
+  const label = t(`actions.${action}`, {
+    defaultValue: config.label ?? action,
+  });
+
   return (
     <ListItem disablePadding>
       <ListItemButton onClick={onClick}>
         <ListItemIcon
-          sx={{ color: action === "deleteAccount" && "error.main" }}
+          sx={(theme) => ({
+            color:
+              action === "deleteAccount"
+                ? theme.palette.error.main
+                : theme.palette.text.primary,
+          })}
         >
           {config.icon}
         </ListItemIcon>
         <ListItemText
-          primary={config.label}
-          sx={{ color: action === "deleteAccount" && "error.main" }}
+          primary={label}
+          sx={(theme) => ({
+            color:
+              action === "deleteAccount"
+                ? theme.palette.error.main
+                : theme.palette.text.primary,
+          })}
         />
         <ArrowForwardIosIcon
-          sx={{ color: action === "deleteAccount" && "error.main" }}
+          sx={(theme) => ({
+            color:
+              action === "deleteAccount"
+                ? theme.palette.error.main
+                : theme.palette.text.primary,
+          })}
         />
       </ListItemButton>
     </ListItem>

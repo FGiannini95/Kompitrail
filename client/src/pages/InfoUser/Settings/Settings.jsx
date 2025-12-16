@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Box, Typography, IconButton, List } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -19,12 +20,40 @@ import { KompitrailContext } from "../../../context/KompitrailContext";
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 // Components
 import { SettingsRow } from "./SettingsRow/SettingsRow";
+import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
+import { ChangeLanguageDialog } from "./ChangeLanguageDialog/ChangeLanguageDialog";
+import { DialogPwa } from "../../../components/Dialogs/DialogPwa/DialogPwa";
 
-export const Settings = () => {
+function Section({ title, children }) {
+  return (
+    <Box
+      sx={(theme) => ({
+        p: "10px",
+        bgcolor: theme.palette.kompitrail.card,
+        mx: "10px",
+        borderRadius: "20px",
+      })}
+    >
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: "bold", pb: 1, color: "text.primary" }}
+      >
+        {title}
+      </Typography>
+      <List disablePadding>{children}</List>
+    </Box>
+  );
+}
+export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
   const navigate = useNavigate();
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const tokenLocalStorage = getLocalStorage("token");
   const { openDialog } = useConfirmationDialog();
+  const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
+  const [isLanguageDialogOpen, setIsLanguageDialogOpen] = useState(false);
+  const [isPwaDialogOpen, setIsPwaDialogOpen] = useState(false);
+
+  const { t } = useTranslation(["general", "dialogs"]);
 
   const deleteProfile = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -49,47 +78,65 @@ export const Settings = () => {
 
   const handleDeleteProfile = () => {
     openDialog({
-      title: "Eliminar cuenta",
-      message:
-        "Esta acción es irreversible. ¿Estás seguro de querer eliminar tu cuenta?",
+      title: t("dialogs:accountDeleteTitle"),
+      message: t("dialogs:accountDeleteText"),
       onConfirm: () => deleteProfile(),
     });
   };
+
+  const handleOpenThemeDialog = () => setIsThemeDialogOpen(true);
+  const handleCloseThemeDialog = () => setIsThemeDialogOpen(false);
+
+  const handleOpenLanguageDialog = () => setIsLanguageDialogOpen(true);
+  const handleCloseLanguageDialog = () => setIsLanguageDialogOpen(false);
+
+  const handleOpenPwaDialog = () => setIsPwaDialogOpen(true);
+  const handleClosePwaDialog = () => setIsPwaDialogOpen(false);
 
   return (
     <Grid container direction="column" spacing={2}>
       {/* Header */}
       <Grid item container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon sx={{ color: "black" }} />
-          <Typography variant="h6" sx={{ color: "black" }}>
-            Ajustes
-          </Typography>
-        </IconButton>
-      </Grid>
-      {/* Settings Card */}
-      <Box
-        sx={{
-          mt: 2,
-          mx: 2,
-          p: 2,
-          pl: 3,
-          bgcolor: "#eeeeee",
-          borderRadius: 2,
-          boxSizing: "border-box",
-          width: "calc(100% - 22px)",
-        }}
-      >
-        <List disablePadding>
-          {/* Change Password Option */}
-          <SettingsRow
-            action="changePassword"
-            onClick={() => navigate(RoutesString.editPassword)}
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
           />
-          {/* Delete Account Option */}
-          <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
-        </List>
-      </Box>
+        </IconButton>
+        <Typography variant="h6" color="text.primary">
+          {t("general:settingsTitle")}
+        </Typography>
+      </Grid>
+
+      <Section>
+        <SettingsRow action="language" onClick={handleOpenLanguageDialog} />
+        <SettingsRow action="theme" onClick={handleOpenThemeDialog} />
+        <SettingsRow action="pwa" onClick={handleOpenPwaDialog} />
+
+        <SettingsRow
+          action="changePassword"
+          onClick={() => navigate(RoutesString.editPassword)}
+        />
+        <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
+      </Section>
+
+      <ModeToggleDialog
+        open={isThemeDialogOpen}
+        onClose={handleCloseThemeDialog}
+        onToggle={toggleMode}
+        currentMode={mode}
+      />
+
+      <ChangeLanguageDialog
+        open={isLanguageDialogOpen}
+        onClose={handleCloseLanguageDialog}
+        language={language}
+        changeLanguage={changeLanguage}
+      />
+
+      <DialogPwa open={isPwaDialogOpen} onClose={handleClosePwaDialog} />
     </Grid>
   );
 };

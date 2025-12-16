@@ -1,0 +1,39 @@
+{
+  "motorbike": {
+    "brandRequired": "Tienes que insertar una marca",
+    "modelRequired": "Tienes que insertar un modelo"
+  },
+  "route": {
+    "startingPointRequired": "Punto de salida requerido",
+    "endingPointRequired": "Punto de llegada requerido",
+    "dateRequired": "Fecha requerida",
+    "distanceRequired": "Distancia requerida",
+    "levelRequired": "Nivel requerido",
+    "estimatedTimeRequired": "Duración requerida",
+    "maxParticipantsRequired": "Nº de pilotos requerido",
+    "motorbikeTypeRequired": "Motos aptas requeridas",
+    "descriptionRequired": "Descripción requerida"
+  },
+  "login": {
+    "emailRequired": "El correo es obligatorio",
+    "passwordRequired": "La contraseña es obligatoria",
+    "invalidCredentials": "Error desconocido al iniciar sesión."
+  },
+  "register": {
+    "nameRequired": "El nombre es obligatorio",
+    "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+    "lastNameRequired": "Los apellidos son obligatorios",
+    "lastNameMinLength": "Los apellidos deben tener al menos 2 caracteres",
+    "emailRequired": "El correo es obligatorio",
+    "emailInvalid": "Ingrese un correo válido",
+    "passwordRequired": "La contraseña es obligatoria",
+    "passwordWeak": "La contraseña no es suficientemente fuerte",
+    "genericError": "Error desconocido.",
+    "genericError2": "Ha ocurrido un error inesperado. Intenta nuevamente."
+  },
+  "google": {
+    "invalidCredentials": "Falta de credenciales.",
+    "invalidToken": "Error en el token o en el usuario",
+    "genericError": "No se pudo iniciar sesión con Google."
+  }
+}

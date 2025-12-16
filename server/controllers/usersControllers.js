@@ -4,23 +4,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-{
-  /*
-    template example
-    action = (req, res) => {
-    #destructuring
-    const {here what you need} = req.body
-    #sql connection
-    let sql = `SELECT * FROM user WHERE email = '${email}'`;
-    connection.query(sql, (error, result) => {
-      error
-        ? res.status(500).json({ error });
-        : res.status(200).json(result);
-    });
-    }
-  */
-}
-
 class usersControllers {
   createUser = (req, res) => {
     const { name, lastname, email, password } = req.body;
@@ -88,10 +71,30 @@ class usersControllers {
   };
 
   oneUser = (req, res) => {
-    const { id: user_id } = req.params;
-    let sql = `SELECT * FROM user WHERE user_id = ${user_id} AND is_deleted = 0`;
-    connection.query(sql, (err, result) => {
-      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    const { id } = req.params;
+
+    // Basic validation of user id
+    const userId = Number(id);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      // Log invalid param for debugging
+      console.error("oneUser: invalid user id param", { id });
+      return res.status(400).json({ message: "Invalid user id" });
+    }
+
+    const sql = "SELECT * FROM user WHERE user_id = ? AND is_deleted = 0";
+
+    connection.query(sql, [userId], (err, result) => {
+      if (err) {
+        console.error("oneUser: DB error", err);
+        return res.status(500).json({ message: "Error fetching user data" });
+      }
+
+      if (!result || result.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Success
+      return res.status(200).json(result[0]);
     });
   };
 
@@ -159,65 +162,108 @@ class usersControllers {
     });
   };
 
-  showOneUser = (req, res) => {
-    const { id: user_id } = req.params;
-    let sql = `SELECT * FROM user WHERE user_id = '${user_id}' AND is_deleted = 0`;
-
-    connection.query(sql, (err, result) => {
-      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
-    });
-  };
-
   editUser = (req, res) => {
-    const { name, lastname, phonenumber, removePhoto } = JSON.parse(
-      req.body.editUser
-    );
-    const { id: user_id } = req.params;
+    try {
+      const { name, lastname, removePhoto } = JSON.parse(req.body.editUser);
+      const { id: user_id } = req.params;
 
-    let sql = `SELECT img FROM user WHERE user_id = "${user_id}" AND is_deleted = 0`;
-    connection.query(sql, (err, rows) => {
-      if (err) {
-        return res.status(400).json({ err });
-      }
+      // First, fetch the current image to know which file to delete if needed
+      let sql = `SELECT img FROM user WHERE user_id = ? AND is_deleted = 0`;
 
-      const currentImg = rows.length > 0 ? rows[0].img : null;
-      let img;
-
-      // User want to delete the photo
-      if (removePhoto === true) {
-        img = null;
-      } else if (req.file) {
-        // User want to upload a photo
-        img = req.file.filename;
-      } else {
-        // User does no change so we keep whatever was there
-        img = currentImg;
-      }
-
-      let sqlUpdate = `UPDATE user 
-          SET 
-            name = "${name}", 
-            lastname = "${lastname}", 
-            phonenumber = ${phonenumber ? `"${phonenumber}"` : "NULL"},
-            img = ${img ? `"${img}"` : "NULL"}
-          WHERE user_id = "${user_id}" AND is_deleted = 0`;
-      connection.query(sqlUpdate, (err, result) => {
+      connection.query(sql, [user_id], (err, rows) => {
         if (err) {
-          return res.status(400).json({ err });
+          return res.status(400).json({ err: err.message });
         }
-        // After update fetch the updated user data to pass it to FE
-        let sqlGetUser = `SELECT user_id, name, lastname, phonenumber, email, img
-          FROM user
-          WHERE user_id="${user_id}" AND is_deleted = 0
-          `;
-        connection.query(sqlGetUser, (err, userData) => {
-          if (err) {
-            return res.status(400).json({ err });
+
+        // Check if user exists
+        if (rows.length === 0) {
+          return res.status(404).json({ err: "User not found" });
+        }
+
+        const currentImg = rows.length > 0 ? rows[0].img : null;
+        let img;
+
+        // User want to delete the photo
+        if (removePhoto === true) {
+          img = null;
+          // Delete the physical file from server if it exists
+          if (currentImg) {
+            const fs = require("fs");
+            const path = require("path");
+            const oldImagePath = path.join(
+              __dirname,
+              `../public/images/users/${currentImg}`
+            );
+            fs.unlink(oldImagePath, (err) => {
+              if (err) console.log("Could not delete old image:", err);
+            });
           }
-          return res.status(200).json(userData[0]);
-        });
+        } else if (req.file) {
+          // User want to upload a photo
+          img = req.file.filename;
+          // Delete old photo when uploading a new one to avoid cluttering the server
+          if (currentImg && currentImg !== img) {
+            const fs = require("fs");
+            const path = require("path");
+            const oldImagePath = path.join(
+              __dirname,
+              `../public/images/users/${currentImg}`
+            );
+            fs.unlink(oldImagePath, (err) => {
+              if (err) console.log("Could not delete old image:", err);
+            });
+          }
+        } else {
+          // User does not change so we keep whatever was there
+          img = currentImg;
+        }
+
+        // Update user data using prepared statements
+        let sqlUpdate = `UPDATE user 
+          SET 
+            name = ?, 
+            lastname = ?, 
+            img = ?
+          WHERE user_id = ? AND is_deleted = 0`;
+
+        connection.query(
+          sqlUpdate,
+          [name, lastname, img, user_id],
+          (err, result) => {
+            if (err) {
+              return res.status(400).json({ err: err.message });
+            }
+
+            // Check if the update actually modified any rows
+            if (result.affectedRows === 0) {
+              return res
+                .status(404)
+                .json({ err: "User not found or not updated" });
+            }
+
+            // After update fetch the updated user data to pass it to FE
+            let sqlGetUser = `SELECT user_id, name, lastname, email, img
+            FROM user
+            WHERE user_id = ? AND is_deleted = 0`;
+
+            connection.query(sqlGetUser, [user_id], (err, userData) => {
+              if (err) {
+                return res.status(400).json({ err: err.message });
+              }
+
+              // Make sure we found the user
+              if (userData.length === 0) {
+                return res.status(404).json({ err: "User not found" });
+              }
+
+              return res.status(200).json(userData[0]);
+            });
+          }
+        );
       });
-    });
+    } catch (err) {
+      return res.status(400).json({ err: "Invalid request format" });
+    }
   };
 }
 

@@ -1,19 +1,11 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-import {
-  Box,
-  Grid2 as Grid,
-  Typography,
-  Button,
-  Tooltip,
-  List,
-  Stack,
-} from "@mui/material";
+import { Box, Typography, List } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-
 const url =
   "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
 // Utils
@@ -25,21 +17,23 @@ import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/C
 // Components
 import { SettingsRow } from "./Settings/SettingsRow/SettingsRow";
 import { PrivacyDialog } from "./Privacy/PrivacyDialog";
-import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 
 function Section({ title, children }) {
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         mt: "30px",
         p: "10px",
-        bgcolor: "#eeeeee",
+        bgcolor: theme.palette.kompitrail.card,
         mx: "10px",
         borderRadius: "20px",
-      }}
+      })}
     >
-      <Typography variant="h6" sx={{ fontWeight: "bold", pb: 1 }}>
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: "bold", pb: 1, color: "text.primary" }}
+      >
         {title}
       </Typography>
       <List disablePadding>{children}</List>
@@ -52,7 +46,7 @@ export const InfoUser = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [iframe, setiIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
-  const [isCopied, setIsCopied] = useState(false);
+  const { t } = useTranslation(["general", "dialogs"]);
 
   const navigate = useNavigate();
   const { openDialog } = useConfirmationDialog();
@@ -67,8 +61,8 @@ export const InfoUser = () => {
 
   const handleLogOut = () => {
     openDialog({
-      title: "Cerrar sessión",
-      message: "¿Estás seguro de querer cerrar sessión?",
+      title: t("dialogs:logoutTitle"),
+      message: t("dialogs:logoutText"),
       onConfirm: () => logOut(),
     });
   };
@@ -76,17 +70,6 @@ export const InfoUser = () => {
   const handleToggleIframe = (url) => {
     setIframeUrl(url);
     setiIframe(!iframe);
-  };
-
-  const handleShare = async () => {
-    try {
-      const url = window.location.href; // Obtain the url
-      await navigator.clipboard.writeText(url); // Copy the url
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (error) {
-      console.error("Error al copiar la URL:", error);
-    }
   };
 
   const handleClose = () => {
@@ -97,56 +80,24 @@ export const InfoUser = () => {
 
   return (
     <Box
-      sx={{
-        backgroundColor: "#fafafa",
-        paddingTop: "25px",
-      }}
+      sx={(theme) => ({
+        backgroundColor: theme.palette.kompitrail.page,
+        pb: "25px",
+      })}
     >
       <Grid>
         <CloseOutlinedIcon
-          sx={{ paddingLeft: "20px", cursor: "pointer" }}
+          sx={(theme) => ({
+            paddingLeft: "20px",
+            cursor: "pointer",
+            color: theme.palette.text.primary,
+            fontSize: 40,
+          })}
           onClick={handleClose}
         />
       </Grid>
       <UserAvatar />
-      <Stack
-        direction="row"
-        spacing={2}
-        justifyContent="center"
-        sx={{ p: "10px" }}
-      >
-        <Button
-          type="button"
-          variant="contained"
-          sx={{
-            color: "black",
-            boxShadow: "none",
-            backgroundColor: "#eeeeee",
-            "&:hover": { backgroundColor: "#dddddd" },
-          }}
-          fullWidth
-        >
-          Ir a premium
-        </Button>
-        <Tooltip
-          title="URL copiada"
-          open={isCopied} // Display the tooltip only if isCopied is true
-          disableInteractive // It doesn't appear with the interaction of the mouse
-          arrow // Display the arrow
-        >
-          <OutlinedButton
-            onClick={handleShare}
-            text={"Compartir perfil"}
-            icon={
-              <ShareOutlinedIcon
-                style={{ paddingLeft: "5px", width: "20px" }}
-                aria-hidden
-              />
-            }
-          />
-        </Tooltip>
-      </Stack>
-      <Section title="Mi cuenta">
+      <Section title={t("general:titleSection1")}>
         <SettingsRow
           action="editAccount"
           onClick={() => navigate(RoutesString.editUser)}
@@ -165,7 +116,7 @@ export const InfoUser = () => {
         />
       </Section>
 
-      <Section title="Ayuda y Soporte">
+      <Section title={t("general:titleSection2")}>
         <SettingsRow
           action="chatbot"
           onClick={() => navigate(RoutesString.settings)}
@@ -173,7 +124,7 @@ export const InfoUser = () => {
         <SettingsRow action="privacy" onClick={() => handleToggleIframe(url)} />
       </Section>
 
-      <Section title="Desconectar perfil">
+      <Section title={t("general:titleSection3")}>
         <SettingsRow action="logout" onClick={handleLogOut} />
       </Section>
       <PrivacyDialog

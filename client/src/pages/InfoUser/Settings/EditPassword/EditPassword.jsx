@@ -1,20 +1,18 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
-//MUI
-import Button from "@mui/material/Button";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 
-//MUI-ICONS
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import IconButton from "@mui/material/IconButton";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
+// Utils
 import { RoutesString } from "../../../../routes/routes";
 import { getLocalStorage } from "../../../../helpers/localStorageUtils";
 import { USERS_URL } from "../../../../api";
@@ -28,6 +26,7 @@ export const EditPassword = () => {
   const [, setIsPasswordSelected] = useState(false);
   const [error, setError] = useState("");
   const tokenLocalStorage = getLocalStorage("token");
+  const { t } = useTranslation(["settings", "forms", "general"]);
 
   const navigate = useNavigate();
 
@@ -114,74 +113,90 @@ export const EditPassword = () => {
     <Grid container direction="column" spacing={2}>
       <Grid item container alignItems="center" justifyContent="space-between">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
-        <Typography variant="h6">Modificar contraseña</Typography>
-        <Button
-          variant="text"
-          color="black"
-          disabled={!isValid}
-          onClick={handleSave}
-        >
-          Guardar
+        <Typography variant="h6" color="text.primary">
+          {t("settings:changePassword")}
+        </Typography>
+        <Button variant="text" disabled={!isValid} onClick={handleSave}>
+          <SaveOutlinedIcon aria-hidden />
         </Button>
       </Grid>
-      <Grid item xs={12}>
-        <Typography>
-          La nueva contraseña debe tener al menos 8 caracteres y un carácter
-          especial.
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          label="Nueva contraseña"
-          name="password"
-          type={showPassword ? "text" : "password"}
-          fullWidth
-          value={password}
-          onChange={handlePasswordChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          error={!!error}
-          helperText={error}
-          InputProps={{
-            endAdornment: (
-              <Button onClick={displayPassword}>
-                {showPassword ? (
-                  <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                ) : (
-                  <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                )}
-              </Button>
-            ),
-          }}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          label="Confirmar contraseña"
-          name="confirmPassword"
-          type={showConfirmPassword ? "text" : "password"}
-          fullWidth
-          value={confirmPassword}
-          onChange={handleConfirmPassword}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          error={!!error}
-          helperText={error}
-          InputProps={{
-            endAdornment: (
-              <Button onClick={displayConfirmPassword}>
-                {showPassword ? (
-                  <VisibilityOffOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                ) : (
-                  <VisibilityOutlinedIcon sx={{ color: "#aaaaaa" }} />
-                )}
-              </Button>
-            ),
-          }}
-        />
-      </Grid>
+
+      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
+        <Typography color="text.primary">{t("general:newPassText")}</Typography>
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            label={t("forms:newPassLabel")}
+            name="password"
+            type={showPassword ? "text" : "password"}
+            fullWidth
+            value={password}
+            onChange={handlePasswordChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            error={!!error}
+            helperText={error}
+            InputProps={{
+              endAdornment: (
+                <Button onClick={displayPassword}>
+                  {showPassword ? (
+                    <VisibilityOffOutlinedIcon
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                    />
+                  ) : (
+                    <VisibilityOutlinedIcon
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                    />
+                  )}
+                </Button>
+              ),
+            }}
+          />
+        </Box>
+        <Box item xs={12}>
+          <TextField
+            label={t("forms:confirmPassLabel")}
+            name="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            fullWidth
+            value={confirmPassword}
+            onChange={handleConfirmPassword}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            error={!!error}
+            helperText={error}
+            InputProps={{
+              endAdornment: (
+                <Button onClick={displayConfirmPassword}>
+                  {showPassword ? (
+                    <VisibilityOffOutlinedIcon
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                    />
+                  ) : (
+                    <VisibilityOutlinedIcon
+                      sx={(theme) => ({
+                        color: theme.palette.text.secondary,
+                      })}
+                    />
+                  )}
+                </Button>
+              ),
+            }}
+          />
+        </Box>
+      </Box>
     </Grid>
   );
 };

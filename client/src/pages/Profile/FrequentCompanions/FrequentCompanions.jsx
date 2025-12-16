@@ -1,27 +1,31 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-import {
-  Avatar,
-  Box,
-  Card,
-  CardContent,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
 
+import { normalizeImg } from "../../../helpers/normalizeImg";
+import { RoutesString } from "../../../routes/routes";
+
+import { KompitrailContext } from "../../../context/KompitrailContext";
 import { useFrequentCompanions } from "../../../hooks/useFrequentCompanions";
-import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
-import { API_BASE } from "../../../api";
 
-export const FrequentCompanions = () => {
-  const { companions = [], loading, error } = useFrequentCompanions();
+import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
+import { Loading } from "../../../components/Loading/Loading";
+
+export const FrequentCompanions = ({ companions: companionsProp }) => {
+  const {
+    companions: myCompanions = [],
+    loading,
+    error,
+  } = useFrequentCompanions();
+  const companions = companionsProp ?? myCompanions;
+  const navigate = useNavigate();
+  const { user } = useContext(KompitrailContext);
+  const { t } = useTranslation("emptyState");
 
   if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-        <CircularProgress size={20} />
-      </Box>
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -29,10 +33,21 @@ export const FrequentCompanions = () => {
   }
 
   if (!Array.isArray(companions) || companions.length === 0) {
-    return <CardPlaceholder text={"Aún no tienes compañeros de viaje."} />;
+    return <CardPlaceholder text={t("frequentCompanionPlaceholder")} />;
   }
 
   const isTwoOrLess = companions.length <= 2;
+
+  const handleCardClick = (companion) => (e) => {
+    e.stopPropagation();
+    const isCurrentUser =
+      user?.user_id !== null && user?.user_id === companion.user_id;
+    navigate(
+      isCurrentUser
+        ? RoutesString.profile
+        : RoutesString.otherProfile.replace(":id", companion.user_id)
+    );
+  };
 
   return (
     <Box
@@ -49,20 +64,19 @@ export const FrequentCompanions = () => {
       }}
     >
       {companions.map((companion) => {
-        const photoUrl = companion.img
-          ? `${API_BASE}/images/users/${companion.img}`
-          : undefined;
+        const photoUrl = normalizeImg(companion.img);
 
         return (
           <Card
             key={companion.user_id}
-            sx={{
+            sx={(theme) => ({
               minWidth: isTwoOrLess ? "calc(50% - 8px)" : "calc(45% - 8px)",
               maxWidth: isTwoOrLess ? "calc(50% - 8px)" : "calc(45% - 8px)",
-              bgcolor: "#eeeeee",
+              bgcolor: theme.palette.kompitrail.card,
               borderRadius: 2,
               flexShrink: 0,
-            }}
+            })}
+            onClick={handleCardClick(companion)}
           >
             <CardContent
               sx={{
@@ -76,13 +90,13 @@ export const FrequentCompanions = () => {
               <Avatar
                 src={photoUrl}
                 alt={`${companion.name ?? ""}`}
-                sx={{
+                sx={(theme) => ({
                   width: 56,
                   height: 56,
-                  border: "1px solid black",
-                  color: "black",
+                  border: `1px solid ${theme.palette.text.primary}`,
+                  color: theme.palette.text.primary,
                   backgroundColor: "transparent",
-                }}
+                })}
               />
               <Typography fontWeight={600}>{companion.name}</Typography>
               <Typography>{companion.shared_routes} rutas en común</Typography>

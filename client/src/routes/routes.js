@@ -1,11 +1,11 @@
 export const RoutesString = {
   home: "/",
-  search: "/search",
   profile: "/profile",
-  createTrip: "/createTrip",
+  otherProfile: "/profile/:id",
   register: "/register",
   login: "/login",
   chat: "/chat",
+  chatDetail: "/chat/:id",
   landing: "/landing",
   infouser: "/infouser",
   editUser: "/editUser",
@@ -14,4 +14,6 @@ export const RoutesString = {
   editPassword: "/editPassword",
   route: "/route",
   routeDetail: "/route/:id",
+  theme: "/theme",
+  language: "/language",
 };

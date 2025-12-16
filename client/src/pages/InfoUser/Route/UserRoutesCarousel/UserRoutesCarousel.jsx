@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Box, Typography } from "@mui/material";
 
@@ -9,22 +10,29 @@ import { CardPlaceholder } from "../../../../components/CardPlaceholder/CardPlac
 
 export const UserRoutesCarousel = ({
   allRoutes = [],
+  profileUserId,
   title,
   showOnlyFuture,
   sortOrder,
 }) => {
   const { user: currentUser } = useContext(KompitrailContext);
+  const { t } = useTranslation("emptyState");
+
+  // Viewed user id: used ONLY for filtering which routes to show in the carousel
+  const targetUserId = Number(profileUserId || currentUser?.user_id);
+  // Viewer (authenticated) user id: used for ownership/capabilities
+  const ownerUserId = Number(currentUser?.user_id);
 
   // Compute only user-related routes and sort by ascending date
   const userRoutes = useMemo(() => {
-    if (!Array.isArray(allRoutes) || !currentUser?.user_id) return [];
+    if (!Array.isArray(allRoutes) || !targetUserId) return [];
 
     const now = new Date();
 
     const filtered = allRoutes.filter((route) => {
       const isUserRoute =
-        route.user_id === currentUser?.user_id ||
-        route.participants?.some((p) => p.user_id === currentUser?.user_id);
+        Number(route.user_id) === targetUserId ||
+        route.participants?.some((p) => Number(p.user_id) === targetUserId);
 
       if (!isUserRoute) return false;
 
@@ -42,13 +50,13 @@ export const UserRoutesCarousel = ({
 
       return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
     });
-  }, [allRoutes, currentUser?.user_id, showOnlyFuture]);
+  }, [allRoutes, targetUserId, showOnlyFuture, sortOrder]);
 
   const isOne = userRoutes.length === 1;
 
   return (
-    <Box sx={{ mb: 2 }}>
-      <Typography>{title}</Typography>
+    <Box sx={{ mb: 2, my: 2 }}>
+      <Typography color="text.primary">{title}</Typography>
       {userRoutes.length > 0 ? (
         <Box
           sx={{
@@ -73,15 +81,14 @@ export const UserRoutesCarousel = ({
             >
               <RouteCard
                 {...route}
-                isOwner={route.user_id === currentUser.user_id}
+                isOwner={Number(route.user_id) === ownerUserId}
+                enableNewBadge={false}
               />
             </Box>
           ))}
         </Box>
       ) : (
-        <CardPlaceholder
-          text={"Aún no tienes rutas guardadas. Apúntate o crea una."}
-        />
+        <CardPlaceholder text={t("carrouselPlaceholder")} />
       )}
     </Box>
   );

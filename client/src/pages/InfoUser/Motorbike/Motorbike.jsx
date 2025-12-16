@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Typography, IconButton, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
 
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
@@ -42,6 +42,7 @@ export const Motorbike = () => {
     openDialog: openCreateEditDialog,
     loading,
   } = useMotorbikes();
+  const { t } = useTranslation(["buttons", "general", "dialogs", "snackbars"]);
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -53,18 +54,18 @@ export const Motorbike = () => {
       .put(`${MOTORBIKES_URL}/deletemotorbike/${motorbike_id}`)
       .then(() => {
         deleteMotorbike(motorbike_id);
-        showSnackbar("Moto eliminada con éxito");
+        showSnackbar(t("snackbars:motorbikeDeleteSuccess"));
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al eliminar la moto", "error");
+        showSnackbar(t("snackbars:motorbikeDeleteError"), "error");
       });
   };
 
   const handleOpenDeleteDialog = (motorbike_id) => {
     openDialog({
-      title: "Eliminar moto",
-      message: "¿Quieres eliminar la moto de tu perfil?",
+      title: t("dialogs:motorbikeDeleteTitle"),
+      message: t("dialogs:motorbikeDeleteText"),
       onConfirm: () => handleDeleteMotorbike(motorbike_id),
     });
   };
@@ -89,11 +90,18 @@ export const Motorbike = () => {
     <Grid container direction="column" spacing={2}>
       <Grid container alignItems="center">
         <IconButton onClick={() => navigate(-1)}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
-        <Typography variant="h6">Mis motos</Typography>
+        <Typography variant="h6" color="text.primary">
+          {t("general:motorbikeTitle")}
+        </Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", px: 2, minWidth: 310 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
         {allMotorbikes.length > 0 ? (
           allMotorbikes.map((motorbike) => (
             <Grid
@@ -117,19 +125,22 @@ export const Motorbike = () => {
             <EmptyState />
           </Grid>
         )}
-      </Box>
-      <Grid>
         <OutlinedButton
           onClick={openCreateDialog}
-          text={"Añadir moto"}
+          text={t("buttons:createMotorbike")}
           icon={
             <AddOutlinedIcon
-              style={{ paddingLeft: "5px", width: "20px" }}
               aria-hidden
+              sx={(theme) => ({
+                color: theme.palette.text.primary,
+                paddingLeft: "5px",
+                marginBottom: "5px",
+              })}
             />
           }
+          sx={{ mb: 2 }}
         />
-      </Grid>
+      </Box>
       <MotorbikeCreateDialog />
       <MotorbikeEditDialog />
       <FullScreenImg

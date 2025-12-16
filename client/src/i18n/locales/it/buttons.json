@@ -1,0 +1,17 @@
+{
+  "createRoute": "Crea un percorso",
+  "editProfile": "Modifica",
+  "shareProfile": "Condividi",
+  "createMotorbike": "Aggiungi una moto",
+  "register": "Registro",
+  "login": "Login",
+  "confirmar": "Confermare",
+  "cancel": "Cancellare",
+  "close": "Chiudere",
+  "pastRoute": "Percorso completato",
+  "enrollmentClosed": "Registrazione completata",
+  "deleteRoute": "Elliminare il percorso",
+  "cancelEnrollment": "Annullare l'inscrizione",
+  "joinRoute": "Unirsi",
+  "fullRoute": "Percorso completo"
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { AppBar, Box, Toolbar, Typography, IconButton } from "@mui/material";
 
@@ -16,8 +17,12 @@ export const TopBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(KompitrailContext);
+  const { t } = useTranslation("general");
+
+  const matchProfile = useMatch("/profile/:id");
 
   const noDesign =
+    Boolean(matchProfile) ||
     [
       RoutesString.infouser,
       RoutesString.editUser,
@@ -28,7 +33,9 @@ export const TopBar = () => {
       RoutesString.createRoute,
       RoutesString.editRoute,
       RoutesString.route,
-    ].includes(location.pathname) || location.pathname.startsWith("/route/");
+    ].includes(location.pathname) ||
+    location.pathname.startsWith("/route/") ||
+    location.pathname.startsWith("/chat/");
 
   useEffect(() => {
     if (location.pathname === RoutesString.home) {
@@ -70,14 +77,14 @@ export const TopBar = () => {
             />
           </Box>
         );
-      case `${RoutesString.search}`:
-        return <Typography variant="h6">Buscar</Typography>;
       case `${RoutesString.createTrip}`:
         return <Typography variant="h6">Crear ruta</Typography>;
       case `${RoutesString.chat}`:
-        return <Typography variant="h6">Chat</Typography>;
+        return <Typography variant="h6">{t("general:titleChat")}</Typography>;
       case `${RoutesString.profile}`:
-        return <Typography variant="h6">Perfil</Typography>;
+        return (
+          <Typography variant="h6">{t("general:titleProfile")}</Typography>
+        );
       default:
         return null;
     }
@@ -102,14 +109,14 @@ export const TopBar = () => {
   return (
     <AppBar
       position="fixed"
-      style={{
-        color: "black",
+      sx={(theme) => ({
+        backgroundColor: theme.palette.kompitrail.card,
+        color: theme.palette.text.primary,
         boxShadow: "none",
-        backgroundColor: "#eeeeee",
         height: noDesign ? "0px" : "64px",
         display: noDesign ? "none" : "flex",
         justifyContent: "center",
-      }}
+      })}
     >
       <Toolbar>
         <Box

@@ -13,10 +13,10 @@ export const ROUTE_INITIAL_VALUE = {
 };
 
 export const ROUTE_LEVELS = [
-  { id: 1, name: "Principiante" },
-  { id: 2, name: "Medio" },
-  { id: 3, name: "Avanzado" },
-  { id: 4, name: "Experto" },
+  { id: 1, name: "beginner" },
+  { id: 2, name: "intermediate" },
+  { id: 3, name: "advanced" },
+  { id: 4, name: "expert" },
 ];
 
 export const MOTORBIKE_TYPES = [

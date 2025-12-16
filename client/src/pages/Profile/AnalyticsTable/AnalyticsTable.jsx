@@ -1,4 +1,6 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
+
 import {
   Table,
   TableBody,
@@ -7,14 +9,14 @@ import {
   TableRow,
   TableCell,
   tableCellClasses,
-  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { Loading } from "../../../components/Loading/Loading";
 
-const StyledTableCell = styled(TableCell)(() => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#eeeeee",
-    color: "inherit",
+    backgroundColor: theme.palette.kompitrail.card,
+    color: theme.palette.text.primary,
     fontSize: 16,
     padding: "8px",
   },
@@ -24,10 +26,10 @@ const StyledTableCell = styled(TableCell)(() => ({
   },
 }));
 
-const StyledTableRow = styled(TableRow)(() => ({
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: "transparent",
-    border: "2px solid #eeeeee",
+    border: `2px solid ${theme.palette.kompitrail.card}`,
   },
 }));
 
@@ -37,6 +39,8 @@ export const AnalyticsTable = ({
   joinedRoutes,
   loading,
 }) => {
+  const { t } = useTranslation("general");
+
   return (
     <TableContainer
       style={{
@@ -49,21 +53,27 @@ export const AnalyticsTable = ({
       <Table>
         <TableHead>
           <TableRow>
-            <StyledTableCell align="center">Nº de motos</StyledTableCell>
-            <StyledTableCell align="center">Rutas creadas</StyledTableCell>
-            <StyledTableCell align="center">Rutas completadas</StyledTableCell>
+            <StyledTableCell align="center">
+              {t("general:tableFirstHeader")}
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              {t("general:tableSecondtHeader")}
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              {t("general:tableThirdHeader")}
+            </StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           <StyledTableRow>
             <StyledTableCell align="center">
-              {loading ? <CircularProgress size={20} /> : motorbikes || 0}
+              {loading ? <Loading /> : motorbikes || 0}
             </StyledTableCell>
             <StyledTableCell align="center">
-              {loading ? <CircularProgress size={20} /> : createdRoutes || 0}
+              {loading ? <Loading /> : createdRoutes || 0}
             </StyledTableCell>
             <StyledTableCell align="center">
-              {loading ? <CircularProgress size={20} /> : joinedRoutes || 0}
+              {loading ? <Loading /> : joinedRoutes || 0}
             </StyledTableCell>
           </StyledTableRow>
         </TableBody>

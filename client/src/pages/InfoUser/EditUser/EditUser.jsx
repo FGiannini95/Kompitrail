@@ -1,26 +1,18 @@
 import React from "react";
-import { PhoneInput, defaultCountries } from "react-international-phone";
-import "react-international-phone/style.css";
+import { useTranslation } from "react-i18next";
 
-import {
-  Box,
-  Button,
-  CircularProgress,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-import IconButton from "@mui/material/IconButton";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-// Utils
+import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
+
 import { getInitials } from "../../../helpers/utils";
 
 import { useEditUserForm } from "../../../hooks/useEditUserForm";
-
-const countries = defaultCountries;
+import { Loading } from "../../../components/Loading/Loading";
 
 export const EditUser = () => {
   const {
@@ -34,13 +26,10 @@ export const EditUser = () => {
     handleConfirm,
     handleCancel,
   } = useEditUserForm();
+  const { t } = useTranslation(["general", "forms"]);
 
   if (isLoading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-        <CircularProgress size={20} />
-      </Box>
-    );
+    return <Loading />;
   }
 
   const initials = getInitials(editUser.name, editUser.lastname);
@@ -88,17 +77,26 @@ export const EditUser = () => {
       {/* Header */}
       <Grid container alignItems="center" justifyContent="space-between">
         <IconButton onClick={handleCancel}>
-          <ArrowBackIosIcon style={{ color: "black" }} />
+          <ArrowBackIosIcon
+            aria-hidden
+            sx={(theme) => ({
+              color: theme.palette.text.primary,
+            })}
+          />
         </IconButton>
-        <Typography variant="h6">Modificar perfil</Typography>
-        <Button
+        <Typography variant="h6" color="text.primary">
+          {t("general:editProfilTitle")}
+        </Typography>
+        <IconButton
           variant="text"
-          color="black"
           onClick={handleConfirm}
           disabled={!save}
+          sx={(theme) => ({
+            color: theme.palette.text.primary,
+          })}
         >
-          Guardar
-        </Button>
+          <SaveOutlinedIcon aria-hidden />
+        </IconButton>
       </Grid>
       {/* Body */}
       <Grid
@@ -111,16 +109,16 @@ export const EditUser = () => {
         {/* Photo Section */}
         <Box sx={{ position: "relative" }}>
           <Grid
-            sx={{
+            sx={(theme) => ({
               width: 120,
               height: 120,
-              border: "2px solid black",
+              border: `2px solid ${theme.palette.text.primary}`,
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               overflow: "hidden",
-            }}
+            })}
           >
             {photoPreview ? (
               <img
@@ -148,13 +146,13 @@ export const EditUser = () => {
             <IconButton
               component="label"
               size="small"
-              sx={{
-                backgroundColor: "white",
-                border: "1px solid black",
+              sx={(theme) => ({
+                backgroundColor: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.text.primary}`,
                 "&:hover": {
-                  backgroundColor: "#f5f5f5",
+                  backgroundColor: theme.palette.action.hover,
                 },
-              }}
+              })}
             >
               <EditOutlinedIcon fontSize="small" aria-hidden />
               <input
@@ -168,13 +166,13 @@ export const EditUser = () => {
               <IconButton
                 size="small"
                 onClick={handleRemovePhoto}
-                sx={{
-                  backgroundColor: "white",
-                  border: "1px solid black",
+                sx={(theme) => ({
+                  backgroundColor: theme.palette.background.paper,
+                  border: `1px solid ${theme.palette.text.primary}`,
                   "&:hover": {
-                    backgroundColor: "#ffebee",
+                    backgroundColor: theme.palette.action.hover,
                   },
-                }}
+                })}
               >
                 <DeleteOutlineIcon fontSize="small" aria-hidden color="error" />
               </IconButton>
@@ -186,7 +184,7 @@ export const EditUser = () => {
       {/* Name & lastname section */}
       <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
         <TextField
-          label="Nombre"
+          label={t("forms:nameLabel")}
           name="name"
           variant="outlined"
           fullWidth
@@ -196,40 +194,12 @@ export const EditUser = () => {
       </Grid>
       <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
         <TextField
-          label="Apellidos"
+          label={t("forms:lastNameLabel")}
           name="lastname"
           variant="outlined"
           fullWidth
           value={editUser?.lastname || ""}
           onChange={handleChange}
-        />
-      </Grid>
-      {/* Phone section */}
-      <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
-        <PhoneInput
-          defaultCountry="es"
-          value={editUser?.phonenumber || ""}
-          onChange={(value) => {
-            handleChange(value);
-          }}
-          countries={countries}
-          style={{
-            width: "100%",
-            backgroundColor: "#f5f4f4",
-            border: "1px solid rgba(0, 0, 0, 0.3)",
-            borderRadius: "5px",
-            fontFamily: "Arial, sans-serif",
-            fontSize: "18px",
-          }}
-          inputStyle={{
-            height: "56px",
-            flex: "1",
-          }}
-          countrySelectorStyleProps={{
-            buttonStyle: {
-              height: "56px",
-            },
-          }}
         />
       </Grid>
     </Grid>

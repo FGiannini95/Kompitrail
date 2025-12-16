@@ -1,9 +1,12 @@
 import React, { useContext, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Avatar, Badge, Typography, Stack } from "@mui/material";
 
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { getInitials } from "../../../helpers/utils";
-import { API_BASE } from "../../../api";
+import { RoutesString } from "../../../routes/routes";
+import { normalizeImg } from "../../../helpers/normalizeImg";
 
 export const BadgeAvatar = ({
   targetUserId,
@@ -16,20 +19,30 @@ export const BadgeAvatar = ({
   badgeContent = "x",
   onBadgeClick,
   showBadge = true,
-  isPastRoute,
+  isRouteLocked,
 }) => {
   const { user } = useContext(KompitrailContext);
+  const navigate = useNavigate();
   const isCurrentUser = user?.user_id !== null && user.user_id === targetUserId;
 
   const initials = useMemo(() => {
     return getInitials(firstName, lastName);
   }, [firstName, lastName]);
 
-  const shouldShowBadge = showBadge && isCurrentUser && !isPastRoute;
+  const shouldShowBadge = showBadge && isCurrentUser && !isRouteLocked;
 
-  const photoUrl = targetUserImg
-    ? `${API_BASE}/images/users/${targetUserImg}`
-    : undefined;
+  const photoUrl = useMemo(() => normalizeImg(targetUserImg), [targetUserImg]);
+
+  const handleAvarClick = (e) => {
+    e.stopPropagation();
+    if (targetUserId) {
+      navigate(
+        isCurrentUser
+          ? RoutesString.profile // Stay in the same page if currentUser = user_id
+          : RoutesString.otherProfile.replace(":id", targetUserId)
+      );
+    }
+  };
 
   return (
     <Stack alignItems="center" spacing={0.5} sx={{ width: size + 8 }}>
@@ -62,14 +75,16 @@ export const BadgeAvatar = ({
       >
         <Avatar
           src={photoUrl || undefined}
-          sx={{
+          imgProps={{ referrerPolicy: "no-referrer" }}
+          sx={(theme) => ({
             width: size,
             height: size,
             fontSize: Math.round(size * 0.35),
-            border: "1px solid black",
-            color: "black",
+            border: `1px solid ${theme.palette.text.primary}`,
+            color: theme.palette.text.primary,
             backgroundColor: "transparent",
-          }}
+          })}
+          onClick={handleAvarClick}
         >
           {initials}
         </Avatar>

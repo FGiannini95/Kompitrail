@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Box, Card, CardContent, Typography } from "@mui/material";
 
@@ -9,23 +10,26 @@ import { RoutesString } from "../../routes/routes";
 
 export const EmptyState = () => {
   const location = useLocation();
+  const { t } = useTranslation("emptyState");
 
   const message =
     location.pathname === RoutesString.motorbike
-      ? "Aún no has añadido ninguna moto."
+      ? t("emptyStateNoMotorbike")
       : location.pathname === RoutesString.route
-        ? "Aún no has creado ninguna ruta."
-        : "Ninguna ruta disponible.";
+        ? t("emptyStateNoRoute")
+        : location.pathname === RoutesString.chat
+          ? t("emptyStateNoChat")
+          : t("emptyState");
 
   return (
     <Card
-      sx={{
+      sx={(theme) => ({
         width: "100%",
-        backgroundColor: "#eeeeee",
+        backgroundColor: theme.palette.kompitrail.card,
         borderRadius: "20px",
         p: 3,
         textAlign: "center",
-      }}
+      })}
     >
       <CardContent>
         <Box display="flex" flexDirection="column" alignItems="center" gap={2}>

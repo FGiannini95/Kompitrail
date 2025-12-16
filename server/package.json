@@ -16,11 +16,13 @@
     "debug": "~2.6.9",
     "dotenv": "^16.4.5",
     "express": "~4.16.1",
+    "google-auth-library": "^10.5.0",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
     "multer": "^2.0.2",
     "mysql2": "^3.11.3",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "socket.io": "^4.8.1"
   }
 }

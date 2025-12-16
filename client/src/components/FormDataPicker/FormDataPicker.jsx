@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import { MobileDateTimePicker } from "@mui/x-date-pickers/MobileDateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -14,6 +16,8 @@ export const FormDataPicker = ({
   name,
   label,
 }) => {
+  const { t } = useTranslation("errors");
+
   const [open, setOpen] = useState(false);
   const value = form?.[name] ? dayjs(form[name]) : null;
 
@@ -33,6 +37,9 @@ export const FormDataPicker = ({
     }
   };
 
+  const errorKey = errors?.[name];
+  const helperText = errorKey ? t(errorKey) : "";
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <MobileDateTimePicker
@@ -51,8 +58,8 @@ export const FormDataPicker = ({
           textField: {
             name,
             fullWidth: true,
-            error: errors?.[name],
-            helperText: errors?.[name] ?? "",
+            error: !!errorKey,
+            helperText,
             InputProps: {
               endAdornment: (
                 <InputAdornment position="end">

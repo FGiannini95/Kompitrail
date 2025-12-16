@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import {
-  Box,
   Button,
   Checkbox,
   Dialog,
@@ -41,6 +41,7 @@ export const RouteEditDialog = () => {
 
   const isOpen = dialog.isOpen && dialog.mode === "edit";
   const route_id = dialog.selectedId;
+  const { t } = useTranslation(["dialogs", "forms", "snackbars"]);
 
   useEffect(() => {
     if (isOpen && route_id) {
@@ -86,166 +87,172 @@ export const RouteEditDialog = () => {
       .then(({ data }) => {
         const update = Array.isArray(data) ? data[0] : data;
         updateRoute(update);
-        showSnackbar("Ruta actualizada con éxito");
+        showSnackbar(t("snackbars:routeUpdatedSuccess"));
         closeDialog();
         setErrors({});
       })
       .catch((err) => {
         console.log(err);
-        showSnackbar("Error al actualizar la ruta", "error");
+        showSnackbar(t("snackbars:routeUpdatedError"), "error");
       });
   };
 
   return (
-    <Dialog open={isOpen} onClose={cleanDialog} fullWidth maxWidth="md">
-      <DialogTitle>Editar ruta</DialogTitle>
-      <DialogContent>
-        <Box
-          style={{
-            backgroundColor: "#fafafa",
-            paddingTop: "25px",
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid size={12}>
-              <FormTextfield
-                label="Salida"
-                name="starting_point"
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-              />
-            </Grid>
-            <Grid size={12}>
-              <FormTextfield
-                label="Llegada"
-                name="ending_point"
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-              />
-            </Grid>
-            <Grid size={12}>
-              <FormDataPicker
-                label="Fecha"
-                name="date"
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-              />
-            </Grid>
-            <Grid size={6}>
-              <FormTextfield
-                label="Km"
-                name="distance"
-                type="number"
-                preventInvalidkey
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-              />
-            </Grid>
-            <Grid size={6}>
-              <FormTextfield
-                label="Duración"
-                name="estimated_time"
-                type="number"
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-              />
-            </Grid>
-            <Grid size={6}>
-              <FormAutocomplete
-                name="level"
-                label="Nivel"
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-                options={ROUTE_LEVELS}
-                optionLabelKey="name"
-                optionValueKey="name"
-                disablePortal
-              />
-            </Grid>
-            <Grid size={6}>
-              <FormAutocomplete
-                name="max_participants"
-                label="Pilotos"
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-                options={PARTICIPANTS}
-                optionLabelKey="name"
-                optionValueKey="id"
-                disablePortal
-              />
-            </Grid>
-            <Grid size={12}>
-              <FormAutocomplete
-                form={editRoute}
-                setForm={setEditRoute}
-                errors={errors}
-                setErrors={setErrors}
-                name="suitable_motorbike_type"
-                label="Motos aptas"
-                options={MOTORBIKE_TYPES}
-                optionLabelKey="name"
-                optionValueKey="name"
-                multiple
-                disablePortal
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Typography>¿Primera vez en esta ruta?</Typography>
-              <Checkbox
-                inputProps={{ "aria-label": "controlled" }}
-                color="default"
-                checked={editRoute?.is_verified === 1}
-                onChange={(event) =>
-                  setEditRoute((prevState) => ({
-                    ...prevState,
-                    is_verified: event.target.checked ? 1 : 0,
-                  }))
-                }
-              />
-            </Grid>
-            <Grid size={12}>
-              <FormTextfield
-                label="Descripción"
-                name="route_description"
-                multiline
-                maxLength={250}
-                errors={errors}
-                setErrors={setErrors}
-                form={editRoute}
-                setForm={setEditRoute}
-              />
-            </Grid>
+    <Dialog
+      open={isOpen}
+      onClose={cleanDialog}
+      fullWidth
+      maxWidth="md"
+      PaperProps={{
+        sx: (theme) => ({
+          bgcolor: theme.palette.kompitrail.card,
+          color: theme.palette.text.primary,
+          borderRadius: 2,
+        }),
+      }}
+    >
+      <DialogTitle>{t("dialogs:routeEditTitle")}</DialogTitle>
+      <DialogContent sx={{ overflow: "visible" }}>
+        <Grid container spacing={2}>
+          <Grid size={12}>
+            <FormTextfield
+              label={t("forms:startingPointLabel")}
+              name="starting_point"
+              errors={errors}
+              setErrors={setErrors}
+              form={editRoute}
+              setForm={setEditRoute}
+            />
           </Grid>
-        </Box>
+          <Grid size={12}>
+            <FormTextfield
+              label={t("forms:endingPointLabel")}
+              name="ending_point"
+              errors={errors}
+              setErrors={setErrors}
+              form={editRoute}
+              setForm={setEditRoute}
+            />
+          </Grid>
+          <Grid size={12}>
+            <FormDataPicker
+              label={t("forms:dateLabel")}
+              name="date"
+              errors={errors}
+              setErrors={setErrors}
+              form={editRoute}
+              setForm={setEditRoute}
+            />
+          </Grid>
+          <Grid size={6}>
+            <FormTextfield
+              label={t("forms:kmLabel")}
+              name="distance"
+              type="number"
+              preventInvalidkey
+              errors={errors}
+              setErrors={setErrors}
+              form={editRoute}
+              setForm={setEditRoute}
+            />
+          </Grid>
+          <Grid size={6}>
+            <FormTextfield
+              label={t("forms:estimatedTimeLable")}
+              name="estimated_time"
+              type="number"
+              errors={errors}
+              setErrors={setErrors}
+              form={editRoute}
+              setForm={setEditRoute}
+            />
+          </Grid>
+          <Grid size={6}>
+            <FormAutocomplete
+              name="level"
+              label={t("forms:levelLabel")}
+              errors={errors}
+              setErrors={setErrors}
+              form={editRoute}
+              setForm={setEditRoute}
+              options={ROUTE_LEVELS}
+              optionLabelKey="name"
+              optionValueKey="name"
+              getOptionLabel={(opt) => t(`forms:level.${opt.name}`)}
+              disablePortal
+            />
+          </Grid>
+          <Grid size={6}>
+            <FormAutocomplete
+              name="max_participants"
+              label={t("forms:maxParticipantsLabel")}
+              errors={errors}
+              setErrors={setErrors}
+              form={editRoute}
+              setForm={setEditRoute}
+              options={PARTICIPANTS}
+              optionLabelKey="name"
+              optionValueKey="id"
+              disablePortal
+            />
+          </Grid>
+          <Grid size={12}>
+            <FormAutocomplete
+              form={editRoute}
+              setForm={setEditRoute}
+              errors={errors}
+              setErrors={setErrors}
+              name="suitable_motorbike_type"
+              label={t("forms:motorbikeTypeLabel")}
+              options={MOTORBIKE_TYPES}
+              optionLabelKey="name"
+              optionValueKey="name"
+              multiple
+              disablePortal
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography>{t("forms:checkbox")}</Typography>
+            <Checkbox
+              inputProps={{ "aria-label": "controlled" }}
+              color="default"
+              checked={editRoute?.is_verified === 1}
+              onChange={(event) =>
+                setEditRoute((prevState) => ({
+                  ...prevState,
+                  is_verified: event.target.checked ? 1 : 0,
+                }))
+              }
+            />
+          </Grid>
+          <Grid size={12} sx={{ mb: 2 }}>
+            <FormTextfield
+              label={t("forms:descriptionLabel")}
+              name="route_description"
+              multiline
+              maxLength={250}
+              errors={errors}
+              setErrors={setErrors}
+              form={editRoute}
+              setForm={setEditRoute}
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={cleanDialog} color="error">
-          Cancelar
+          {t("buttons:cancel")}
         </Button>
         <Button onClick={handleConfirm} color="success">
-          Confirmar
+          {t("buttons:confirmar")}
         </Button>
       </DialogActions>
     </Dialog>
