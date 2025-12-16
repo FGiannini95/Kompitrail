@@ -41,7 +41,12 @@ export const RouteCreateDialog = () => {
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createRoute, dialog, closeDialog } = useRoutes();
-  const { t } = useTranslation(["dialogs", "forms", "buttons", "snackbars"]);
+  const { t, i18n } = useTranslation([
+    "dialogs",
+    "forms",
+    "buttons",
+    "snackbars",
+  ]);
 
   const navigate = useNavigate();
   const isOpen = dialog.isOpen && dialog.mode === "create";
@@ -62,6 +67,9 @@ export const RouteCreateDialog = () => {
       return;
     }
 
+    // Get current language from i18next and normalize it (es, en, it)
+    const currentLang = i18n.language?.slice(0, 2) || "es";
+
     const newFormData = new FormData();
     newFormData.append(
       "createRoute",
@@ -77,6 +85,7 @@ export const RouteCreateDialog = () => {
         max_participants: createOneRoute.max_participants,
         route_description: createOneRoute.route_description,
         user_id: user.user_id,
+        language: currentLang,
       })
     );
 

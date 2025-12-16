@@ -41,7 +41,7 @@ export const RouteEditDialog = () => {
 
   const isOpen = dialog.isOpen && dialog.mode === "edit";
   const route_id = dialog.selectedId;
-  const { t } = useTranslation(["dialogs", "forms", "snackbars"]);
+  const { t, i18n } = useTranslation(["dialogs", "forms", "snackbars"]);
 
   useEffect(() => {
     if (isOpen && route_id) {
@@ -72,12 +72,16 @@ export const RouteEditDialog = () => {
       return;
     }
 
+    // Get current language from i18next and normalize to "es" | "en" | "it"
+    const currentLang = i18n.language?.slice(0, 2) || "es";
+
     const newFormData = new FormData();
     newFormData.append(
       "editRoute",
       JSON.stringify({
         ...editRoute,
         date: toMySQLDateTime(editRoute.date, "Europe/Madrid"),
+        language: currentLang,
       })
     );
 

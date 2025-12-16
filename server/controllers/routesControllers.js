@@ -7,6 +7,7 @@ const Contract = require(path.resolve(
   "../../shared/chat-contract/index"
 ));
 const { EVENTS } = Contract;
+const translateAndSaveRouteLanguages = require("../utils/translateAndSaveRouteLanguages");
 
 class routesControllers {
   createRoute = (req, res) => {
@@ -274,9 +275,27 @@ class routesControllers {
 
   showOneRoute = (req, res) => {
     const { id: route_id } = req.params;
-    let sql = `SELECT * FROM route WHERE route_id ='${route_id}' AND is_deleted = 0`;
-    connection.query(sql, (err, result) => {
-      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    const lang = req.query.lang || "es";
+    const sql = `
+      SELECT
+        r.*,
+        -- Only translate description. Keep starting_point and ending_point from route table.
+        COALESCE(rt.route_description, r.route_description) AS route_description
+      FROM route r
+      LEFT JOIN route_translation rt
+        ON rt.route_id = r.route_id AND rt.lang = ?
+      WHERE r.route_id = ? AND r.is_deleted = 0
+      LIMIT 1
+      `;
+
+    connection.query(sql, [lang, route_id], (err, rows) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+      if (!rows || rows.length === 0) {
+        return res.status(404).json({ error: "Ruta no encontrada" });
+      }
+      return res.status(200).json(rows[0]);
     });
   };
 

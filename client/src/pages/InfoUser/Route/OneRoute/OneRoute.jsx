@@ -49,6 +49,7 @@ const InfoItem = ({ label, value }) => (
 );
 
 export const OneRoute = () => {
+  const [fetched, setFetched] = useState(null);
   const { state } = useLocation(); // May be undefined on deep link
   const { id: route_id } = useParams();
   const { user: currentUser } = useContext(KompitrailContext);
@@ -68,11 +69,9 @@ export const OneRoute = () => {
   const currentLang = i18n.language?.slice(0, 2) || "es";
   const locale = localeMap[currentLang] ?? "es-ES";
 
-  const [fetched, setFetched] = useState(null);
-
   const participantsSectionRef = useRef();
+
   useEffect(() => {
-    if (state) return; // Internal navigation already has data
     if (!route_id) return;
 
     let cancelled = false;
@@ -81,7 +80,7 @@ export const OneRoute = () => {
       try {
         // Fetch the route
         const { data: routeRaw } = await axios.get(
-          `${ROUTES_URL}/oneroute/${route_id}`
+          `${ROUTES_URL}/oneroute/${route_id}?lang=${currentLang}`
         );
         const route = routeRaw ?? {};
 
@@ -128,7 +127,7 @@ export const OneRoute = () => {
     return () => {
       cancelled = true;
     };
-  }, [state, route_id]);
+  }, [route_id, currentLang]);
 
   // Ensure the routes cache exists to use as a fallback source
   useEffect(() => {
@@ -161,7 +160,7 @@ export const OneRoute = () => {
     }
   }, [state, fetched, allRoutes, route_id]);
 
-  const data = state ?? fetched;
+  const data = fetched ?? state;
 
   let {
     date,

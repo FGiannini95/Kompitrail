@@ -15,4 +15,4 @@ async function translateText(text, sourceLang, targetLang) {
   return result.text;
 }
 
-module.export = translateText;
+module.exports = translateText;
