@@ -35,11 +35,12 @@ export const Home = () => {
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
   const [lastRoutesVisit, setLastRoutesVisit] = useState(null);
-  const { t } = useTranslation(["buttons", "general"]);
+  const { t, i18n } = useTranslation(["buttons", "general"]);
+  const currentLang = i18n.language?.slice(0, 2) || "es";
 
   useEffect(() => {
-    loadAllRoutes();
-  }, [loadAllRoutes]);
+    loadAllRoutes({ language: currentLang });
+  }, [loadAllRoutes, currentLang]);
 
   // Handle new routes
   useEffect(() => {

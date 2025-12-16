@@ -169,32 +169,38 @@ class routesControllers {
   };
 
   showAllRoutes = (req, res) => {
+    const lang = req.query.lang || "es";
+
     const sql = `
-    SELECT
-      route.*,
-      creator_user.name     AS create_name,
-      creator_user.lastname AS create_lastname,
-      creator_user.img      AS user_img,
-      GROUP_CONCAT(
-          DISTINCT CONCAT(
-          route_participant.user_id, ':',
-          COALESCE(participant_user.name, ''), ':',
-          COALESCE(participant_user.img, '')
-        )
-        SEPARATOR '|'
-      ) AS participants_raw
-    FROM route
-    LEFT JOIN \`user\` AS creator_user
-           ON creator_user.user_id = route.user_id
-    LEFT JOIN route_participant
-           ON route_participant.route_id = route.route_id
-    LEFT JOIN \`user\` AS participant_user
-           ON participant_user.user_id = route_participant.user_id
-    WHERE route.is_deleted = 0
-    GROUP BY route.route_id
-    ORDER BY route.route_id DESC
-  `;
-    connection.query(sql, (error, rows) => {
+      SELECT
+        route.*,
+        rt.starting_point   AS starting_point,
+        rt.ending_point     AS ending_point,
+        creator_user.name     AS create_name,
+        creator_user.lastname AS create_lastname,
+        creator_user.img      AS user_img,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(
+            route_participant.user_id, ':',
+            COALESCE(participant_user.name, ''), ':',
+            COALESCE(participant_user.img, '')
+          )
+          SEPARATOR '|'
+        ) AS participants_raw
+      FROM route
+      JOIN route_translation rt
+        ON rt.route_id = route.route_id AND rt.lang = ?
+      LEFT JOIN \`user\` AS creator_user
+            ON creator_user.user_id = route.user_id
+      LEFT JOIN route_participant
+            ON route_participant.route_id = route.route_id
+      LEFT JOIN \`user\` AS participant_user
+            ON participant_user.user_id = route_participant.user_id
+      WHERE route.is_deleted = 0
+      GROUP BY route.route_id
+      ORDER BY route.route_id DESC
+    `;
+    connection.query(sql, [lang], (error, rows) => {
       if (error) return res.status(500).json({ error });
 
       // Convert "12:Marco|27:Anna" -> [{ user_id:12, name:"Marco" }, { user_id:27, name:"Anna" }]
@@ -279,10 +285,9 @@ class routesControllers {
     const sql = `
       SELECT
         r.*,
-        -- Only translate description. Keep starting_point and ending_point from route table.
-        COALESCE(rt.route_description, r.route_description) AS route_description
+        rt.route_description AS route_description
       FROM route r
-      LEFT JOIN route_translation rt
+      JOIN route_translation rt
         ON rt.route_id = r.route_id AND rt.lang = ?
       WHERE r.route_id = ? AND r.is_deleted = 0
       LIMIT 1

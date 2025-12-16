@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { ROUTES_URL } from "../../api";
 
@@ -25,6 +26,8 @@ export const RoutesProvider = ({ children }) => {
   // Track per route ids to block double clicks
   const [joiningRouteId, setJoiningRouteId] = useState(() => new Set());
   const location = useLocation();
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language?.slice(0, 2) || "es";
 
   // Reset the value when there is a navigation
   useEffect(() => {
@@ -45,27 +48,34 @@ export const RoutesProvider = ({ children }) => {
     setDialog({ isOpen: false, mode: null, selectedId: null });
   }, []);
 
-  const loadAllRoutes = useCallback((options = { silent: false }) => {
-    const { silent } = options;
+  const loadAllRoutes = useCallback(
+    (options = {}) => {
+      const { silent = false, language } = options;
 
-    // Only show loading spinner if this is not a silent refresh
-    if (!silent) {
-      setLoading(true);
-    }
+      const langToUse = language || currentLang;
 
-    axios
-      .get(`${ROUTES_URL}/showallroutes`)
-      .then((res) => setAllRoutes(res.data))
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        if (!silent) {
-          setLoading(false);
-        }
-        setHasLoadedOnce(true); // track that we loaded at least once
-      });
-  }, []);
+      // Only show loading spinner if this is not a silent refresh
+      if (!silent) {
+        setLoading(true);
+      }
+
+      const query = langToUse ? `?lang=${langToUse}` : "";
+
+      axios
+        .get(`${ROUTES_URL}/showallroutes${query}`)
+        .then((res) => setAllRoutes(res.data))
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          if (!silent) {
+            setLoading(false);
+          }
+          setHasLoadedOnce(true); // track that we loaded at least once
+        });
+    },
+    [currentLang]
+  );
 
   const loadUserRoutes = useCallback((user_id) => {
     setLoading(true);
@@ -85,16 +95,16 @@ export const RoutesProvider = ({ children }) => {
 
   // Poll routes periodically, every 15s, to keep all clients in sync
   useEffect(() => {
-    // First load: show spinner
-    loadAllRoutes();
+    // First load: show spinner, with current language
+    loadAllRoutes({ language: currentLang });
 
     const interval = setInterval(() => {
       // Background refresh: no spinner, no visual flicker
-      loadAllRoutes({ silent: true });
+      loadAllRoutes({ silent: true, language: currentLang });
     }, 15000);
 
     return () => clearInterval(interval);
-  }, [loadAllRoutes]);
+  }, [loadAllRoutes, currentLang]);
 
   // CREATE action
   const createRoute = useCallback((route) => {
