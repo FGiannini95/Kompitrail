@@ -51,7 +51,6 @@ export const RoutesProvider = ({ children }) => {
   const loadAllRoutes = useCallback(
     (options = {}) => {
       const { silent = false, language } = options;
-
       const langToUse = language || currentLang;
 
       // Only show loading spinner if this is not a silent refresh
@@ -77,10 +76,16 @@ export const RoutesProvider = ({ children }) => {
     [currentLang]
   );
 
-  const loadUserRoutes = useCallback((user_id) => {
+  const loadUserRoutes = useCallback((user_id, options = {}) => {
+    const { language } = options;
+    const langToUse = language || currentLang;
+
     setLoading(true);
+
+    const query = langToUse ? `?lang=${langToUse}` : "";
+
     axios
-      .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}`)
+      .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}${query}`)
       .then((res) => {
         setUserRoutes(res.data);
       })

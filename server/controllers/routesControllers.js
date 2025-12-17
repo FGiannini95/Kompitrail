@@ -152,18 +152,24 @@ class routesControllers {
 
   showAllRoutesOneUser = (req, res) => {
     const { id: user_id } = req.params;
+    const lang = req.query.lang || "es";
+
     const sql = `
     SELECT
       r.*,
+      COALESCE(rt.starting_point, r.starting_point) AS starting_point,
+      COALESCE(rt.ending_point,   r.ending_point)   AS ending_point,
       u.name AS create_name, 
       u.lastname AS create_lastname,
       u.img AS user_img 
     FROM route r
+    LEFT JOIN route_translation rt
+      ON rt.route_id = r.route_id AND rt.lang = ?
     LEFT JOIN \`user\` u ON u.user_id = r.user_id
-    WHERE r.user_id = '${user_id}' AND r.is_deleted = 0 AND r.date >= NOW()
+    WHERE r.user_id = ? AND r.is_deleted = 0 AND r.date >= NOW()
     ORDER BY r.route_id DESC
   `;
-    connection.query(sql, (error, result) => {
+    connection.query(sql, [lang, user_id], (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
   };
@@ -174,8 +180,8 @@ class routesControllers {
     const sql = `
       SELECT
         route.*,
-        rt.starting_point   AS starting_point,
-        rt.ending_point     AS ending_point,
+        COALESCE(rt.starting_point,   route.starting_point)       AS starting_point,
+        COALESCE(rt.ending_point,     route.ending_point)         AS ending_point,
         creator_user.name     AS create_name,
         creator_user.lastname AS create_lastname,
         creator_user.img      AS user_img,
@@ -188,7 +194,7 @@ class routesControllers {
           SEPARATOR '|'
         ) AS participants_raw
       FROM route
-      JOIN route_translation rt
+      LEFT JOIN route_translation rt
         ON rt.route_id = route.route_id AND rt.lang = ?
       LEFT JOIN \`user\` AS creator_user
             ON creator_user.user_id = route.user_id
@@ -285,9 +291,9 @@ class routesControllers {
     const sql = `
       SELECT
         r.*,
-        rt.route_description AS route_description
+      COALESCE(rt.route_description, r.route_description) AS route_description
       FROM route r
-      JOIN route_translation rt
+      LEFT JOIN route_translation rt
         ON rt.route_id = r.route_id AND rt.lang = ?
       WHERE r.route_id = ? AND r.is_deleted = 0
       LIMIT 1

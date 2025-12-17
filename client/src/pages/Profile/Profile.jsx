@@ -43,11 +43,12 @@ export const Profile = () => {
     otherUserId,
     currentUserId: currentUser?.user_id,
   });
-  const { t } = useTranslation(["buttons", "general"]);
+  const { t, i18n } = useTranslation(["buttons", "general"]);
+  const currentLang = i18n.language?.slice(0, 2) || "es";
 
   useEffect(() => {
-    loadAllRoutes();
-  }, [loadAllRoutes]);
+    loadAllRoutes({ language: currentLang });
+  }, [loadAllRoutes, currentLang]);
 
   // Determine which user profile we are watching
   const isOtherProfile =

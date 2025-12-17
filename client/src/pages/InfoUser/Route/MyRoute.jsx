@@ -36,12 +36,13 @@ export const MyRoute = () => {
     loading,
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
-  const { t } = useTranslation(["buttons", "general", "dialogs"]);
+  const { t, i18n } = useTranslation(["buttons", "general", "dialogs"]);
+  const currentLang = i18n.language?.slice(0, 2) || "es";
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
-    loadUserRoutes(user_id);
-  }, [tokenLocalStorage, loadUserRoutes]);
+    loadUserRoutes(user_id, { language: currentLang });
+  }, [tokenLocalStorage, loadUserRoutes, currentLang]);
 
   const openCreateDialog = () => {
     openCreateEditDialog({ mode: "create" });
