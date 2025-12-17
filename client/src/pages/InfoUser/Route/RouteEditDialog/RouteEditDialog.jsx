@@ -17,6 +17,7 @@ import Grid from "@mui/material/Grid2";
 import { ROUTES_URL } from "../../../../api";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 import { toMySQLDateTime } from "../../../../helpers/utils";
+import { getCurrentLang } from "../../../../helpers/oneRouteUtils";
 // Providers & Hooks
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
@@ -57,7 +58,7 @@ export const RouteEditDialog = () => {
 
   useEffect(() => {
     if (isOpen && route_id) {
-      const currentLang = i18n.language?.slice(0, 2) || "es";
+      const currentLang = getCurrentLang(i18n);
 
       axios
         .get(`${ROUTES_URL}/oneroute/${route_id}?lang=${currentLang}`)
@@ -101,7 +102,7 @@ export const RouteEditDialog = () => {
     }
 
     // Get current language from i18next and normalize to "es" | "en" | "it"
-    const currentLang = i18n.language?.slice(0, 2) || "es";
+    const currentLang = getCurrentLang(i18n);
 
     const newFormData = new FormData();
     newFormData.append(

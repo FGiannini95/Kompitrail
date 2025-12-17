@@ -14,6 +14,7 @@ import {
   getLocalStorage,
   saveLocalStorage,
 } from "../../helpers/localStorageUtils";
+import { getCurrentLang } from "../../helpers/oneRouteUtils";
 // Components
 import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
 import { EmptyState } from "../../components/EmptyState/EmptyState";
@@ -36,7 +37,7 @@ export const Home = () => {
   const { user } = useContext(KompitrailContext);
   const [lastRoutesVisit, setLastRoutesVisit] = useState(null);
   const { t, i18n } = useTranslation(["buttons", "general"]);
-  const currentLang = i18n.language?.slice(0, 2) || "es";
+  const currentLang = getCurrentLang(i18n);
 
   useEffect(() => {
     loadAllRoutes({ language: currentLang });

@@ -18,6 +18,7 @@ import Grid from "@mui/material/Grid2";
 import { ROUTES_URL } from "../../../../api";
 import { RoutesString } from "../../../../routes/routes";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
+import { getCurrentLang } from "../../../../helpers/oneRouteUtils";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
@@ -68,7 +69,7 @@ export const RouteCreateDialog = () => {
     }
 
     // Get current language from i18next and normalize it (es, en, it)
-    const currentLang = i18n.language?.slice(0, 2) || "es";
+    const currentLang = getCurrentLang(i18n);
 
     const newFormData = new FormData();
     newFormData.append(

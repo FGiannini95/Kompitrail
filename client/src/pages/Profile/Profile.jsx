@@ -9,6 +9,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 // Utils
 import { RoutesString } from "../../routes/routes";
+import { getCurrentLang } from "../../helpers/oneRouteUtils";
 // Providers & Hooks
 import { useUserAnalytics } from "../../hooks/useUserAnalytics";
 import { useOtherUserProfile } from "../../hooks/useOtherUserProfile";
@@ -44,7 +45,7 @@ export const Profile = () => {
     currentUserId: currentUser?.user_id,
   });
   const { t, i18n } = useTranslation(["buttons", "general"]);
-  const currentLang = i18n.language?.slice(0, 2) || "es";
+  const currentLang = getCurrentLang(i18n);
 
   useEffect(() => {
     loadAllRoutes({ language: currentLang });

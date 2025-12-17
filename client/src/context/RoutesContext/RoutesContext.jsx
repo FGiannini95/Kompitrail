@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import { ROUTES_URL } from "../../api";
+import { getCurrentLang } from "../../helpers/oneRouteUtils";
 
 export const RoutesContext = createContext();
 // Helpful for debugging with ReactDev Tools
@@ -27,7 +28,7 @@ export const RoutesProvider = ({ children }) => {
   const [joiningRouteId, setJoiningRouteId] = useState(() => new Set());
   const location = useLocation();
   const { i18n } = useTranslation();
-  const currentLang = i18n.language?.slice(0, 2) || "es";
+  const currentLang = getCurrentLang(i18n);
 
   // Reset the value when there is a navigation
   useEffect(() => {
