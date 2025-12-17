@@ -366,13 +366,15 @@ class routesControllers {
     const sql = `
       SELECT
         r.*,
-      COALESCE(rt.route_description, r.route_description) AS route_description
+        COALESCE(rt.starting_point,   r.starting_point)       AS starting_point,
+        COALESCE(rt.ending_point,     r.ending_point)         AS ending_point,
+        COALESCE(rt.route_description, r.route_description)   AS route_description
       FROM route r
       LEFT JOIN route_translation rt
         ON rt.route_id = r.route_id AND rt.lang = ?
       WHERE r.route_id = ? AND r.is_deleted = 0
       LIMIT 1
-      `;
+    `;
 
     connection.query(sql, [lang, route_id], (err, rows) => {
       if (err) {
