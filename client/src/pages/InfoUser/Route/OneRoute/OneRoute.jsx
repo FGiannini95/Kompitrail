@@ -3,14 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
-import {
-  Button,
-  Card,
-  CardContent,
-  Stack,
-  Typography,
-  Divider,
-} from "@mui/material";
+import { Card, CardContent, Stack, Typography, Divider } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
@@ -27,7 +20,7 @@ import {
   capitalizeFirstLetter,
   formatDateTime,
 } from "../../../../helpers/utils";
-import { ROUTES_URL, USERS_URL } from "../../../../api";
+import { ROUTES_URL } from "../../../../api";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useShareUrl } from "../../../../hooks/useShareUrl";
@@ -37,6 +30,7 @@ import { openCalendar } from "../../../../helpers/calendar";
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
 import { Header } from "../../../../components/Header/Header";
+import { RouteActionButton } from "../RouteActionButton/RouteActionButton";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -48,8 +42,8 @@ const InfoItem = ({ label, value }) => (
 );
 
 export const OneRoute = () => {
-  const [data, setData] = useState(state ?? null); // state only as initial value
   const { state } = useLocation();
+  const [data, setData] = useState(state ?? null); // state only as initial value
   const { id: route_id } = useParams();
   const { user: currentUser } = useContext(KompitrailContext);
   const { isCopied, handleShare } = useShareUrl({
@@ -146,75 +140,6 @@ export const OneRoute = () => {
   const isEnrollmentClosed = now >= enrollmentDeadline && now < routeEnd;
 
   const isRouteLocked = isPastRoute || isEnrollmentClosed;
-
-  const buttonConfig = useMemo(() => {
-    // Rute is finished
-    if (isPastRoute) {
-      return {
-        text: t("buttons:pastRoute"),
-        onClick: undefined,
-        danger: false,
-        disabled: true,
-        show: true,
-      };
-    }
-
-    // Inscription closed but rute still in progress
-    if (isEnrollmentClosed) {
-      return {
-        text: t("buttons:enrollmentClosed"),
-        onClick: undefined,
-        danger: false,
-        disabled: true,
-        show: true,
-      };
-    }
-
-    if (isOwner) {
-      return {
-        text: t("buttons:deleteRoute"),
-        onClick: () => participantsSectionRef.current?.handleOpenDeleteDialog(),
-        danger: true,
-        disabled: false,
-        show: true,
-      };
-    }
-
-    if (isCurrentUserEnrolled) {
-      return {
-        text: t("buttons:cancelEnrollment"),
-        onClick: () => participantsSectionRef.current?.handleOpenLeaveRoute(),
-        danger: true,
-        disabled: false,
-        show: true,
-      };
-    }
-
-    if (!isRouteFull && !isOwner && !isCurrentUserEnrolled) {
-      return {
-        text: t("buttons:joinRoute"),
-        onClick: () => participantsSectionRef.current?.handleJoin(),
-        danger: false,
-        disabled: false,
-        show: true,
-      };
-    }
-
-    if (isRouteFull && !isOwner && !isCurrentUserEnrolled) {
-      return {
-        text: t("buttons:fullRoute"),
-        danger: false,
-        disabled: true,
-        show: true,
-      };
-    }
-  }, [
-    isOwner,
-    isCurrentUserEnrolled,
-    isRouteFull,
-    isPastRoute,
-    isEnrollmentClosed,
-  ]);
 
   const handleOpenCalendar = !isRouteLocked
     ? () =>
@@ -429,29 +354,22 @@ export const OneRoute = () => {
           <Typography color="text.primary">{route_description} </Typography>
         </Stack>
       </Stack>
-
-      {buttonConfig.show && (
-        <Stack sx={{ px: 1 }}>
-          <Button
-            type="button"
-            variant="outlined"
-            fullWidth
-            disabled={buttonConfig.disabled}
-            onClick={buttonConfig.disabled ? undefined : buttonConfig.onClick}
-            sx={(theme) => ({
-              color: buttonConfig.danger
-                ? theme.palette.error.main
-                : theme.palette.text.primary,
-              borderColor: buttonConfig.danger
-                ? theme.palette.error.main
-                : theme.palette.kompitrail.card,
-              borderWidth: buttonConfig.danger ? "1px" : "2px",
-            })}
-          >
-            {buttonConfig.text}
-          </Button>
-        </Stack>
-      )}
+      <Stack sx={{ px: 1 }}>
+        <RouteActionButton
+          isPastRoute={isPastRoute}
+          isEnrollmentClosed={isEnrollmentClosed}
+          isOwner={isOwner}
+          isCurrentUserEnrolled={isCurrentUserEnrolled}
+          isRouteFull={isRouteFull}
+          onDeleteRoute={() =>
+            participantsSectionRef.current?.handleOpenDeleteDialog()
+          }
+          onJoinRoute={() => participantsSectionRef.current?.handleJoin()}
+          onCancelEnrollment={() =>
+            participantsSectionRef.current?.handleOpenLeaveRoute()
+          }
+        />
+      </Stack>
     </Grid>
   );
 };
