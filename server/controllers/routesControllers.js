@@ -264,6 +264,7 @@ class routesControllers {
       estimated_time,
       max_participants,
       route_description,
+      language,
     } = JSON.parse(req.body.editRoute);
 
     const { id: route_id } = req.params;
@@ -279,7 +280,7 @@ class routesControllers {
       suitable_motorbike_type= ?,  
       estimated_time= ?, 
       max_participants= ?, 
-      route_description= ?, 
+      route_description= ?
       WHERE route_id = ? AND is_deleted = 0
     `;
 
