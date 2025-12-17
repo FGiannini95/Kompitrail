@@ -43,6 +43,16 @@ export const RouteEditDialog = () => {
   const route_id = dialog.selectedId;
   const { t, i18n } = useTranslation(["dialogs", "forms", "snackbars"]);
 
+  // Number of already enrolled users in this route
+  const occupiedSeats = Array.isArray(editRoute?.max_participants)
+    ? editRoute.max_participants.length
+    : 0;
+
+  // Available options for max_participants, cannot be less than occupiedSeats
+  const maxParticipantsOptions = PARTICIPANTS.filter((opt) => {
+    return opt.id >= occupiedSeats;
+  });
+
   useEffect(() => {
     if (isOpen && route_id) {
       const currentLang = i18n.language?.slice(0, 2) || "es";
@@ -67,6 +77,17 @@ export const RouteEditDialog = () => {
     e.preventDefault();
 
     const newErrors = validateRouteForm(editRoute);
+
+    // Extra validation to ensure max_participants is not lower than occupied seats
+    const currentMaxParticipants = Number(editRoute?.max_participants) || 0;
+
+    if (occupiedSeats > 0 && currentMaxParticipants < occupiedSeats) {
+      // We prevent lowering the capacity under the number of already enrolled users
+      newErrors.max_participants = t("errors:route.maxParticipantsTooLow", {
+        occupiedSeats,
+      });
+    }
+
     setErrors(newErrors);
 
     // Si hay errores, detener la ejecución
@@ -196,7 +217,7 @@ export const RouteEditDialog = () => {
               setErrors={setErrors}
               form={editRoute}
               setForm={setEditRoute}
-              options={PARTICIPANTS}
+              options={maxParticipantsOptions}
               optionLabelKey="name"
               optionValueKey="id"
               disablePortal

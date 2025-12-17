@@ -7,7 +7,7 @@ export const ROUTE_INITIAL_VALUE = {
   is_verified: 0,
   suitable_motorbike_type: "",
   estimated_time: "",
-  max_max_max_participants: "",
+  max_participants: "",
   route_description: "",
   user_id: "",
 };
