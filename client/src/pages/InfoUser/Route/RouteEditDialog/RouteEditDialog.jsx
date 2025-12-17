@@ -43,14 +43,16 @@ export const RouteEditDialog = () => {
   const route_id = dialog.selectedId;
   const { t, i18n } = useTranslation(["dialogs", "forms", "snackbars"]);
 
-  // Number of already enrolled users in this route
-  const occupiedSeats = Array.isArray(editRoute?.max_participants)
-    ? editRoute.max_participants.length
-    : 0;
+  // Total people already in the route: 1 creator + current participants
+  const currentParticipants =
+    1 +
+    (Array.isArray(editRoute?.participants)
+      ? editRoute.participants.length
+      : 0);
 
   // Available options for max_participants, cannot be less than occupiedSeats
   const maxParticipantsOptions = PARTICIPANTS.filter((opt) => {
-    return opt.id >= occupiedSeats;
+    return opt.id >= currentParticipants;
   });
 
   useEffect(() => {
@@ -81,10 +83,13 @@ export const RouteEditDialog = () => {
     // Extra validation to ensure max_participants is not lower than occupied seats
     const currentMaxParticipants = Number(editRoute?.max_participants) || 0;
 
-    if (occupiedSeats > 0 && currentMaxParticipants < occupiedSeats) {
+    if (
+      currentParticipants > 0 &&
+      currentMaxParticipants < currentParticipants
+    ) {
       // We prevent lowering the capacity under the number of already enrolled users
       newErrors.max_participants = t("errors:route.maxParticipantsTooLow", {
-        occupiedSeats,
+        currentParticipants,
       });
     }
 

@@ -31,7 +31,6 @@ import { ROUTES_URL, USERS_URL } from "../../../../api";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useShareUrl } from "../../../../hooks/useShareUrl";
-import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 import { openCalendar } from "../../../../helpers/calendar";
@@ -49,17 +48,16 @@ const InfoItem = ({ label, value }) => (
 );
 
 export const OneRoute = () => {
-  const [fetched, setFetched] = useState(null);
-  const { state } = useLocation(); // May be undefined on deep link
+  const [data, setData] = useState(state ?? null); // state only as initial value
+  const { state } = useLocation();
   const { id: route_id } = useParams();
   const { user: currentUser } = useContext(KompitrailContext);
   const { isCopied, handleShare } = useShareUrl({
     mode: "route",
     routeId: route_id,
   });
-  const { allRoutes, loadAllRoutes } = useRoutes();
-  const navigate = useNavigate();
   const { t, i18n } = useTranslation(["buttons", "oneRoute", "forms"]);
+  const navigate = useNavigate();
 
   const localeMap = {
     es: "es-ES",
@@ -84,38 +82,8 @@ export const OneRoute = () => {
         );
         const route = routeRaw ?? {};
 
-        // Base object
-        const base = {
-          ...route,
-          participants: Array.isArray(route.participants)
-            ? route.participants
-            : [],
-        };
-
-        let create_name = base.create_name;
-        let user_img = base.user_img;
-
-        if ((!create_name || !user_img) && base.user_id) {
-          try {
-            const { data: userRaw } = await axios.get(
-              `${USERS_URL}/oneuser/${base.user_id}`
-            );
-            const user = Array.isArray(userRaw)
-              ? (userRaw[0] ?? {})
-              : (userRaw ?? {});
-
-            const firstName = (user?.name ?? "").trim();
-
-            create_name = create_name ?? firstName;
-            user_img = user_img ?? user?.img ?? null;
-          } catch (e) {
-            // Non-blocking: keep page working even if this fails
-            console.log("Creator fetch failed (non-blocking)", e);
-          }
-        }
-
         if (!cancelled) {
-          setFetched({ ...base, create_name, user_img });
+          setData(route);
         }
       } catch (err) {
         if (!cancelled) {
@@ -128,39 +96,6 @@ export const OneRoute = () => {
       cancelled = true;
     };
   }, [route_id, currentLang]);
-
-  // Ensure the routes cache exists to use as a fallback source
-  useEffect(() => {
-    if (state) return; // internal navigation already has participants
-    if (!fetched) return; // wait for the single-route fetch
-    if (Array.isArray(fetched.participants) && fetched.participants.length > 0)
-      return;
-
-    // If cache is empty, load it
-    if (!allRoutes || allRoutes.length === 0) {
-      loadAllRoutes();
-    }
-  }, [state, fetched, allRoutes, loadAllRoutes]);
-
-  // When cache is available and fetched participants are empty, pull them from cache
-  useEffect(() => {
-    if (state) return; // not needed for internal navigation
-    if (!fetched || (fetched.participants?.length ?? 0) > 0) return;
-
-    // Try to find this route in the cache and use its participants
-    const fromCache = Array.isArray(allRoutes)
-      ? allRoutes.find((r) => String(r.route_id) === String(route_id))
-      : null;
-
-    if (fromCache?.participants?.length) {
-      setFetched((prev) => ({
-        ...prev,
-        participants: fromCache.participants, // fallback participants
-      }));
-    }
-  }, [state, fetched, allRoutes, route_id]);
-
-  const data = fetched ?? state;
 
   let {
     date,
@@ -387,9 +322,7 @@ export const OneRoute = () => {
             user_id={user_id}
             create_name={create_name}
             user_img={user_img}
-            participants={
-              participants
-            } /* Will have data via state OR cache fallback */
+            participants={participants}
             max_participants={max_participants}
             isOwner={isOwner}
             isRouteLocked={isRouteLocked}

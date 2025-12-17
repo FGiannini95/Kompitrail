@@ -369,11 +369,29 @@ class routesControllers {
         r.*,
         COALESCE(rt.starting_point,   r.starting_point)       AS starting_point,
         COALESCE(rt.ending_point,     r.ending_point)         AS ending_point,
-        COALESCE(rt.route_description, r.route_description)   AS route_description
+        COALESCE(rt.route_description, r.route_description)   AS route_description,
+        creator_user.name     AS create_name,
+        creator_user.lastname AS create_lastname,
+        creator_user.img      AS user_img,
+        GROUP_CONCAT(
+          DISTINCT CONCAT(
+            rp.user_id, ':',
+            COALESCE(participant_user.name, ''), ':',
+            COALESCE(participant_user.img, '')
+          )
+          SEPARATOR '|'
+        ) AS participants_raw
       FROM route r
       LEFT JOIN route_translation rt
         ON rt.route_id = r.route_id AND rt.lang = ?
+      LEFT JOIN \`user\` AS creator_user
+        ON creator_user.user_id = r.user_id
+      LEFT JOIN route_participant rp
+        ON rp.route_id = r.route_id
+      LEFT JOIN \`user\` AS participant_user
+        ON participant_user.user_id = rp.user_id
       WHERE r.route_id = ? AND r.is_deleted = 0
+      GROUP BY r.route_id
       LIMIT 1
     `;
 
@@ -384,7 +402,26 @@ class routesControllers {
       if (!rows || rows.length === 0) {
         return res.status(404).json({ error: "Ruta no encontrada" });
       }
-      return res.status(200).json(rows[0]);
+      const r = rows[0];
+
+      // Convert "12:Marco|27:Anna" -> [{ user_id:12, name:"Marco" }, { user_id:27, name:"Anna" }]
+      const participants = (r.participants_raw || "")
+        .split("|")
+        .filter(Boolean)
+        .map((triple) => {
+          const parts = triple.split(":");
+          const uid = Number(parts.shift());
+          const name = parts.shift() || "";
+          const img = parts.join(":") || "";
+          return { user_id: uid, name, img };
+        });
+
+      const { participants_raw, ...rest } = r;
+
+      return res.status(200).json({
+        ...rest,
+        participants,
+      });
     });
   };
 
