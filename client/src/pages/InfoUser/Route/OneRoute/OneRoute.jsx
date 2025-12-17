@@ -20,13 +20,18 @@ import {
   capitalizeFirstLetter,
   formatDateTime,
 } from "../../../../helpers/utils";
+import {
+  LOCALE_MAP,
+  getCurrentLang,
+  getRouteStatus,
+} from "../../../../helpers/oneRouteUtils";
+import { openCalendar } from "../../../../helpers/calendar";
 import { ROUTES_URL } from "../../../../api";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useShareUrl } from "../../../../hooks/useShareUrl";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
-import { openCalendar } from "../../../../helpers/calendar";
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
 import { Header } from "../../../../components/Header/Header";
@@ -53,13 +58,8 @@ export const OneRoute = () => {
   const { t, i18n } = useTranslation(["buttons", "oneRoute", "forms"]);
   const navigate = useNavigate();
 
-  const localeMap = {
-    es: "es-ES",
-    en: "en-GB",
-    it: "it-IT",
-  };
-  const currentLang = i18n.language?.slice(0, 2) || "es";
-  const locale = localeMap[currentLang] ?? "es-ES";
+  const currentLang = getCurrentLang(i18n);
+  const locale = LOCALE_MAP[currentLang] ?? "es-ES";
 
   const participantsSectionRef = useRef();
 
@@ -113,6 +113,11 @@ export const OneRoute = () => {
     isOwner = currentUser?.user_id === user_id;
   }
 
+  const { isPastRoute, isEnrollmentClosed, isRouteLocked } = getRouteStatus(
+    date,
+    estimated_time
+  );
+
   const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } = formatDateTime(
     date,
     { locale }
@@ -127,19 +132,6 @@ export const OneRoute = () => {
   const isRouteFull = currentParticipants >= max_participants;
 
   const canAccessChat = isCurrentUserEnrolled || isOwner;
-
-  const now = new Date();
-  const routeStart = new Date(date);
-  const ONE_HOUR_MS = 60 * 60 * 1000;
-  const routeDurationMs = (Number(estimated_time) || 0) * ONE_HOUR_MS;
-
-  const routeEnd = new Date(routeStart.getTime() + routeDurationMs);
-  const enrollmentDeadline = new Date(routeStart.getTime() - ONE_HOUR_MS);
-  const isPastRoute = now >= routeEnd;
-  // isEnrollmentClosed is true from 1h before the start till the end of the route
-  const isEnrollmentClosed = now >= enrollmentDeadline && now < routeEnd;
-
-  const isRouteLocked = isPastRoute || isEnrollmentClosed;
 
   const handleOpenCalendar = !isRouteLocked
     ? () =>
