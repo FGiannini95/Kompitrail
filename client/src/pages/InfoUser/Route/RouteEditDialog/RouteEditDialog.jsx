@@ -45,8 +45,10 @@ export const RouteEditDialog = () => {
 
   useEffect(() => {
     if (isOpen && route_id) {
+      const currentLang = i18n.language?.slice(0, 2) || "es";
+
       axios
-        .get(`${ROUTES_URL}/oneroute/${route_id}`)
+        .get(`${ROUTES_URL}/oneroute/${route_id}?lang=${currentLang}`)
         .then((res) => {
           setEditRoute(res.data);
         })

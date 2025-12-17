@@ -265,23 +265,98 @@ class routesControllers {
       max_participants,
       route_description,
     } = JSON.parse(req.body.editRoute);
+
     const { id: route_id } = req.params;
-    let sql = `UPDATE route SET 
-      starting_point = '${starting_point}', 
-      ending_point = '${ending_point}',
-      date = '${date}', 
-      level = '${level}', 
-      distance = '${distance}', 
-      is_verified='${is_verified}', 
-      suitable_motorbike_type='${suitable_motorbike_type}', 
-      estimated_time='${estimated_time}', 
-      max_participants='${max_participants}', 
-      route_description='${route_description}' 
-      WHERE route_id = '${route_id}' AND is_deleted = 0`;
-    connection.query(sql, (err, result) => {
-      err
-        ? res.status(400).json({ err })
-        : res.status(200).json({ message: "Ruta modificada", result });
+    const sourceLang = language || "es";
+
+    let sqlUpdateRoute = `UPDATE route SET 
+      starting_point = ?, 
+      ending_point = ?, 
+      date = ?, 
+      level = ?,  
+      distance = ?,  
+      is_verified= ?, 
+      suitable_motorbike_type= ?,  
+      estimated_time= ?, 
+      max_participants= ?, 
+      route_description= ?, 
+      WHERE route_id = ? AND is_deleted = 0
+    `;
+
+    const routeParams = [
+      starting_point,
+      ending_point,
+      date,
+      level,
+      distance,
+      is_verified,
+      suitable_motorbike_type,
+      estimated_time,
+      max_participants,
+      route_description,
+      route_id,
+    ];
+
+    connection.query(sqlUpdateRoute, routeParams, (err, result) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+
+      // Upsert the translation for the edited language
+      const sqlUpsertTranslation = `
+      INSERT INTO route_translation (
+        route_id, lang, starting_point, ending_point, route_description
+      )
+      VALUES (?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        starting_point   = VALUES(starting_point),
+        ending_point     = VALUES(ending_point),
+        route_description = VALUES(route_description)
+    `;
+
+      const translationParams = [
+        route_id,
+        sourceLang,
+        starting_point,
+        ending_point,
+        route_description,
+      ];
+
+      connection.query(
+        sqlUpsertTranslation,
+        translationParams,
+        async (errorTranslation) => {
+          if (errorTranslation) {
+            console.error(
+              "Failed to upsert route translation for edit",
+              route_id,
+              errorTranslation
+            );
+            return res.status(200).json({
+              message:
+                "Ruta modificada, pero hubo un error en las traducciones.",
+              result,
+            });
+          }
+
+          // Re-translate to the other languages, based on the edited source language
+          try {
+            await translateAndSaveRouteLanguages(
+              connection,
+              route_id,
+              sourceLang
+            );
+          } catch (translationError) {
+            console.error(
+              "Error translating after edit",
+              route_id,
+              translationError
+            );
+          }
+
+          return res.status(200).json({ message: "Ruta modificada", result });
+        }
+      );
     });
   };
 
