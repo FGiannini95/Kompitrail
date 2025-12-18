@@ -10,6 +10,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
+import { getCurrentLang } from "../../../helpers/oneRouteUtils";
 // Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
@@ -36,12 +37,13 @@ export const MyRoute = () => {
     loading,
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
-  const { t } = useTranslation(["buttons", "general", "dialogs"]);
+  const { t, i18n } = useTranslation(["buttons", "general", "dialogs"]);
+  const currentLang = getCurrentLang(i18n);
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
-    loadUserRoutes(user_id);
-  }, [tokenLocalStorage, loadUserRoutes]);
+    loadUserRoutes(user_id, { language: currentLang });
+  }, [tokenLocalStorage, loadUserRoutes, currentLang]);
 
   const openCreateDialog = () => {
     openCreateEditDialog({ mode: "create" });

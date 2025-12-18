@@ -7,6 +7,7 @@ const Contract = require(path.resolve(
   "../../shared/chat-contract/index"
 ));
 const { EVENTS } = Contract;
+const translateAndSaveRouteLanguages = require("../utils/translateAndSaveRouteLanguages");
 
 class routesControllers {
   createRoute = (req, res) => {
@@ -22,7 +23,10 @@ class routesControllers {
       max_participants,
       route_description,
       is_verified,
+      language,
     } = JSON.parse(req.body.createRoute);
+
+    const sourceLang = language || "es";
 
     if (
       !user_id ||
@@ -68,20 +72,47 @@ class routesControllers {
 
       const routeId = result.insertId;
 
-      // Create also a chat_room, 1:1 with route
-      const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
+      // Translate the fields of this route
+      const sqlInsertTranslation = `INSERT INTO route_translation (route_id, lang, starting_point, ending_point, route_description) VALUES(?, ?, ?, ?, ?)`;
 
-      connection.query(sqlInsertChatRoom, (errorChat) => {
-        if (errorChat) {
-          console.error(
-            "Failed to create chat_room from route",
-            routeId,
-            errorChat
-          );
-        }
+      connection.query(
+        sqlInsertTranslation,
+        [routeId, sourceLang, starting_point, ending_point, route_description],
+        async (errorTranslation) => {
+          if (errorTranslation) {
+            console.error(
+              "Failed to insert source translation for this route",
+              routeId,
+              errorTranslation
+            );
+            return res
+              .status(500)
+              .json({ error: "Error saving route translation." });
+          }
+          try {
+            await translateAndSaveRouteLanguages(
+              connection,
+              routeId,
+              sourceLang
+            );
+          } catch (translationError) {
+            console.error("Error translating", routeId, translationError);
+          }
 
-        // Return the freshly created route (joined with creator name for convenience)
-        const sqlSelect = `
+          // Create also a chat_room, 1:1 with route
+          const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
+
+          connection.query(sqlInsertChatRoom, (errorChat) => {
+            if (errorChat) {
+              console.error(
+                "Failed to create chat_room from route",
+                routeId,
+                errorChat
+              );
+            }
+
+            // Return the freshly created route (joined with creator name for convenience)
+            const sqlSelect = `
               SELECT 
                 r.route_id, 
                 r.user_id, 
@@ -104,64 +135,79 @@ class routesControllers {
               WHERE r.route_id = ?
             `;
 
-        connection.query(sqlSelect, [routeId], (error2, result2) => {
-          if (error2) {
-            return res.status(500).json({ error: error2 });
-          }
-          if (!result2 || result2.length === 0) {
-            return res.status(404).json({ error: "Ruta no encontrada" });
-          }
-          return res.status(200).json(result2[0]);
-        });
-      });
+            connection.query(sqlSelect, [routeId], (error2, result2) => {
+              if (error2) {
+                return res.status(500).json({ error: error2 });
+              }
+              if (!result2 || result2.length === 0) {
+                return res.status(404).json({ error: "Ruta no encontrada" });
+              }
+              return res.status(200).json(result2[0]);
+            });
+          });
+        }
+      );
     });
   };
 
   showAllRoutesOneUser = (req, res) => {
     const { id: user_id } = req.params;
+    const lang = req.query.lang || "es";
+
     const sql = `
     SELECT
       r.*,
+      COALESCE(rt.starting_point, r.starting_point) AS starting_point,
+      COALESCE(rt.ending_point,   r.ending_point)   AS ending_point,
       u.name AS create_name, 
       u.lastname AS create_lastname,
       u.img AS user_img 
     FROM route r
+    LEFT JOIN route_translation rt
+      ON rt.route_id = r.route_id AND rt.lang = ?
     LEFT JOIN \`user\` u ON u.user_id = r.user_id
-    WHERE r.user_id = '${user_id}' AND r.is_deleted = 0 AND r.date >= NOW()
+    WHERE r.user_id = ? AND r.is_deleted = 0 AND r.date >= NOW()
     ORDER BY r.route_id DESC
   `;
-    connection.query(sql, (error, result) => {
+    connection.query(sql, [lang, user_id], (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
   };
 
   showAllRoutes = (req, res) => {
+    const lang = req.query.lang || "es";
+
     const sql = `
-    SELECT
-      route.*,
-      creator_user.name     AS create_name,
-      creator_user.lastname AS create_lastname,
-      creator_user.img      AS user_img,
-      GROUP_CONCAT(
-          DISTINCT CONCAT(
-          route_participant.user_id, ':',
-          COALESCE(participant_user.name, ''), ':',
-          COALESCE(participant_user.img, '')
-        )
-        SEPARATOR '|'
-      ) AS participants_raw
-    FROM route
-    LEFT JOIN \`user\` AS creator_user
-           ON creator_user.user_id = route.user_id
-    LEFT JOIN route_participant
-           ON route_participant.route_id = route.route_id
-    LEFT JOIN \`user\` AS participant_user
-           ON participant_user.user_id = route_participant.user_id
-    WHERE route.is_deleted = 0
-    GROUP BY route.route_id
-    ORDER BY route.route_id DESC
-  `;
-    connection.query(sql, (error, rows) => {
+      SELECT
+        route.*,
+        COALESCE(rt.starting_point,   route.starting_point)       AS starting_point,
+        COALESCE(rt.ending_point,     route.ending_point)         AS ending_point,
+        creator_user.name     AS create_name,
+        creator_user.lastname AS create_lastname,
+        creator_user.img      AS user_img,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(
+            route_participant.user_id, ':',
+            COALESCE(participant_user.name, ''), ':',
+            COALESCE(participant_user.img, '')
+          )
+          ORDER BY route_participant.joined_at ASC
+          SEPARATOR '|'
+        ) AS participants_raw
+      FROM route
+      LEFT JOIN route_translation rt
+        ON rt.route_id = route.route_id AND rt.lang = ?
+      LEFT JOIN \`user\` AS creator_user
+            ON creator_user.user_id = route.user_id
+      LEFT JOIN route_participant
+            ON route_participant.route_id = route.route_id
+      LEFT JOIN \`user\` AS participant_user
+            ON participant_user.user_id = route_participant.user_id
+      WHERE route.is_deleted = 0
+      GROUP BY route.route_id
+      ORDER BY route.route_id DESC
+    `;
+    connection.query(sql, [lang], (error, rows) => {
       if (error) return res.status(500).json({ error });
 
       // Convert "12:Marco|27:Anna" -> [{ user_id:12, name:"Marco" }, { user_id:27, name:"Anna" }]
@@ -219,32 +265,165 @@ class routesControllers {
       estimated_time,
       max_participants,
       route_description,
+      language,
     } = JSON.parse(req.body.editRoute);
+
     const { id: route_id } = req.params;
-    let sql = `UPDATE route SET 
-      starting_point = '${starting_point}', 
-      ending_point = '${ending_point}',
-      date = '${date}', 
-      level = '${level}', 
-      distance = '${distance}', 
-      is_verified='${is_verified}', 
-      suitable_motorbike_type='${suitable_motorbike_type}', 
-      estimated_time='${estimated_time}', 
-      max_participants='${max_participants}', 
-      route_description='${route_description}' 
-      WHERE route_id = '${route_id}' AND is_deleted = 0`;
-    connection.query(sql, (err, result) => {
-      err
-        ? res.status(400).json({ err })
-        : res.status(200).json({ message: "Ruta modificada", result });
+    const sourceLang = language || "es";
+
+    let sqlUpdateRoute = `UPDATE route SET 
+      starting_point = ?, 
+      ending_point = ?, 
+      date = ?, 
+      level = ?,  
+      distance = ?,  
+      is_verified= ?, 
+      suitable_motorbike_type= ?,  
+      estimated_time= ?, 
+      max_participants= ?, 
+      route_description= ?
+      WHERE route_id = ? AND is_deleted = 0
+    `;
+
+    const routeParams = [
+      starting_point,
+      ending_point,
+      date,
+      level,
+      distance,
+      is_verified,
+      suitable_motorbike_type,
+      estimated_time,
+      max_participants,
+      route_description,
+      route_id,
+    ];
+
+    connection.query(sqlUpdateRoute, routeParams, (err, result) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+
+      // Upsert the translation for the edited language
+      const sqlUpsertTranslation = `
+      INSERT INTO route_translation (
+        route_id, lang, starting_point, ending_point, route_description
+      )
+      VALUES (?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        starting_point   = VALUES(starting_point),
+        ending_point     = VALUES(ending_point),
+        route_description = VALUES(route_description)
+    `;
+
+      const translationParams = [
+        route_id,
+        sourceLang,
+        starting_point,
+        ending_point,
+        route_description,
+      ];
+
+      connection.query(
+        sqlUpsertTranslation,
+        translationParams,
+        async (errorTranslation) => {
+          if (errorTranslation) {
+            console.error(
+              "Failed to upsert route translation for edit",
+              route_id,
+              errorTranslation
+            );
+            return res.status(200).json({
+              message:
+                "Ruta modificada, pero hubo un error en las traducciones.",
+              result,
+            });
+          }
+
+          // Re-translate to the other languages, based on the edited source language
+          try {
+            await translateAndSaveRouteLanguages(
+              connection,
+              route_id,
+              sourceLang
+            );
+          } catch (translationError) {
+            console.error(
+              "Error translating after edit",
+              route_id,
+              translationError
+            );
+          }
+
+          return res.status(200).json({ message: "Ruta modificada", result });
+        }
+      );
     });
   };
 
   showOneRoute = (req, res) => {
     const { id: route_id } = req.params;
-    let sql = `SELECT * FROM route WHERE route_id ='${route_id}' AND is_deleted = 0`;
-    connection.query(sql, (err, result) => {
-      err ? res.status(400).json({ err }) : res.status(200).json(result[0]);
+    const lang = req.query.lang || "es";
+    const sql = `
+      SELECT
+        r.*,
+        COALESCE(rt.starting_point,   r.starting_point)       AS starting_point,
+        COALESCE(rt.ending_point,     r.ending_point)         AS ending_point,
+        COALESCE(rt.route_description, r.route_description)   AS route_description,
+        creator_user.name     AS create_name,
+        creator_user.lastname AS create_lastname,
+        creator_user.img      AS user_img,
+        GROUP_CONCAT(
+          DISTINCT CONCAT(
+            rp.user_id, ':',
+            COALESCE(participant_user.name, ''), ':',
+            COALESCE(participant_user.img, '')
+          )
+          ORDER BY rp.joined_at ASC
+          SEPARATOR '|'
+        ) AS participants_raw
+      FROM route r
+      LEFT JOIN route_translation rt
+        ON rt.route_id = r.route_id AND rt.lang = ?
+      LEFT JOIN \`user\` AS creator_user
+        ON creator_user.user_id = r.user_id
+      LEFT JOIN route_participant rp
+        ON rp.route_id = r.route_id
+      LEFT JOIN \`user\` AS participant_user
+        ON participant_user.user_id = rp.user_id
+      WHERE r.route_id = ? AND r.is_deleted = 0
+      GROUP BY r.route_id
+      LIMIT 1
+    `;
+
+    connection.query(sql, [lang, route_id], (err, rows) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+      if (!rows || rows.length === 0) {
+        return res.status(404).json({ error: "Ruta no encontrada" });
+      }
+      const r = rows[0];
+
+      // Convert "12:Marco|27:Anna" -> [{ user_id:12, name:"Marco" }, { user_id:27, name:"Anna" }]
+      const participants = (r.participants_raw || "")
+        .split("|")
+        .filter(Boolean)
+        .map((triple) => {
+          const parts = triple.split(":");
+          const uid = Number(parts.shift());
+          const name = parts.shift() || "";
+          const img = parts.join(":") || "";
+          return { user_id: uid, name, img };
+        });
+
+      const { participants_raw, ...rest } = r;
+
+      return res.status(200).json({
+        ...rest,
+        participants,
+      });
     });
   };
 

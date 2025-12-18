@@ -12,7 +12,8 @@
     "estimatedTimeRequired": "Durata richiesta",
     "maxParticipantsRequired": "Nº di piloti richiesti",
     "motorbikeTypeRequired": "Moto idonee richieste",
-    "descriptionRequired": "Descrizione richiesta"
+    "descriptionRequired": "Descrizione richiesta",
+    "maxParticipantsTooLow": "Ci sono già {{occupiedSeats}} utenti registrati per questo percorso. Non è possibile ridurre il numero di posti al di sotto di questa quantità."
   },
   "login": {
     "emailRequired": "L'email è obbligatoria",

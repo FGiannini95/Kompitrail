@@ -55,7 +55,7 @@ export function App() {
   };
 
   // Select language and persist it in localStorage
-  const changeLanguage = (nextLanguage = "es" | "en" | "it") => {
+  const changeLanguage = (nextLanguage = "es") => {
     // Ignore invalid values
     if (!["es", "en", "it"].includes(nextLanguage)) return;
 

@@ -37,7 +37,7 @@ export const FormTextfield = ({
     if (type === "checkbox") next = checked;
     else if (type === "number") next = value;
     else if (value) {
-      next = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+      next = value.charAt(0).toUpperCase() + value.slice(1);
     }
 
     setForm((prev) => ({ ...prev, [name]: next }));

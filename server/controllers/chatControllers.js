@@ -8,11 +8,13 @@ class chatControllers {
     const userId = req.user?.user_id ?? req.query.user_id;
     if (!userId) return res.status(400).json({ error: "Missing user_id" });
 
+    const lang = req.query.lang || "es";
+
     const sql = `
     SELECT
       r.route_id,
-      r.starting_point,
-      r.ending_point,
+      COALESCE(rt.starting_point, r.starting_point) AS starting_point,
+      COALESCE(rt.ending_point,   r.ending_point)   AS ending_point,
       r.date,
       last.chat_message_id,
       last.user_id,
@@ -23,9 +25,11 @@ class chatControllers {
     FROM route r
     INNER JOIN chat_room cr
       ON cr.route_id = r.route_id
+    LEFT JOIN route_translation rt
+      ON rt.route_id = r.route_id AND rt.lang = ?
     LEFT JOIN route_participant rp
       ON rp.route_id = r.route_id
-    AND rp.user_id = ?
+     AND rp.user_id = ?
     LEFT JOIN (
       SELECT
         msg.chat_message_id,
@@ -41,21 +45,24 @@ class chatControllers {
         GROUP BY chat_room_id
       ) AS latest_per_room
         ON latest_per_room.chat_room_id = msg.chat_room_id
-      AND latest_per_room.max_id = msg.chat_message_id
+       AND latest_per_room.max_id = msg.chat_message_id
     ) AS last
       ON last.chat_room_id = cr.chat_room_id
     WHERE r.is_deleted = 0
       AND (rp.user_id IS NOT NULL OR r.user_id = ?)
     ORDER BY
-      CASE WHEN last.created_at IS NULL THEN 1 ELSE 0 END ASC,      -- with messages first
-      CASE WHEN last.created_at IS NULL THEN DATE(r.date) END DESC, -- no-msg: newer day first
-      CASE WHEN last.created_at IS NULL THEN TIME(r.date) END ASC,  -- no-msg same day: earliest time first
-      last.created_at DESC,                                         -- with-msg: newest message first
-      r.route_id DESC;   
-    `;
+      CASE WHEN last.created_at IS NULL THEN 1 ELSE 0 END ASC,
+      CASE WHEN last.created_at IS NULL THEN DATE(r.date) END DESC,
+      CASE WHEN last.created_at IS NULL THEN TIME(r.date) END ASC,
+      last.created_at DESC,
+      r.route_id DESC;
+  `;
 
-    connection.query(sql, [userId, userId], (err, rows) => {
-      if (err) return res.status(500).json({ error: "Internal server error" });
+    connection.query(sql, [lang, userId, userId], (err, rows) => {
+      if (err) {
+        console.error("Error in listUserRooms:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      }
 
       const result = (rows || []).map((r) => ({
         route_id: r.route_id,

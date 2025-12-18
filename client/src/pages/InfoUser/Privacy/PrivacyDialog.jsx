@@ -1,19 +1,17 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
-// MUI
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import IconButton from "@mui/material/IconButton";
+import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 
-// MUI-ICONS
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 
 export const PrivacyDialog = ({ openIframe, handleCloseIframe, iframeUrl }) => {
+  const { t } = useTranslation("settings");
+
   return (
     <Dialog open={openIframe} onClose={handleCloseIframe} fullWidth>
       <DialogTitle>
-        Política de Privacidad
+        {t("settings:actions.privacy")}
         <IconButton
           aria-label="close"
           onClick={handleCloseIframe}
@@ -40,7 +38,7 @@ export const PrivacyDialog = ({ openIframe, handleCloseIframe, iframeUrl }) => {
             border: "none",
             borderRadius: "20px",
           }}
-          title="Política de Privacidad"
+          title={t("settings:actions.privacy")}
         />
       </DialogContent>
     </Dialog>

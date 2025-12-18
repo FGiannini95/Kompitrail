@@ -18,6 +18,7 @@ import Grid from "@mui/material/Grid2";
 import { ROUTES_URL } from "../../../../api";
 import { RoutesString } from "../../../../routes/routes";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
+import { getCurrentLang } from "../../../../helpers/oneRouteUtils";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
@@ -41,7 +42,12 @@ export const RouteCreateDialog = () => {
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
   const { createRoute, dialog, closeDialog } = useRoutes();
-  const { t } = useTranslation(["dialogs", "forms", "buttons", "snackbars"]);
+  const { t, i18n } = useTranslation([
+    "dialogs",
+    "forms",
+    "buttons",
+    "snackbars",
+  ]);
 
   const navigate = useNavigate();
   const isOpen = dialog.isOpen && dialog.mode === "create";
@@ -62,6 +68,8 @@ export const RouteCreateDialog = () => {
       return;
     }
 
+    const currentLang = getCurrentLang(i18n);
+
     const newFormData = new FormData();
     newFormData.append(
       "createRoute",
@@ -77,6 +85,7 @@ export const RouteCreateDialog = () => {
         max_participants: createOneRoute.max_participants,
         route_description: createOneRoute.route_description,
         user_id: user.user_id,
+        language: currentLang,
       })
     );
 

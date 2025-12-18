@@ -20,6 +20,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 // Utils
 import { CHAT_URL } from "../../api";
 import { formatDateTime } from "../../helpers/utils";
+import { getCurrentLang, LOCALE_MAP } from "../../helpers/oneRouteUtils";
 // Providers & Hooks
 import { KompitrailContext } from "../../context/KompitrailContext";
 // Componets
@@ -57,14 +58,8 @@ export const Chat = () => {
   const { user: currentUser } = useContext(KompitrailContext);
   const { t, i18n } = useTranslation("chat");
 
-  const localeMap = {
-    es: "es-ES",
-    en: "en-GB",
-    it: "it-IT",
-  };
-
-  const currentLang = i18n.language?.slice(0, 2) || "es";
-  const locale = localeMap[currentLang] ?? "es-ES";
+  const currentLang = getCurrentLang(i18n);
+  const locale = LOCALE_MAP[currentLang] ?? "es-ES";
 
   useEffect(() => {
     let cancelled = false;
@@ -84,7 +79,7 @@ export const Chat = () => {
 
         // We get all chats for just one user
         const { data } = await axios.get(`${CHAT_URL}/rooms`, {
-          params: { user_id: uid },
+          params: { user_id: uid, lang: currentLang },
           withCredentials: true,
         });
 
@@ -104,7 +99,7 @@ export const Chat = () => {
     return () => {
       cancelled = true;
     };
-  }, [currentUser?.user_id]);
+  }, [currentUser?.user_id, currentLang]);
 
   const ordered = rooms;
 

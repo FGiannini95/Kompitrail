@@ -12,7 +12,8 @@
     "estimatedTimeRequired": "Duration required ",
     "maxParticipantsRequired": "No. of pilots required",
     "motorbikeTypeRequired": "Suitable motorbikes required",
-    "descriptionRequired": "Description required"
+    "descriptionRequired": "Description required",
+    "maxParticipantsTooLow": "There are already {{occupiedSeats}} users registered for this route. You cannot reduce the number of seats below this amount."
   },
   "login": {
     "emailRequired": "Mailing is mandatory",

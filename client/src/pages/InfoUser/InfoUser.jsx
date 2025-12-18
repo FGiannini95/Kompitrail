@@ -6,11 +6,11 @@ import { Box, Typography, List } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-const url =
-  "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf";
+
 // Utils
 import { delLocalStorage } from "../../helpers/localStorageUtils";
 import { RoutesString } from "../../routes/routes";
+import { getCurrentLang } from "../../helpers/oneRouteUtils";
 // Providers & Hooks
 import { KompitrailContext } from "../../context/KompitrailContext";
 import { useConfirmationDialog } from "../../context/ConfirmationDialogContext/ConfirmationDialogContext";
@@ -42,11 +42,18 @@ function Section({ title, children }) {
 }
 const RETURN_KEY = "infoUser:returnTo";
 
+const PRIVACY_URLS = {
+  es: "/privacy/kompitrail_privacy_spanish.pdf",
+  it: "/privacy/kompitrail_privacy_italian.pdf",
+  en: "/privacy/kompitrail_privacy_english.pdf",
+};
+
 export const InfoUser = () => {
   const { setUser, setToken, setIsLogged } = useContext(KompitrailContext);
   const [iframe, setiIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("");
-  const { t } = useTranslation(["general", "dialogs"]);
+  const { t, i18n } = useTranslation(["general", "dialogs"]);
+  const currentLang = getCurrentLang(i18n);
 
   const navigate = useNavigate();
   const { openDialog } = useConfirmationDialog();
@@ -67,9 +74,11 @@ export const InfoUser = () => {
     });
   };
 
-  const handleToggleIframe = (url) => {
+  const handleToggleIframe = () => {
+    const url = PRIVACY_URLS[currentLang];
+
     setIframeUrl(url);
-    setiIframe(!iframe);
+    setiIframe((prev) => !prev);
   };
 
   const handleClose = () => {
@@ -121,7 +130,7 @@ export const InfoUser = () => {
           action="chatbot"
           onClick={() => navigate(RoutesString.settings)}
         />
-        <SettingsRow action="privacy" onClick={() => handleToggleIframe(url)} />
+        <SettingsRow action="privacy" onClick={handleToggleIframe} />
       </Section>
 
       <Section title={t("general:titleSection3")}>

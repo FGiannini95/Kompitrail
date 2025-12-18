@@ -23,6 +23,7 @@ import FiberNewOutlinedIcon from "@mui/icons-material/FiberNewOutlined";
 // Utils
 import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
+import { getRouteStatus } from "../../../../helpers/oneRouteUtils";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 
@@ -90,18 +91,7 @@ export const RouteCard = ({
 
   const participantsSectionRef = useRef();
 
-  const now = new Date();
-  const routeStart = new Date(date);
-  const ONE_HOUR_MS = 60 * 60 * 1000;
-  const routeDurationMs = (Number(estimated_time) || 0) * ONE_HOUR_MS;
-
-  const routeEnd = new Date(routeStart.getTime() + routeDurationMs);
-  const enrollmentDeadline = new Date(routeStart.getTime() - ONE_HOUR_MS);
-  const isPastRoute = now >= routeEnd;
-  // isEnrollmentClosed is true from 1h before the start till the end of the route
-  const isEnrollmentClosed = now >= enrollmentDeadline && now < routeEnd;
-
-  const isRouteLocked = isPastRoute || isEnrollmentClosed;
+  const { isRouteLocked } = getRouteStatus(date, estimated_time);
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL

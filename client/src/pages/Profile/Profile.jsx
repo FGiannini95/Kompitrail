@@ -9,6 +9,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 // Utils
 import { RoutesString } from "../../routes/routes";
+import { getCurrentLang } from "../../helpers/oneRouteUtils";
 // Providers & Hooks
 import { useUserAnalytics } from "../../hooks/useUserAnalytics";
 import { useOtherUserProfile } from "../../hooks/useOtherUserProfile";
@@ -43,11 +44,12 @@ export const Profile = () => {
     otherUserId,
     currentUserId: currentUser?.user_id,
   });
-  const { t } = useTranslation(["buttons", "general"]);
+  const { t, i18n } = useTranslation(["buttons", "general"]);
+  const currentLang = getCurrentLang(i18n);
 
   useEffect(() => {
-    loadAllRoutes();
-  }, [loadAllRoutes]);
+    loadAllRoutes({ language: currentLang });
+  }, [loadAllRoutes, currentLang]);
 
   // Determine which user profile we are watching
   const isOtherProfile =

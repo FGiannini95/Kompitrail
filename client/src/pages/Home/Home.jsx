@@ -14,6 +14,7 @@ import {
   getLocalStorage,
   saveLocalStorage,
 } from "../../helpers/localStorageUtils";
+import { getCurrentLang } from "../../helpers/oneRouteUtils";
 // Components
 import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
 import { EmptyState } from "../../components/EmptyState/EmptyState";
@@ -35,11 +36,12 @@ export const Home = () => {
   } = useRoutes();
   const { user } = useContext(KompitrailContext);
   const [lastRoutesVisit, setLastRoutesVisit] = useState(null);
-  const { t } = useTranslation(["buttons", "general"]);
+  const { t, i18n } = useTranslation(["buttons", "general"]);
+  const currentLang = getCurrentLang(i18n);
 
   useEffect(() => {
-    loadAllRoutes();
-  }, [loadAllRoutes]);
+    loadAllRoutes({ language: currentLang });
+  }, [loadAllRoutes, currentLang]);
 
   // Handle new routes
   useEffect(() => {
@@ -74,14 +76,12 @@ export const Home = () => {
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       <DialogPwa />
-      {futureRoutes.length > 0 && (
-        <UserRoutesCarousel
-          allRoutes={futureRoutes}
-          title={t("general:upComingNextRoutesText")}
-          showOnlyFuture={true}
-          sortOrder="asc"
-        />
-      )}
+      <UserRoutesCarousel
+        allRoutes={futureRoutes}
+        title={t("general:upComingNextRoutesText")}
+        showOnlyFuture={true}
+        sortOrder="asc"
+      />
       <OutlinedButton
         onClick={openCreateDialog}
         text={t("buttons:createRoute")}

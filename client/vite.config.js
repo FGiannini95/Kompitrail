@@ -10,6 +10,15 @@ export default defineConfig({
   resolve: {
     alias: {
       "@shared": path.resolve(__dirname, "../shared"),
+      "@shared/chat-contract": path.resolve(
+        __dirname,
+        "../shared/chat-contract"
+      ),
+    },
+  },
+  server: {
+    fs: {
+      allow: [".."],
     },
   },
   optimizeDeps: {
