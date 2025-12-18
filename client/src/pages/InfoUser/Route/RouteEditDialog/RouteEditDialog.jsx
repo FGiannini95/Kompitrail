@@ -101,7 +101,6 @@ export const RouteEditDialog = () => {
       return;
     }
 
-    // Get current language from i18next and normalize to "es" | "en" | "it"
     const currentLang = getCurrentLang(i18n);
 
     const newFormData = new FormData();
