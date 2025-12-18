@@ -76,14 +76,12 @@ export const Home = () => {
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       <DialogPwa />
-      {futureRoutes.length > 0 && (
-        <UserRoutesCarousel
-          allRoutes={futureRoutes}
-          title={t("general:upComingNextRoutesText")}
-          showOnlyFuture={true}
-          sortOrder="asc"
-        />
-      )}
+      <UserRoutesCarousel
+        allRoutes={futureRoutes}
+        title={t("general:upComingNextRoutesText")}
+        showOnlyFuture={true}
+        sortOrder="asc"
+      />
       <OutlinedButton
         onClick={openCreateDialog}
         text={t("buttons:createRoute")}
