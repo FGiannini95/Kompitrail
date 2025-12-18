@@ -38,7 +38,7 @@ export const PrivacyDialog = ({ openIframe, handleCloseIframe, iframeUrl }) => {
             border: "none",
             borderRadius: "20px",
           }}
-          title="Política de Privacidad"
+          title={t("settings:actions.privacy")}
         />
       </DialogContent>
     </Dialog>
