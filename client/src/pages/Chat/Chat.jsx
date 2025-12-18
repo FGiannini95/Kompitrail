@@ -79,7 +79,7 @@ export const Chat = () => {
 
         // We get all chats for just one user
         const { data } = await axios.get(`${CHAT_URL}/rooms`, {
-          params: { user_id: uid },
+          params: { user_id: uid, lang: currentLang },
           withCredentials: true,
         });
 
@@ -99,7 +99,7 @@ export const Chat = () => {
     return () => {
       cancelled = true;
     };
-  }, [currentUser?.user_id]);
+  }, [currentUser?.user_id, currentLang]);
 
   const ordered = rooms;
 
