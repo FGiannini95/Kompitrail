@@ -5,9 +5,20 @@ export const LOCALE_MAP = {
   it: "it-IT",
 };
 
-//  Get normalized language code ("es" | "en" | "it") from i18n.
+// Gets a normalized 2-letter language code ("es", "en", "it") from i18n.
 export const getCurrentLang = (i18n) => {
-  i18n.language?.slice(0, 2) || "es";
+  // Take the current i18n language or fallback to Spanish
+  const rawLang = i18n?.language || "es";
+
+  // Normalize to first 2 characters (e.g. "en-GB" -> "en")
+  const shortLang = rawLang.slice(0, 2);
+
+  // Ensure the language is one of the supported ones
+  if (!["es", "en", "it"].includes(shortLang)) {
+    return "es";
+  }
+
+  return shortLang;
 };
 
 // Compute route temporal state: past, enrollment closed, locked.
