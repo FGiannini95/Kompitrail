@@ -191,6 +191,7 @@ class routesControllers {
             COALESCE(participant_user.name, ''), ':',
             COALESCE(participant_user.img, '')
           )
+          ORDER BY route_participant.joined_at ASC
           SEPARATOR '|'
         ) AS participants_raw
       FROM route
@@ -379,6 +380,7 @@ class routesControllers {
             COALESCE(participant_user.name, ''), ':',
             COALESCE(participant_user.img, '')
           )
+          ORDER BY rp.joined_at ASC
           SEPARATOR '|'
         ) AS participants_raw
       FROM route r
