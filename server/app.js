@@ -11,6 +11,7 @@ const motorbikesRouter = require("./routes/motorbikes");
 const routesRouter = require("./routes/route");
 const authRouter = require("./routes/auth");
 const chatRouter = require("./routes/chat");
+const chatBotRouter = require("./routes/chatbot");
 
 var app = express();
 
@@ -42,6 +43,7 @@ app.use("/motorbikes", motorbikesRouter);
 app.use("/routes", routesRouter);
 app.use("/auth", authRouter);
 app.use("/chat", chatRouter);
+app.use("/chatbot", chatBotRouter);
 
 // Static assets from Vite build (client/dist)
 const clientBuildPath = path.join(__dirname, "..", "client", "dist");
