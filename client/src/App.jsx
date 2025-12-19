@@ -76,6 +76,7 @@ export function App() {
   }
 
   const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  console.log("DEBUG CLIENT_ID:", CLIENT_ID);
 
   return (
     <>

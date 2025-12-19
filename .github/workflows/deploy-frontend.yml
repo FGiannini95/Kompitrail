@@ -21,6 +21,9 @@ jobs:
       DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }} # es. /var/www/kompitrail
       FRONTEND_SUBDIR: ${{ secrets.FRONTEND_SUBDIR }} # es. client
       RELEASE: ${{ github.run_id }}-${{ github.run_number }}
+      VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+      VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+      VITE_DEEPL_API_KEY: ${{ secrets.VITE_DEEPL_API_KEY }}
       BUILD_DIR: dist # output vite
 
     steps:
