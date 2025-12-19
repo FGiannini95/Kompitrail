@@ -516,7 +516,7 @@ class routesControllers {
     const io = req.app.get("io");
 
     // Check if the route is passed
-    let checkDateSql = `SELECT date from ROUTE where route_id = "${route_id}"`;
+    let checkDateSql = `SELECT date from route where route_id = "${route_id}"`;
     connection.query(checkDateSql, (err, result) => {
       if (err) {
         return res.status(400).json({ err });
