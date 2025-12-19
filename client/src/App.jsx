@@ -3,6 +3,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./i18n";
 import i18n from "./i18n";
+import { useTranslation } from "react-i18next";
 
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
@@ -22,6 +23,7 @@ export function App() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [mode, setMode] = useState("light");
   const [language, setLanguage] = useState("es");
+  const { t } = useTranslation("general");
 
   useEffect(() => {
     const storedMode = getLocalStorage(THEME_STORAGE_KEY);
@@ -68,15 +70,10 @@ export function App() {
   };
 
   if (!isMobile) {
-    return (
-      <Typography align="center">
-        Esta aplicación sólo está disponible en dispositivos móviles
-      </Typography>
-    );
+    return <Typography align="center">{t("general:isMobileMsg")}</Typography>;
   }
 
   const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-  console.log("DEBUG CLIENT_ID:", CLIENT_ID);
 
   return (
     <>
