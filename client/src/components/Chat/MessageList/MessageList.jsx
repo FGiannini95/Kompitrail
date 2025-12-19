@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Paper, Typography, Divider } from "@mui/material";
-import { formatDateTime } from "../../../helpers/utils";
 
 const formatDateDivider = (dateString) => {
   const date = new Date(dateString);
