@@ -26,7 +26,7 @@ import { MotorbikesProvider } from "../context/MotorbikesContext/MotorbikesConte
 import { RoutesProvider } from "../context/RoutesContext/RoutesContext";
 import { ScrollToTop } from "../components/ScrollToTop/ScrollToTop";
 import { CaptureAndForward } from "../auth/CaptureAndForward/CaptureAndForward";
-import { ChatRoom } from "../pages/Chat/ChatRoom/ChatRoom";
+import { ChatRoom } from "../components/Chat/ChatRoom/ChatRoom";
 import { Box } from "@mui/material";
 
 export const GlobalRouter = ({
