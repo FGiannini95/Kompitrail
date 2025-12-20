@@ -74,6 +74,10 @@ export const GlobalRouter = ({
                         element={<ChatRoom />}
                       />
                       <Route
+                        path={RoutesString.chatbot}
+                        element={<ChatRoom mode="bot" title="Assistant" />}
+                      />
+                      <Route
                         path={RoutesString.otherProfile}
                         element={<Profile />}
                       />
