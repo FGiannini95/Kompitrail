@@ -11,14 +11,40 @@ import { useChat } from "../../../hooks/useChat";
 // Components
 import { MessageList } from "../MessageList/MessageList";
 import { MessageInput } from "../MessageInput/MessageInput";
+import { useMemo } from "react";
 
-export const ChatRoom = () => {
-  const { id } = useParams();
+export const ChatRoom = ({
+  mode = "group",
+  chatId: propChatId = null,
+  messages: propMessages = null,
+  sendMessage: propSendMessage = null,
+  isLoading: propIsLoading = null,
+  isSending: propIsSending = null,
+  title: propTitle = null,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const title = location.state?.title || "Chat";
-  const { messages, sendMessage } = useChat(id);
+  // If chatId not explicitly passed as prop, try to read from route params
+  const params = useParams();
+  const routeChatId = params?.id || null;
+  const chatId = propChatId ?? routeChatId;
+
+  // Fallback: use existing useChat hook only when external props are not provided.
+  const chatHook = useMemo(() => {
+    return useChat(chatId);
+  }, [chatId]);
+
+  // Define final values
+  const messages = propMessages ?? chatHook.messages ?? [];
+  const sendMessage = propSendMessage ?? chatHook.sendMessage;
+  const isLoading = propIsLoading ?? chatHook.isLoading ?? false;
+  const isSending = propIsSending ?? false;
+
+  const title =
+    propTitle ||
+    location.state?.title ||
+    (mode === "group" ? "Chat" : "Assistant");
 
   return (
     <Box
@@ -69,14 +95,24 @@ export const ChatRoom = () => {
             <Typography variant="h6" color="text.primary" noWrap title={title}>
               {title}
             </Typography>
+            {mode === "bot" && (
+              <Typography variant="caption" color="text.secondary" noWrap>
+                Chat bot
+              </Typography>
+            )}
           </Box>
 
-          <IconButton
-            onClick={() => navigate(`/route/${id}`)}
-            aria-label="info"
-          >
-            <InfoOutlinedIcon />
-          </IconButton>
+          {mode === "group" && (
+            <IconButton
+              onClick={() => {
+                if (chatId) navigate(`/route/${chatId}`);
+              }}
+              aria-label="info"
+            >
+              <InfoOutlinedIcon />
+            </IconButton>
+          )}
+          {mode === "bot" && <Box sx={{ width: 48 }} />}
         </Grid>
 
         <Divider sx={{ "&::before, &::after": { borderTopWidth: 2 } }} />
@@ -108,7 +144,7 @@ export const ChatRoom = () => {
           px: 1,
         }}
       >
-        <MessageInput onSend={sendMessage} />
+        <MessageInput onSend={sendMessage} disabled={isSending || isLoading} />
       </Box>
     </Box>
   );

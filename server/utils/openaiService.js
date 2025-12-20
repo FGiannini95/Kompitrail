@@ -47,8 +47,11 @@ async function askChatbot({ message, language, history }) {
     - Only tell the joke if the user accepts or seems open to it; do not force it in every answer.
   `;
 
-  // Build the message array with the system message
-  const messages = [{ role: "system", content: systemContent }];
+  // Build the message array with the system + user message
+  const messages = [
+    { role: "system", content: systemContent },
+    { role: "user", content: message },
+  ];
 
   // Call API
   const response = await client.chat.completions.create({
