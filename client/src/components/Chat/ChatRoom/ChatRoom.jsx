@@ -1,45 +1,26 @@
 import React from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { Box, Divider, IconButton, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-// Hooks & Providers
-import { useChat } from "../../../hooks/useChat";
 // Components
 import { MessageList } from "../MessageList/MessageList";
 import { MessageInput } from "../MessageInput/MessageInput";
-import { useMemo } from "react";
 
 export const ChatRoom = ({
   mode = "group",
-  chatId: propChatId = null,
-  messages: propMessages = null,
-  sendMessage: propSendMessage = null,
-  isLoading: propIsLoading = null,
-  isSending: propIsSending = null,
+  chatId = null,
+  messages = [],
+  sendMessage,
+  isLoading = false,
+  isSending = false,
   title: propTitle = null,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // If chatId not explicitly passed as prop, try to read from route params
-  const params = useParams();
-  const routeChatId = params?.id || null;
-  const chatId = propChatId ?? routeChatId;
-
-  // Fallback: use existing useChat hook only when external props are not provided.
-  const chatHook = useMemo(() => {
-    return useChat(chatId);
-  }, [chatId]);
-
-  // Define final values
-  const messages = propMessages ?? chatHook.messages ?? [];
-  const sendMessage = propSendMessage ?? chatHook.sendMessage;
-  const isLoading = propIsLoading ?? chatHook.isLoading ?? false;
-  const isSending = propIsSending ?? false;
 
   const title =
     propTitle ||
@@ -95,11 +76,6 @@ export const ChatRoom = ({
             <Typography variant="h6" color="text.primary" noWrap title={title}>
               {title}
             </Typography>
-            {mode === "bot" && (
-              <Typography variant="caption" color="text.secondary" noWrap>
-                Chat bot
-              </Typography>
-            )}
           </Box>
 
           {mode === "group" && (

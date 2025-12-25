@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Box } from "@mui/material";
+
 import { NavBarApp } from "../components/NavBarApp/NavBarApp";
 import { RoutesString } from "./routes";
 import { Home } from "../pages/Home/Home";
@@ -26,8 +28,8 @@ import { MotorbikesProvider } from "../context/MotorbikesContext/MotorbikesConte
 import { RoutesProvider } from "../context/RoutesContext/RoutesContext";
 import { ScrollToTop } from "../components/ScrollToTop/ScrollToTop";
 import { CaptureAndForward } from "../auth/CaptureAndForward/CaptureAndForward";
-import { ChatRoom } from "../components/Chat/ChatRoom/ChatRoom";
-import { Box } from "@mui/material";
+import { ChatRoomGroupPage } from "../pages/Chat/ChatRoomGroupPage/ChatRoomGroupPage";
+import { ChatRoomBotPage } from "../pages/Chat/ChatRoomBotPage/ChatRoomBotPage";
 
 export const GlobalRouter = ({
   toggleMode,
@@ -71,11 +73,11 @@ export const GlobalRouter = ({
                       <Route path={RoutesString.chat} element={<Chat />} />
                       <Route
                         path={RoutesString.chatDetail}
-                        element={<ChatRoom />}
+                        element={<ChatRoomGroupPage />}
                       />
                       <Route
                         path={RoutesString.chatbot}
-                        element={<ChatRoom mode="bot" title="Assistant" />}
+                        element={<ChatRoomBotPage />}
                       />
                       <Route
                         path={RoutesString.otherProfile}
