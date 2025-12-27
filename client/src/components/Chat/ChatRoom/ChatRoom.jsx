@@ -62,7 +62,6 @@ export const ChatRoom = ({
               })}
             />
           </IconButton>
-
           <Box
             sx={{
               flex: 1,
@@ -77,7 +76,6 @@ export const ChatRoom = ({
               {title}
             </Typography>
           </Box>
-
           {mode === "group" && (
             <IconButton
               onClick={() => {
@@ -90,10 +88,8 @@ export const ChatRoom = ({
           )}
           {mode === "bot" && <Box sx={{ width: 48 }} />}
         </Grid>
-
         <Divider sx={{ "&::before, &::after": { borderTopWidth: 2 } }} />
       </Box>
-
       <Box
         sx={{
           flex: 1,
@@ -108,7 +104,6 @@ export const ChatRoom = ({
       >
         <MessageList items={messages} />
       </Box>
-
       <Box
         sx={{
           position: "sticky",
