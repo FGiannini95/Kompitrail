@@ -128,7 +128,7 @@ export const InfoUser = () => {
       <Section title={t("general:titleSection2")}>
         <SettingsRow
           action="chatbot"
-          onClick={() => navigate(RoutesString.settings)}
+          onClick={() => navigate(RoutesString.chatbot)}
         />
         <SettingsRow action="privacy" onClick={handleToggleIframe} />
       </Section>

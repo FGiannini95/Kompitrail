@@ -1,24 +1,31 @@
 import React from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { Box, Divider, IconButton, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-// Hooks & Providers
-import { useChat } from "../../../hooks/useChat";
 // Components
 import { MessageList } from "../MessageList/MessageList";
 import { MessageInput } from "../MessageInput/MessageInput";
 
-export const ChatRoom = () => {
-  const { id } = useParams();
+export const ChatRoom = ({
+  mode = "group",
+  chatId = null,
+  messages = [],
+  sendMessage,
+  isLoading = false,
+  isSending = false,
+  title: propTitle = null,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const title = location.state?.title || "Chat";
-  const { messages, sendMessage } = useChat(id);
+  const title =
+    propTitle ||
+    location.state?.title ||
+    (mode === "group" ? "Chat" : "Assistant");
 
   return (
     <Box
@@ -55,7 +62,6 @@ export const ChatRoom = () => {
               })}
             />
           </IconButton>
-
           <Box
             sx={{
               flex: 1,
@@ -70,18 +76,20 @@ export const ChatRoom = () => {
               {title}
             </Typography>
           </Box>
-
-          <IconButton
-            onClick={() => navigate(`/route/${id}`)}
-            aria-label="info"
-          >
-            <InfoOutlinedIcon />
-          </IconButton>
+          {mode === "group" && (
+            <IconButton
+              onClick={() => {
+                if (chatId) navigate(`/route/${chatId}`);
+              }}
+              aria-label="info"
+            >
+              <InfoOutlinedIcon />
+            </IconButton>
+          )}
+          {mode === "bot" && <Box sx={{ width: 48 }} />}
         </Grid>
-
         <Divider sx={{ "&::before, &::after": { borderTopWidth: 2 } }} />
       </Box>
-
       <Box
         sx={{
           flex: 1,
@@ -96,7 +104,6 @@ export const ChatRoom = () => {
       >
         <MessageList items={messages} />
       </Box>
-
       <Box
         sx={{
           position: "sticky",
@@ -108,7 +115,7 @@ export const ChatRoom = () => {
           px: 1,
         }}
       >
-        <MessageInput onSend={sendMessage} />
+        <MessageInput onSend={sendMessage} disabled={isSending || isLoading} />
       </Box>
     </Box>
   );

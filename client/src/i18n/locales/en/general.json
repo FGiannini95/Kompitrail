@@ -24,5 +24,6 @@
   "forgotPasswordText": "Forgot your password? Click <1>here</1>!",
   "introLanding": "Connect with other bikers: share your routes, plan adventures and enjoy the road together. Whether you're looking for companions for a weekend getaway or want to explore new routes, our app allows you to find and join bikers who share your passion. Don't travel alone, join the Kompitrail community and transform every ride into an unforgettable experience!",
   "urlText": "Url copied",
-  "plusAvatarText": "Join"
+  "plusAvatarText": "Join",
+  "isMobileMsg": "This application is only available on mobile devices"
 }
