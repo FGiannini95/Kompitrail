@@ -52,7 +52,7 @@ export const ModeToggleDialog = ({ open, onClose, onToggle, currentMode }) => {
                 }
                 checkedIcon={<DarkModeIcon />}
                 sx={{
-                  // Make the switch visually bigger
+                  height: 42,
                   transform: "scale(1.3)",
                 }}
               />

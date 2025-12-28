@@ -199,7 +199,7 @@ export const RouteEditDialog = () => {
               setForm={setEditRoute}
             />
           </Grid>
-          <Grid size={6}>
+          <Grid size={12}>
             <FormAutocomplete
               name="level"
               label={t("forms:levelLabel")}
@@ -214,7 +214,7 @@ export const RouteEditDialog = () => {
               disablePortal
             />
           </Grid>
-          <Grid size={6}>
+          <Grid size={12}>
             <FormAutocomplete
               name="max_participants"
               label={t("forms:maxParticipantsLabel")}

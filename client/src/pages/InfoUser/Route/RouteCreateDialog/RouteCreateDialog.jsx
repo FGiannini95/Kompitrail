@@ -173,7 +173,7 @@ export const RouteCreateDialog = () => {
               setForm={setCreateOneRoute}
             />
           </Grid>
-          <Grid size={6}>
+          <Grid size={12}>
             <FormAutocomplete
               label={t("forms:levelLabel")}
               name="level"
@@ -188,7 +188,7 @@ export const RouteCreateDialog = () => {
               disablePortal
             />
           </Grid>
-          <Grid size={6}>
+          <Grid size={12}>
             <FormAutocomplete
               name="max_participants"
               label={t("forms:maxParticipantsLabel")}

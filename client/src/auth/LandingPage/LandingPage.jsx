@@ -2,10 +2,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import { Button, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { RoutesString } from "../../routes/routes";
 import { useRedirectParam } from "../../hooks/useRedirectParam";
+import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
+import { ContainedButton } from "../../components/Buttons/ContainedButton/ContainedButton";
 
 export const LandingPage = () => {
   const { t } = useTranslation(["buttons", "general"]);
@@ -37,38 +39,13 @@ export const LandingPage = () => {
           alignItems="center"
           width="100%"
           paddingTop={4}
+          gap={2}
         >
-          <Button
-            type="button"
-            variant="outlined"
+          <OutlinedButton
             onClick={handleRegister}
-            sx={(theme) => ({
-              color: theme.palette.text.primary,
-              borderColor: theme.palette.kompitrail.card,
-              borderWidth: "2px",
-              "&:hover": {
-                borderColor: theme.palette.kompitrail.page,
-                borderWidth: "2px",
-                backgroundColor: "transparent",
-              },
-            })}
-          >
-            {t("buttons:register")}
-          </Button>
-          <Button
-            type="button"
-            variant="contained"
-            sx={(theme) => ({
-              color: theme.palette.text.primary,
-              backgroundColor: theme.palette.kompitrail.card,
-              boxShadow: "none",
-              "&:hover": { backgroundColor: theme.palette.kompitrail.page },
-            })}
-            onClick={handleLogin}
-          >
-            {" "}
-            {t("buttons:login")}
-          </Button>
+            text={t("buttons:register")}
+          />
+          <ContainedButton onClick={handleLogin} text={t("buttons:login")} />
         </Box>
       </Box>
     </Box>
