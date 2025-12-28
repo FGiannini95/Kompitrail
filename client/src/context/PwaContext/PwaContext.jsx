@@ -21,7 +21,6 @@ export const PwaProvider = ({ children }) => {
 
       setDeferredPrompt(e);
       setIsInstallable(true);
-      console.log("[PWA] beforeinstallprompt event captured");
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
