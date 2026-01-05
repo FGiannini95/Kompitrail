@@ -17,6 +17,7 @@ import { MOTORBIKES_URL } from "../../../../api";
 // Providers & Hooks
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useMotorbikes } from "../../../../context/MotorbikesContext/MotorbikesContext";
+import { normalizeMotorbikeName } from "../../../../helpers/motorbikeName";
 
 const initialValue = {
   brand: "",
@@ -24,8 +25,14 @@ const initialValue = {
   photo: null,
 };
 
+const MOTORBIKE_NAME_REGEX = /^[\p{L}\p{N}]+([ -][\p{L}\p{N}]+)*$/u;
+
 export const MotorbikeEditDialog = () => {
   const [editMotorbike, setEditMotorbike] = useState(initialValue);
+  const [errors, setErrors] = useState({
+    brand: "",
+    model: "",
+  });
   const { showSnackbar } = useSnackbar();
   const {
     editMotorbike: updateMotorbike,
@@ -80,8 +87,30 @@ export const MotorbikeEditDialog = () => {
   const handleConfirm = (e) => {
     e.preventDefault();
 
+    const newErrors = {
+      brand: "",
+      model: "",
+    };
+
     // ALl fields must be filled
-    if (!editMotorbike.brand.trim() || !editMotorbike.model.trim()) {
+    const normalizedBrand = normalizeMotorbikeName(editMotorbike.brand);
+    const normalizedModel = normalizeMotorbikeName(editMotorbike.model);
+
+    if (!normalizedBrand) {
+      newErrors.brand = t("errors:motorbike.brandRequired");
+    } else if (!MOTORBIKE_NAME_REGEX.test(normalizedBrand)) {
+      newErrors.brand = t("errors:motorbike.invalidChars");
+    }
+
+    if (!normalizedModel) {
+      newErrors.model = t("errors:motorbike.modelRequired");
+    } else if (!MOTORBIKE_NAME_REGEX.test(normalizedModel)) {
+      newErrors.model = t("errors:motorbike.invalidChars");
+    }
+
+    // If there are errors, set them and stop
+    if (newErrors.brand || newErrors.model) {
+      setErrors(newErrors);
       return;
     }
 
@@ -89,8 +118,8 @@ export const MotorbikeEditDialog = () => {
     newFormData.append(
       "editMotorbike",
       JSON.stringify({
-        brand: editMotorbike.brand,
-        model: editMotorbike.model,
+        brand: normalizedBrand,
+        model: normalizedModel,
       })
     );
 
@@ -148,6 +177,8 @@ export const MotorbikeEditDialog = () => {
           name="brand"
           value={editMotorbike?.brand || ""}
           onChange={handleChange}
+          error={!!errors.brand}
+          helperText={errors.brand}
         />
         <TextField
           label={t("forms:modelLabel")}
@@ -156,6 +187,8 @@ export const MotorbikeEditDialog = () => {
           name="model"
           value={editMotorbike?.model || ""}
           onChange={handleChange}
+          error={!!errors.model}
+          helperText={errors.model}
         />
       </DialogContent>
       <DialogActions>
