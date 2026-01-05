@@ -1,7 +1,8 @@
 {
   "motorbike": {
     "brandRequired": "Tienes que insertar una marca",
-    "modelRequired": "Tienes que insertar un modelo"
+    "modelRequired": "Tienes que insertar un modelo",
+    "invalidChars": "Solo se permiten letras, números, espacios y '-'."
   },
   "route": {
     "startingPointRequired": "Punto de salida requerido",

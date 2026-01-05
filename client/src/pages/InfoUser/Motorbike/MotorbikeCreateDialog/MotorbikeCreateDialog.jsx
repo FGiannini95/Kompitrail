@@ -18,12 +18,17 @@ import { MOTORBIKES_URL } from "../../../../api";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useMotorbikes } from "../../../../context/MotorbikesContext/MotorbikesContext";
+import { normalizeMotorbikeName } from "../../../../helpers/motorbikeName";
 
 const initialValue = {
   brand: "",
   model: "",
   photo: null,
 };
+
+// Allow letters (including accents), numbers, spaces, hyphen.
+// Examples valid: "Harley Davidson", "Harley-Davidson", "BMW R 1250"
+const MOTORBIKE_NAME_REGEX = /^[\p{L}\p{N}]+([ -][\p{L}\p{N}]+)*$/u;
 
 export const MotorbikeCreateDialog = () => {
   const [createOneMotorbike, setCreateOneMotorbike] = useState(initialValue);
@@ -38,16 +43,16 @@ export const MotorbikeCreateDialog = () => {
 
   const isOpen = dialog.isOpen && dialog.mode === "create";
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (fieldName) => (e) => {
+    const { value } = e.target;
     setCreateOneMotorbike((prevState) => ({
       ...prevState,
-      [name]: value,
+      [fieldName]: value,
     }));
     // Reset error for this field
     setErrors((prev) => ({
       ...prev,
-      [name]: "",
+      [fieldName]: "",
     }));
   };
 
@@ -74,12 +79,20 @@ export const MotorbikeCreateDialog = () => {
       model: "",
     };
 
+    const normalizedBrand = normalizeMotorbikeName(createOneMotorbike.brand);
+    const normalizedModel = normalizeMotorbikeName(createOneMotorbike.model);
+
     // According to the ddbb, the brand is mandatory
-    if (!createOneMotorbike.brand) {
+    if (!normalizedBrand) {
       newErrors.brand = t("errors:motorbike.brandRequired");
+    } else if (!MOTORBIKE_NAME_REGEX.test(normalizedBrand)) {
+      newErrors.brand = t("errors:motorbike.invalidChars");
     }
-    if (!createOneMotorbike.model) {
+
+    if (!normalizedModel) {
       newErrors.model = t("errors:motorbike.modelRequired");
+    } else if (!MOTORBIKE_NAME_REGEX.test(normalizedModel)) {
+      newErrors.model = t("errors:motorbike.invalidChars");
     }
 
     // If there are errors, set them and stop
@@ -94,8 +107,8 @@ export const MotorbikeCreateDialog = () => {
     newFormData.append(
       "createMotorbike",
       JSON.stringify({
-        brand: createOneMotorbike.brand,
-        model: createOneMotorbike.model,
+        brand: normalizedBrand,
+        model: normalizedModel,
         user_id: user.user_id,
       })
     );
@@ -144,7 +157,7 @@ export const MotorbikeCreateDialog = () => {
           margin="normal"
           name="brand"
           value={createOneMotorbike.brand}
-          onChange={handleChange}
+          onChange={handleChange("brand")}
           error={!!errors.brand}
           helperText={errors.brand}
         />
@@ -154,7 +167,7 @@ export const MotorbikeCreateDialog = () => {
           margin="normal"
           name="model"
           value={createOneMotorbike.model}
-          onChange={handleChange}
+          onChange={handleChange("model")}
           error={!!errors.model}
           helperText={errors.model}
         />

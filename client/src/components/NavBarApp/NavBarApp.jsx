@@ -65,19 +65,28 @@ export const NavBarApp = ({ children }) => {
         <Toolbar sx={{ display: "flex", justifyContent: "space-around" }}>
           <IconButton
             onClick={() => navigate(RoutesString.home)}
-            color={isActive(RoutesString.home) ? "" : "inherit"}
+            sx={{
+              color: "inherit",
+              opacity: isActive(RoutesString.home) ? 1 : 0.45,
+            }}
           >
             <HomeIcon />
           </IconButton>
           <IconButton
             onClick={() => navigate(RoutesString.chat)}
-            color={isActive(RoutesString.chat) ? "" : "inherit"}
+            sx={{
+              color: "inherit",
+              opacity: isActive(RoutesString.chat) ? 1 : 0.45,
+            }}
           >
             <ChatIcon />
           </IconButton>
           <IconButton
             onClick={() => navigate(RoutesString.profile)}
-            color={isActive(RoutesString.profile) ? "" : "inherit"}
+            sx={{
+              color: "inherit",
+              opacity: isActive(RoutesString.profile) ? 1 : 0.45,
+            }}
           >
             <PersonIcon />
           </IconButton>

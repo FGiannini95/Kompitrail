@@ -4,11 +4,10 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useTranslation } from "react-i18next";
 
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import IconButton from "@mui/material/IconButton";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
@@ -123,14 +122,21 @@ export const EditPassword = () => {
         <Typography variant="h6" color="text.primary">
           {t("settings:changePassword")}
         </Typography>
-        <Button variant="text" disabled={!isValid} onClick={handleSave}>
+        <IconButton
+          variant="text"
+          disabled={!isValid}
+          onClick={handleSave}
+          sx={(theme) => ({
+            color: theme.palette.text.primary,
+          })}
+        >
           <SaveOutlinedIcon aria-hidden />
-        </Button>
+        </IconButton>
       </Grid>
 
       <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
         <Typography color="text.primary">{t("general:newPassText")}</Typography>
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 2, mt: 2 }}>
           <TextField
             label={t("forms:newPassLabel")}
             name="password"

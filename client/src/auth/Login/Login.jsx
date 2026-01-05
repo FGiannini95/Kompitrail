@@ -3,14 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 
-import {
-  TextField,
-  Box,
-  Button,
-  Link,
-  Typography,
-  IconButton,
-} from "@mui/material";
+import { TextField, Box, Link, Typography, IconButton } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -27,6 +20,8 @@ import { usePostAuthRedirect } from "../../hooks/usePostAuthRedirect";
 import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
 import { SocialAuthButtons } from "../../components/Buttons/SocialAuthButtons/SocialAuthButtons";
 import { Loading } from "../../components/Loading/Loading";
+import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
+import { ContainedButton } from "../../components/Buttons/ContainedButton/ContainedButton";
 
 const initialValue = {
   email: "",
@@ -232,43 +227,18 @@ export const Login = () => {
 
                 <Grid container xs={12} spacing={2} justifyContent="center">
                   <Grid xs={6}>
-                    <Button
-                      type="button"
-                      variant="outlined"
-                      sx={(theme) => ({
-                        color: theme.palette.text.primary,
-                        borderColor: theme.palette.kompitrail.card,
-                        borderWidth: "2px",
-                        "&:hover": {
-                          borderColor: theme.palette.kompitrail.page,
-                          borderWidth: "2px",
-                        },
-                      })}
-                      fullWidth
+                    <OutlinedButton
                       onClick={handleCancel}
-                    >
-                      {t("buttons:cancel")}
-                    </Button>
+                      text={t("buttons:cancel")}
+                    />
                   </Grid>
                   <Grid xs={6}>
-                    <Button
+                    <ContainedButton
                       type="submit"
-                      variant="contained"
-                      fullWidth
-                      sx={(theme) => ({
-                        color: theme.palette.text.primary,
-                        boxShadow: "none",
-                        backgroundColor: theme.palette.kompitrail.card,
-                        "&:hover": {
-                          backgroundColor: theme.palette.kompitrail.page,
-                        },
-                      })}
-                    >
-                      {t("buttons:confirmar")}
-                    </Button>
+                      text={t("buttons:confirmar")}
+                    />
                   </Grid>
                 </Grid>
-
                 <Grid size={12}>
                   <Typography textAlign="center">
                     <Trans

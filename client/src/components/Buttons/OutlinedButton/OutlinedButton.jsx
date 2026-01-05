@@ -14,11 +14,11 @@ export const OutlinedButton = forwardRef(
           backgroundColor: "transparent",
           color: theme.palette.text.primary,
           borderColor: theme.palette.kompitrail.card,
-          borderWidth: "2px",
+          borderWidth: "3px",
           "&:hover": {
             backgroundColor: theme.palette.kompitrail.card,
             borderColor: theme.palette.kompitrail.card,
-            borderWidth: "2px",
+            borderWidth: "3px",
           },
           ...sx,
         })}
