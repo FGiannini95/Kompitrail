@@ -14,7 +14,11 @@ class routesControllers {
     const {
       user_id,
       starting_point,
+      starting_lat,
+      starting_lng,
       ending_point,
+      ending_lat,
+      ending_lng,
       date,
       level,
       distance,
@@ -24,129 +28,348 @@ class routesControllers {
       route_description,
       is_verified,
       language,
+      waypoints = [],
     } = JSON.parse(req.body.createRoute);
 
     const sourceLang = language || "es";
 
+    // Basic input validation
     if (
       !user_id ||
       !starting_point ||
+      starting_lat == null ||
+      starting_lat === "" ||
+      starting_lng == null ||
+      starting_lng === "" ||
       !ending_point ||
+      ending_lat == null ||
+      ending_lat === "" ||
+      ending_lng == null ||
+      ending_lng === "" ||
       !date ||
       !level ||
-      !distance ||
-      !suitable_motorbike_type ||
-      !estimated_time ||
       !max_participants ||
       !route_description
     ) {
       return res.status(400).json({ error: "Faltan campos requeridos." });
     }
 
-    const sqlInsertRoute = `
-    INSERT INTO route (
-      user_id, date, starting_point, ending_point, level, distance,
-      is_verified, suitable_motorbike_type, estimated_time, max_participants,
-      route_description, is_deleted
-    )
-    VALUES (
-      '${user_id}',
-      '${date}',
-      '${starting_point}',
-      '${ending_point}',
-      '${level}',
-      '${distance}',
-      '${is_verified}',
-      '${suitable_motorbike_type}',
-      '${estimated_time}',
-      '${max_participants}',
-      '${route_description}',
-      '0'
-    );
-  `;
+    // Validate motorbikes
+    if (
+      !Array.isArray(suitable_motorbike_type) ||
+      suitable_motorbike_type.filter((v) => v && v.trim() !== "").length === 0
+    ) {
+      return res.status(400).json({ error: "Tipo de moto requerido" });
+    }
 
-    connection.query(sqlInsertRoute, (error, result) => {
-      if (error) {
-        return res.status(500).json({ error });
+    // Validate coordinates
+    if (
+      isNaN(starting_lat) ||
+      isNaN(starting_lng) ||
+      isNaN(ending_lat) ||
+      isNaN(ending_lng)
+    ) {
+      return res.status(400).json({ error: "Coordinadas incorrectas." });
+    }
+
+    // Validate waypoints
+    if (waypoints.length > 10) {
+      return res.status(400).json({ error: "Max paradas permitidas: 10" });
+    }
+
+    // Validate each waypoint shape if present
+    for (const w of waypoints) {
+      if (
+        !w ||
+        typeof w.label !== "string" ||
+        w.label.trim() === "" ||
+        w.lat == null ||
+        w.lng == null ||
+        w.position == null ||
+        w.lat == "" ||
+        w.lng == ""
+      ) {
+        return res.status(400).json({ error: "Waypoint incorecto" });
       }
 
-      const routeId = result.insertId;
+      if (isNaN(w.lat) || isNaN(w.lng) || isNaN(w.position)) {
+        return res
+          .status(400)
+          .json({ error: "Coordinadas del waypoint incorrectas" });
+      }
+    }
 
-      // Translate the fields of this route
-      const sqlInsertTranslation = `INSERT INTO route_translation (route_id, lang, starting_point, ending_point, route_description) VALUES(?, ?, ?, ?, ?)`;
+    // Validate waypoint positions
+    const positions = new Set();
 
-      connection.query(
-        sqlInsertTranslation,
-        [routeId, sourceLang, starting_point, ending_point, route_description],
-        async (errorTranslation) => {
-          if (errorTranslation) {
-            console.error(
-              "Failed to insert source translation for this route",
-              routeId,
-              errorTranslation
-            );
-            return res
-              .status(500)
-              .json({ error: "Error saving route translation." });
-          }
-          try {
-            await translateAndSaveRouteLanguages(
-              connection,
-              routeId,
-              sourceLang
-            );
-          } catch (translationError) {
-            console.error("Error translating", routeId, translationError);
-          }
+    for (const w of waypoints) {
+      // Ensure integer (accept numeric strings too)
+      const pos = Number(w.position);
 
-          // Create also a chat_room, 1:1 with route
-          const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
+      // Position must be a finite integer
+      if (!Number.isFinite(pos) || !Number.isInteger(pos)) {
+        return res
+          .status(400)
+          .json({ error: "La posizione del waypoint deve essere un numero." });
+      }
 
-          connection.query(sqlInsertChatRoom, (errorChat) => {
-            if (errorChat) {
-              console.error(
-                "Failed to create chat_room from route",
-                routeId,
-                errorChat
-              );
-            }
+      // range 0..9 (because max 10)
+      if (pos < 0 || pos > 9) {
+        return res
+          .status(400)
+          .json({ error: "Waypoint position out of range (0..9)" });
+      }
 
-            // Return the freshly created route (joined with creator name for convenience)
-            const sqlSelect = `
-              SELECT 
-                r.route_id, 
-                r.user_id, 
-                r.date, 
-                r.created_at,
-                r.starting_point, 
-                r.ending_point,
-                r.level, 
-                r.distance, 
-                r.is_verified, 
-                r.suitable_motorbike_type,
-                r.estimated_time, 
-                r.max_participants, 
-                r.route_description, 
-                r.is_deleted,
-                u.name AS create_name,
-                u.img  AS user_img
-              FROM route r
-                LEFT JOIN user u ON r.user_id = u.user_id
-              WHERE r.route_id = ?
-            `;
+      // Avoid duplicates
+      if (positions.has(pos)) {
+        return res
+          .status(400)
+          .json({ error: "Posizione del waypoint duplicada." });
+      }
 
-            connection.query(sqlSelect, [routeId], (error2, result2) => {
-              if (error2) {
-                return res.status(500).json({ error: error2 });
-              }
-              if (!result2 || result2.length === 0) {
-                return res.status(404).json({ error: "Ruta no encontrada" });
-              }
-              return res.status(200).json(result2[0]);
-            });
+      positions.add(pos);
+    }
+
+    //Normalize motorbike types
+    const motorbikeTypes = Array.isArray(suitable_motorbike_type)
+      ? suitable_motorbike_type.filter((v) => v && v.trim() !== "").join(",")
+      : suitable_motorbike_type;
+
+    // Phase 1: routing geometry not computed yet (placeholder)
+    const routeGeometry = "";
+
+    const sqlInsertRoute = `
+    INSERT INTO route (
+      user_id, 
+      date, 
+      starting_point, 
+      starting_lat,
+      starting_lng,
+      ending_point, 
+      ending_lat,
+      ending_lng,
+      level, 
+      distance,
+      is_verified, 
+      suitable_motorbike_type, 
+      estimated_time, 
+      max_participants,
+      route_description,
+      route_geometry, 
+      is_deleted
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+  `;
+
+    const routeParams = [
+      user_id,
+      date,
+      starting_point,
+      starting_lat,
+      starting_lng,
+      ending_point,
+      ending_lat,
+      ending_lng,
+      level,
+      distance,
+      is_verified || 0,
+      motorbikeTypes,
+      estimated_time,
+      max_participants,
+      route_description,
+      routeGeometry,
+    ];
+
+    // TRANSACTION: route + waypoints + chat_room
+    connection.beginTransaction((txErr) => {
+      if (txErr) {
+        return res.status(500).json({ error: txErr });
+      }
+
+      // Insert route
+      connection.query(sqlInsertRoute, routeParams, (error, result) => {
+        if (error) {
+          // Rollback: route insert failed
+          return connection.rollback(() => {
+            return res.status(500).json({ error });
           });
         }
-      );
+
+        const routeId = result.insertId;
+
+        // Insert waypoints
+        const insertWaypoints = () => {
+          // If there are no waypoints, skip directly to chat_room (still core).
+          if (!waypoints.length) return createChatRoom();
+
+          const sqlInsertWaypoints = `
+            INSERT INTO route_waypoint (route_id, position, label, lat, lng) VALUES ?
+          `;
+
+          const ordered = [...waypoints].sort(
+            (a, b) => Number(a.position) - Number(b.position)
+          );
+
+          const values = ordered.map((w) => [
+            routeId,
+            Number(w.position),
+            w.label,
+            w.lat,
+            w.lng,
+          ]);
+
+          connection.query(sqlInsertWaypoints, [values], (wpErr) => {
+            if (wpErr) {
+              // Rollback: waypoint insert failed
+              return connection.rollback(() => {
+                return res.status(500).json({ error: wpErr });
+              });
+            }
+
+            createChatRoom();
+          });
+        };
+
+        // Create also a chat_room, 1:1 with route
+        const createChatRoom = () => {
+          const sqlInsertChatRoom = `
+          INSERT INTO chat_room (route_id, is_locked) VALUES (?, 0)
+        `;
+
+          connection.query(sqlInsertChatRoom, [routeId], (errorChat) => {
+            if (errorChat) {
+              // Rollback: chat_room is core data (we want consistency)
+              return connection.rollback(() => {
+                return res.status(500).json({ error: errorChat });
+              });
+            }
+
+            // Commit core data
+            connection.commit((commitErr) => {
+              if (commitErr) {
+                return connection.rollback(() => {
+                  return res.status(500).json({ error: commitErr });
+                });
+              }
+
+              // Translation is best-effort and must NOT block route creation.
+              insertTranslation(routeId);
+            });
+          });
+        };
+
+        // Insert translation
+        const insertTranslation = (routeId) => {
+          // Translate the fields of this route
+          const sqlInsertTranslation = `
+          INSERT INTO route_translation (route_id, lang, starting_point, ending_point, route_description)
+          VALUES(?, ?, ?, ?, ?)
+        `;
+
+          connection.query(
+            sqlInsertTranslation,
+            [
+              routeId,
+              sourceLang,
+              starting_point,
+              ending_point,
+              route_description,
+            ],
+            async (errorTranslation) => {
+              if (errorTranslation) {
+                // Log and continue
+                console.error(
+                  "Failed to insert source translation for this route",
+                  routeId,
+                  errorTranslation
+                );
+                return selectAndReturn(routeId);
+              }
+
+              try {
+                await translateAndSaveRouteLanguages(
+                  connection,
+                  routeId,
+                  sourceLang
+                );
+              } catch (translationError) {
+                console.error("Error translating", routeId, translationError);
+              }
+
+              return selectAndReturn(routeId);
+            }
+          );
+        };
+
+        // Return the freshly created route with its waypoints
+        const selectAndReturn = (routeId) => {
+          const sqlSelect = `
+          SELECT 
+            r.route_id, 
+            r.user_id, 
+            r.date, 
+            r.created_at,
+            r.starting_point, 
+            r.starting_lat,
+            r.starting_lng,
+            r.ending_point,
+            r.ending_lat,
+            r.ending_lng,
+            r.level, 
+            r.distance, 
+            r.is_verified, 
+            r.suitable_motorbike_type,
+            r.estimated_time, 
+            r.max_participants, 
+            r.route_description,
+            r.route_geometry, 
+            r.is_deleted,
+            u.name AS create_name,
+            u.img  AS user_img
+          FROM route r
+            LEFT JOIN user u ON r.user_id = u.user_id
+          WHERE r.route_id = ?
+        `;
+
+          // Select waypoints for this route
+          const sqlSelectWaypoints = `
+            SELECT position, label, lat, lng
+            FROM route_waypoint
+            WHERE route_id = ?
+              ORDER BY position ASC
+          `;
+
+          connection.query(sqlSelect, [routeId], (error2, result2) => {
+            if (error2) {
+              return res.status(500).json({ error: error2 });
+            }
+            if (!result2 || result2.length === 0) {
+              return res.status(404).json({ error: "Ruta no encontrada" });
+            }
+
+            const route = result2[0];
+
+            // Return motorbike types as array to match FE expectations
+            route.suitable_motorbike_type = (
+              route.suitable_motorbike_type || ""
+            )
+              .split(",")
+              .filter(Boolean);
+
+            // Fetch waypoints and attach them to the response
+            connection.query(sqlSelectWaypoints, [routeId], (wpErr, wpRows) => {
+              if (wpErr) {
+                return res.status(500).json({ error: wpErr });
+              }
+
+              route.waypoints = wpRows || [];
+              return res.status(200).json(route);
+            });
+          });
+        };
+
+        insertWaypoints();
+      });
     });
   };
 

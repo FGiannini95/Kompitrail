@@ -74,8 +74,12 @@ export const RouteCreateDialog = () => {
     newFormData.append(
       "createRoute",
       JSON.stringify({
-        starting_point: createOneRoute.starting_point,
-        ending_point: createOneRoute.ending_point,
+        starting_point: createOneRoute.starting_point.label,
+        starting_lat: createOneRoute.starting_point.lat,
+        starting_lng: createOneRoute.starting_point.lng,
+        ending_point: createOneRoute.ending_point.label,
+        ending_lat: createOneRoute.ending_point.lat,
+        ending_lng: createOneRoute.ending_point.lng,
         date: createOneRoute.date,
         level: createOneRoute.level,
         distance: createOneRoute.distance,
@@ -130,10 +134,56 @@ export const RouteCreateDialog = () => {
               setForm={setCreateOneRoute}
             />
           </Grid>
+          <Grid size={6}>
+            <FormTextfield
+              label="Starting lat"
+              name="starting_lat"
+              type="number"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+            />
+          </Grid>
+
+          <Grid size={6}>
+            <FormTextfield
+              label="Starting lng"
+              name="starting_lng"
+              type="number"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+            />
+          </Grid>
           <Grid size={12}>
             <FormTextfield
               label={t("forms:endingPointLabel")}
               name="ending_point"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+            />
+          </Grid>
+          <Grid size={6}>
+            <FormTextfield
+              label="Ending lat"
+              name="ending_lat"
+              type="number"
+              errors={errors}
+              setErrors={setErrors}
+              form={createOneRoute}
+              setForm={setCreateOneRoute}
+            />
+          </Grid>
+
+          <Grid size={6}>
+            <FormTextfield
+              label="Ending lng"
+              name="ending_lng"
+              type="number"
               errors={errors}
               setErrors={setErrors}
               form={createOneRoute}
