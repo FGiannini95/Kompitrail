@@ -1,10 +1,6 @@
 export const ROUTE_INITIAL_VALUE = {
-  starting_point: "",
-  starting_lat: "",
-  starting_lng: "",
-  ending_point: "",
-  ending_lat: "",
-  ending_lng: "",
+  starting_point: { label: "", lat: null, lng: null },
+  ending_point: { label: "", lat: null, lng: null },
   waypoints: [],
   date: "",
   level: "",

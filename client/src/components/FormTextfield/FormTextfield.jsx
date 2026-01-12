@@ -18,8 +18,9 @@ export const FormTextfield = ({
   preventInvalidkey = false,
   endAdornment,
   maxLength,
+  onClick,
 }) => {
-  const value = form?.[name] ?? "";
+  const value = name.split(".").reduce((acc, key) => acc?.[key], form) ?? "";
   const { t } = useTranslation("errors");
   const errorKey = errors?.[name];
   const helperText = errorKey ? t(errorKey) : "";
@@ -79,6 +80,7 @@ export const FormTextfield = ({
         onKeyDown={handleKeyDown}
         error={!!errorKey}
         helperText={helperText}
+        onClick={onClick}
         inputProps={{ readOnly, maxLength }}
         InputProps={{
           endAdornment:

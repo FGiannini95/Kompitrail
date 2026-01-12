@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -11,8 +11,14 @@ import {
   DialogContent,
   DialogTitle,
   DialogActions,
+  Divider,
+  ButtonBase,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
+
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
 
 // Utils
 import { ROUTES_URL } from "../../../../api";
@@ -34,10 +40,14 @@ import {
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
+import { RouteMapDialog } from "../../../../components/Dialogs/RouteMapDialog/RouteMapDialog";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
   const [errors, setErrors] = useState({});
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  // Which field is currently selecting a location on the map.
+  const [mapTarget, setMapTarget] = useState(null);
 
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
@@ -51,6 +61,13 @@ export const RouteCreateDialog = () => {
 
   const navigate = useNavigate();
   const isOpen = dialog.isOpen && dialog.mode === "create";
+  const hasStart =
+    createOneRoute?.starting_point?.lat !== null &&
+    createOneRoute?.starting_point?.lng !== null;
+  const hasEnd =
+    createOneRoute?.ending_point?.lat !== null &&
+    createOneRoute?.ending_point?.lng !== null;
+  const waypointCount = createOneRoute?.waypoints?.length || 0;
 
   const cleanDialog = () => {
     closeDialog();
@@ -107,209 +124,264 @@ export const RouteCreateDialog = () => {
       });
   };
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (hasStart) return;
+
+    if (!navigator.geolocation) {
+      // If geolocation is not available, we still set a readable label
+      setCreateOneRoute((prev) => ({
+        ...prev,
+        starting_point: { label: "Posición actual", lat: null, lng: null },
+      }));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+
+        setCreateOneRoute((prev) => ({
+          ...prev,
+          // Default start = user's current position
+          starting_point: {
+            label: "Posición actual",
+            lat: latitude,
+            lng: longitude,
+          },
+        }));
+      },
+      (error) => {
+        console.error("Geolocation error", error);
+
+        // Permission denied / error: still show label, but no coords
+        setCreateOneRoute((prev) => ({
+          ...prev,
+          starting_point: { label: "Posición actual", lat: null, lng: null },
+        }));
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 8000,
+      }
+    );
+  }, [isOpen]);
+
   return (
-    <Dialog
-      open={isOpen}
-      onClose={cleanDialog}
-      fullWidth
-      maxWidth="md"
-      PaperProps={{
-        sx: (theme) => ({
-          bgcolor: theme.palette.kompitrail.card,
-          color: theme.palette.text.primary,
-          borderRadius: 2,
-        }),
-      }}
-    >
-      <DialogTitle>{t("dialogs:routeCreateTitle")}</DialogTitle>
-      <DialogContent sx={{ overflow: "visible" }}>
-        <Grid container spacing={2}>
-          <Grid size={12}>
-            <FormTextfield
-              label={t("forms:startingPointLabel")}
-              name="starting_point"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-            />
-          </Grid>
-          <Grid size={6}>
-            <FormTextfield
-              label="Starting lat"
-              name="starting_lat"
-              type="number"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-            />
-          </Grid>
+    <>
+      <Dialog
+        open={isOpen}
+        onClose={cleanDialog}
+        fullWidth
+        maxWidth="md"
+        PaperProps={{
+          sx: (theme) => ({
+            bgcolor: theme.palette.kompitrail.card,
+            color: theme.palette.text.primary,
+            borderRadius: 2,
+          }),
+        }}
+      >
+        <DialogTitle>{t("dialogs:routeCreateTitle")}</DialogTitle>
+        <DialogContent sx={{ overflow: "visible" }}>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              <FormTextfield
+                label={t("forms:startingPointLabel")}
+                name="starting_point.label"
+                readOnly
+                clearable={false}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+                errors={errors}
+                setErrors={setErrors}
+                endAdornment={<NearMeOutlinedIcon />}
+                onClick={() => {
+                  setMapTarget("start");
+                  setIsMapOpen(true);
+                }}
+              />
+            </Grid>
 
-          <Grid size={6}>
-            <FormTextfield
-              label="Starting lng"
-              name="starting_lng"
-              type="number"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-            />
-          </Grid>
-          <Grid size={12}>
-            <FormTextfield
-              label={t("forms:endingPointLabel")}
-              name="ending_point"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-            />
-          </Grid>
-          <Grid size={6}>
-            <FormTextfield
-              label="Ending lat"
-              name="ending_lat"
-              type="number"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-            />
-          </Grid>
+            <Grid size={12}>
+              <FormTextfield
+                label={t("forms:endingPointLabel")}
+                name="ending_point.label"
+                readOnly
+                clearable={false}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+                errors={errors}
+                setErrors={setErrors}
+                endAdornment={<LocationOnOutlinedIcon />}
+                onClick={() => {
+                  setMapTarget("end");
+                  setIsMapOpen(true);
+                }}
+              />
+            </Grid>
 
-          <Grid size={6}>
-            <FormTextfield
-              label="Ending lng"
-              name="ending_lng"
-              type="number"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-            />
+            <Grid size={12}>
+              <FormDataPicker
+                label={t("forms:dateLabel")}
+                name="date"
+                errors={errors}
+                setErrors={setErrors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+              />
+            </Grid>
+
+            {hasStart && hasEnd && (
+              <>
+                <Grid size={6}>
+                  <FormTextfield
+                    label={t("forms:kmLabel")}
+                    name="distance"
+                    type="number"
+                    preventInvalidkey
+                    errors={errors}
+                    setErrors={setErrors}
+                    form={createOneRoute}
+                    setForm={setCreateOneRoute}
+                    disabled
+                  />
+                </Grid>
+                <Grid size={6}>
+                  <FormTextfield
+                    label={t("forms:estimatedTimeLable")}
+                    name="estimated_time"
+                    type="number"
+                    errors={errors}
+                    setErrors={setErrors}
+                    form={createOneRoute}
+                    setForm={setCreateOneRoute}
+                    disabled
+                  />
+                </Grid>
+              </>
+            )}
+
+            <Grid size={12}>
+              <FormAutocomplete
+                label={t("forms:levelLabel")}
+                name="level"
+                errors={errors}
+                setErrors={setErrors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+                options={ROUTE_LEVELS}
+                optionLabelKey="name"
+                optionValueKey="name"
+                getOptionLabel={(opt) => t(`forms:level.${opt.name}`)}
+                disablePortal
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <FormAutocomplete
+                name="max_participants"
+                label={t("forms:maxParticipantsLabel")}
+                errors={errors}
+                setErrors={setErrors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+                options={PARTICIPANTS}
+                optionLabelKey="name"
+                optionValueKey="name"
+                disablePortal
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <FormAutocomplete
+                label={t("forms:motorbikeTypeLabel")}
+                name="suitable_motorbike_type"
+                errors={errors}
+                setErrors={setErrors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+                options={MOTORBIKE_TYPES}
+                optionLabelKey="name"
+                optionValueKey="name"
+                multiple
+                disablePortal
+              />
+            </Grid>
+
+            <Grid
+              size={12}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Typography>{t("forms:checkbox")}</Typography>
+              <Checkbox
+                inputProps={{ "aria-label": "controlled" }}
+                color="default"
+                checked={createOneRoute?.is_verified === 1}
+                onChange={(event) =>
+                  setCreateOneRoute((prevState) => ({
+                    ...prevState,
+                    is_verified: event.target.checked ? 1 : 0,
+                  }))
+                }
+              />
+            </Grid>
+
+            <Grid size={12} sx={{ mb: 2 }}>
+              <FormTextfield
+                label={t("forms:descriptionLabel")}
+                name="route_description"
+                errors={errors}
+                setErrors={setErrors}
+                form={createOneRoute}
+                setForm={setCreateOneRoute}
+                multiline
+                maxLength={250}
+              />
+            </Grid>
           </Grid>
-          <Grid size={12}>
-            <FormDataPicker
-              label={t("forms:dateLabel")}
-              name="date"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-            />
-          </Grid>
-          <Grid size={6}>
-            <FormTextfield
-              label={t("forms:kmLabel")}
-              name="distance"
-              type="number"
-              preventInvalidkey
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-            />
-          </Grid>
-          <Grid size={6}>
-            <FormTextfield
-              label={t("forms:estimatedTimeLable")}
-              name="estimated_time"
-              type="number"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-            />
-          </Grid>
-          <Grid size={12}>
-            <FormAutocomplete
-              label={t("forms:levelLabel")}
-              name="level"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-              options={ROUTE_LEVELS}
-              optionLabelKey="name"
-              optionValueKey="name"
-              getOptionLabel={(opt) => t(`forms:level.${opt.name}`)}
-              disablePortal
-            />
-          </Grid>
-          <Grid size={12}>
-            <FormAutocomplete
-              name="max_participants"
-              label={t("forms:maxParticipantsLabel")}
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-              options={PARTICIPANTS}
-              optionLabelKey="name"
-              optionValueKey="name"
-              disablePortal
-            />
-          </Grid>
-          <Grid size={12}>
-            <FormAutocomplete
-              label={t("forms:motorbikeTypeLabel")}
-              name="suitable_motorbike_type"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-              options={MOTORBIKE_TYPES}
-              optionLabelKey="name"
-              optionValueKey="name"
-              multiple
-              disablePortal
-            />
-          </Grid>
-          <Grid
-            size={12}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Typography>{t("forms:checkbox")}</Typography>
-            <Checkbox
-              inputProps={{ "aria-label": "controlled" }}
-              color="default"
-              checked={createOneRoute?.is_verified === 1}
-              onChange={(event) =>
-                setCreateOneRoute((prevState) => ({
-                  ...prevState,
-                  is_verified: event.target.checked ? 1 : 0,
-                }))
-              }
-            />
-          </Grid>
-          <Grid size={12} sx={{ mb: 2 }}>
-            <FormTextfield
-              label={t("forms:descriptionLabel")}
-              name="route_description"
-              errors={errors}
-              setErrors={setErrors}
-              form={createOneRoute}
-              setForm={setCreateOneRoute}
-              multiline
-              maxLength={250}
-            />
-          </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={cleanDialog} color="error">
-          {t("buttons:cancel")}
-        </Button>
-        <Button onClick={handleConfirm} color="success">
-          {t("buttons:confirmar")}
-        </Button>
-      </DialogActions>
-    </Dialog>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={cleanDialog} color="error">
+            {t("buttons:cancel")}
+          </Button>
+          <Button onClick={handleConfirm} color="success">
+            {t("buttons:confirmar")}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <RouteMapDialog
+        open={isMapOpen}
+        initialSelected={
+          mapTarget === "start"
+            ? createOneRoute?.starting_point
+            : mapTarget === "end"
+              ? createOneRoute?.ending_point
+              : null
+        }
+        onCancel={() => {
+          setIsMapOpen(false);
+          setMapTarget(null);
+        }}
+        onConfirm={(point) => {
+          setCreateOneRoute((prev) => {
+            if (mapTarget === "start")
+              return { ...prev, starting_point: point };
+            if (mapTarget === "end") return { ...prev, ending_point: point };
+            return prev;
+          });
+
+          setIsMapOpen(false);
+          setMapTarget(null);
+        }}
+      />
+    </>
   );
 };
