@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { getCurrentLang } from "../helpers/oneRouteUtils";
 import { useTranslation } from "react-i18next";
 
@@ -22,7 +22,7 @@ export const useReverseGeocoding = () => {
           "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
           `${encodeURIComponent(lng)},${encodeURIComponent(lat)}.json` +
           "?types=poi,place,locality,neighborhood,address" +
-          `&language=${language}` +
+          `&language=${encodeURIComponent(language)}` +
           `&access_token=${encodeURIComponent(mapboxToken)}`;
 
         const res = await fetch(url);
@@ -47,11 +47,12 @@ export const useReverseGeocoding = () => {
         setLoading(false);
       }
     },
-    [mapboxToken]
+    [mapboxToken, currentLang]
   );
 
   return {
     reverseGeocode,
     loading,
+    currentLang,
   };
 };
