@@ -29,6 +29,7 @@ import { getCurrentLang } from "../../../../helpers/oneRouteUtils";
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
+import { useRouteMetrics } from "../../../../hooks/useRouteMetrics";
 // Constants
 import {
   MOTORBIKE_TYPES,
@@ -58,6 +59,7 @@ export const RouteCreateDialog = () => {
     "buttons",
     "snackbars",
   ]);
+  const { data: metrics, loading: isRecalculating } = useRouteMetrics();
 
   const navigate = useNavigate();
   const isOpen = dialog.isOpen && dialog.mode === "create";
@@ -168,6 +170,16 @@ export const RouteCreateDialog = () => {
     );
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!metrics) return;
+
+    setCreateOneRoute((prev) => ({
+      ...prev,
+      distance: metrics.distanceKm,
+      estimated_time: metrics.durationHours,
+    }));
+  }, [metrics, setCreateOneRoute]);
+
   return (
     <>
       <Dialog
@@ -240,12 +252,12 @@ export const RouteCreateDialog = () => {
                     label={t("forms:kmLabel")}
                     name="distance"
                     type="number"
-                    preventInvalidkey
+                    readOnly
+                    clearable={false}
                     errors={errors}
                     setErrors={setErrors}
                     form={createOneRoute}
                     setForm={setCreateOneRoute}
-                    disabled
                   />
                 </Grid>
                 <Grid size={6}>
@@ -253,11 +265,12 @@ export const RouteCreateDialog = () => {
                     label={t("forms:estimatedTimeLable")}
                     name="estimated_time"
                     type="number"
+                    readOnly
+                    clearable={false}
                     errors={errors}
                     setErrors={setErrors}
                     form={createOneRoute}
                     setForm={setCreateOneRoute}
-                    disabled
                   />
                 </Grid>
               </>

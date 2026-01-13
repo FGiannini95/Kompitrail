@@ -83,7 +83,8 @@ export const RouteMapDialog = ({
 
       return;
     }
-
+    // When there is no initialSelected, start "empty"
+    setSelected(null);
     // Otherwise center on current location
     if (!navigator.geolocation) {
       // If geolocation is unavailable, render a neutral fallback
