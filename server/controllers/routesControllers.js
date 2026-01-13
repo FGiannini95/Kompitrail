@@ -1036,9 +1036,9 @@ class routesControllers {
 
       //Convert units
       const distanceKm = Number((path.distance / 1000).toFixed(2));
-      const durationHours = Number((path.time / 1000 / 60 / 60).toFixed(2));
+      const durationMinutes = Math.round(path.time / 1000 / 60);
 
-      return res.json({ distanceKm, durationHours });
+      return res.json({ distanceKm, durationMinutes });
     } catch (err) {
       console.error("calculateMetrics error:", err.message);
       return res.status(500).json({

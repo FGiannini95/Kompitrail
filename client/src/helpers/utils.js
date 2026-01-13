@@ -74,3 +74,13 @@ export const formatDateTime = (
 
 export const toMySQLDateTime = (value, timeZone) =>
   new Date(value).toLocaleString("sv-SE", { timeZone, hour12: false });
+
+// Always formats minutes as HH:MM
+export const formatMinutesToHHMM = (minutes) => {
+  if (!Number.isFinite(minutes)) return "00:00";
+
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+};

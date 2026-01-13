@@ -12,7 +12,7 @@
   "endingPointLabel": "Arrival",
   "dateLabel": "Date",
   "kmLabel": "Km",
-  "estimatedTimeLable": "Duration",
+  "estimatedTimeLable": "Hours",
   "levelLabel": "Level",
   "level": {
     "beginner": "Beginner",

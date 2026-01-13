@@ -42,6 +42,7 @@ import { FormTextfield } from "../../../../components/FormTextfield/FormTextfiel
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 import { RouteMapDialog } from "../../../../components/Dialogs/RouteMapDialog/RouteMapDialog";
+import { formatMinutesToHHMM } from "../../../../helpers/utils";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -189,7 +190,7 @@ export const RouteCreateDialog = () => {
     setCreateOneRoute((prev) => ({
       ...prev,
       distance: metrics.distanceKm,
-      estimated_time: metrics.durationHours,
+      estimated_time: metrics.durationMinutes,
     }));
   }, [metrics, setCreateOneRoute]);
 
@@ -277,7 +278,8 @@ export const RouteCreateDialog = () => {
                   <FormTextfield
                     label={t("forms:estimatedTimeLable")}
                     name="estimated_time"
-                    type="number"
+                    type="text"
+                    value={formatMinutesToHHMM(createOneRoute.estimated_time)}
                     readOnly
                     clearable={false}
                     errors={errors}

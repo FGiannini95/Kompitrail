@@ -19,8 +19,13 @@ export const FormTextfield = ({
   endAdornment,
   maxLength,
   onClick,
+  value: valueProp,
 }) => {
-  const value = name.split(".").reduce((acc, key) => acc?.[key], form) ?? "";
+  const formValue =
+    name.split(".").reduce((acc, key) => acc?.[key], form) ?? "";
+  // If valueProp is provided, use it. Otherwise, use the value from the form.
+  const value = valueProp !== undefined ? valueProp : formValue;
+
   const { t } = useTranslation("errors");
   const errorKey = errors?.[name];
   const helperText = errorKey ? t(errorKey) : "";
