@@ -77,12 +77,11 @@ export const RouteMapDialog = ({
 
           // Only fallback to Granada when explicitly requested
           if (fallbackToGranada && error.code === 3) {
-            setViewState((prev) => ({
-              ...prev,
+            setViewState({
               latitude: 37.1773,
               longitude: -3.5986,
               zoom: 13,
-            }));
+            });
           }
         },
         {
@@ -234,15 +233,18 @@ export const RouteMapDialog = ({
                   />
                 )}
                 <IconButton
-                  onMouseDown={(e) => e.stopPropagation()} // prevent Mapbox from catching the click early
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
                   onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     recenterToCurrentLocation();
                   }}
                   sx={(theme) => ({
                     position: "absolute",
-                    left: 4,
-                    bottom: 4,
+                    left: 12,
+                    bottom: 12,
+                    pointerEvents: "auto",
                     bgcolor: theme.palette.kompitrail.card,
                     border: `1px solid ${theme.palette.divider}`,
                     boxShadow: 2,
