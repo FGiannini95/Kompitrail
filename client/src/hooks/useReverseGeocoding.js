@@ -12,7 +12,11 @@ export const useReverseGeocoding = () => {
 
   const reverseGeocode = useCallback(
     async ({ lat, lng, language = currentLang }) => {
-      if (!mapboxToken) return "Zona no definida";
+      if (!mapboxToken)
+        return {
+          fullLabel: "Zona no definida",
+          shortLabel: "Zona no definida",
+        };
 
       try {
         setLoading(true);
@@ -29,7 +33,10 @@ export const useReverseGeocoding = () => {
 
         if (!res.ok) {
           console.error("Reverse geocoding failed", res.status);
-          return "Zona no definida";
+          return {
+            fullLabel: "Zona no definida",
+            shortLabel: "Zona no definida",
+          };
         }
 
         const data = await res.json();
@@ -42,7 +49,10 @@ export const useReverseGeocoding = () => {
         return "Zona no definida";
       } catch (err) {
         console.error("Reverse geocoding error", err);
-        return "Zona no definida";
+        return {
+          fullLabel: "Zona no definida",
+          shortLabel: "Zona no definida",
+        };
       } finally {
         setLoading(false);
       }

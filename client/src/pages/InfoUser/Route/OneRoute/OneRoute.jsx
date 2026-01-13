@@ -48,7 +48,7 @@ const InfoItem = ({ label, value }) => (
 
 export const OneRoute = () => {
   const { state } = useLocation();
-  const [data, setData] = useState(state ?? null); // state only as initial value
+  const [data, setData] = useState(state ?? null);
   const { id: route_id } = useParams();
   const { user: currentUser } = useContext(KompitrailContext);
   const { isCopied, handleShare } = useShareUrl({

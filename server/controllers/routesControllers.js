@@ -1007,40 +1007,82 @@ class routesControllers {
         });
       }
 
-      const apiKey = process.env.GRAPHHOPPER_API_KEY;
+      const apiKey = process.env.ORS_API_KEY;
       if (!apiKey) {
-        return res.status(500).json({ error: "GraphHopper Api key ausente" });
+        return res.status(500).json({ error: "ORS Api key ausente" });
       }
 
-      const response = await axios.post(
-        "https://graphhopper.com/api/1/route",
-        {
-          // GraphHopper expects [lng, lat]
-          points: [
-            [start.lng, start.lat],
-            [end.lng, end.lat],
-          ],
-          vehicle: "car",
-          points_encoded: false,
+      // ORS expects [lng, lat]
+      const coordinates = [
+        [start.lng, start.lat],
+        [end.lng, end.lat],
+      ];
+
+      const orsBody = {
+        coordinates,
+        preference: "recommended",
+        options: {
+          avoid_features: ["ferries", "steps", "fords"],
         },
+        extra_info: ["surface", "waytype"],
+      };
+
+      const profile = "cycling-mountain";
+      const response = await axios.post(
+        `https://api.openrouteservice.org/v2/directions/${profile}/geojson`,
+        orsBody,
         {
-          params: { key: apiKey },
-          timeout: 8000,
+          headers: {
+            Authorization: apiKey,
+            "Content-Type": "application/json",
+          },
+          timeout: 10000,
         }
       );
 
-      const path = response.data?.paths?.[0];
-      if (!path) {
-        return res.status(500).json({ error: "No ruta encontrada" });
+      const feature = response.data?.features?.[0];
+      if (!feature) {
+        return res.status(500).json({ error: "Ruta no encontrada" });
       }
 
-      //Convert units
-      const distanceKm = Number((path.distance / 1000).toFixed(2));
-      const durationMinutes = Math.round(path.time / 1000 / 60);
+      const summary = feature.properties?.summary;
+      if (!summary) {
+        return res.status(500).json({ error: "Ruta no encontrada" });
+      }
 
-      return res.json({ distanceKm, durationMinutes });
+      // Convert units
+      const distanceKm = Number((summary.distance / 1000).toFixed(2));
+      const durationMinutes = Math.round(summary.duration / 60);
+
+      const debug = {
+        profile,
+        preference: orsBody.preference,
+        avoid_features: orsBody.options?.avoid_features,
+      };
+
+      return res.json({ distanceKm, durationMinutes, debug });
     } catch (err) {
-      console.error("calculateMetrics error:", err.message);
+      const status = err.response?.status;
+      const orsData = err.response?.data;
+
+      // Network/timeout info
+      const code = err.code;
+
+      console.error("calculateMetrics error:", {
+        message: err.message,
+        code,
+        status,
+        ors: orsData,
+      });
+
+      // If ORS replied with a 4xx/5xx, forward it so we can see it in the frontend too
+      if (status) {
+        return res.status(status).json({
+          error: "ORS routing error",
+          details: orsData,
+        });
+      }
+
       return res.status(500).json({
         error: "Error al calcular la ruta",
       });
