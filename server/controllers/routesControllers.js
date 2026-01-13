@@ -8,6 +8,7 @@ const Contract = require(path.resolve(
 ));
 const { EVENTS } = Contract;
 const translateAndSaveRouteLanguages = require("../utils/translateAndSaveRouteLanguages");
+const { error } = require("console");
 
 class routesControllers {
   createRoute = (req, res) => {
@@ -986,6 +987,64 @@ class routesControllers {
     connection.query(sql, (err, result) => {
       err ? res.status(400).json({ err }) : res.status(200).json(result);
     });
+  };
+
+  calculateMetrics = async (req, res) => {
+    try {
+      const { start, end } = req.body;
+
+      // Validate input
+      if (
+        !start ||
+        !end ||
+        typeof start.lat !== "number" ||
+        typeof start.lng !== "number" ||
+        typeof end.lat !== "number" ||
+        typeof end.lng !== "number"
+      ) {
+        return res.status(400).json({
+          error: "Coordinadas incorrectas",
+        });
+      }
+
+      const apiKey = process.env.GRAPHHOPPER_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: "GraphHopper Api key ausente" });
+      }
+
+      const response = await axios.post(
+        "https://graphhopper.com/api/1/route",
+        {
+          // GraphHopper expects [lng, lat]
+          points: [
+            [start.lng, start.lat],
+            [end.lng, end.lat],
+          ],
+          vehicle: "car",
+          points_encoded: false,
+        },
+        {
+          params: { key: apiKey },
+          timeout: 8000,
+        }
+      );
+
+      const path = response.data?.paths?.[0];
+      if (!path) {
+        return res.status(500).json({ error: "No ruta encontrada" });
+      }
+
+      //Convert units
+      const distanceKm = Number((path.distance / 1000).toFixed(2));
+      const durationHours = Number((path.time / 1000 / 60 / 60).toFixed(2));
+
+      return res.json({ distanceKm, durationHours });
+    } catch (err) {
+      console.error("calculateMetrics error:", err.message);
+      return res.status(500).json({
+        error: "Error al calcular la ruta",
+      });
+    }
   };
 }
 

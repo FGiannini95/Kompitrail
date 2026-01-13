@@ -59,16 +59,24 @@ export const RouteCreateDialog = () => {
     "buttons",
     "snackbars",
   ]);
-  const { data: metrics, loading: isRecalculating } = useRouteMetrics();
+  const metricsEndpoint = `${ROUTES_URL}/metrics`;
+  const isOpen = dialog.isOpen && dialog.mode === "create";
+
+  const { data: metrics, loading: isRecalculating } = useRouteMetrics({
+    start: createOneRoute.starting_point,
+    end: createOneRoute.ending_point,
+    endpointUrl: metricsEndpoint,
+    enabled: isOpen,
+    debounceMs: 600,
+  });
 
   const navigate = useNavigate();
-  const isOpen = dialog.isOpen && dialog.mode === "create";
   const hasStart =
-    createOneRoute?.starting_point?.lat !== null &&
-    createOneRoute?.starting_point?.lng !== null;
+    createOneRoute?.starting_point?.lat != null &&
+    createOneRoute?.starting_point?.lng != null;
   const hasEnd =
-    createOneRoute?.ending_point?.lat !== null &&
-    createOneRoute?.ending_point?.lng !== null;
+    createOneRoute?.ending_point?.lat != null &&
+    createOneRoute?.ending_point?.lng != null;
   const waypointCount = createOneRoute?.waypoints?.length || 0;
 
   const cleanDialog = () => {
@@ -131,41 +139,46 @@ export const RouteCreateDialog = () => {
 
     if (hasStart) return;
 
-    if (!navigator.geolocation) {
-      // If geolocation is not available, we still set a readable label
-      setCreateOneRoute((prev) => ({
-        ...prev,
-        starting_point: { label: "Posición actual", lat: null, lng: null },
-      }));
-      return;
-    }
+    // Show the label immediately
+    setCreateOneRoute((prev) => ({
+      ...prev,
+      starting_point: {
+        ...prev.starting_point,
+        label: "Posición actual",
+      },
+    }));
+
+    if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
 
-        setCreateOneRoute((prev) => ({
-          ...prev,
-          // Default start = user's current position
-          starting_point: {
-            label: "Posición actual",
-            lat: latitude,
-            lng: longitude,
-          },
-        }));
-      },
-      (error) => {
-        console.error("Geolocation error", error);
+        setCreateOneRoute((prev) => {
+          // If coords are already set, don't overwrite
+          if (
+            prev.starting_point?.lat != null &&
+            prev.starting_point?.lng != null
+          ) {
+            return prev;
+          }
 
-        // Permission denied / error: still show label, but no coords
-        setCreateOneRoute((prev) => ({
-          ...prev,
-          starting_point: { label: "Posición actual", lat: null, lng: null },
-        }));
+          return {
+            ...prev,
+            starting_point: {
+              ...prev.starting_point,
+              label: "Posición actual",
+              lat: latitude,
+              lng: longitude,
+            },
+          };
+        });
       },
+      (error) => console.error("Geolocation error", error),
       {
         enableHighAccuracy: true,
-        timeout: 8000,
+        timeout: 20000,
+        maximumAge: 60000,
       }
     );
   }, [isOpen]);

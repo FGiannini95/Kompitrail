@@ -22,10 +22,10 @@ export const useRouteMetrics = ({
 
   // We have a starting and ending points
   const hasPoints =
-    start?.lat !== null &&
-    start?.lng !== null &&
-    end?.lat !== null &&
-    end?.lng !== null;
+    start?.lat != null &&
+    start?.lng != null &&
+    end?.lat != null &&
+    end?.lng != null;
 
   useEffect(() => {
     if (!enabled) return;

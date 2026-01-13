@@ -12,10 +12,12 @@ import {
   Typography,
 } from "@mui/material";
 
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
+// Hooks & Providers
 import { useReverseGeocoding } from "../../../hooks/useReverseGeocoding";
 import { useLocalizedPointLabel } from "../../../hooks/useLocalizedPointLabel";
-
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+// Components
 import { Loading } from "../../Loading/Loading";
 
 export const RouteMapDialog = ({
@@ -58,11 +60,13 @@ export const RouteMapDialog = ({
 
   useEffect(() => {
     if (!open) return;
+    // Reset camera state each time the dialog opens
+    setViewState(null);
 
     // Reset search input each time the dialog opens
     setQuery("");
 
-    // If we have an initialSelected point, use it as current draft selection
+    // If we have a selected point, center on it immediately
     if (initialSelected?.lat != null && initialSelected?.lng != null) {
       const lat = Number(initialSelected.lat);
       const lng = Number(initialSelected.lng);
@@ -83,21 +87,18 @@ export const RouteMapDialog = ({
 
       return;
     }
-    // When there is no initialSelected, start "empty"
-    setSelected(null);
-    // Otherwise center on current location
+
+    // Wait for geolocation before rendering
     if (!navigator.geolocation) {
-      // If geolocation is unavailable, render a neutral fallback
-      setViewState({
-        latitude: 0,
-        longitude: 0,
-        zoom: 2,
-      });
       return;
     }
 
+    let cancelled = false;
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        if (cancelled) return;
+
         setViewState({
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
@@ -105,16 +106,28 @@ export const RouteMapDialog = ({
         });
       },
       (error) => {
+        if (cancelled) return;
         console.error("Geolocation error", error);
-
-        setViewState({
-          latitude: 0,
-          longitude: 0,
-          zoom: 2,
-        });
+        // Timeout: GPS could not get a fix in time, fallback to Granada
+        if (error.code === 3) {
+          setViewState({
+            latitude: 37.1773,
+            longitude: -3.5986,
+            zoom: 13,
+          });
+          return;
+        }
       },
-      { enableHighAccuracy: true, timeout: 8000 }
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 60000,
+      }
     );
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     open,
     initialSelected?.label,
