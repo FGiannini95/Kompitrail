@@ -9,11 +9,14 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
+  Typography,
 } from "@mui/material";
 
 import { useReverseGeocoding } from "../../../hooks/useReverseGeocoding";
+import { useLocalizedPointLabel } from "../../../hooks/useLocalizedPointLabel";
 
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { Loading } from "../../Loading/Loading";
 
 export const RouteMapDialog = ({
   open,
@@ -23,7 +26,11 @@ export const RouteMapDialog = ({
   maxWidth = "md",
 }) => {
   const { t } = useTranslation(["buttons"]);
-  const { reverseGeocode, loading: isResolvingLabel } = useReverseGeocoding();
+  const {
+    reverseGeocode,
+    loading: isResolvingLabel,
+    currentLang,
+  } = useReverseGeocoding();
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
   // Search input value (UI only for now)
@@ -42,6 +49,13 @@ export const RouteMapDialog = ({
     return null;
   });
 
+  // It doesn't return anything, it doesn't create a new state, it reads a state and update it
+  useLocalizedPointLabel({
+    point: selected,
+    setPoint: setSelected,
+    enabled: open,
+  });
+
   useEffect(() => {
     if (!open) return;
 
@@ -57,6 +71,7 @@ export const RouteMapDialog = ({
         label: initialSelected.label || "",
         lat,
         lng,
+        lang: initialSelected.lang,
       });
 
       // Center on the selected point
@@ -99,7 +114,12 @@ export const RouteMapDialog = ({
       },
       { enableHighAccuracy: true, timeout: 8000 }
     );
-  }, [open, initialSelected?.lat, initialSelected?.lng]);
+  }, [
+    open,
+    initialSelected?.label,
+    initialSelected?.lat,
+    initialSelected?.lng,
+  ]);
 
   if (!mapboxToken) {
     return (
@@ -143,9 +163,26 @@ export const RouteMapDialog = ({
             />
           </Box>
 
+          {selected && (
+            <Box sx={{ pb: 1 }}>
+              <Typography
+                variant="body2"
+                sx={(theme) => ({
+                  color: theme.palette.text.secondary,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                })}
+                title={selected.label}
+              >
+                {selected.label}
+              </Typography>
+            </Box>
+          )}
+
           <Box sx={{ flex: 1 }}>
             {!viewState ? (
-              <Box sx={{ p: 2 }}>Getting your position…</Box>
+              <Loading />
             ) : (
               <Map
                 mapboxAccessToken={mapboxToken}
@@ -163,13 +200,18 @@ export const RouteMapDialog = ({
                   });
 
                   // Resolve a readable name from Mapbox
-                  const label = await reverseGeocode({ lat, lng });
+                  const label = await reverseGeocode({
+                    lat,
+                    lng,
+                    language: currentLang,
+                  });
 
                   // Update the selection
                   setSelected({
                     label,
                     lat,
                     lng,
+                    lang: currentLang,
                   });
                 }}
               >
