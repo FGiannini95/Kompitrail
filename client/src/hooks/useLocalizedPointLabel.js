@@ -33,7 +33,7 @@ export const useLocalizedPointLabel = ({ point, setPoint, enabled = true }) => {
 
     const run = async () => {
       try {
-        const label = await reverseGeocode({
+        const { fullLabel, shortLabel } = await reverseGeocode({
           lat,
           lng,
           language: currentLang,
@@ -47,7 +47,8 @@ export const useLocalizedPointLabel = ({ point, setPoint, enabled = true }) => {
 
           return {
             ...prev,
-            label,
+            label: fullLabel,
+            shortLabel,
             lang: currentLang,
           };
         });

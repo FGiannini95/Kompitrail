@@ -80,14 +80,15 @@ export const RouteMapDialog = ({
           if (!setPin) return;
 
           // Resolve label
-          const label = await reverseGeocode({
+          const { fullLabel, shortLabel } = await reverseGeocode({
             lat,
             lng,
             language: currentLang,
           });
 
           setSelected({
-            label,
+            label: fullLabel,
+            shortLabel,
             lat,
             lng,
             lang: currentLang,
