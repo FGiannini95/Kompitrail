@@ -61,21 +61,42 @@ export const RouteMapDialog = ({
   });
 
   const getCurrentLocation = useCallback(
-    ({ fallbackToGranada = false } = {}) => {
+    ({ fallbackToGranada = false, setPin = false } = {}) => {
       if (!navigator.geolocation) return;
 
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          // Recenter the camera
           setViewState({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
+            latitude: lat,
+            longitude: lng,
             zoom: 13,
+          });
+
+          // Move the pin too
+          if (!setPin) return;
+
+          // Resolve label
+          const label = await reverseGeocode({
+            lat,
+            lng,
+            language: currentLang,
+          });
+
+          setSelected({
+            label,
+            lat,
+            lng,
+            lang: currentLang,
           });
         },
         (error) => {
           console.error("Geolocation error", error);
 
-          // Only fallback to Granada when explicitly requested
+          // Only fallback to Granada when explicitly requested (and only for open)
           if (fallbackToGranada && error.code === 3) {
             setViewState({
               latitude: 37.1773,
@@ -91,7 +112,7 @@ export const RouteMapDialog = ({
         }
       );
     },
-    []
+    [reverseGeocode, currentLang]
   );
 
   useEffect(() => {
@@ -125,10 +146,10 @@ export const RouteMapDialog = ({
     }
 
     getCurrentLocation({ fallbackToGranada: true });
-  }, [open, initialSelected?.lat, initialSelected?.lng]);
+  }, [open, initialSelected?.lat, initialSelected?.lng, getCurrentLocation]);
 
   const recenterToCurrentLocation = () => {
-    getCurrentLocation({ fallbackToGranada: false });
+    getCurrentLocation({ fallbackToGranada: false, setPin: true });
   };
 
   if (!mapboxToken) {
