@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Map, { Marker } from "react-map-gl/mapbox";
 import { useTranslation } from "react-i18next";
 
 import {
   Box,
   Button,
+  IconButton,
   TextField,
   Dialog,
   DialogContent,
@@ -13,7 +14,8 @@ import {
 } from "@mui/material";
 
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
+import MyLocationOutlinedIcon from "@mui/icons-material/MyLocationOutlined";
+
 // Hooks & Providers
 import { useReverseGeocoding } from "../../../hooks/useReverseGeocoding";
 import { useLocalizedPointLabel } from "../../../hooks/useLocalizedPointLabel";
@@ -58,6 +60,41 @@ export const RouteMapDialog = ({
     enabled: open,
   });
 
+  const getCurrentLocation = useCallback(
+    ({ fallbackToGranada = false } = {}) => {
+      if (!navigator.geolocation) return;
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setViewState({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            zoom: 13,
+          });
+        },
+        (error) => {
+          console.error("Geolocation error", error);
+
+          // Only fallback to Granada when explicitly requested
+          if (fallbackToGranada && error.code === 3) {
+            setViewState((prev) => ({
+              ...prev,
+              latitude: 37.1773,
+              longitude: -3.5986,
+              zoom: 13,
+            }));
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 60000,
+        }
+      );
+    },
+    []
+  );
+
   useEffect(() => {
     if (!open) return;
     // Reset camera state each time the dialog opens
@@ -88,52 +125,12 @@ export const RouteMapDialog = ({
       return;
     }
 
-    // Wait for geolocation before rendering
-    if (!navigator.geolocation) {
-      return;
-    }
+    getCurrentLocation({ fallbackToGranada: true });
+  }, [open, initialSelected?.lat, initialSelected?.lng]);
 
-    let cancelled = false;
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        if (cancelled) return;
-
-        setViewState({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-          zoom: 13,
-        });
-      },
-      (error) => {
-        if (cancelled) return;
-        console.error("Geolocation error", error);
-        // Timeout: GPS could not get a fix in time, fallback to Granada
-        if (error.code === 3) {
-          setViewState({
-            latitude: 37.1773,
-            longitude: -3.5986,
-            zoom: 13,
-          });
-          return;
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 60000,
-      }
-    );
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    open,
-    initialSelected?.label,
-    initialSelected?.lat,
-    initialSelected?.lng,
-  ]);
+  const recenterToCurrentLocation = () => {
+    getCurrentLocation({ fallbackToGranada: false });
+  };
 
   if (!mapboxToken) {
     return (
@@ -236,6 +233,23 @@ export const RouteMapDialog = ({
                     anchor="bottom"
                   />
                 )}
+                <IconButton
+                  onMouseDown={(e) => e.stopPropagation()} // prevent Mapbox from catching the click early
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    recenterToCurrentLocation();
+                  }}
+                  sx={(theme) => ({
+                    position: "absolute",
+                    left: 4,
+                    bottom: 4,
+                    bgcolor: theme.palette.kompitrail.card,
+                    border: `1px solid ${theme.palette.divider}`,
+                    boxShadow: 2,
+                  })}
+                >
+                  <MyLocationOutlinedIcon fontSize="small" />
+                </IconButton>
               </Map>
             )}
           </Box>
