@@ -11,13 +11,10 @@ import {
   DialogContent,
   DialogTitle,
   DialogActions,
-  Divider,
-  ButtonBase,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
 
 // Utils
@@ -26,6 +23,11 @@ import { RoutesString } from "../../../../routes/routes";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 import { getCurrentLang } from "../../../../helpers/oneRouteUtils";
 import { formatMinutesToHHMM } from "../../../../helpers/utils";
+import {
+  getPointLabel,
+  fetchPointI18n,
+} from "../../../../helpers/pointMetrics";
+
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
@@ -49,6 +51,7 @@ export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
   const [errors, setErrors] = useState({});
   const [isMapOpen, setIsMapOpen] = useState(false);
+
   // Which field is currently selecting a location on the map.
   const [mapTarget, setMapTarget] = useState(null);
 
@@ -61,10 +64,12 @@ export const RouteCreateDialog = () => {
     "buttons",
     "snackbars",
   ]);
+
   const metricsEndpoint = `${ROUTES_URL}/metrics`;
   const isOpen = dialog.isOpen && dialog.mode === "create";
   const { reverseGeocode, currentLang } = useReverseGeocoding();
-  const { data: metrics, loading: isRecalculating } = useRouteMetrics({
+
+  const { data: metrics } = useRouteMetrics({
     start: createOneRoute.starting_point,
     end: createOneRoute.ending_point,
     endpointUrl: metricsEndpoint,
@@ -73,6 +78,7 @@ export const RouteCreateDialog = () => {
   });
 
   const navigate = useNavigate();
+
   const hasStart =
     createOneRoute?.starting_point?.lat != null &&
     createOneRoute?.starting_point?.lng != null;
@@ -105,12 +111,10 @@ export const RouteCreateDialog = () => {
     newFormData.append(
       "createRoute",
       JSON.stringify({
-        starting_point: createOneRoute.starting_point.fullLabel,
-        starting_point_short: createOneRoute.starting_point.shortLabel,
+        starting_point_i18n: createOneRoute.starting_point.i18n,
+        ending_point_i18n: createOneRoute.ending_point.i18n,
         starting_lat: createOneRoute.starting_point.lat,
         starting_lng: createOneRoute.starting_point.lng,
-        ending_point: createOneRoute.ending_point.label,
-        ending_point_short: createOneRoute.ending_point.shortLabel,
         ending_lat: createOneRoute.ending_point.lat,
         ending_lng: createOneRoute.ending_point.lng,
         date: createOneRoute.date,
@@ -138,16 +142,19 @@ export const RouteCreateDialog = () => {
       });
   };
 
+  // Auto-detect user's current location for starting point
   useEffect(() => {
     if (!isOpen) return;
     if (hasStart) return;
 
-    // Show the Placeholder immediately
+    // Show placeholder immediately
     setCreateOneRoute((prev) => ({
       ...prev,
       starting_point: {
         ...prev.starting_point,
-        label: "Posición actual",
+        i18n: {
+          [currentLang]: { full: "Posición actual", short: "Actual" },
+        },
       },
     }));
 
@@ -165,12 +172,8 @@ export const RouteCreateDialog = () => {
           return;
         }
 
-        // Reverse geocode to get real full + short labels
-        const { fullLabel, shortLabel } = await reverseGeocode({
-          lat: latitude,
-          lng: longitude,
-          language: currentLang,
-        });
+        // Fetch i18n labels for all languages
+        const i18n = await fetchPointI18n(latitude, longitude, reverseGeocode);
 
         setCreateOneRoute((prev) => {
           // Double-check inside setState too
@@ -184,11 +187,9 @@ export const RouteCreateDialog = () => {
           return {
             ...prev,
             starting_point: {
-              ...prev.starting_point,
-              fullLabel,
-              shortLabel,
               lat: latitude,
               lng: longitude,
+              i18n,
             },
           };
         });
@@ -209,6 +210,7 @@ export const RouteCreateDialog = () => {
     createOneRoute.starting_point?.lng,
   ]);
 
+  // Update distance and time when metrics are calculated
   useEffect(() => {
     if (!metrics) return;
 
@@ -243,6 +245,11 @@ export const RouteCreateDialog = () => {
                 name="starting_point.label"
                 readOnly
                 clearable={false}
+                value={getPointLabel(
+                  createOneRoute.starting_point,
+                  currentLang,
+                  "full"
+                )}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
                 errors={errors}
@@ -261,6 +268,11 @@ export const RouteCreateDialog = () => {
                 name="ending_point.label"
                 readOnly
                 clearable={false}
+                value={getPointLabel(
+                  createOneRoute.ending_point,
+                  currentLang,
+                  "full"
+                )}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
                 errors={errors}

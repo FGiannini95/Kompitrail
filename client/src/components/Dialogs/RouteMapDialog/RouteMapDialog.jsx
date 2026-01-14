@@ -1,26 +1,22 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Map, { Marker } from "react-map-gl/mapbox";
+import React, { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import Map, { Marker } from "react-map-gl/mapbox";
 
 import {
-  Box,
-  Button,
-  IconButton,
-  TextField,
   Dialog,
   DialogContent,
   DialogActions,
+  Button,
+  Box,
+  TextField,
   Typography,
+  IconButton,
 } from "@mui/material";
 
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import MyLocationOutlinedIcon from "@mui/icons-material/MyLocationOutlined";
 
-import { reverseGeocodeI18n } from "../../../helpers/oneRouteUtils";
-// Hooks & Providers
-import { useReverseGeocoding } from "../../../hooks/useReverseGeocoding";
-import { useLocalizedPointLabel } from "../../../hooks/useLocalizedPointLabel";
-// Components
+import { useRoutePoint } from "../../../hooks/useRoutePoint";
 import { Loading } from "../../Loading/Loading";
 
 export const RouteMapDialog = ({
@@ -31,39 +27,25 @@ export const RouteMapDialog = ({
   maxWidth = "md",
 }) => {
   const { t } = useTranslation(["buttons"]);
-  const {
-    reverseGeocode,
-    loading: isResolvingLabel,
-    currentLang,
-  } = useReverseGeocoding();
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
-  // Search input value (UI only for now)
-  const [query, setQuery] = useState("");
-  // Map camera state (controlled map)
-  const [viewState, setViewState] = useState(null);
-  // Draft selection (saved only on Confirm)
-  const [selected, setSelected] = useState(() => {
-    if (initialSelected?.lat != null && initialSelected?.lng != null) {
-      return {
-        label: initialSelected.label || "",
-        shortLabel: initialSelected.shortLabel || "",
-        fullLabel: initialSelected.fullLabel || "",
-        lat: Number(initialSelected.lat),
-        lng: Number(initialSelected.lng),
-        lang: initialSelected.lang,
-      };
-    }
-    return null;
-  });
-
-  // It doesn't return anything, it doesn't create a new state, it reads a state and update it
-  useLocalizedPointLabel({
-    point: selected,
-    setPoint: setSelected,
+  const {
+    point,
+    updatePoint,
+    loading: isResolvingLabel,
+    getLabel,
+  } = useRoutePoint({
+    initialPoint: initialSelected,
     enabled: open,
   });
 
+  // Search input value
+  const [query, setQuery] = useState("");
+
+  // Map camera state
+  const [viewState, setViewState] = useState(null);
+
+  // Get current location from browser
   const getCurrentLocation = useCallback(
     ({ fallbackToGranada = false, setPin = false } = {}) => {
       if (!navigator.geolocation) return;
@@ -80,29 +62,15 @@ export const RouteMapDialog = ({
             zoom: 13,
           });
 
-          // Move the pin too
-          if (!setPin) return;
-
-          // Resolve label
-          const { fullLabel, shortLabel } = await reverseGeocode({
-            lat,
-            lng,
-            language: currentLang,
-          });
-
-          setSelected({
-            label: fullLabel,
-            fullLabel,
-            shortLabel,
-            lat,
-            lng,
-            lang: currentLang,
-          });
+          // Move the pin and fetch i18n labels
+          if (setPin) {
+            await updatePoint(lat, lng);
+          }
         },
         (error) => {
           console.error("Geolocation error", error);
 
-          // Only fallback to Granada when explicitly requested (and only for open)
+          // Fallback to Granada if timeout and explicitly requested
           if (fallbackToGranada && error.code === 3) {
             setViewState({
               latitude: 37.1773,
@@ -118,32 +86,20 @@ export const RouteMapDialog = ({
         }
       );
     },
-    [reverseGeocode, currentLang]
+    [updatePoint]
   );
 
   useEffect(() => {
     if (!open) return;
-    // Reset camera state each time the dialog opens
-    setViewState(null);
 
-    // Reset search input each time the dialog opens
+    setViewState(null);
     setQuery("");
 
-    // If we have a selected point, center on it immediately
+    // If we have an initial point, center on it
     if (initialSelected?.lat != null && initialSelected?.lng != null) {
       const lat = Number(initialSelected.lat);
       const lng = Number(initialSelected.lng);
 
-      setSelected({
-        label: initialSelected.label || "",
-        shortLabel: initialSelected.shortLabel || "",
-        fullLabel: initialSelected.fullLabel || "",
-        lat,
-        lng,
-        lang: initialSelected.lang,
-      });
-
-      // Center on the selected point
       setViewState({
         latitude: lat,
         longitude: lng,
@@ -153,11 +109,19 @@ export const RouteMapDialog = ({
       return;
     }
 
+    // Otherwise, try to get current location
     getCurrentLocation({ fallbackToGranada: true });
   }, [open, initialSelected?.lat, initialSelected?.lng, getCurrentLocation]);
 
+  // Recenter to current location and update pin
   const recenterToCurrentLocation = () => {
     getCurrentLocation({ fallbackToGranada: false, setPin: true });
+  };
+
+  // Handle map click: update point coordinates + fetch i18n labels
+  const handleMapClick = async (evt) => {
+    const { lng, lat } = evt.lngLat;
+    await updatePoint(lat, lng);
   };
 
   if (!mapboxToken) {
@@ -190,6 +154,7 @@ export const RouteMapDialog = ({
             flexDirection: "column",
           }}
         >
+          {/* Search input (placeholder for future feature) */}
           <Box sx={{ pb: 2 }}>
             <TextField
               fullWidth
@@ -202,7 +167,8 @@ export const RouteMapDialog = ({
             />
           </Box>
 
-          {selected && (
+          {/* Display current point label in current UI language */}
+          {point && (
             <Box sx={{ pb: 1 }}>
               <Typography
                 variant="body2"
@@ -212,13 +178,14 @@ export const RouteMapDialog = ({
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                 })}
-                title={selected.label}
+                title={getLabel("full")}
               >
-                {selected.label}
+                {getLabel("full")}
               </Typography>
             </Box>
           )}
 
+          {/* Map */}
           <Box sx={{ flex: 1 }}>
             {!viewState ? (
               <Loading />
@@ -228,53 +195,18 @@ export const RouteMapDialog = ({
                 {...viewState}
                 onMove={(evt) => setViewState(evt.viewState)}
                 mapStyle="mapbox://styles/mapbox/outdoors-v12"
-                onClick={async (evt) => {
-                  const { lng, lat } = evt.lngLat;
-
-                  // Immediate feedback: show pin right away with a temporary label
-                  setSelected({
-                    label: "Resolving place name…",
-                    lat,
-                    lng,
-                  });
-
-                  const languages = ["es", "it", "en"];
-                  const i18n = await reverseGeocodeI18n({
-                    reverseGeocode,
-                    lat,
-                    lng,
-                    languages,
-                  });
-
-                  // Keep label in current language for UI
-                  const current = i18n[currentLang] || i18n.es;
-
-                  // Resolve a readable name from Mapbox
-                  const { fullLabel, shortLabel } = await reverseGeocode({
-                    lat,
-                    lng,
-                    language: currentLang,
-                  });
-
-                  // Update the selection
-                  setSelected({
-                    label: current?.full || "Zona desconocida",
-                    fullLabel,
-                    shortLabel,
-                    lat,
-                    lng,
-                    lang: currentLang,
-                    i18n,
-                  });
-                }}
+                onClick={handleMapClick}
               >
-                {selected && (
+                {/* Pin marker */}
+                {point && (
                   <Marker
-                    longitude={selected.lng}
-                    latitude={selected.lat}
+                    longitude={point.lng}
+                    latitude={point.lat}
                     anchor="bottom"
                   />
                 )}
+
+                {/* Recenter button */}
                 <IconButton
                   onPointerDown={(e) => e.stopPropagation()}
                   onMouseDown={(e) => e.stopPropagation()}
@@ -306,9 +238,9 @@ export const RouteMapDialog = ({
           {t("buttons:cancel")}
         </Button>
         <Button
-          disabled={!selected || isResolvingLabel}
+          disabled={!point || isResolvingLabel}
           onClick={() => {
-            onConfirm?.(selected);
+            onConfirm?.(point);
           }}
           color="success"
         >

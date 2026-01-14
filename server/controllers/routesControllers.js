@@ -14,12 +14,10 @@ class routesControllers {
   createRoute = async (req, res) => {
     const {
       user_id,
-      starting_point,
-      starting_point_short,
+      starting_point_i18n,
+      ending_point_i18n,
       starting_lat,
       starting_lng,
-      ending_point,
-      ending_point_short,
       ending_lat,
       ending_lng,
       date,
@@ -28,21 +26,34 @@ class routesControllers {
       max_participants,
       route_description,
       is_verified,
-      language,
       waypoints = [],
     } = JSON.parse(req.body.createRoute);
 
-    const sourceLang = language || "es";
+    // Validate i18n objects
+    if (
+      !starting_point_i18n ||
+      typeof starting_point_i18n !== "object" ||
+      Object.keys(starting_point_i18n).length === 0
+    ) {
+      return res.status(400).json({ error: "starting_point_i18n inválido" });
+    }
+
+    if (
+      !ending_point_i18n ||
+      typeof ending_point_i18n !== "object" ||
+      !ending_point_i18n.es ||
+      !ending_point_i18n.es.full
+    ) {
+      return res.status(400).json({ error: "ending_point_i18n inválido" });
+    }
 
     // Basic input validation
     if (
       !user_id ||
-      !starting_point ||
       starting_lat == null ||
       starting_lat === "" ||
       starting_lng == null ||
       starting_lng === "" ||
-      !ending_point ||
       ending_lat == null ||
       ending_lat === "" ||
       ending_lng == null ||
@@ -164,40 +175,39 @@ class routesControllers {
       });
     }
 
+    const startingPointI18nJson = JSON.stringify(starting_point_i18n);
+    const endingPointI18nJson = JSON.stringify(ending_point_i18n);
+
     const sqlInsertRoute = `
-    INSERT INTO route (
-      user_id, 
-      date, 
-      starting_point, 
-      starting_point_short,
-      starting_lat,
-      starting_lng,
-      ending_point,
-      ending_point_short, 
-      ending_lat,
-      ending_lng,
-      level, 
-      distance,
-      is_verified, 
-      suitable_motorbike_type, 
-      estimated_time, 
-      max_participants,
-      route_description,
-      route_geometry, 
-      is_deleted
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
-  `;
+      INSERT INTO route (
+        user_id, 
+        date, 
+        starting_point_i18n,
+        starting_lat,
+        starting_lng,
+        ending_point_i18n,
+        ending_lat,
+        ending_lng,
+        level, 
+        distance,
+        is_verified, 
+        suitable_motorbike_type, 
+        estimated_time, 
+        max_participants,
+        route_description,
+        route_geometry, 
+        is_deleted
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+    `;
 
     const routeParams = [
       user_id,
       date,
-      starting_point,
-      starting_point_short ?? null,
+      startingPointI18nJson,
       Number(starting_lat),
       Number(starting_lng),
-      ending_point,
-      ending_point_short ?? null,
+      endingPointI18nJson,
       Number(ending_lat),
       Number(ending_lng),
       level,
@@ -287,91 +297,46 @@ class routesControllers {
                 // Release connection before long async work.
                 conn.release();
 
-                // Translation is best-effort and must NOT block route creation.
-                insertTranslation(routeId);
+                selectAndReturn(routeId);
               });
             });
           };
 
-          // IMPORTANT: inside selectAndReturn + insertTranslation use `connection` (pool),
-          // not `conn`, because we already released the transaction connection.
-          const insertTranslation = (routeId) => {
-            const sqlInsertTranslation = `
-          INSERT INTO route_translation (route_id, lang, starting_point, ending_point, route_description)
-          VALUES(?, ?, ?, ?, ?)
-        `;
-
-            connection.query(
-              sqlInsertTranslation,
-              [
-                routeId,
-                sourceLang,
-                starting_point,
-                ending_point,
-                route_description,
-              ],
-              async (errorTranslation) => {
-                if (errorTranslation) {
-                  console.error(
-                    "Failed to insert source translation for this route",
-                    routeId,
-                    errorTranslation
-                  );
-                  return selectAndReturn(routeId);
-                }
-
-                try {
-                  await translateAndSaveRouteLanguages(
-                    connection,
-                    routeId,
-                    sourceLang
-                  );
-                } catch (translationError) {
-                  console.error("Error translating", routeId, translationError);
-                }
-
-                return selectAndReturn(routeId);
-              }
-            );
-          };
-
           const selectAndReturn = (routeId) => {
             const sqlSelect = `
-              SELECT 
-                r.route_id, 
-                r.user_id, 
-                r.date, 
-                r.created_at,
-                r.starting_point,
-                r.starting_point_short, 
-                r.starting_lat,
-                r.starting_lng,
-                r.ending_point,
-                r.ending_point_short,
-                r.ending_lat,
-                r.ending_lng,
-                r.level, 
-                r.distance, 
-                r.is_verified, 
-                r.suitable_motorbike_type,
-                r.estimated_time, 
-                r.max_participants, 
-                r.route_description,
-                r.route_geometry, 
-                r.is_deleted,
-                u.name AS create_name,
-                u.img  AS user_img
-              FROM route r
-                LEFT JOIN user u ON r.user_id = u.user_id
-              WHERE r.route_id = ?
-            `;
+            SELECT 
+              r.route_id, 
+              r.user_id, 
+              r.date, 
+              r.created_at,
+              r.starting_point_i18n,
+              r.starting_lat,
+              r.starting_lng,
+              r.ending_point_i18n,
+              r.ending_lat,
+              r.ending_lng,
+              r.level, 
+              r.distance, 
+              r.is_verified, 
+              r.suitable_motorbike_type,
+              r.estimated_time, 
+              r.max_participants, 
+              r.route_description,
+              r.route_geometry, 
+              r.is_deleted,
+              u.name AS create_name,
+              u.img  AS user_img
+            FROM route r
+              LEFT JOIN user u ON r.user_id = u.user_id
+            WHERE r.route_id = ?
+          `;
 
             const sqlSelectWaypoints = `
-          SELECT position, label, lat, lng
-          FROM route_waypoint
-          WHERE route_id = ?
-          ORDER BY position ASC
-        `;
+              SELECT position, label, lat, lng
+              FROM route_waypoint
+              WHERE route_id = ?
+              ORDER BY position ASC
+            `;
 
             connection.query(sqlSelect, [routeId], (error2, result2) => {
               if (error2) {
@@ -382,6 +347,15 @@ class routesControllers {
               }
 
               const route = result2[0];
+              // Parse i18n JSON back to objects
+              try {
+                route.starting_point_i18n = JSON.parse(
+                  route.starting_point_i18n
+                );
+                route.ending_point_i18n = JSON.parse(route.ending_point_i18n);
+              } catch (parseErr) {
+                console.error("Error parsing i18n JSON:", parseErr);
+              }
 
               route.suitable_motorbike_type = (
                 route.suitable_motorbike_type || ""

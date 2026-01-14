@@ -24,16 +24,21 @@ import FiberNewOutlinedIcon from "@mui/icons-material/FiberNewOutlined";
 import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
 import { getRouteStatus } from "../../../../helpers/oneRouteUtils";
+import { getPointLabel } from "../../../../helpers/pointMetrics";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
+// Hooks & Providers
+import { useReverseGeocoding } from "../../../../hooks/useReverseGeocoding";
 
 export const RouteCard = ({
   route_id,
   user_id,
-  starting_point,
-  starting_point_short,
-  ending_point,
-  ending_point_short,
+  starting_point_i18n,
+  ending_point_i18n,
+  starting_lat,
+  starting_lng,
+  ending_lat,
+  ending_lng,
   date,
   level,
   distance,
@@ -51,8 +56,26 @@ export const RouteCard = ({
   lastRoutesVisit,
   enableNewBadge = false,
 }) => {
+  const { currentLang } = useReverseGeocoding();
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const navigate = useNavigate();
+
+  // Create point objects for utility function
+  const startingPoint = {
+    lat: starting_lat,
+    lng: starting_lng,
+    i18n: starting_point_i18n,
+  };
+
+  const endingPoint = {
+    lat: ending_lat,
+    lng: ending_lng,
+    i18n: ending_point_i18n,
+  };
+
+  // Get labels in current language
+  const startingLabel = getPointLabel(startingPoint, currentLang, "short");
+  const endingLabel = getPointLabel(endingPoint, currentLang, "short");
 
   // Decide if this route should be considered "new" based on created_at and lastRoutesVisit
   const isNew = (() => {
@@ -102,10 +125,12 @@ export const RouteCard = ({
     const url = generatePath(RoutesString.routeDetail, { id: route_id });
     navigate(url, {
       state: {
-        starting_point,
-        starting_point_short,
-        ending_point,
-        ending_point_short,
+        starting_point_i18n,
+        ending_point_i18n,
+        starting_lat,
+        starting_lng,
+        ending_lat,
+        ending_lng,
         date,
         level,
         distance,
@@ -158,11 +183,11 @@ export const RouteCard = ({
 
           <Stack direction="row" alignItems="center" spacing={1}>
             <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
-            <Typography>{starting_point_short ?? starting_point}</Typography>
+            <Typography>{startingLabel}</Typography>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1}>
             <FlagOutlinedIcon fontSize="medium" aria-hidden />
-            <Typography>{ending_point_short ?? ending_point}</Typography>
+            <Typography>{endingLabel}</Typography>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1}>
             <CalendarMonthIcon fontSize="medium" aria-hidden />
