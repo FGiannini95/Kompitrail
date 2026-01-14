@@ -25,11 +25,13 @@ import { ROUTES_URL } from "../../../../api";
 import { RoutesString } from "../../../../routes/routes";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
 import { getCurrentLang } from "../../../../helpers/oneRouteUtils";
+import { formatMinutesToHHMM } from "../../../../helpers/utils";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
 import { useRouteMetrics } from "../../../../hooks/useRouteMetrics";
+import { useReverseGeocoding } from "../../../../hooks/useReverseGeocoding";
 // Constants
 import {
   MOTORBIKE_TYPES,
@@ -42,7 +44,6 @@ import { FormTextfield } from "../../../../components/FormTextfield/FormTextfiel
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 import { RouteMapDialog } from "../../../../components/Dialogs/RouteMapDialog/RouteMapDialog";
-import { formatMinutesToHHMM } from "../../../../helpers/utils";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -62,7 +63,7 @@ export const RouteCreateDialog = () => {
   ]);
   const metricsEndpoint = `${ROUTES_URL}/metrics`;
   const isOpen = dialog.isOpen && dialog.mode === "create";
-
+  const { reverseGeocode, currentLang } = useReverseGeocoding();
   const { data: metrics, loading: isRecalculating } = useRouteMetrics({
     start: createOneRoute.starting_point,
     end: createOneRoute.ending_point,
@@ -104,7 +105,7 @@ export const RouteCreateDialog = () => {
     newFormData.append(
       "createRoute",
       JSON.stringify({
-        starting_point: createOneRoute.starting_point.label,
+        starting_point: createOneRoute.starting_point.fullLabel,
         starting_point_short: createOneRoute.starting_point.shortLabel,
         starting_lat: createOneRoute.starting_point.lat,
         starting_lng: createOneRoute.starting_point.lng,
@@ -139,10 +140,9 @@ export const RouteCreateDialog = () => {
 
   useEffect(() => {
     if (!isOpen) return;
-
     if (hasStart) return;
 
-    // Show the label immediately
+    // Show the Placeholder immediately
     setCreateOneRoute((prev) => ({
       ...prev,
       starting_point: {
@@ -154,11 +154,26 @@ export const RouteCreateDialog = () => {
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
         const { latitude, longitude } = pos.coords;
 
+        // If coords are already set, don't overwrite and avoid double runs
+        if (
+          createOneRoute.starting_point?.lat != null &&
+          createOneRoute.starting_point?.lng != null
+        ) {
+          return;
+        }
+
+        // Reverse geocode to get real full + short labels
+        const { fullLabel, shortLabel } = await reverseGeocode({
+          lat: latitude,
+          lng: longitude,
+          language: currentLang,
+        });
+
         setCreateOneRoute((prev) => {
-          // If coords are already set, don't overwrite
+          // Double-check inside setState too
           if (
             prev.starting_point?.lat != null &&
             prev.starting_point?.lng != null
@@ -170,7 +185,8 @@ export const RouteCreateDialog = () => {
             ...prev,
             starting_point: {
               ...prev.starting_point,
-              label: "Posición actual",
+              fullLabel,
+              shortLabel,
               lat: latitude,
               lng: longitude,
             },
@@ -184,7 +200,14 @@ export const RouteCreateDialog = () => {
         maximumAge: 60000,
       }
     );
-  }, [isOpen]);
+  }, [
+    isOpen,
+    hasStart,
+    reverseGeocode,
+    currentLang,
+    createOneRoute.starting_point?.lat,
+    createOneRoute.starting_point?.lng,
+  ]);
 
   useEffect(() => {
     if (!metrics) return;

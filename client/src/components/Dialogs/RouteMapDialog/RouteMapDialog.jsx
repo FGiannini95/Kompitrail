@@ -46,8 +46,11 @@ export const RouteMapDialog = ({
     if (initialSelected?.lat != null && initialSelected?.lng != null) {
       return {
         label: initialSelected.label || "",
+        shortLabel: initialSelected.shortLabel || "",
+        fullLabel: initialSelected.fullLabel || "",
         lat: Number(initialSelected.lat),
         lng: Number(initialSelected.lng),
+        lang: initialSelected.lang,
       };
     }
     return null;
@@ -88,6 +91,7 @@ export const RouteMapDialog = ({
 
           setSelected({
             label: fullLabel,
+            fullLabel,
             shortLabel,
             lat,
             lng,
@@ -131,6 +135,8 @@ export const RouteMapDialog = ({
 
       setSelected({
         label: initialSelected.label || "",
+        shortLabel: initialSelected.shortLabel || "",
+        fullLabel: initialSelected.fullLabel || "",
         lat,
         lng,
         lang: initialSelected.lang,
@@ -241,6 +247,7 @@ export const RouteMapDialog = ({
                   // Update the selection
                   setSelected({
                     label: fullLabel,
+                    fullLabel,
                     shortLabel,
                     lat,
                     lng,

@@ -31,7 +31,9 @@ export const RouteCard = ({
   route_id,
   user_id,
   starting_point,
+  starting_point_short,
   ending_point,
+  ending_point_short,
   date,
   level,
   distance,
@@ -101,7 +103,9 @@ export const RouteCard = ({
     navigate(url, {
       state: {
         starting_point,
+        starting_point_short,
         ending_point,
+        ending_point_short,
         date,
         level,
         distance,
@@ -154,11 +158,11 @@ export const RouteCard = ({
 
           <Stack direction="row" alignItems="center" spacing={1}>
             <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
-            <Typography>{starting_point}</Typography>
+            <Typography>{starting_point_short ?? starting_point}</Typography>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1}>
             <FlagOutlinedIcon fontSize="medium" aria-hidden />
-            <Typography>{ending_point}</Typography>
+            <Typography>{ending_point_short ?? ending_point}</Typography>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1}>
             <CalendarMonthIcon fontSize="medium" aria-hidden />

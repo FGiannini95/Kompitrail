@@ -94,7 +94,9 @@ export const OneRoute = () => {
   let {
     date,
     starting_point,
+    starting_point_short,
     ending_point,
+    ending_point_short,
     level,
     distance,
     suitable_motorbike_type,
