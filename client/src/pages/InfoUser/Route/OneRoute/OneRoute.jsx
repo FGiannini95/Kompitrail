@@ -3,7 +3,14 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
-import { Card, CardContent, Stack, Typography, Divider } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Stack,
+  Typography,
+  Divider,
+  Box,
+} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
@@ -14,11 +21,14 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 
 // Utils
 import {
   capitalizeFirstLetter,
   formatDateTime,
+  formatMinutesToHHMM,
 } from "../../../../helpers/utils";
 import {
   LOCALE_MAP,
@@ -27,6 +37,7 @@ import {
 } from "../../../../helpers/oneRouteUtils";
 import { openCalendar } from "../../../../helpers/calendar";
 import { ROUTES_URL } from "../../../../api";
+import { getPointLabel } from "../../../../helpers/pointMetrics";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useShareUrl } from "../../../../hooks/useShareUrl";
@@ -93,10 +104,12 @@ export const OneRoute = () => {
 
   let {
     date,
-    starting_point,
-    starting_point_short,
-    ending_point,
-    ending_point_short,
+    starting_point_i18n,
+    ending_point_i18n,
+    starting_lat,
+    starting_lng,
+    ending_lat,
+    ending_lng,
     level,
     distance,
     suitable_motorbike_type,
@@ -114,6 +127,25 @@ export const OneRoute = () => {
   if (isOwner == null) {
     isOwner = currentUser?.user_id === user_id;
   }
+
+  // Create point objects
+  const startingPoint = {
+    lat: starting_lat,
+    lng: starting_lng,
+    i18n: starting_point_i18n,
+  };
+
+  const endingPoint = {
+    lat: ending_lat,
+    lng: ending_lng,
+    i18n: ending_point_i18n,
+  };
+
+  // Get labels in current language
+  const startingLabelFull = getPointLabel(startingPoint, currentLang, "full");
+  const startingLabelShort = getPointLabel(startingPoint, currentLang, "short");
+  const endingLabelFull = getPointLabel(endingPoint, currentLang, "full");
+  const endingLabelShort = getPointLabel(endingPoint, currentLang, "short");
 
   const { isPastRoute, isEnrollmentClosed, isRouteLocked } = getRouteStatus(
     date,
@@ -138,8 +170,8 @@ export const OneRoute = () => {
   const handleOpenCalendar = !isRouteLocked
     ? () =>
         openCalendar({
-          starting_point,
-          ending_point,
+          startingLabelShort,
+          endingLabelShort,
           dateISO: date,
           estimated_time,
         })
@@ -194,7 +226,7 @@ export const OneRoute = () => {
             />
             <InfoItem
               label={t("oneRoute:info.estimatedTimeLable")}
-              value={`${estimated_time} h`}
+              value={formatMinutesToHHMM(estimated_time)} //
             />
             <InfoItem
               label={t("oneRoute:info.levelLabel")}
@@ -282,7 +314,7 @@ export const OneRoute = () => {
               : () => {
                   navigate(`/chat/${route_id}`, {
                     state: {
-                      title: `${starting_point} - ${ending_point}`,
+                      title: `${startingLabelShort} - ${endingLabelShort}`,
                     },
                   });
                 }
@@ -301,7 +333,47 @@ export const OneRoute = () => {
         })}
       >
         <CardContent sx={{ padding: 3 }}>
-          <Typography>Aqui va en enlace para maps</Typography>
+          {/* Map Preview  */}
+          <Box
+            sx={{
+              width: "100%",
+              height: 300,
+              bgcolor: "grey.200",
+              borderRadius: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              Mappa preview - Coming soon
+            </Typography>
+          </Box>
+          <Divider sx={{ my: 2 }} />
+
+          {/* Route points */}
+          <Stack spacing={2} sx={{ mb: 2 }}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <LocationOnOutlinedIcon
+                fontSize="medium"
+                aria-hidden
+                sx={{ color: "green" }}
+              />
+              <Typography variant="body1" color="text.primary">
+                {startingLabelFull}
+              </Typography>
+            </Stack>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <FlagOutlinedIcon
+                fontSize="medium"
+                aria-hidden
+                sx={{ color: "red" }}
+              />
+              <Typography variant="body1" color="text.primary">
+                {endingLabelFull}
+              </Typography>
+            </Stack>
+          </Stack>
         </CardContent>
       </Card>
 
