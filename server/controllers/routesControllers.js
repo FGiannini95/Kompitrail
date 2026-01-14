@@ -8,10 +8,10 @@ const Contract = require(path.resolve(
 ));
 const { EVENTS } = Contract;
 const translateAndSaveRouteLanguages = require("../utils/translateAndSaveRouteLanguages");
-const axios = require("axios");
+const getOrsRouteGeojson = require("../utils/orsRoute");
 
 class routesControllers {
-  createRoute = (req, res) => {
+  createRoute = async (req, res) => {
     const {
       user_id,
       starting_point,
@@ -22,9 +22,7 @@ class routesControllers {
       ending_lng,
       date,
       level,
-      distance,
       suitable_motorbike_type,
-      estimated_time,
       max_participants,
       route_description,
       is_verified,
@@ -136,8 +134,33 @@ class routesControllers {
       ? suitable_motorbike_type.filter((v) => v && v.trim() !== "").join(",")
       : suitable_motorbike_type;
 
-    // Phase 1: routing geometry not computed yet (placeholder)
-    const routeGeometry = "";
+    // NOTE: for now we pass NO waypoints to ORS.
+    let routeGeometry;
+    let computedDistance;
+    let computedEstimatedTime;
+
+    try {
+      const start = { lat: Number(starting_lat), lng: Number(starting_lng) };
+      const end = { lat: Number(ending_lat), lng: Number(ending_lng) };
+
+      const orsResult = await getOrsRouteGeojson(start, end);
+
+      routeGeometry = JSON.stringify(orsResult.geometry);
+      computedDistance = Math.round(orsResult.distanceKm);
+      computedEstimatedTime = orsResult.durationMinutes;
+    } catch (err) {
+      const status = err.status || err.response?.status || 500;
+
+      console.error("createRoute ORS error:", {
+        message: err.message,
+        code: err.code,
+        status,
+      });
+
+      return res.status(status).json({
+        error: err.message || "Error al calcular la ruta",
+      });
+    }
 
     const sqlInsertRoute = `
     INSERT INTO route (
@@ -166,16 +189,16 @@ class routesControllers {
       user_id,
       date,
       starting_point,
-      starting_lat,
-      starting_lng,
+      Number(starting_lat),
+      Number(starting_lng),
       ending_point,
-      ending_lat,
-      ending_lng,
+      Number(ending_lat),
+      Number(ending_lng),
       level,
-      distance,
+      computedDistance,
       is_verified || 0,
       motorbikeTypes,
-      estimated_time,
+      computedEstimatedTime,
       max_participants,
       route_description,
       routeGeometry,
@@ -993,98 +1016,23 @@ class routesControllers {
     try {
       const { start, end } = req.body;
 
-      // Validate input
-      if (
-        !start ||
-        !end ||
-        typeof start.lat !== "number" ||
-        typeof start.lng !== "number" ||
-        typeof end.lat !== "number" ||
-        typeof end.lng !== "number"
-      ) {
-        return res.status(400).json({
-          error: "Coordinadas incorrectas",
-        });
-      }
+      const orsResult = await getOrsRouteGeojson(start, end);
 
-      const apiKey = process.env.ORS_API_KEY;
-      if (!apiKey) {
-        return res.status(500).json({ error: "ORS Api key ausente" });
-      }
-
-      // ORS expects [lng, lat]
-      const coordinates = [
-        [start.lng, start.lat],
-        [end.lng, end.lat],
-      ];
-
-      const orsBody = {
-        coordinates,
-        preference: "recommended",
-        options: {
-          avoid_features: ["ferries", "steps", "fords"],
-        },
-        extra_info: ["surface", "waytype"],
-      };
-
-      const profile = "cycling-mountain";
-      const response = await axios.post(
-        `https://api.openrouteservice.org/v2/directions/${profile}/geojson`,
-        orsBody,
-        {
-          headers: {
-            Authorization: apiKey,
-            "Content-Type": "application/json",
-          },
-          timeout: 10000,
-        }
-      );
-
-      const feature = response.data?.features?.[0];
-      if (!feature) {
-        return res.status(500).json({ error: "Ruta no encontrada" });
-      }
-
-      const summary = feature.properties?.summary;
-      if (!summary) {
-        return res.status(500).json({ error: "Ruta no encontrada" });
-      }
-
-      // Convert units
-      const distanceKm = Number((summary.distance / 1000).toFixed(2));
-      const durationMinutes = Math.round(summary.duration / 60);
-
-      const debug = {
-        profile,
-        preference: orsBody.preference,
-        avoid_features: orsBody.options?.avoid_features,
-      };
-
-      return res.json({ distanceKm, durationMinutes, debug });
+      return res.json({
+        distanceKm: orsResult.distanceKm,
+        durationMinutes: orsResult.durationMinutes,
+      });
     } catch (err) {
-      const status = err.response?.status;
-      const orsData = err.response?.data;
-
-      // Network/timeout info
-      const code = err.code;
+      const status = err.status || err.response?.status || 500;
 
       console.error("calculateMetrics error:", {
         message: err.message,
-        code,
+        code: err.code,
         status,
-        ors: orsData,
       });
 
-      // If ORS replied with a 4xx/5xx, forward it so we can see it in the frontend too
-      if (status) {
-        return res.status(status).json({
-          error: "ORS routing error",
-          details: orsData,
-        });
-      }
-
-      return res.status(500).json({
-        error: "Error al calcular la ruta",
+      return res.status(status).json({
+        error: err.message || "Error al calcular la ruta",
       });
     }
   };
