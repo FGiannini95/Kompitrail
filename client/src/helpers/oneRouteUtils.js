@@ -39,3 +39,33 @@ export const getRouteStatus = (date, estimated_time) => {
 
   return { isPastRoute, isEnrollmentClosed, isRouteLocked, routeEnd };
 };
+
+// Resolve Mapbox reverse geocoding for multiple languages in parallel.
+// Returns an object like: { es: { full: "...", short: "..." }, it: { ... }, en: { ... } }
+
+export async function reverseGeocodeI18n({
+  reverseGeocode,
+  lat,
+  lng,
+  languages,
+}) {
+  const results = await Promise.all(
+    languages.map(async (lang) => {
+      const { fullLabel, shortLabel } = await reverseGeocode({
+        lat,
+        lng,
+        language: lang,
+      });
+
+      return [
+        lang,
+        {
+          full: fullLabel,
+          short: shortLabel,
+        },
+      ];
+    })
+  );
+
+  return Object.fromEntries(results);
+}

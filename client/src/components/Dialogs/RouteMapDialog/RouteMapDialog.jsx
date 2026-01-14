@@ -16,6 +16,7 @@ import {
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import MyLocationOutlinedIcon from "@mui/icons-material/MyLocationOutlined";
 
+import { reverseGeocodeI18n } from "../../../helpers/oneRouteUtils";
 // Hooks & Providers
 import { useReverseGeocoding } from "../../../hooks/useReverseGeocoding";
 import { useLocalizedPointLabel } from "../../../hooks/useLocalizedPointLabel";
@@ -237,6 +238,17 @@ export const RouteMapDialog = ({
                     lng,
                   });
 
+                  const languages = ["es", "it", "en"];
+                  const i18n = await reverseGeocodeI18n({
+                    reverseGeocode,
+                    lat,
+                    lng,
+                    languages,
+                  });
+
+                  // Keep label in current language for UI
+                  const current = i18n[currentLang] || i18n.es;
+
                   // Resolve a readable name from Mapbox
                   const { fullLabel, shortLabel } = await reverseGeocode({
                     lat,
@@ -246,12 +258,13 @@ export const RouteMapDialog = ({
 
                   // Update the selection
                   setSelected({
-                    label: fullLabel,
+                    label: current?.full || "Zona desconocida",
                     fullLabel,
                     shortLabel,
                     lat,
                     lng,
                     lang: currentLang,
+                    i18n,
                   });
                 }}
               >
