@@ -146,7 +146,7 @@ class routesControllers {
       const orsResult = await getOrsRouteGeojson(start, end);
 
       routeGeometry = JSON.stringify(orsResult.geometry);
-      computedDistance = Math.round(orsResult.distanceKm);
+      computedDistance = orsResult.distanceKm;
       computedEstimatedTime = orsResult.durationMinutes;
     } catch (err) {
       const status = err.status || err.response?.status || 500;
@@ -204,130 +204,133 @@ class routesControllers {
       routeGeometry,
     ];
 
-    // TRANSACTION: route + waypoints + chat_room
-    connection.beginTransaction((txErr) => {
-      if (txErr) {
-        return res.status(500).json({ error: txErr });
+    connection.getConnection((getConnErr, conn) => {
+      if (getConnErr) {
+        return res.status(500).json({ error: getConnErr });
       }
 
-      // Insert route
-      connection.query(sqlInsertRoute, routeParams, (error, result) => {
-        if (error) {
-          // Rollback: route insert failed
-          return connection.rollback(() => {
-            return res.status(500).json({ error });
-          });
+      conn.beginTransaction((txErr) => {
+        if (txErr) {
+          conn.release();
+          return res.status(500).json({ error: txErr });
         }
 
-        const routeId = result.insertId;
+        // Insert route
+        conn.query(sqlInsertRoute, routeParams, (error, result) => {
+          if (error) {
+            return conn.rollback(() => {
+              conn.release();
+              return res.status(500).json({ error });
+            });
+          }
 
-        // Insert waypoints
-        const insertWaypoints = () => {
-          // If there are no waypoints, skip directly to chat_room (still core).
-          if (!waypoints.length) return createChatRoom();
+          const routeId = result.insertId;
 
-          const sqlInsertWaypoints = `
-            INSERT INTO route_waypoint (route_id, position, label, lat, lng) VALUES ?
-          `;
+          const insertWaypoints = () => {
+            if (!waypoints.length) return createChatRoom();
 
-          const ordered = [...waypoints].sort(
-            (a, b) => Number(a.position) - Number(b.position)
-          );
+            const sqlInsertWaypoints = `
+              INSERT INTO route_waypoint (route_id, position, label, lat, lng) VALUES ?
+            `;
 
-          const values = ordered.map((w) => [
-            routeId,
-            Number(w.position),
-            w.label,
-            w.lat,
-            w.lng,
-          ]);
+            const ordered = [...waypoints].sort(
+              (a, b) => Number(a.position) - Number(b.position)
+            );
 
-          connection.query(sqlInsertWaypoints, [values], (wpErr) => {
-            if (wpErr) {
-              // Rollback: waypoint insert failed
-              return connection.rollback(() => {
-                return res.status(500).json({ error: wpErr });
-              });
-            }
+            const values = ordered.map((w) => [
+              routeId,
+              Number(w.position),
+              w.label,
+              w.lat,
+              w.lng,
+            ]);
 
-            createChatRoom();
-          });
-        };
-
-        // Create also a chat_room, 1:1 with route
-        const createChatRoom = () => {
-          const sqlInsertChatRoom = `
-          INSERT INTO chat_room (route_id, is_locked) VALUES (?, 0)
-        `;
-
-          connection.query(sqlInsertChatRoom, [routeId], (errorChat) => {
-            if (errorChat) {
-              // Rollback: chat_room is core data (we want consistency)
-              return connection.rollback(() => {
-                return res.status(500).json({ error: errorChat });
-              });
-            }
-
-            // Commit core data
-            connection.commit((commitErr) => {
-              if (commitErr) {
-                return connection.rollback(() => {
-                  return res.status(500).json({ error: commitErr });
+            conn.query(sqlInsertWaypoints, [values], (wpErr) => {
+              if (wpErr) {
+                return conn.rollback(() => {
+                  conn.release();
+                  return res.status(500).json({ error: wpErr });
                 });
               }
 
-              // Translation is best-effort and must NOT block route creation.
-              insertTranslation(routeId);
+              createChatRoom();
             });
-          });
-        };
+          };
 
-        // Insert translation
-        const insertTranslation = (routeId) => {
-          // Translate the fields of this route
-          const sqlInsertTranslation = `
+          const createChatRoom = () => {
+            const sqlInsertChatRoom = `
+          INSERT INTO chat_room (route_id, is_locked) VALUES (?, 0)
+        `;
+
+            conn.query(sqlInsertChatRoom, [routeId], (errorChat) => {
+              if (errorChat) {
+                return conn.rollback(() => {
+                  conn.release();
+                  return res.status(500).json({ error: errorChat });
+                });
+              }
+
+              conn.commit((commitErr) => {
+                if (commitErr) {
+                  return conn.rollback(() => {
+                    conn.release();
+                    return res.status(500).json({ error: commitErr });
+                  });
+                }
+
+                // ✅ Core data committed. Release connection before long async work.
+                conn.release();
+
+                // Translation is best-effort and must NOT block route creation.
+                insertTranslation(routeId);
+              });
+            });
+          };
+
+          // IMPORTANT: inside selectAndReturn + insertTranslation use `connection` (pool),
+          // not `conn`, because we already released the transaction connection.
+          const insertTranslation = (routeId) => {
+            const sqlInsertTranslation = `
           INSERT INTO route_translation (route_id, lang, starting_point, ending_point, route_description)
           VALUES(?, ?, ?, ?, ?)
         `;
 
-          connection.query(
-            sqlInsertTranslation,
-            [
-              routeId,
-              sourceLang,
-              starting_point,
-              ending_point,
-              route_description,
-            ],
-            async (errorTranslation) => {
-              if (errorTranslation) {
-                // Log and continue
-                console.error(
-                  "Failed to insert source translation for this route",
-                  routeId,
-                  errorTranslation
-                );
+            connection.query(
+              sqlInsertTranslation,
+              [
+                routeId,
+                sourceLang,
+                starting_point,
+                ending_point,
+                route_description,
+              ],
+              async (errorTranslation) => {
+                if (errorTranslation) {
+                  console.error(
+                    "Failed to insert source translation for this route",
+                    routeId,
+                    errorTranslation
+                  );
+                  return selectAndReturn(routeId);
+                }
+
+                try {
+                  await translateAndSaveRouteLanguages(
+                    connection,
+                    routeId,
+                    sourceLang
+                  );
+                } catch (translationError) {
+                  console.error("Error translating", routeId, translationError);
+                }
+
                 return selectAndReturn(routeId);
               }
+            );
+          };
 
-              try {
-                await translateAndSaveRouteLanguages(
-                  connection,
-                  routeId,
-                  sourceLang
-                );
-              } catch (translationError) {
-                console.error("Error translating", routeId, translationError);
-              }
-
-              return selectAndReturn(routeId);
-            }
-          );
-        };
-
-        // Return the freshly created route with its waypoints
-        const selectAndReturn = (routeId) => {
-          const sqlSelect = `
+          const selectAndReturn = (routeId) => {
+            const sqlSelect = `
           SELECT 
             r.route_id, 
             r.user_id, 
@@ -355,44 +358,46 @@ class routesControllers {
           WHERE r.route_id = ?
         `;
 
-          // Select waypoints for this route
-          const sqlSelectWaypoints = `
-            SELECT position, label, lat, lng
-            FROM route_waypoint
-            WHERE route_id = ?
-              ORDER BY position ASC
-          `;
+            const sqlSelectWaypoints = `
+          SELECT position, label, lat, lng
+          FROM route_waypoint
+          WHERE route_id = ?
+          ORDER BY position ASC
+        `;
 
-          connection.query(sqlSelect, [routeId], (error2, result2) => {
-            if (error2) {
-              return res.status(500).json({ error: error2 });
-            }
-            if (!result2 || result2.length === 0) {
-              return res.status(404).json({ error: "Ruta no encontrada" });
-            }
-
-            const route = result2[0];
-
-            // Return motorbike types as array to match FE expectations
-            route.suitable_motorbike_type = (
-              route.suitable_motorbike_type || ""
-            )
-              .split(",")
-              .filter(Boolean);
-
-            // Fetch waypoints and attach them to the response
-            connection.query(sqlSelectWaypoints, [routeId], (wpErr, wpRows) => {
-              if (wpErr) {
-                return res.status(500).json({ error: wpErr });
+            connection.query(sqlSelect, [routeId], (error2, result2) => {
+              if (error2) {
+                return res.status(500).json({ error: error2 });
+              }
+              if (!result2 || result2.length === 0) {
+                return res.status(404).json({ error: "Ruta no encontrada" });
               }
 
-              route.waypoints = wpRows || [];
-              return res.status(200).json(route);
-            });
-          });
-        };
+              const route = result2[0];
 
-        insertWaypoints();
+              route.suitable_motorbike_type = (
+                route.suitable_motorbike_type || ""
+              )
+                .split(",")
+                .filter(Boolean);
+
+              connection.query(
+                sqlSelectWaypoints,
+                [routeId],
+                (wpErr, wpRows) => {
+                  if (wpErr) {
+                    return res.status(500).json({ error: wpErr });
+                  }
+
+                  route.waypoints = wpRows || [];
+                  return res.status(200).json(route);
+                }
+              );
+            });
+          };
+
+          insertWaypoints();
+        });
       });
     });
   };
