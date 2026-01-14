@@ -105,9 +105,11 @@ export const RouteCreateDialog = () => {
       "createRoute",
       JSON.stringify({
         starting_point: createOneRoute.starting_point.label,
+        starting_point_short: createOneRoute.starting_point.shortLabel,
         starting_lat: createOneRoute.starting_point.lat,
         starting_lng: createOneRoute.starting_point.lng,
         ending_point: createOneRoute.ending_point.label,
+        ending_point_short: createOneRoute.ending_point.shortLabel,
         ending_lat: createOneRoute.ending_point.lat,
         ending_lng: createOneRoute.ending_point.lng,
         date: createOneRoute.date,

@@ -15,9 +15,11 @@ class routesControllers {
     const {
       user_id,
       starting_point,
+      starting_point_short,
       starting_lat,
       starting_lng,
       ending_point,
+      ending_point_short,
       ending_lat,
       ending_lng,
       date,
@@ -167,9 +169,11 @@ class routesControllers {
       user_id, 
       date, 
       starting_point, 
+      starting_point_short,
       starting_lat,
       starting_lng,
-      ending_point, 
+      ending_point,
+      ending_point_short, 
       ending_lat,
       ending_lng,
       level, 
@@ -182,16 +186,18 @@ class routesControllers {
       route_geometry, 
       is_deleted
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
   `;
 
     const routeParams = [
       user_id,
       date,
       starting_point,
+      starting_point_short ?? null,
       Number(starting_lat),
       Number(starting_lng),
       ending_point,
+      ending_point_short ?? null,
       Number(ending_lat),
       Number(ending_lng),
       level,
@@ -278,7 +284,7 @@ class routesControllers {
                   });
                 }
 
-                // ✅ Core data committed. Release connection before long async work.
+                // Release connection before long async work.
                 conn.release();
 
                 // Translation is best-effort and must NOT block route creation.
@@ -331,32 +337,34 @@ class routesControllers {
 
           const selectAndReturn = (routeId) => {
             const sqlSelect = `
-          SELECT 
-            r.route_id, 
-            r.user_id, 
-            r.date, 
-            r.created_at,
-            r.starting_point, 
-            r.starting_lat,
-            r.starting_lng,
-            r.ending_point,
-            r.ending_lat,
-            r.ending_lng,
-            r.level, 
-            r.distance, 
-            r.is_verified, 
-            r.suitable_motorbike_type,
-            r.estimated_time, 
-            r.max_participants, 
-            r.route_description,
-            r.route_geometry, 
-            r.is_deleted,
-            u.name AS create_name,
-            u.img  AS user_img
-          FROM route r
-            LEFT JOIN user u ON r.user_id = u.user_id
-          WHERE r.route_id = ?
-        `;
+              SELECT 
+                r.route_id, 
+                r.user_id, 
+                r.date, 
+                r.created_at,
+                r.starting_point,
+                r.starting_point_short, 
+                r.starting_lat,
+                r.starting_lng,
+                r.ending_point,
+                r.ending_point_short,
+                r.ending_lat,
+                r.ending_lng,
+                r.level, 
+                r.distance, 
+                r.is_verified, 
+                r.suitable_motorbike_type,
+                r.estimated_time, 
+                r.max_participants, 
+                r.route_description,
+                r.route_geometry, 
+                r.is_deleted,
+                u.name AS create_name,
+                u.img  AS user_img
+              FROM route r
+                LEFT JOIN user u ON r.user_id = u.user_id
+              WHERE r.route_id = ?
+            `;
 
             const sqlSelectWaypoints = `
           SELECT position, label, lat, lng
