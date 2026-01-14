@@ -78,6 +78,8 @@ export const RouteCreateDialog = () => {
   const hasEnd =
     createOneRoute?.ending_point?.lat != null &&
     createOneRoute?.ending_point?.lng != null;
+  const hasMetrics =
+    metrics?.distanceKm != null && metrics?.durationMinutes != null;
   const waypointCount = createOneRoute?.waypoints?.length || 0;
 
   const cleanDialog = () => {
@@ -259,7 +261,7 @@ export const RouteCreateDialog = () => {
               />
             </Grid>
 
-            {hasStart && hasEnd && (
+            {hasStart && hasEnd && hasMetrics && (
               <>
                 <Grid size={6}>
                   <FormTextfield

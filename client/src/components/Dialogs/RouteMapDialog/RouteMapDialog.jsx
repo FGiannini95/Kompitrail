@@ -232,7 +232,7 @@ export const RouteMapDialog = ({
                   });
 
                   // Resolve a readable name from Mapbox
-                  const label = await reverseGeocode({
+                  const { fullLabel, shortLabel } = await reverseGeocode({
                     lat,
                     lng,
                     language: currentLang,
@@ -240,7 +240,8 @@ export const RouteMapDialog = ({
 
                   // Update the selection
                   setSelected({
-                    label,
+                    label: fullLabel,
+                    shortLabel,
                     lat,
                     lng,
                     lang: currentLang,
