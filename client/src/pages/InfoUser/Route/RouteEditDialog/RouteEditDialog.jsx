@@ -19,7 +19,10 @@ import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
 // Utils
 import { ROUTES_URL } from "../../../../api";
 import { validateRouteForm } from "../../../../helpers/validateRouteForm";
-import { toMySQLDateTime } from "../../../../helpers/utils";
+import {
+  formatMinutesToHHMM,
+  toMySQLDateTime,
+} from "../../../../helpers/utils";
 import { getCurrentLang } from "../../../../helpers/oneRouteUtils";
 import { getPointLabel } from "../../../../helpers/pointMetrics";
 // Providers & Hooks
@@ -231,7 +234,8 @@ export const RouteEditDialog = () => {
               <FormTextfield
                 label={t("forms:estimatedTimeLable")}
                 name="estimated_time"
-                type="number"
+                type="text"
+                value={formatMinutesToHHMM(editRoute.estimated_time)}
                 errors={errors}
                 setErrors={setErrors}
                 form={editRoute}
