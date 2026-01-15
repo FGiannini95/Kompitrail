@@ -28,6 +28,7 @@ import { getPointLabel } from "../../../../helpers/pointMetrics";
 // Providers & Hooks
 import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
+import { useRouteMetrics } from "../../../../hooks/useRouteMetrics";
 // Constants
 import {
   MOTORBIKE_TYPES,
@@ -46,6 +47,8 @@ export const RouteEditDialog = () => {
   const [errors, setErrors] = useState({});
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [mapTarget, setMapTarget] = useState(null); // "start" or "end"
+
+  const metricsEndpoint = `${ROUTES_URL}/metrics`;
 
   const { showSnackbar } = useSnackbar();
   const { editRoute: updateRoute, dialog, closeDialog } = useRoutes();
@@ -87,6 +90,35 @@ export const RouteEditDialog = () => {
     currentLang,
     "full"
   );
+
+  const { data: routeMetrics } = useRouteMetrics({
+    start: {
+      lat: Number(editRoute.starting_lat),
+      lng: Number(editRoute.starting_lng),
+    },
+    end: {
+      lat: Number(editRoute.ending_lat),
+      lng: Number(editRoute.ending_lng),
+    },
+    enabled: Boolean(
+      editRoute.starting_lat &&
+        editRoute.starting_lng &&
+        editRoute.ending_lat &&
+        editRoute.ending_lng
+    ),
+    debounceMs: 600,
+    endpointUrl: metricsEndpoint,
+  });
+
+  useEffect(() => {
+    if (routeMetrics) {
+      setEditRoute((prev) => ({
+        ...prev,
+        distance: routeMetrics.distanceKm,
+        estimated_time: routeMetrics.durationMinutes,
+      }));
+    }
+  }, [routeMetrics]);
 
   // Load route data when dialog opens
   useEffect(() => {
@@ -224,6 +256,8 @@ export const RouteEditDialog = () => {
                 name="distance"
                 type="number"
                 preventInvalidkey
+                readOnly
+                clearable={false}
                 errors={errors}
                 setErrors={setErrors}
                 form={editRoute}
@@ -235,6 +269,8 @@ export const RouteEditDialog = () => {
                 label={t("forms:estimatedTimeLable")}
                 name="estimated_time"
                 type="text"
+                readOnly
+                clearable={false}
                 value={formatMinutesToHHMM(editRoute.estimated_time)}
                 errors={errors}
                 setErrors={setErrors}
@@ -353,21 +389,25 @@ export const RouteEditDialog = () => {
           setMapTarget(null);
         }}
         onConfirm={(point) => {
-          if (mapTarget === "start") {
-            setEditRoute((prev) => ({
-              ...prev,
-              starting_lat: point.lat,
-              starting_lng: point.lng,
-              starting_point_i18n: point.i18n,
-            }));
-          } else if (mapTarget === "end") {
-            setEditRoute((prev) => ({
-              ...prev,
-              ending_lat: point.lat,
-              ending_lng: point.lng,
-              ending_point_i18n: point.i18n,
-            }));
-          }
+          setEditRoute((prev) => {
+            if (mapTarget === "start") {
+              return {
+                ...prev,
+                starting_lat: point.lat,
+                starting_lng: point.lng,
+                starting_point_i18n: point.i18n,
+              };
+            }
+            if (mapTarget === "end") {
+              return {
+                ...prev,
+                ending_lat: point.lat,
+                ending_lng: point.lng,
+                ending_point_i18n: point.i18n,
+              };
+            }
+            return prev;
+          });
 
           setIsMapOpen(false);
           setMapTarget(null);
