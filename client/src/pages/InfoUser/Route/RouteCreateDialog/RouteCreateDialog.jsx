@@ -51,9 +51,7 @@ export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
   const [errors, setErrors] = useState({});
   const [isMapOpen, setIsMapOpen] = useState(false);
-
-  // Which field is currently selecting a location on the map.
-  const [mapTarget, setMapTarget] = useState(null);
+  const [mapTarget, setMapTarget] = useState(null); // "start" or "end"
 
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();

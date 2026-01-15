@@ -1,4 +1,5 @@
 export const ROUTE_INITIAL_VALUE = {
+  // Create
   starting_point: {
     lat: null,
     lng: null,
@@ -9,6 +10,16 @@ export const ROUTE_INITIAL_VALUE = {
     lng: null,
     i18n: null,
   },
+
+  // Edit
+  starting_point_i18n: null,
+  starting_lat: null,
+  starting_lng: null,
+  ending_point_i18n: null,
+  ending_lat: null,
+  ending_lng: null,
+  route_geometry: null,
+
   waypoints: [],
   date: "",
   level: "",

@@ -485,8 +485,12 @@ class routesControllers {
 
   editRoute = (req, res) => {
     const {
-      starting_point,
-      ending_point,
+      starting_point_i18n,
+      ending_point_i18n,
+      starting_lat,
+      starting_lng,
+      ending_lat,
+      ending_lng,
       date,
       level,
       distance,
@@ -499,30 +503,47 @@ class routesControllers {
     } = JSON.parse(req.body.editRoute);
 
     const { id: route_id } = req.params;
-    const sourceLang = language || "es";
 
-    let sqlUpdateRoute = `UPDATE route SET 
-      starting_point = ?, 
-      ending_point = ?, 
-      date = ?, 
-      level = ?,  
-      distance = ?,  
-      is_verified= ?, 
-      suitable_motorbike_type= ?,  
-      estimated_time= ?, 
-      max_participants= ?, 
-      route_description= ?
+    // Parse suitable_motorbike_type if it's array
+    const motorbikeTypes = Array.isArray(suitable_motorbike_type)
+      ? suitable_motorbike_type.join(",")
+      : suitable_motorbike_type;
+
+    // Stringify i18n objects
+    const startingPointI18nJson = JSON.stringify(starting_point_i18n);
+    const endingPointI18nJson = JSON.stringify(ending_point_i18n);
+
+    let sqlUpdateRoute = `
+      UPDATE route SET 
+        starting_point_i18n = ?,
+        starting_lat = ?,
+        starting_lng = ?,
+        ending_point_i18n = ?,
+        ending_lat = ?,
+        ending_lng = ?,
+        date = ?, 
+        level = ?,  
+        distance = ?,  
+        is_verified = ?, 
+        suitable_motorbike_type = ?,  
+        estimated_time = ?, 
+        max_participants = ?, 
+        route_description = ?
       WHERE route_id = ? AND is_deleted = 0
     `;
 
     const routeParams = [
-      starting_point,
-      ending_point,
+      startingPointI18nJson,
+      starting_lat,
+      starting_lng,
+      endingPointI18nJson,
+      ending_lat,
+      ending_lng,
       date,
       level,
       distance,
       is_verified,
-      suitable_motorbike_type,
+      motorbikeTypes,
       estimated_time,
       max_participants,
       route_description,
@@ -534,61 +555,7 @@ class routesControllers {
         return res.status(400).json({ err });
       }
 
-      // Upsert the translation for the edited language
-      const sqlUpsertTranslation = `
-      INSERT INTO route_translation (
-        route_id, lang, starting_point, ending_point, route_description
-      )
-      VALUES (?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE
-        starting_point   = VALUES(starting_point),
-        ending_point     = VALUES(ending_point),
-        route_description = VALUES(route_description)
-    `;
-
-      const translationParams = [
-        route_id,
-        sourceLang,
-        starting_point,
-        ending_point,
-        route_description,
-      ];
-
-      connection.query(
-        sqlUpsertTranslation,
-        translationParams,
-        async (errorTranslation) => {
-          if (errorTranslation) {
-            console.error(
-              "Failed to upsert route translation for edit",
-              route_id,
-              errorTranslation
-            );
-            return res.status(200).json({
-              message:
-                "Ruta modificada, pero hubo un error en las traducciones.",
-              result,
-            });
-          }
-
-          // Re-translate to the other languages, based on the edited source language
-          try {
-            await translateAndSaveRouteLanguages(
-              connection,
-              route_id,
-              sourceLang
-            );
-          } catch (translationError) {
-            console.error(
-              "Error translating after edit",
-              route_id,
-              translationError
-            );
-          }
-
-          return res.status(200).json({ message: "Ruta modificada", result });
-        }
-      );
+      return res.status(200).json({ message: "Ruta modificada", result });
     });
   };
 
