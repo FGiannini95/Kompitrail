@@ -386,24 +386,20 @@ class routesControllers {
 
   showAllRoutesOneUser = (req, res) => {
     const { id: user_id } = req.params;
-    const lang = req.query.lang || "es";
 
     const sql = `
-    SELECT
-      r.*,
-      COALESCE(rt.starting_point, r.starting_point) AS starting_point,
-      COALESCE(rt.ending_point,   r.ending_point)   AS ending_point,
-      u.name AS create_name, 
-      u.lastname AS create_lastname,
-      u.img AS user_img 
-    FROM route r
-    LEFT JOIN route_translation rt
-      ON rt.route_id = r.route_id AND rt.lang = ?
-    LEFT JOIN \`user\` u ON u.user_id = r.user_id
-    WHERE r.user_id = ? AND r.is_deleted = 0 AND r.date >= NOW()
-    ORDER BY r.route_id DESC
-  `;
-    connection.query(sql, [lang, user_id], (error, result) => {
+      SELECT
+        r.*,
+        u.name AS create_name, 
+        u.lastname AS create_lastname,
+        u.img AS user_img 
+      FROM route r
+      LEFT JOIN \`user\` u ON u.user_id = r.user_id
+      WHERE r.user_id = ? AND r.is_deleted = 0 AND r.date >= NOW()
+      ORDER BY r.route_id DESC
+    `;
+
+    connection.query(sql, [user_id], (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
   };
@@ -435,6 +431,7 @@ class routesControllers {
       GROUP BY route.route_id
       ORDER BY route.route_id DESC
     `;
+
     connection.query(sql, (error, rows) => {
       if (error) return res.status(500).json({ error });
 

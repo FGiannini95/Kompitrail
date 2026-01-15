@@ -346,7 +346,7 @@ export const OneRoute = () => {
             endPoint={endingPoint}
           />
           <Divider sx={{ my: 2 }} />
-          <Stack spacing={2} sx={{ mb: 2 }}>
+          <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
               <Typography color="text.primary" variant="body2">

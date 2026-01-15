@@ -42,7 +42,7 @@ export const MyRoute = () => {
 
   useEffect(() => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
-    loadUserRoutes(user_id, { language: currentLang });
+    loadUserRoutes(user_id);
   }, [tokenLocalStorage, loadUserRoutes, currentLang]);
 
   const openCreateDialog = () => {
@@ -93,7 +93,7 @@ export const MyRoute = () => {
           {t("general:routesTitle")}
         </Typography>
       </Grid>
-      <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2 }}>
+      <Box sx={{ maxWidth: 480, mx: "auto", width: "100%", px: 2, mb: 2 }}>
         {userRoutes.length > 0 ? (
           userRoutes.map((route) => (
             <Grid
