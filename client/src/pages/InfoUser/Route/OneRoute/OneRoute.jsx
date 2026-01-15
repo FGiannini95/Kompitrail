@@ -47,6 +47,7 @@ import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/Ou
 import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
 import { Header } from "../../../../components/Header/Header";
 import { RouteActionButton } from "../RouteActionButton/RouteActionButton";
+import { RouteMapPreview } from "../../../../components/RouteMapPreview/RouteMapPreview";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -170,8 +171,8 @@ export const OneRoute = () => {
   const handleOpenCalendar = !isRouteLocked
     ? () =>
         openCalendar({
-          startingLabelShort,
-          endingLabelShort,
+          starting_point: startingLabelShort,
+          ending_point: endingLabelShort,
           dateISO: date,
           estimated_time,
         })
@@ -185,6 +186,7 @@ export const OneRoute = () => {
       sx={{ overflowX: "auto", paddingBottom: 3 }}
     >
       <Header onShare={handleShare} isCopied={isCopied} />
+      {/* General info */}
       <Card
         sx={(theme) => ({
           width: "95%",
@@ -236,6 +238,7 @@ export const OneRoute = () => {
         </CardContent>
       </Card>
 
+      {/* Route verification */}
       <Stack sx={{ pl: 2 }}>
         <Typography
           sx={{
@@ -256,6 +259,7 @@ export const OneRoute = () => {
         </Typography>
       </Stack>
 
+      {/* Participants */}
       <Card
         sx={(theme) => ({
           width: "95%",
@@ -281,6 +285,7 @@ export const OneRoute = () => {
         </CardContent>
       </Card>
 
+      {/* Calendar */}
       <Stack
         direction="row"
         spacing={2}
@@ -299,6 +304,7 @@ export const OneRoute = () => {
           disabled={!canAccessChat || isRouteLocked}
         />
 
+        {/* Chat */}
         <OutlinedButton
           text={t("oneRoute:chat")}
           icon={
@@ -322,6 +328,7 @@ export const OneRoute = () => {
         />
       </Stack>
 
+      {/* Map Preview abd Route points */}
       <Card
         sx={(theme) => ({
           width: "95%",
@@ -333,43 +340,22 @@ export const OneRoute = () => {
         })}
       >
         <CardContent sx={{ padding: 3 }}>
-          {/* Map Preview  */}
-          <Box
-            sx={{
-              width: "100%",
-              height: 300,
-              bgcolor: "grey.200",
-              borderRadius: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Typography variant="body2" color="text.secondary">
-              Mappa preview - Coming soon
-            </Typography>
-          </Box>
+          <RouteMapPreview
+            routeGeometry={data?.route_geometry}
+            startPoint={startingPoint}
+            endPoint={endingPoint}
+          />
           <Divider sx={{ my: 2 }} />
-
-          {/* Route points */}
           <Stack spacing={2} sx={{ mb: 2 }}>
             <Stack direction="row" alignItems="center" spacing={1}>
-              <LocationOnOutlinedIcon
-                fontSize="medium"
-                aria-hidden
-                sx={{ color: "green" }}
-              />
-              <Typography variant="body1" color="text.primary">
+              <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
+              <Typography color="text.primary" variant="body2">
                 {startingLabelFull}
               </Typography>
             </Stack>
             <Stack direction="row" alignItems="center" spacing={1}>
-              <FlagOutlinedIcon
-                fontSize="medium"
-                aria-hidden
-                sx={{ color: "red" }}
-              />
-              <Typography variant="body1" color="text.primary">
+              <FlagOutlinedIcon fontSize="medium" aria-hidden />
+              <Typography color="text.primary" variant="body2">
                 {endingLabelFull}
               </Typography>
             </Stack>
@@ -377,18 +363,13 @@ export const OneRoute = () => {
         </CardContent>
       </Card>
 
+      {/* Extra Info */}
       <Stack sx={{ pl: 2 }}>
         <Typography sx={{ fontWeight: "bold" }} color="text.primary">
           {t("oneRoute:info.generalInfoTitle")}
         </Typography>
         <Stack direction="row" spacing={0.75}>
-          <Groups2OutlinedIcon
-            fontSize="medium"
-            aria-hidden
-            sx={(theme) => ({
-              color: theme.palette.text.primary,
-            })}
-          />
+          <Groups2OutlinedIcon fontSize="medium" aria-hidden />
           <Typography color="text.primary">
             {t("oneRoute:info.maxParticipantsLabel", {
               count: max_participants,
@@ -396,13 +377,7 @@ export const OneRoute = () => {
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
-          <TwoWheelerOutlinedIcon
-            fontSize="medium"
-            aria-hidden
-            sx={(theme) => ({
-              color: theme.palette.text.primary,
-            })}
-          />
+          <TwoWheelerOutlinedIcon fontSize="medium" aria-hidden />
           <Typography color="text.primary">
             {t("oneRoute:info.motorbikeTypeLabel", {
               types: suitable_motorbike_type,
@@ -410,16 +385,12 @@ export const OneRoute = () => {
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
-          <DescriptionOutlinedIcon
-            fontSize="medium"
-            aria-hidden
-            sx={(theme) => ({
-              color: theme.palette.text.primary,
-            })}
-          />
+          <DescriptionOutlinedIcon fontSize="medium" aria-hidden />
           <Typography color="text.primary">{route_description} </Typography>
         </Stack>
       </Stack>
+
+      {/* Actions button */}
       <Stack sx={{ px: 1 }}>
         <RouteActionButton
           isPastRoute={isPastRoute}

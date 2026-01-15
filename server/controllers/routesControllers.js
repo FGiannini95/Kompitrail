@@ -409,13 +409,9 @@ class routesControllers {
   };
 
   showAllRoutes = (req, res) => {
-    const lang = req.query.lang || "es";
-
     const sql = `
       SELECT
         route.*,
-        COALESCE(rt.starting_point,   route.starting_point)       AS starting_point,
-        COALESCE(rt.ending_point,     route.ending_point)         AS ending_point,
         creator_user.name     AS create_name,
         creator_user.lastname AS create_lastname,
         creator_user.img      AS user_img,
@@ -429,8 +425,6 @@ class routesControllers {
           SEPARATOR '|'
         ) AS participants_raw
       FROM route
-      LEFT JOIN route_translation rt
-        ON rt.route_id = route.route_id AND rt.lang = ?
       LEFT JOIN \`user\` AS creator_user
             ON creator_user.user_id = route.user_id
       LEFT JOIN route_participant
@@ -441,7 +435,7 @@ class routesControllers {
       GROUP BY route.route_id
       ORDER BY route.route_id DESC
     `;
-    connection.query(sql, [lang], (error, rows) => {
+    connection.query(sql, (error, rows) => {
       if (error) return res.status(500).json({ error });
 
       // Convert "12:Marco|27:Anna" -> [{ user_id:12, name:"Marco" }, { user_id:27, name:"Anna" }]
@@ -456,6 +450,11 @@ class routesControllers {
             const img = parts.join(":") || ""; // everything else
             return { user_id: Number(uid), name, img };
           });
+
+        r.suitable_motorbike_type = (r.suitable_motorbike_type || "")
+          .split(",")
+          .filter(Boolean);
+
         const { participants_raw, ...rest } = r;
         return { ...rest, participants };
       });
@@ -598,13 +597,9 @@ class routesControllers {
 
   showOneRoute = (req, res) => {
     const { id: route_id } = req.params;
-    const lang = req.query.lang || "es";
     const sql = `
       SELECT
         r.*,
-        COALESCE(rt.starting_point,   r.starting_point)       AS starting_point,
-        COALESCE(rt.ending_point,     r.ending_point)         AS ending_point,
-        COALESCE(rt.route_description, r.route_description)   AS route_description,
         creator_user.name     AS create_name,
         creator_user.lastname AS create_lastname,
         creator_user.img      AS user_img,
@@ -618,8 +613,6 @@ class routesControllers {
           SEPARATOR '|'
         ) AS participants_raw
       FROM route r
-      LEFT JOIN route_translation rt
-        ON rt.route_id = r.route_id AND rt.lang = ?
       LEFT JOIN \`user\` AS creator_user
         ON creator_user.user_id = r.user_id
       LEFT JOIN route_participant rp
@@ -631,13 +624,15 @@ class routesControllers {
       LIMIT 1
     `;
 
-    connection.query(sql, [lang, route_id], (err, rows) => {
+    connection.query(sql, [route_id], (err, rows) => {
       if (err) {
-        return res.status(400).json({ err });
+        console.error("showOneRoute DB error:", err);
+        return res.status(500).json({ error: err.message });
       }
       if (!rows || rows.length === 0) {
         return res.status(404).json({ error: "Ruta no encontrada" });
       }
+
       const r = rows[0];
 
       // Convert "12:Marco|27:Anna" -> [{ user_id:12, name:"Marco" }, { user_id:27, name:"Anna" }]
@@ -651,6 +646,10 @@ class routesControllers {
           const img = parts.join(":") || "";
           return { user_id: uid, name, img };
         });
+
+      r.suitable_motorbike_type = (r.suitable_motorbike_type || "")
+        .split(",")
+        .filter(Boolean);
 
       const { participants_raw, ...rest } = r;
 
