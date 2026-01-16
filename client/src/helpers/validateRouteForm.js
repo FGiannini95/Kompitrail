@@ -13,6 +13,7 @@ export const validateRouteForm = (routeData) => {
     errors.date = "route.dateRequired";
   }
 
+  // To remove later
   if (!routeData.distance) {
     errors.distance = "route.distanceRequired";
   }
@@ -21,6 +22,7 @@ export const validateRouteForm = (routeData) => {
     errors.level = "route.levelRequired";
   }
 
+  // To remove later
   if (!routeData.estimated_time) {
     errors.estimated_time = "route.estimatedTimeRequired";
   }
@@ -29,7 +31,10 @@ export const validateRouteForm = (routeData) => {
     errors.max_participants = "route.maxParticipantsRequired";
   }
 
-  if (!routeData.suitable_motorbike_type) {
+  if (
+    !Array.isArray(routeData.suitable_motorbike_type) ||
+    routeData.suitable_motorbike_type.length === 0
+  ) {
     errors.suitable_motorbike_type = "route.motorbikeTypeRequired";
   }
 

@@ -51,18 +51,14 @@ export const RoutesProvider = ({ children }) => {
 
   const loadAllRoutes = useCallback(
     (options = {}) => {
-      const { silent = false, language } = options;
-      const langToUse = language || currentLang;
-
+      const { silent = false } = options;
       // Only show loading spinner if this is not a silent refresh
       if (!silent) {
         setLoading(true);
       }
 
-      const query = langToUse ? `?lang=${langToUse}` : "";
-
       axios
-        .get(`${ROUTES_URL}/showallroutes${query}`)
+        .get(`${ROUTES_URL}/showallroutes`)
         .then((res) => setAllRoutes(res.data))
         .catch((err) => {
           console.log(err);
@@ -77,16 +73,11 @@ export const RoutesProvider = ({ children }) => {
     [currentLang]
   );
 
-  const loadUserRoutes = useCallback((user_id, options = {}) => {
-    const { language } = options;
-    const langToUse = language || currentLang;
-
+  const loadUserRoutes = useCallback((user_id) => {
     setLoading(true);
 
-    const query = langToUse ? `?lang=${langToUse}` : "";
-
     axios
-      .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}${query}`)
+      .get(`${ROUTES_URL}/showallroutesoneuser/${user_id}`)
       .then((res) => {
         setUserRoutes(res.data);
       })
