@@ -88,6 +88,20 @@ export const RouteCreateDialog = () => {
     metrics?.distanceKm != null && metrics?.durationMinutes != null;
   const waypointCount = createOneRoute?.waypoints?.length || 0;
 
+  // Define if the starting position matches the current positionconst isStartingPointCurrent =
+  const isStartingPointCurrent =
+    isCurrentLocation &&
+    createOneRoute.starting_point?.lat &&
+    createOneRoute.starting_point?.lng &&
+    Math.abs(createOneRoute.starting_point.lat - isCurrentLocation.lat) <
+      0.0001 &&
+    Math.abs(createOneRoute.starting_point.lng - isCurrentLocation.lng) <
+      0.0001;
+
+  const startingDisplayLabel = isStartingPointCurrent
+    ? t("forms:currentLocation")
+    : getPointLabel(createOneRoute.starting_point, currentLang, "full");
+
   const cleanDialog = () => {
     closeDialog();
     setCreateOneRoute(ROUTE_INITIAL_VALUE);
@@ -146,17 +160,6 @@ export const RouteCreateDialog = () => {
     if (!isOpen) return;
     if (hasStart) return;
 
-    // Show placeholder immediately
-    setCreateOneRoute((prev) => ({
-      ...prev,
-      starting_point: {
-        ...prev.starting_point,
-        i18n: {
-          [currentLang]: { full: "Posición actual", short: "Actual" },
-        },
-      },
-    }));
-
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
@@ -170,6 +173,8 @@ export const RouteCreateDialog = () => {
         ) {
           return;
         }
+
+        setIsCurrentLocation({ lat: latitude, lng: longitude });
 
         // Fetch i18n labels for all languages
         const i18n = await fetchPointI18n(latitude, longitude, reverseGeocode);
@@ -220,10 +225,6 @@ export const RouteCreateDialog = () => {
       estimated_time: metrics.durationMinutes,
     }));
   }, [metrics, setCreateOneRoute]);
-
-  const startingDisplayLabel = isCurrentLocation
-    ? t("forms:currentLocation")
-    : getPointLabel(createOneRoute.starting_point, currentLang, "full");
 
   return (
     <>
@@ -439,12 +440,6 @@ export const RouteCreateDialog = () => {
         onConfirm={(point) => {
           setCreateOneRoute((prev) => {
             if (mapTarget === "start") {
-              const isSameAsInitial =
-                point.lat === createOneRoute.starting_point?.lat &&
-                point.lng === createOneRoute.starting_point?.lng;
-
-              setIsCurrentLocation(isSameAsInitial);
-
               return { ...prev, starting_point: point };
             }
             if (mapTarget === "end") {
