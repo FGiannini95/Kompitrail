@@ -23,5 +23,6 @@
   "maxParticipantsLabel": "Pilotos",
   "motorbikeTypeLabel": "Motos aptas",
   "descriptionLabel": "Descripción",
-  "checkbox": "¿Primera vez en esta ruta?"
+  "checkbox": "¿Primera vez en esta ruta?",
+  "currentLocation": "Posición actual"
 }

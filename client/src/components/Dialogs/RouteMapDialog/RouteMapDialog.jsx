@@ -25,6 +25,7 @@ export const RouteMapDialog = ({
   onCancel,
   onConfirm,
   maxWidth = "md",
+  showConfirmButton = true,
 }) => {
   const { t } = useTranslation(["buttons"]);
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -38,6 +39,15 @@ export const RouteMapDialog = ({
     initialPoint: initialSelected,
     enabled: open,
   });
+
+  // Track if the point has changed
+  const [hasChanged, setHasChanged] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setHasChanged(false);
+    }
+  }, [open]);
 
   // Search input value
   const [query, setQuery] = useState("");
@@ -122,7 +132,10 @@ export const RouteMapDialog = ({
   const handleMapClick = async (evt) => {
     const { lng, lat } = evt.lngLat;
     await updatePoint(lat, lng);
+    setHasChanged(true);
   };
+
+  const showMap = viewState && point;
 
   if (!mapboxToken) {
     return (
@@ -131,6 +144,14 @@ export const RouteMapDialog = ({
       </Dialog>
     );
   }
+
+  console.log("🗺️ Map state:", {
+    open,
+    viewState,
+    point,
+    showMap: viewState && point,
+    initialSelected,
+  });
 
   return (
     <Dialog
@@ -187,7 +208,7 @@ export const RouteMapDialog = ({
 
           {/* Map */}
           <Box sx={{ flex: 1 }}>
-            {!viewState ? (
+            {!showMap ? (
               <Loading />
             ) : (
               <Map
@@ -238,7 +259,7 @@ export const RouteMapDialog = ({
           {t("buttons:cancel")}
         </Button>
         <Button
-          disabled={!point || isResolvingLabel}
+          disabled={!point || isResolvingLabel || !hasChanged}
           onClick={() => {
             onConfirm?.(point);
           }}

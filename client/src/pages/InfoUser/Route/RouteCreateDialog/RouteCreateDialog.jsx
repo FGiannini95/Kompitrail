@@ -52,6 +52,7 @@ export const RouteCreateDialog = () => {
   const [errors, setErrors] = useState({});
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [mapTarget, setMapTarget] = useState(null); // "start" or "end"
+  const [isCurrentLocation, setIsCurrentLocation] = useState(true);
 
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
@@ -191,6 +192,7 @@ export const RouteCreateDialog = () => {
             },
           };
         });
+        setIsCurrentLocation(true);
       },
       (error) => console.error("Geolocation error", error),
       {
@@ -219,6 +221,10 @@ export const RouteCreateDialog = () => {
     }));
   }, [metrics, setCreateOneRoute]);
 
+  const startingDisplayLabel = isCurrentLocation
+    ? t("forms:currentLocation")
+    : getPointLabel(createOneRoute.starting_point, currentLang, "full");
+
   return (
     <>
       <Dialog
@@ -243,11 +249,7 @@ export const RouteCreateDialog = () => {
                 name="starting_point.label"
                 readOnly
                 clearable={false}
-                value={getPointLabel(
-                  createOneRoute.starting_point,
-                  currentLang,
-                  "full"
-                )}
+                value={startingDisplayLabel}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
                 errors={errors}
@@ -429,15 +431,25 @@ export const RouteCreateDialog = () => {
               ? createOneRoute?.ending_point
               : null
         }
+        showConfirmButton={true}
         onCancel={() => {
           setIsMapOpen(false);
           setMapTarget(null);
         }}
         onConfirm={(point) => {
           setCreateOneRoute((prev) => {
-            if (mapTarget === "start")
+            if (mapTarget === "start") {
+              const isSameAsInitial =
+                point.lat === createOneRoute.starting_point?.lat &&
+                point.lng === createOneRoute.starting_point?.lng;
+
+              setIsCurrentLocation(isSameAsInitial);
+
               return { ...prev, starting_point: point };
-            if (mapTarget === "end") return { ...prev, ending_point: point };
+            }
+            if (mapTarget === "end") {
+              return { ...prev, ending_point: point };
+            }
             return prev;
           });
 

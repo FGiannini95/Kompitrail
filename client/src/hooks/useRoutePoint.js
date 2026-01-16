@@ -16,15 +16,22 @@
       }
 }*/
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useReverseGeocoding } from "./useReverseGeocoding";
 import { fetchPointI18n, getPointLabel } from "../helpers/pointMetrics";
 
-export const useRoutePoint = ({ initialPoint = null }) => {
+export const useRoutePoint = ({ initialPoint = null, enabled = true }) => {
   const { reverseGeocode, currentLang } = useReverseGeocoding();
   const [point, setPoint] = useState(initialPoint);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Keep point an initialPoint syncro
+  useEffect(() => {
+    if (enabled && initialPoint) {
+      setPoint(initialPoint);
+    }
+  }, [enabled, initialPoint]);
 
   const getLabel = useCallback(
     (type = "full") => {
