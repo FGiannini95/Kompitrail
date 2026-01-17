@@ -116,6 +116,7 @@ export const RouteEditDialog = () => {
         ...prev,
         distance: routeMetrics.distanceKm,
         estimated_time: routeMetrics.durationMinutes,
+        route_geometry: routeMetrics.geometry,
       }));
     }
   }, [routeMetrics]);

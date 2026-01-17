@@ -491,6 +491,7 @@ class routesControllers {
       starting_lng,
       ending_lat,
       ending_lng,
+      route_geometry,
       date,
       level,
       distance,
@@ -499,7 +500,6 @@ class routesControllers {
       estimated_time,
       max_participants,
       route_description,
-      language,
     } = JSON.parse(req.body.editRoute);
 
     const { id: route_id } = req.params;
@@ -521,6 +521,7 @@ class routesControllers {
         ending_point_i18n = ?,
         ending_lat = ?,
         ending_lng = ?,
+        route_geometry = ?,
         date = ?, 
         level = ?,  
         distance = ?,  
@@ -539,6 +540,7 @@ class routesControllers {
       endingPointI18nJson,
       ending_lat,
       ending_lng,
+      JSON.stringify(route_geometry),
       date,
       level,
       distance,
@@ -971,6 +973,7 @@ class routesControllers {
       return res.json({
         distanceKm: orsResult.distanceKm,
         durationMinutes: orsResult.durationMinutes,
+        geometry: orsResult.geometry,
       });
     } catch (err) {
       const status = err.status || err.response?.status || 500;

@@ -38,21 +38,23 @@ export const RouteMapPreview = ({ routeGeometry, startPoint, endPoint }) => {
   }
 
   if (!routeGeometry) {
-    <Box
-      sx={{
-        width: "100%",
-        height: 300,
-        bgcolor: "grey.200",
-        borderRadius: 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Typography variant="body2" color="text.secondary">
-        Mappa preview - Coming soon
-      </Typography>
-    </Box>;
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: 300,
+          bgcolor: "grey.200",
+          borderRadius: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          Mappa preview - Coming soon
+        </Typography>
+      </Box>
+    );
   }
 
   // Convert route_geometry to GeoJSON Feature

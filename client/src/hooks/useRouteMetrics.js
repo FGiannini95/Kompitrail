@@ -76,6 +76,7 @@ export const useRouteMetrics = ({
         setData({
           distanceKm: result.distanceKm,
           durationMinutes: result.durationMinutes,
+          geometry: result.geometry,
         });
       } catch (err) {
         // Ignore aborted requests (expected behavior)
