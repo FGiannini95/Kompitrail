@@ -13,5 +13,6 @@
   "deleteRoute": "Eliminar ruta",
   "cancelEnrollment": "Cancelar inscripción",
   "joinRoute": "Únete",
-  "fullRoute": "Ruta completa"
+  "fullRoute": "Ruta completa",
+  "addWaypoint": "Añadir etapa"
 }

@@ -16,6 +16,7 @@ import Grid from "@mui/material/Grid2";
 
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 // Utils
 import { ROUTES_URL } from "../../../../api";
@@ -46,6 +47,7 @@ import { FormTextfield } from "../../../../components/FormTextfield/FormTextfiel
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 import { RouteMapDialog } from "../../../../components/Dialogs/RouteMapDialog/RouteMapDialog";
+import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -53,6 +55,8 @@ export const RouteCreateDialog = () => {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [mapTarget, setMapTarget] = useState(null); // "start" or "end"
   const [isCurrentLocation, setIsCurrentLocation] = useState(true);
+  const [waypoints, setWaypoints] = useState([]);
+  const [isWaypointOpen, setIsWaypointMapOpen] = useState(false);
 
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
@@ -262,6 +266,21 @@ export const RouteCreateDialog = () => {
                 }}
               />
             </Grid>
+
+            {hasStart && hasEnd && hasMetrics && (
+              <Grid size={12}>
+                <OutlinedButton
+                  onClick={() => setIsWaypointMapOpen(true)}
+                  text={t("buttons:addWaypoint")}
+                  icon={
+                    <AddOutlinedIcon
+                      style={{ paddingLeft: "5px", width: "20px" }}
+                      aria-hidden
+                    />
+                  }
+                />
+              </Grid>
+            )}
 
             <Grid size={12}>
               <FormTextfield
