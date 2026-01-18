@@ -7,8 +7,8 @@ const Contract = require(path.resolve(
   "../../shared/chat-contract/index"
 ));
 const { EVENTS } = Contract;
-const translateAndSaveRouteLanguages = require("../utils/translateAndSaveRouteLanguages");
 const getOrsRouteGeojson = require("../utils/orsRoute");
+const translateText = require("../utils/translator");
 
 class routesControllers {
   createRoute = async (req, res) => {
@@ -986,6 +986,29 @@ class routesControllers {
 
       return res.status(status).json({
         error: err.message || "Error al calcular la ruta",
+      });
+    }
+  };
+
+  translateDescription = async (req, res) => {
+    try {
+      const { text, targetLang } = req.body;
+
+      if (!text || !targetLang) {
+        return res.status(400).json({ error: "Texto e idioma obligatorios" });
+      }
+      // DeepL auto-detects source language when sourceLang is null
+      const translatedText = await translateText(text, null, targetLang);
+
+      res.json({
+        translatedText: translatedText || text,
+        originalText: text,
+      });
+    } catch (error) {
+      console.error("Error en la tradución:", error);
+      res.status(500).json({
+        error: "Error en la tradución",
+        translatedText: req.body.text, // fallback to original text
       });
     }
   };

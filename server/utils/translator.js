@@ -25,11 +25,17 @@ async function translateText(text, sourceLang, targetLang) {
     return text;
   }
 
-  // DeepL requires uppercase language codes: ES, EN, IT
-  const source = sourceLang.toUpperCase();
   const target = TARGET_LANG_MAP[targetLang.toLowerCase()] || "ES";
 
-  const result = await translator.translateText(text, source, target);
+  let result;
+  if (sourceLang) {
+    // DeepL requires uppercase language codes: ES, EN, IT
+    const source = sourceLang.toUpperCase();
+    result = await translator.translateText(text, source, target);
+  } else {
+    // For auto-detection, don't pass source language
+    result = await translator.translateText(text, null, target);
+  }
 
   return result.text;
 }

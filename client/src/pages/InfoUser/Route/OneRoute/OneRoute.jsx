@@ -74,6 +74,24 @@ export const OneRoute = () => {
   const locale = LOCALE_MAP[currentLang] ?? "es-ES";
 
   const participantsSectionRef = useRef();
+  const [translatedDescription, setTranslatedDescription] = useState("");
+
+  // Funzione semplice senza loading
+  const handleTranslateDescription = async () => {
+    if (!route_description || !route_description.trim()) return;
+
+    try {
+      const response = await axios.post(`${ROUTES_URL}/translatedescription`, {
+        text: route_description,
+        targetLang: currentLang,
+      });
+
+      setTranslatedDescription(response.data.translatedText);
+    } catch (error) {
+      console.error("Translation error:", error);
+      setTranslatedDescription(route_description); // fallback al testo originale
+    }
+  };
 
   useEffect(() => {
     if (!route_id) return;
@@ -90,6 +108,7 @@ export const OneRoute = () => {
 
         if (!cancelled) {
           setData(route);
+          handleTranslateDescription();
         }
       } catch (err) {
         if (!cancelled) {
@@ -386,7 +405,10 @@ export const OneRoute = () => {
         </Stack>
         <Stack direction="row" spacing={0.75}>
           <DescriptionOutlinedIcon fontSize="medium" aria-hidden />
-          <Typography color="text.primary">{route_description} </Typography>
+          <Typography color="text.primary">
+            {" "}
+            {translatedDescription || route_description}
+          </Typography>
         </Stack>
       </Stack>
 
