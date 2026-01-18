@@ -25,7 +25,7 @@ export const Header = ({
       container
       alignItems="center"
       justifyContent="space-between"
-      sx={{ px: 1, mb: 1 }}
+      sx={{ px: 1 }}
     >
       <IconButton onClick={handleBack} aria-label="Volver">
         <ArrowBackIosIcon

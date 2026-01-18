@@ -3,7 +3,14 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
-import { Card, CardContent, Stack, Typography, Divider } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Stack,
+  Typography,
+  Divider,
+  Box,
+} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
@@ -14,11 +21,14 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 
 // Utils
 import {
   capitalizeFirstLetter,
   formatDateTime,
+  formatMinutesToHHMM,
 } from "../../../../helpers/utils";
 import {
   LOCALE_MAP,
@@ -27,6 +37,7 @@ import {
 } from "../../../../helpers/oneRouteUtils";
 import { openCalendar } from "../../../../helpers/calendar";
 import { ROUTES_URL } from "../../../../api";
+import { getPointLabel } from "../../../../helpers/pointMetrics";
 // Providers & Hooks
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 import { useShareUrl } from "../../../../hooks/useShareUrl";
@@ -36,6 +47,7 @@ import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/Ou
 import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
 import { Header } from "../../../../components/Header/Header";
 import { RouteActionButton } from "../RouteActionButton/RouteActionButton";
+import { RouteMapPreview } from "../../../../components/RouteMapPreview/RouteMapPreview";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -48,7 +60,7 @@ const InfoItem = ({ label, value }) => (
 
 export const OneRoute = () => {
   const { state } = useLocation();
-  const [data, setData] = useState(state ?? null); // state only as initial value
+  const [data, setData] = useState(state ?? null);
   const { id: route_id } = useParams();
   const { user: currentUser } = useContext(KompitrailContext);
   const { isCopied, handleShare } = useShareUrl({
@@ -62,6 +74,24 @@ export const OneRoute = () => {
   const locale = LOCALE_MAP[currentLang] ?? "es-ES";
 
   const participantsSectionRef = useRef();
+  const [translatedDescription, setTranslatedDescription] = useState("");
+
+  // Funzione semplice senza loading
+  const handleTranslateDescription = async () => {
+    if (!route_description || !route_description.trim()) return;
+
+    try {
+      const response = await axios.post(`${ROUTES_URL}/translatedescription`, {
+        text: route_description,
+        targetLang: currentLang,
+      });
+
+      setTranslatedDescription(response.data.translatedText);
+    } catch (error) {
+      console.error("Translation error:", error);
+      setTranslatedDescription(route_description); // fallback al testo originale
+    }
+  };
 
   useEffect(() => {
     if (!route_id) return;
@@ -78,6 +108,7 @@ export const OneRoute = () => {
 
         if (!cancelled) {
           setData(route);
+          handleTranslateDescription();
         }
       } catch (err) {
         if (!cancelled) {
@@ -93,8 +124,12 @@ export const OneRoute = () => {
 
   let {
     date,
-    starting_point,
-    ending_point,
+    starting_point_i18n,
+    ending_point_i18n,
+    starting_lat,
+    starting_lng,
+    ending_lat,
+    ending_lng,
     level,
     distance,
     suitable_motorbike_type,
@@ -112,6 +147,25 @@ export const OneRoute = () => {
   if (isOwner == null) {
     isOwner = currentUser?.user_id === user_id;
   }
+
+  // Create point objects
+  const startingPoint = {
+    lat: starting_lat,
+    lng: starting_lng,
+    i18n: starting_point_i18n,
+  };
+
+  const endingPoint = {
+    lat: ending_lat,
+    lng: ending_lng,
+    i18n: ending_point_i18n,
+  };
+
+  // Get labels in current language
+  const startingLabelFull = getPointLabel(startingPoint, currentLang, "full");
+  const startingLabelShort = getPointLabel(startingPoint, currentLang, "short");
+  const endingLabelFull = getPointLabel(endingPoint, currentLang, "full");
+  const endingLabelShort = getPointLabel(endingPoint, currentLang, "short");
 
   const { isPastRoute, isEnrollmentClosed, isRouteLocked } = getRouteStatus(
     date,
@@ -136,8 +190,8 @@ export const OneRoute = () => {
   const handleOpenCalendar = !isRouteLocked
     ? () =>
         openCalendar({
-          starting_point,
-          ending_point,
+          starting_point: startingLabelShort,
+          ending_point: endingLabelShort,
           dateISO: date,
           estimated_time,
         })
@@ -151,6 +205,7 @@ export const OneRoute = () => {
       sx={{ overflowX: "auto", paddingBottom: 3 }}
     >
       <Header onShare={handleShare} isCopied={isCopied} />
+      {/* General info */}
       <Card
         sx={(theme) => ({
           width: "95%",
@@ -192,7 +247,7 @@ export const OneRoute = () => {
             />
             <InfoItem
               label={t("oneRoute:info.estimatedTimeLable")}
-              value={`${estimated_time} h`}
+              value={formatMinutesToHHMM(estimated_time)} //
             />
             <InfoItem
               label={t("oneRoute:info.levelLabel")}
@@ -202,6 +257,7 @@ export const OneRoute = () => {
         </CardContent>
       </Card>
 
+      {/* Route verification */}
       <Stack sx={{ pl: 2 }}>
         <Typography
           sx={{
@@ -222,6 +278,7 @@ export const OneRoute = () => {
         </Typography>
       </Stack>
 
+      {/* Participants */}
       <Card
         sx={(theme) => ({
           width: "95%",
@@ -247,6 +304,7 @@ export const OneRoute = () => {
         </CardContent>
       </Card>
 
+      {/* Calendar */}
       <Stack
         direction="row"
         spacing={2}
@@ -265,6 +323,7 @@ export const OneRoute = () => {
           disabled={!canAccessChat || isRouteLocked}
         />
 
+        {/* Chat */}
         <OutlinedButton
           text={t("oneRoute:chat")}
           icon={
@@ -280,7 +339,7 @@ export const OneRoute = () => {
               : () => {
                   navigate(`/chat/${route_id}`, {
                     state: {
-                      title: `${starting_point} - ${ending_point}`,
+                      title: `${startingLabelShort} - ${endingLabelShort}`,
                     },
                   });
                 }
@@ -288,6 +347,7 @@ export const OneRoute = () => {
         />
       </Stack>
 
+      {/* Map Preview abd Route points */}
       <Card
         sx={(theme) => ({
           width: "95%",
@@ -299,22 +359,36 @@ export const OneRoute = () => {
         })}
       >
         <CardContent sx={{ padding: 3 }}>
-          <Typography>Aqui va en enlace para maps</Typography>
+          <RouteMapPreview
+            routeGeometry={data?.route_geometry}
+            startPoint={startingPoint}
+            endPoint={endingPoint}
+          />
+          <Divider sx={{ my: 2 }} />
+          <Stack spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
+              <Typography color="text.primary" variant="body2">
+                {startingLabelFull}
+              </Typography>
+            </Stack>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <FlagOutlinedIcon fontSize="medium" aria-hidden />
+              <Typography color="text.primary" variant="body2">
+                {endingLabelFull}
+              </Typography>
+            </Stack>
+          </Stack>
         </CardContent>
       </Card>
 
+      {/* Extra Info */}
       <Stack sx={{ pl: 2 }}>
         <Typography sx={{ fontWeight: "bold" }} color="text.primary">
           {t("oneRoute:info.generalInfoTitle")}
         </Typography>
         <Stack direction="row" spacing={0.75}>
-          <Groups2OutlinedIcon
-            fontSize="medium"
-            aria-hidden
-            sx={(theme) => ({
-              color: theme.palette.text.primary,
-            })}
-          />
+          <Groups2OutlinedIcon fontSize="medium" aria-hidden />
           <Typography color="text.primary">
             {t("oneRoute:info.maxParticipantsLabel", {
               count: max_participants,
@@ -322,13 +396,7 @@ export const OneRoute = () => {
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
-          <TwoWheelerOutlinedIcon
-            fontSize="medium"
-            aria-hidden
-            sx={(theme) => ({
-              color: theme.palette.text.primary,
-            })}
-          />
+          <TwoWheelerOutlinedIcon fontSize="medium" aria-hidden />
           <Typography color="text.primary">
             {t("oneRoute:info.motorbikeTypeLabel", {
               types: suitable_motorbike_type,
@@ -336,16 +404,15 @@ export const OneRoute = () => {
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
-          <DescriptionOutlinedIcon
-            fontSize="medium"
-            aria-hidden
-            sx={(theme) => ({
-              color: theme.palette.text.primary,
-            })}
-          />
-          <Typography color="text.primary">{route_description} </Typography>
+          <DescriptionOutlinedIcon fontSize="medium" aria-hidden />
+          <Typography color="text.primary">
+            {" "}
+            {translatedDescription || route_description}
+          </Typography>
         </Stack>
       </Stack>
+
+      {/* Actions button */}
       <Stack sx={{ px: 1 }}>
         <RouteActionButton
           isPastRoute={isPastRoute}

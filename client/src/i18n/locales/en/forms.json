@@ -12,7 +12,7 @@
   "endingPointLabel": "Arrival",
   "dateLabel": "Date",
   "kmLabel": "Km",
-  "estimatedTimeLable": "Duration",
+  "estimatedTimeLable": "Hours",
   "levelLabel": "Level",
   "level": {
     "beginner": "Beginner",
@@ -23,5 +23,6 @@
   "maxParticipantsLabel": "Pilots",
   "motorbikeTypeLabel": "Suitable motorbikes",
   "descriptionLabel": "Description",
-  "checkbox": "First time on this route?"
+  "checkbox": "First time on this route?",
+  "currentLocation": "Current position"
 }

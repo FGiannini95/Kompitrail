@@ -7,132 +7,335 @@ const Contract = require(path.resolve(
   "../../shared/chat-contract/index"
 ));
 const { EVENTS } = Contract;
-const translateAndSaveRouteLanguages = require("../utils/translateAndSaveRouteLanguages");
+const getOrsRouteGeojson = require("../utils/orsRoute");
+const translateText = require("../utils/translator");
 
 class routesControllers {
-  createRoute = (req, res) => {
+  createRoute = async (req, res) => {
     const {
       user_id,
-      starting_point,
-      ending_point,
+      starting_point_i18n,
+      ending_point_i18n,
+      starting_lat,
+      starting_lng,
+      ending_lat,
+      ending_lng,
       date,
       level,
-      distance,
       suitable_motorbike_type,
-      estimated_time,
       max_participants,
       route_description,
       is_verified,
-      language,
+      waypoints = [],
     } = JSON.parse(req.body.createRoute);
 
-    const sourceLang = language || "es";
+    // Validate i18n objects
+    if (
+      !starting_point_i18n ||
+      typeof starting_point_i18n !== "object" ||
+      Object.keys(starting_point_i18n).length === 0
+    ) {
+      return res.status(400).json({ error: "starting_point_i18n inválido" });
+    }
 
     if (
+      !ending_point_i18n ||
+      typeof ending_point_i18n !== "object" ||
+      !ending_point_i18n.es ||
+      !ending_point_i18n.es.full
+    ) {
+      return res.status(400).json({ error: "ending_point_i18n inválido" });
+    }
+
+    // Basic input validation
+    if (
       !user_id ||
-      !starting_point ||
-      !ending_point ||
+      starting_lat == null ||
+      starting_lat === "" ||
+      starting_lng == null ||
+      starting_lng === "" ||
+      ending_lat == null ||
+      ending_lat === "" ||
+      ending_lng == null ||
+      ending_lng === "" ||
       !date ||
       !level ||
-      !distance ||
-      !suitable_motorbike_type ||
-      !estimated_time ||
       !max_participants ||
       !route_description
     ) {
       return res.status(400).json({ error: "Faltan campos requeridos." });
     }
 
-    const sqlInsertRoute = `
-    INSERT INTO route (
-      user_id, date, starting_point, ending_point, level, distance,
-      is_verified, suitable_motorbike_type, estimated_time, max_participants,
-      route_description, is_deleted
-    )
-    VALUES (
-      '${user_id}',
-      '${date}',
-      '${starting_point}',
-      '${ending_point}',
-      '${level}',
-      '${distance}',
-      '${is_verified}',
-      '${suitable_motorbike_type}',
-      '${estimated_time}',
-      '${max_participants}',
-      '${route_description}',
-      '0'
-    );
-  `;
+    // Validate motorbikes
+    if (
+      !Array.isArray(suitable_motorbike_type) ||
+      suitable_motorbike_type.filter((v) => v && v.trim() !== "").length === 0
+    ) {
+      return res.status(400).json({ error: "Tipo de moto requerido" });
+    }
 
-    connection.query(sqlInsertRoute, (error, result) => {
-      if (error) {
-        return res.status(500).json({ error });
+    // Validate coordinates
+    if (
+      isNaN(starting_lat) ||
+      isNaN(starting_lng) ||
+      isNaN(ending_lat) ||
+      isNaN(ending_lng)
+    ) {
+      return res.status(400).json({ error: "Coordinadas incorrectas." });
+    }
+
+    // Validate waypoints
+    if (waypoints.length > 10) {
+      return res.status(400).json({ error: "Max paradas permitidas: 10" });
+    }
+
+    // Validate each waypoint shape if present
+    for (const w of waypoints) {
+      if (
+        !w ||
+        typeof w.label !== "string" ||
+        w.label.trim() === "" ||
+        w.lat == null ||
+        w.lng == null ||
+        w.position == null ||
+        w.lat == "" ||
+        w.lng == ""
+      ) {
+        return res.status(400).json({ error: "Waypoint incorecto" });
       }
 
-      const routeId = result.insertId;
+      if (isNaN(w.lat) || isNaN(w.lng) || isNaN(w.position)) {
+        return res
+          .status(400)
+          .json({ error: "Coordinadas del waypoint incorrectas" });
+      }
+    }
 
-      // Translate the fields of this route
-      const sqlInsertTranslation = `INSERT INTO route_translation (route_id, lang, starting_point, ending_point, route_description) VALUES(?, ?, ?, ?, ?)`;
+    // Validate waypoint positions
+    const positions = new Set();
 
-      connection.query(
-        sqlInsertTranslation,
-        [routeId, sourceLang, starting_point, ending_point, route_description],
-        async (errorTranslation) => {
-          if (errorTranslation) {
-            console.error(
-              "Failed to insert source translation for this route",
-              routeId,
-              errorTranslation
-            );
-            return res
-              .status(500)
-              .json({ error: "Error saving route translation." });
+    for (const w of waypoints) {
+      // Ensure integer (accept numeric strings too)
+      const pos = Number(w.position);
+
+      // Position must be a finite integer
+      if (!Number.isFinite(pos) || !Number.isInteger(pos)) {
+        return res
+          .status(400)
+          .json({ error: "La posizione del waypoint deve essere un numero." });
+      }
+
+      // range 0..9 (because max 10)
+      if (pos < 0 || pos > 9) {
+        return res
+          .status(400)
+          .json({ error: "Waypoint position out of range (0..9)" });
+      }
+
+      // Avoid duplicates
+      if (positions.has(pos)) {
+        return res
+          .status(400)
+          .json({ error: "Posizione del waypoint duplicada." });
+      }
+
+      positions.add(pos);
+    }
+
+    //Normalize motorbike types
+    const motorbikeTypes = Array.isArray(suitable_motorbike_type)
+      ? suitable_motorbike_type.filter((v) => v && v.trim() !== "").join(",")
+      : suitable_motorbike_type;
+
+    // NOTE: for now we pass NO waypoints to ORS.
+    let routeGeometry;
+    let computedDistance;
+    let computedEstimatedTime;
+
+    try {
+      const start = { lat: Number(starting_lat), lng: Number(starting_lng) };
+      const end = { lat: Number(ending_lat), lng: Number(ending_lng) };
+
+      const orsResult = await getOrsRouteGeojson(start, end);
+
+      routeGeometry = JSON.stringify(orsResult.geometry);
+      computedDistance = orsResult.distanceKm;
+      computedEstimatedTime = orsResult.durationMinutes;
+    } catch (err) {
+      const status = err.status || err.response?.status || 500;
+
+      console.error("createRoute ORS error:", {
+        message: err.message,
+        code: err.code,
+        status,
+      });
+
+      return res.status(status).json({
+        error: err.message || "Error al calcular la ruta",
+      });
+    }
+
+    const startingPointI18nJson = JSON.stringify(starting_point_i18n);
+    const endingPointI18nJson = JSON.stringify(ending_point_i18n);
+
+    const sqlInsertRoute = `
+      INSERT INTO route (
+        user_id, 
+        date, 
+        starting_point_i18n,
+        starting_lat,
+        starting_lng,
+        ending_point_i18n,
+        ending_lat,
+        ending_lng,
+        level, 
+        distance,
+        is_verified, 
+        suitable_motorbike_type, 
+        estimated_time, 
+        max_participants,
+        route_description,
+        route_geometry, 
+        is_deleted
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+    `;
+
+    const routeParams = [
+      user_id,
+      date,
+      startingPointI18nJson,
+      Number(starting_lat),
+      Number(starting_lng),
+      endingPointI18nJson,
+      Number(ending_lat),
+      Number(ending_lng),
+      level,
+      computedDistance,
+      is_verified || 0,
+      motorbikeTypes,
+      computedEstimatedTime,
+      max_participants,
+      route_description,
+      routeGeometry,
+    ];
+
+    connection.getConnection((getConnErr, conn) => {
+      if (getConnErr) {
+        return res.status(500).json({ error: getConnErr });
+      }
+
+      conn.beginTransaction((txErr) => {
+        if (txErr) {
+          conn.release();
+          return res.status(500).json({ error: txErr });
+        }
+
+        // Insert route
+        conn.query(sqlInsertRoute, routeParams, (error, result) => {
+          if (error) {
+            return conn.rollback(() => {
+              conn.release();
+              return res.status(500).json({ error });
+            });
           }
-          try {
-            await translateAndSaveRouteLanguages(
-              connection,
-              routeId,
-              sourceLang
+
+          const routeId = result.insertId;
+
+          const insertWaypoints = () => {
+            if (!waypoints.length) return createChatRoom();
+
+            const sqlInsertWaypoints = `
+              INSERT INTO route_waypoint (route_id, position, label, lat, lng) VALUES ?
+            `;
+
+            const ordered = [...waypoints].sort(
+              (a, b) => Number(a.position) - Number(b.position)
             );
-          } catch (translationError) {
-            console.error("Error translating", routeId, translationError);
-          }
 
-          // Create also a chat_room, 1:1 with route
-          const sqlInsertChatRoom = `INSERT INTO chat_room (route_id, is_locked) VALUES ('${routeId}', 0)`;
+            const values = ordered.map((w) => [
+              routeId,
+              Number(w.position),
+              w.label,
+              w.lat,
+              w.lng,
+            ]);
 
-          connection.query(sqlInsertChatRoom, (errorChat) => {
-            if (errorChat) {
-              console.error(
-                "Failed to create chat_room from route",
-                routeId,
-                errorChat
-              );
-            }
+            conn.query(sqlInsertWaypoints, [values], (wpErr) => {
+              if (wpErr) {
+                return conn.rollback(() => {
+                  conn.release();
+                  return res.status(500).json({ error: wpErr });
+                });
+              }
 
-            // Return the freshly created route (joined with creator name for convenience)
+              createChatRoom();
+            });
+          };
+
+          const createChatRoom = () => {
+            const sqlInsertChatRoom = `
+          INSERT INTO chat_room (route_id, is_locked) VALUES (?, 0)
+        `;
+
+            conn.query(sqlInsertChatRoom, [routeId], (errorChat) => {
+              if (errorChat) {
+                return conn.rollback(() => {
+                  conn.release();
+                  return res.status(500).json({ error: errorChat });
+                });
+              }
+
+              conn.commit((commitErr) => {
+                if (commitErr) {
+                  return conn.rollback(() => {
+                    conn.release();
+                    return res.status(500).json({ error: commitErr });
+                  });
+                }
+
+                // Release connection before long async work.
+                conn.release();
+
+                selectAndReturn(routeId);
+              });
+            });
+          };
+
+          const selectAndReturn = (routeId) => {
             const sqlSelect = `
-              SELECT 
-                r.route_id, 
-                r.user_id, 
-                r.date, 
-                r.created_at,
-                r.starting_point, 
-                r.ending_point,
-                r.level, 
-                r.distance, 
-                r.is_verified, 
-                r.suitable_motorbike_type,
-                r.estimated_time, 
-                r.max_participants, 
-                r.route_description, 
-                r.is_deleted,
-                u.name AS create_name,
-                u.img  AS user_img
-              FROM route r
-                LEFT JOIN user u ON r.user_id = u.user_id
-              WHERE r.route_id = ?
+            SELECT 
+              r.route_id, 
+              r.user_id, 
+              r.date, 
+              r.created_at,
+              r.starting_point_i18n,
+              r.starting_lat,
+              r.starting_lng,
+              r.ending_point_i18n,
+              r.ending_lat,
+              r.ending_lng,
+              r.level, 
+              r.distance, 
+              r.is_verified, 
+              r.suitable_motorbike_type,
+              r.estimated_time, 
+              r.max_participants, 
+              r.route_description,
+              r.route_geometry, 
+              r.is_deleted,
+              u.name AS create_name,
+              u.img  AS user_img
+            FROM route r
+              LEFT JOIN user u ON r.user_id = u.user_id
+            WHERE r.route_id = ?
+          `;
+
+            const sqlSelectWaypoints = `
+              SELECT position, label, lat, lng
+              FROM route_waypoint
+              WHERE route_id = ?
+              ORDER BY position ASC
             `;
 
             connection.query(sqlSelect, [routeId], (error2, result2) => {
@@ -142,46 +345,69 @@ class routesControllers {
               if (!result2 || result2.length === 0) {
                 return res.status(404).json({ error: "Ruta no encontrada" });
               }
-              return res.status(200).json(result2[0]);
+
+              const route = result2[0];
+              // Parse i18n JSON back to objects
+              try {
+                route.starting_point_i18n = JSON.parse(
+                  route.starting_point_i18n
+                );
+                route.ending_point_i18n = JSON.parse(route.ending_point_i18n);
+              } catch (parseErr) {
+                console.error("Error parsing i18n JSON:", parseErr);
+              }
+
+              route.suitable_motorbike_type = (
+                route.suitable_motorbike_type || ""
+              )
+                .split(",")
+                .filter(Boolean);
+
+              connection.query(
+                sqlSelectWaypoints,
+                [routeId],
+                (wpErr, wpRows) => {
+                  if (wpErr) {
+                    return res.status(500).json({ error: wpErr });
+                  }
+
+                  route.waypoints = wpRows || [];
+                  return res.status(200).json(route);
+                }
+              );
             });
-          });
-        }
-      );
+          };
+
+          insertWaypoints();
+        });
+      });
     });
   };
 
   showAllRoutesOneUser = (req, res) => {
     const { id: user_id } = req.params;
-    const lang = req.query.lang || "es";
 
     const sql = `
-    SELECT
-      r.*,
-      COALESCE(rt.starting_point, r.starting_point) AS starting_point,
-      COALESCE(rt.ending_point,   r.ending_point)   AS ending_point,
-      u.name AS create_name, 
-      u.lastname AS create_lastname,
-      u.img AS user_img 
-    FROM route r
-    LEFT JOIN route_translation rt
-      ON rt.route_id = r.route_id AND rt.lang = ?
-    LEFT JOIN \`user\` u ON u.user_id = r.user_id
-    WHERE r.user_id = ? AND r.is_deleted = 0 AND r.date >= NOW()
-    ORDER BY r.route_id DESC
-  `;
-    connection.query(sql, [lang, user_id], (error, result) => {
+      SELECT
+        r.*,
+        u.name AS create_name, 
+        u.lastname AS create_lastname,
+        u.img AS user_img 
+      FROM route r
+      LEFT JOIN \`user\` u ON u.user_id = r.user_id
+      WHERE r.user_id = ? AND r.is_deleted = 0 AND r.date >= NOW()
+      ORDER BY r.route_id DESC
+    `;
+
+    connection.query(sql, [user_id], (error, result) => {
       error ? res.status(500).json({ error }) : res.status(200).json(result);
     });
   };
 
   showAllRoutes = (req, res) => {
-    const lang = req.query.lang || "es";
-
     const sql = `
       SELECT
         route.*,
-        COALESCE(rt.starting_point,   route.starting_point)       AS starting_point,
-        COALESCE(rt.ending_point,     route.ending_point)         AS ending_point,
         creator_user.name     AS create_name,
         creator_user.lastname AS create_lastname,
         creator_user.img      AS user_img,
@@ -195,8 +421,6 @@ class routesControllers {
           SEPARATOR '|'
         ) AS participants_raw
       FROM route
-      LEFT JOIN route_translation rt
-        ON rt.route_id = route.route_id AND rt.lang = ?
       LEFT JOIN \`user\` AS creator_user
             ON creator_user.user_id = route.user_id
       LEFT JOIN route_participant
@@ -207,7 +431,8 @@ class routesControllers {
       GROUP BY route.route_id
       ORDER BY route.route_id DESC
     `;
-    connection.query(sql, [lang], (error, rows) => {
+
+    connection.query(sql, (error, rows) => {
       if (error) return res.status(500).json({ error });
 
       // Convert "12:Marco|27:Anna" -> [{ user_id:12, name:"Marco" }, { user_id:27, name:"Anna" }]
@@ -222,6 +447,11 @@ class routesControllers {
             const img = parts.join(":") || ""; // everything else
             return { user_id: Number(uid), name, img };
           });
+
+        r.suitable_motorbike_type = (r.suitable_motorbike_type || "")
+          .split(",")
+          .filter(Boolean);
+
         const { participants_raw, ...rest } = r;
         return { ...rest, participants };
       });
@@ -255,8 +485,13 @@ class routesControllers {
 
   editRoute = (req, res) => {
     const {
-      starting_point,
-      ending_point,
+      starting_point_i18n,
+      ending_point_i18n,
+      starting_lat,
+      starting_lng,
+      ending_lat,
+      ending_lng,
+      route_geometry,
       date,
       level,
       distance,
@@ -265,34 +500,52 @@ class routesControllers {
       estimated_time,
       max_participants,
       route_description,
-      language,
     } = JSON.parse(req.body.editRoute);
 
     const { id: route_id } = req.params;
-    const sourceLang = language || "es";
 
-    let sqlUpdateRoute = `UPDATE route SET 
-      starting_point = ?, 
-      ending_point = ?, 
-      date = ?, 
-      level = ?,  
-      distance = ?,  
-      is_verified= ?, 
-      suitable_motorbike_type= ?,  
-      estimated_time= ?, 
-      max_participants= ?, 
-      route_description= ?
+    // Parse suitable_motorbike_type if it's array
+    const motorbikeTypes = Array.isArray(suitable_motorbike_type)
+      ? suitable_motorbike_type.join(",")
+      : suitable_motorbike_type;
+
+    // Stringify i18n objects
+    const startingPointI18nJson = JSON.stringify(starting_point_i18n);
+    const endingPointI18nJson = JSON.stringify(ending_point_i18n);
+
+    let sqlUpdateRoute = `
+      UPDATE route SET 
+        starting_point_i18n = ?,
+        starting_lat = ?,
+        starting_lng = ?,
+        ending_point_i18n = ?,
+        ending_lat = ?,
+        ending_lng = ?,
+        route_geometry = ?,
+        date = ?, 
+        level = ?,  
+        distance = ?,  
+        is_verified = ?, 
+        suitable_motorbike_type = ?,  
+        estimated_time = ?, 
+        max_participants = ?, 
+        route_description = ?
       WHERE route_id = ? AND is_deleted = 0
     `;
 
     const routeParams = [
-      starting_point,
-      ending_point,
+      startingPointI18nJson,
+      starting_lat,
+      starting_lng,
+      endingPointI18nJson,
+      ending_lat,
+      ending_lng,
+      JSON.stringify(route_geometry),
       date,
       level,
       distance,
       is_verified,
-      suitable_motorbike_type,
+      motorbikeTypes,
       estimated_time,
       max_participants,
       route_description,
@@ -304,73 +557,15 @@ class routesControllers {
         return res.status(400).json({ err });
       }
 
-      // Upsert the translation for the edited language
-      const sqlUpsertTranslation = `
-      INSERT INTO route_translation (
-        route_id, lang, starting_point, ending_point, route_description
-      )
-      VALUES (?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE
-        starting_point   = VALUES(starting_point),
-        ending_point     = VALUES(ending_point),
-        route_description = VALUES(route_description)
-    `;
-
-      const translationParams = [
-        route_id,
-        sourceLang,
-        starting_point,
-        ending_point,
-        route_description,
-      ];
-
-      connection.query(
-        sqlUpsertTranslation,
-        translationParams,
-        async (errorTranslation) => {
-          if (errorTranslation) {
-            console.error(
-              "Failed to upsert route translation for edit",
-              route_id,
-              errorTranslation
-            );
-            return res.status(200).json({
-              message:
-                "Ruta modificada, pero hubo un error en las traducciones.",
-              result,
-            });
-          }
-
-          // Re-translate to the other languages, based on the edited source language
-          try {
-            await translateAndSaveRouteLanguages(
-              connection,
-              route_id,
-              sourceLang
-            );
-          } catch (translationError) {
-            console.error(
-              "Error translating after edit",
-              route_id,
-              translationError
-            );
-          }
-
-          return res.status(200).json({ message: "Ruta modificada", result });
-        }
-      );
+      return res.status(200).json({ message: "Ruta modificada", result });
     });
   };
 
   showOneRoute = (req, res) => {
     const { id: route_id } = req.params;
-    const lang = req.query.lang || "es";
     const sql = `
       SELECT
         r.*,
-        COALESCE(rt.starting_point,   r.starting_point)       AS starting_point,
-        COALESCE(rt.ending_point,     r.ending_point)         AS ending_point,
-        COALESCE(rt.route_description, r.route_description)   AS route_description,
         creator_user.name     AS create_name,
         creator_user.lastname AS create_lastname,
         creator_user.img      AS user_img,
@@ -384,8 +579,6 @@ class routesControllers {
           SEPARATOR '|'
         ) AS participants_raw
       FROM route r
-      LEFT JOIN route_translation rt
-        ON rt.route_id = r.route_id AND rt.lang = ?
       LEFT JOIN \`user\` AS creator_user
         ON creator_user.user_id = r.user_id
       LEFT JOIN route_participant rp
@@ -397,13 +590,15 @@ class routesControllers {
       LIMIT 1
     `;
 
-    connection.query(sql, [lang, route_id], (err, rows) => {
+    connection.query(sql, [route_id], (err, rows) => {
       if (err) {
-        return res.status(400).json({ err });
+        console.error("showOneRoute DB error:", err);
+        return res.status(500).json({ error: err.message });
       }
       if (!rows || rows.length === 0) {
         return res.status(404).json({ error: "Ruta no encontrada" });
       }
+
       const r = rows[0];
 
       // Convert "12:Marco|27:Anna" -> [{ user_id:12, name:"Marco" }, { user_id:27, name:"Anna" }]
@@ -417,6 +612,10 @@ class routesControllers {
           const img = parts.join(":") || "";
           return { user_id: uid, name, img };
         });
+
+      r.suitable_motorbike_type = (r.suitable_motorbike_type || "")
+        .split(",")
+        .filter(Boolean);
 
       const { participants_raw, ...rest } = r;
 
@@ -763,6 +962,55 @@ class routesControllers {
     connection.query(sql, (err, result) => {
       err ? res.status(400).json({ err }) : res.status(200).json(result);
     });
+  };
+
+  calculateMetrics = async (req, res) => {
+    try {
+      const { start, end } = req.body;
+
+      const orsResult = await getOrsRouteGeojson(start, end);
+
+      return res.json({
+        distanceKm: orsResult.distanceKm,
+        durationMinutes: orsResult.durationMinutes,
+        geometry: orsResult.geometry,
+      });
+    } catch (err) {
+      const status = err.status || err.response?.status || 500;
+
+      console.error("calculateMetrics error:", {
+        message: err.message,
+        code: err.code,
+        status,
+      });
+
+      return res.status(status).json({
+        error: err.message || "Error al calcular la ruta",
+      });
+    }
+  };
+
+  translateDescription = async (req, res) => {
+    try {
+      const { text, targetLang } = req.body;
+
+      if (!text || !targetLang) {
+        return res.status(400).json({ error: "Texto e idioma obligatorios" });
+      }
+      // DeepL auto-detects source language when sourceLang is null
+      const translatedText = await translateText(text, null, targetLang);
+
+      res.json({
+        translatedText: translatedText || text,
+        originalText: text,
+      });
+    } catch (error) {
+      console.error("Error en la tradución:", error);
+      res.status(500).json({
+        error: "Error en la tradución",
+        translatedText: req.body.text, // fallback to original text
+      });
+    }
   };
 }
 

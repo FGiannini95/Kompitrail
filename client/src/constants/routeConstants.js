@@ -1,12 +1,32 @@
 export const ROUTE_INITIAL_VALUE = {
-  starting_point: "",
-  ending_point: "",
+  // Create
+  starting_point: {
+    lat: null,
+    lng: null,
+    i18n: null,
+  },
+  ending_point: {
+    lat: null,
+    lng: null,
+    i18n: null,
+  },
+
+  // Edit
+  starting_point_i18n: null,
+  starting_lat: null,
+  starting_lng: null,
+  ending_point_i18n: null,
+  ending_lat: null,
+  ending_lng: null,
+  route_geometry: null,
+
+  waypoints: [],
   date: "",
   level: "",
-  distance: "",
+  distance: null,
   is_verified: 0,
-  suitable_motorbike_type: "",
-  estimated_time: "",
+  suitable_motorbike_type: [],
+  estimated_time: null,
   max_participants: "",
   route_description: "",
   user_id: "",
