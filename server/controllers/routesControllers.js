@@ -246,7 +246,10 @@ class routesControllers {
             if (!waypoints.length) return createChatRoom();
 
             const sqlInsertWaypoints = `
-              INSERT INTO route_waypoint (route_id, position, label, lat, lng) VALUES ?
+              INSERT INTO 
+                route_waypoint 
+                (route_id, position, label_i18n, waypoint_lat, waypoint_lng) 
+              VALUES ?
             `;
 
             const ordered = [...waypoints].sort(
@@ -1012,6 +1015,8 @@ class routesControllers {
       });
     }
   };
+
+  addWaypoint = (req, res) => {};
 }
 
 module.exports = new routesControllers();

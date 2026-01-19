@@ -53,10 +53,9 @@ export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
   const [errors, setErrors] = useState({});
   const [isMapOpen, setIsMapOpen] = useState(false);
-  const [mapTarget, setMapTarget] = useState(null); // "start" or "end"
+  const [mapTarget, setMapTarget] = useState(null); // "start" | "end" | "waypoint"
   const [isCurrentLocation, setIsCurrentLocation] = useState(true);
   const [waypoints, setWaypoints] = useState([]);
-  const [isWaypointOpen, setIsWaypointMapOpen] = useState(false);
 
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
@@ -230,6 +229,13 @@ export const RouteCreateDialog = () => {
     }));
   }, [metrics, setCreateOneRoute]);
 
+  const waypointData = {
+    startPoint: createOneRoute.starting_point,
+    endPoint: createOneRoute.ending_point,
+    existingWaypoints: waypoints,
+    onWaypointAdd: (newWaypoint) => setWaypoints([...waypoints, newWaypoint]),
+  };
+
   return (
     <>
       <Dialog
@@ -270,7 +276,10 @@ export const RouteCreateDialog = () => {
             {hasStart && hasEnd && hasMetrics && (
               <Grid size={12}>
                 <OutlinedButton
-                  onClick={() => setIsWaypointMapOpen(true)}
+                  onClick={() => {
+                    setMapTarget("waypoint");
+                    setIsMapOpen(true);
+                  }}
                   text={t("buttons:addWaypoint")}
                   icon={
                     <AddOutlinedIcon
@@ -449,7 +458,7 @@ export const RouteCreateDialog = () => {
             ? createOneRoute?.starting_point
             : mapTarget === "end"
               ? createOneRoute?.ending_point
-              : null
+              : null // ← waypoint mode
         }
         showConfirmButton={true}
         onCancel={() => {
@@ -457,6 +466,7 @@ export const RouteCreateDialog = () => {
           setMapTarget(null);
         }}
         onConfirm={(point) => {
+          if (mapTarget === "waypoint") return;
           setCreateOneRoute((prev) => {
             if (mapTarget === "start") {
               return { ...prev, starting_point: point };
@@ -470,6 +480,7 @@ export const RouteCreateDialog = () => {
           setIsMapOpen(false);
           setMapTarget(null);
         }}
+        waypointData={mapTarget === "waypoint" ? waypointData : null}
       />
     </>
   );
