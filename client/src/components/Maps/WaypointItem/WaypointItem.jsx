@@ -8,7 +8,7 @@ import { getCurrentLang } from "../../../helpers/oneRouteUtils";
 
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import DeleteOutlineIcon from "@mui/icons-material/AddOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import { FormTextfield } from "../../FormTextfield/FormTextfield";
 
@@ -85,18 +85,19 @@ export const WaypointItem = ({
 
   return (
     <FormTextfield
-      label={`t("forms:waypoint") ${index + 1}. `}
+      label={`${t("forms:waypoint")} ${index + 1}`}
+      name="waypoint_display"
       value={getDisplayLabel(waypoint)}
       readOnly={true}
       clearable={false}
       endAdornment={
-        <Stack direction="row" spacing={0.5}>
+        <Stack direction="row">
           <IconButton
             size="small"
             onClick={handleMoveUp}
             disabled={!canMoveUp}
             sx={{
-              color: canMoveUp ? "primary.main" : "action.disabled",
+              color: !canMoveUp === "action.disabled",
               minWidth: "auto",
               p: 0.5,
             }}
@@ -106,10 +107,9 @@ export const WaypointItem = ({
           <IconButton
             size="small"
             onClick={handleMoveDown}
-            disabled={!canMoveUp}
+            disabled={!canMoveDown}
             sx={{
-              color: canMoveDown ? "primary.main" : "action.disabled",
-
+              color: !canMoveDown === "action.disabled",
               p: 0.5,
             }}
           >
@@ -119,12 +119,11 @@ export const WaypointItem = ({
             size="small"
             onClick={handleDelete}
             sx={{
-              color: "error.main",
               minWidth: "auto",
               p: 0.5,
             }}
           >
-            <DeleteOutlineIcon fontSize="small" />
+            <DeleteOutlineIcon fontSize="small" aria-hidden />
           </IconButton>
         </Stack>
       }

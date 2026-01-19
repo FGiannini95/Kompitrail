@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogTitle,
   DialogActions,
+  Box,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -274,36 +275,38 @@ export const RouteCreateDialog = () => {
               />
             </Grid>
             {hasStart && hasEnd && hasMetrics && (
-              <Grid size={12}>
-                <OutlinedButton
-                  onClick={() => {
-                    setMapTarget("waypoint");
-                    setIsMapOpen(true);
-                  }}
-                  text={t("buttons:addWaypoint")}
-                  icon={
-                    <AddOutlinedIcon
-                      style={{ paddingLeft: "5px", width: "20px" }}
-                      aria-hidden
-                    />
-                  }
-                />
-              </Grid>
-            )}
-
-            {waypoints.length > 0 && (
-              <Grid size={12}>
-                {waypoints.map((waypoint, index) => (
-                  <WaypointItem
-                    key={index}
-                    waypoint={waypoint}
-                    index={index}
-                    allWaypoints={waypoints}
-                    setWaypoints={setWaypoints}
-                    totalCount={waypoints.length}
+              <>
+                <Grid size={12}>
+                  <OutlinedButton
+                    onClick={() => {
+                      setMapTarget("waypoint");
+                      setIsMapOpen(true);
+                    }}
+                    text={t("buttons:addWaypoint")}
+                    icon={
+                      <AddOutlinedIcon
+                        style={{ paddingLeft: "5px", width: "20px" }}
+                        aria-hidden
+                      />
+                    }
                   />
-                ))}
-              </Grid>
+                </Grid>
+                {waypoints.length > 0 && (
+                  <Grid size={12} spacing={1.5}>
+                    {waypoints.map((waypoint, index) => (
+                      <Box key={index} sx={{ mb: 1 }}>
+                        <WaypointItem
+                          waypoint={waypoint}
+                          index={index}
+                          allWaypoints={waypoints}
+                          setWaypoints={setWaypoints}
+                          totalCount={waypoints.length}
+                        />
+                      </Box>
+                    ))}
+                  </Grid>
+                )}
+              </>
             )}
 
             <Grid size={12}>
