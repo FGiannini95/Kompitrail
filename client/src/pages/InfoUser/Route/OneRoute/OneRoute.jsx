@@ -47,7 +47,7 @@ import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/Ou
 import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
 import { Header } from "../../../../components/Header/Header";
 import { RouteActionButton } from "../RouteActionButton/RouteActionButton";
-import { RouteMapPreview } from "../../../../components/RouteMapPreview/RouteMapPreview";
+import { RouteMapPreview } from "../../../../components/Maps/RouteMapPreview/RouteMapPreview";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>

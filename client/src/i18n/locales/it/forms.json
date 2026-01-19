@@ -24,5 +24,6 @@
   "motorbikeTypeLabel": "Moto idonee",
   "descriptionLabel": "Descrizione",
   "checkbox": "Prima volta su questo percorso?",
-  "currentLocation": "Posizione attuale"
+  "currentLocation": "Posizione attuale",
+  "waypoint": "Tappa"
 }

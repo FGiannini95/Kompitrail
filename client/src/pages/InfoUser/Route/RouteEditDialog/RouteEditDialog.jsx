@@ -40,7 +40,7 @@ import {
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
-import { RouteMapDialog } from "../../../../components/Dialogs/RouteMapDialog/RouteMapDialog";
+import { RouteMapDialog } from "../../../../components/Maps/RouteMapDialog/RouteMapDialog";
 
 export const RouteEditDialog = () => {
   const [editRoute, setEditRoute] = useState(ROUTE_INITIAL_VALUE);

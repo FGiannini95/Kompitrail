@@ -46,8 +46,9 @@ import {
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
-import { RouteMapDialog } from "../../../../components/Dialogs/RouteMapDialog/RouteMapDialog";
+import { RouteMapDialog } from "../../../../components/Maps/RouteMapDialog/RouteMapDialog";
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
+import { WaypointItem } from "../../../../components/Maps/WaypointItem/WaypointItem";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -272,7 +273,6 @@ export const RouteCreateDialog = () => {
                 }}
               />
             </Grid>
-
             {hasStart && hasEnd && hasMetrics && (
               <Grid size={12}>
                 <OutlinedButton
@@ -288,6 +288,21 @@ export const RouteCreateDialog = () => {
                     />
                   }
                 />
+              </Grid>
+            )}
+
+            {waypoints.length > 0 && (
+              <Grid size={12}>
+                {waypoints.map((waypoint, index) => (
+                  <WaypointItem
+                    key={index}
+                    waypoint={waypoint}
+                    index={index}
+                    allWaypoints={waypoints}
+                    setWaypoints={setWaypoints}
+                    totalCount={waypoints.length}
+                  />
+                ))}
               </Grid>
             )}
 
@@ -313,7 +328,6 @@ export const RouteCreateDialog = () => {
                 }}
               />
             </Grid>
-
             <Grid size={12}>
               <FormDataPicker
                 label={t("forms:dateLabel")}
@@ -324,7 +338,6 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-
             {hasStart && hasEnd && hasMetrics && (
               <>
                 <Grid size={6}>
@@ -356,7 +369,6 @@ export const RouteCreateDialog = () => {
                 </Grid>
               </>
             )}
-
             <Grid size={12}>
               <FormAutocomplete
                 label={t("forms:levelLabel")}
@@ -372,7 +384,6 @@ export const RouteCreateDialog = () => {
                 disablePortal
               />
             </Grid>
-
             <Grid size={12}>
               <FormAutocomplete
                 name="max_participants"
@@ -387,7 +398,6 @@ export const RouteCreateDialog = () => {
                 disablePortal
               />
             </Grid>
-
             <Grid size={12}>
               <FormAutocomplete
                 label={t("forms:motorbikeTypeLabel")}
@@ -403,7 +413,6 @@ export const RouteCreateDialog = () => {
                 disablePortal
               />
             </Grid>
-
             <Grid
               size={12}
               sx={{
@@ -425,7 +434,6 @@ export const RouteCreateDialog = () => {
                 }
               />
             </Grid>
-
             <Grid size={12} sx={{ mb: 2 }}>
               <FormTextfield
                 label={t("forms:descriptionLabel")}
