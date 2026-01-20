@@ -51,6 +51,7 @@ import { RouteMapDialog } from "../../../../components/Maps/RouteMapDialog/Route
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 import { WaypointItem } from "../../../../components/Maps/WaypointItem/WaypointItem";
 import { useRef } from "react";
+import { useCallback } from "react";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -233,6 +234,22 @@ export const RouteCreateDialog = () => {
     }));
   }, [metrics, setCreateOneRoute]);
 
+  // Convert raw point to waypoint structure. Data transformer: input - point, output - waypoint
+  const createWaypointFromPoint = useCallback(
+    (point) => {
+      return {
+        lat: point.lat,
+        lng: point.lng,
+        waypoint_lat: point.lat,
+        waypoint_lng: point.lng,
+        label_i18n: point.i18n,
+        position: waypoints.length,
+      };
+    },
+    [waypoints.length]
+  );
+
+  // Add formatted waypoint to existing array
   const waypointData = {
     startPoint: createOneRoute.starting_point,
     endPoint: createOneRoute.ending_point,
@@ -491,7 +508,18 @@ export const RouteCreateDialog = () => {
           setMapTarget(null);
         }}
         onConfirm={(point) => {
-          if (mapTarget === "waypoint") return;
+          if (mapTarget === "waypoint") {
+            // Create and add new waypoint
+            const newWaypoint = createWaypointFromPoint(point);
+            setWaypoints([...waypoints, newWaypoint]);
+
+            // Close dialog and reset mapTarget
+            setIsMapOpen(false);
+            setMapTarget(null);
+            return;
+          }
+
+          // Existing logic for start/end points
           setCreateOneRoute((prev) => {
             if (mapTarget === "start") {
               return { ...prev, starting_point: point };
