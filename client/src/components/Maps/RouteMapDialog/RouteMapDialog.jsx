@@ -118,6 +118,9 @@ export const RouteMapDialog = forwardRef(
 
       // In waypoint mode, center on start point and clear point state
       if (isWaypointMode && waypointData?.startPoint) {
+        // Force waypoint to be null
+        updatePoint(null, null);
+
         setViewState({
           latitude: waypointData.startPoint.lat,
           longitude: waypointData.startPoint.lng,
