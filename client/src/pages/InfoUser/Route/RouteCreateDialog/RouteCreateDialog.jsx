@@ -78,7 +78,6 @@ export const RouteCreateDialog = () => {
     end: createOneRoute.ending_point,
     endpointUrl: metricsEndpoint,
     enabled: isOpen,
-    debounceMs: 600,
   });
 
   const navigate = useNavigate();
@@ -234,6 +233,7 @@ export const RouteCreateDialog = () => {
   const waypointData = {
     startPoint: createOneRoute.starting_point,
     endPoint: createOneRoute.ending_point,
+    routeGeometry: metrics?.geometry,
     existingWaypoints: waypoints,
     onWaypointAdd: (newWaypoint) => setWaypoints([...waypoints, newWaypoint]),
   };
@@ -263,6 +263,7 @@ export const RouteCreateDialog = () => {
                 readOnly
                 clearable={false}
                 value={startingDisplayLabel}
+                title={startingDisplayLabel}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
                 errors={errors}
@@ -294,7 +295,7 @@ export const RouteCreateDialog = () => {
                 {waypoints.length > 0 && (
                   <Grid size={12} spacing={1.5}>
                     {waypoints.map((waypoint, index) => (
-                      <Box key={index} sx={{ mb: 1 }}>
+                      <Box key={index} sx={{ mb: 1.5 }}>
                         <WaypointItem
                           waypoint={waypoint}
                           index={index}
@@ -316,6 +317,11 @@ export const RouteCreateDialog = () => {
                 readOnly
                 clearable={false}
                 value={getPointLabel(
+                  createOneRoute.ending_point,
+                  currentLang,
+                  "full"
+                )}
+                title={getPointLabel(
                   createOneRoute.ending_point,
                   currentLang,
                   "full"
@@ -492,6 +498,7 @@ export const RouteCreateDialog = () => {
           setMapTarget(null);
         }}
         waypointData={mapTarget === "waypoint" ? waypointData : null}
+        mapTarget={mapTarget}
       />
     </>
   );

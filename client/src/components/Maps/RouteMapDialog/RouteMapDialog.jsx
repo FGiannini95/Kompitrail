@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import Map, { Marker } from "react-map-gl/mapbox";
+import Map, { Source, Layer } from "react-map-gl/mapbox";
 
 import {
   Dialog,
@@ -18,6 +18,9 @@ import MyLocationOutlinedIcon from "@mui/icons-material/MyLocationOutlined";
 
 import { useRoutePoint } from "../../../hooks/useRoutePoint";
 import { Loading } from "../../Loading/Loading";
+import { MarkerWithIcon } from "../MarkerWithIcon/MarkerWithIcon";
+import { ROUTES_URL } from "../../../api";
+import { useRouteMetrics } from "../../../hooks/useRouteMetrics";
 
 export const RouteMapDialog = ({
   open,
@@ -25,10 +28,14 @@ export const RouteMapDialog = ({
   onCancel,
   onConfirm,
   maxWidth = "md",
+  waypointData = null,
+  mapTarget = null,
 }) => {
-  const { t } = useTranslation(["buttons"]);
-  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+  const [query, setQuery] = useState(""); // Search input value
+  const [viewState, setViewState] = useState(null); // Map camera state
+  const [updatedRoute, setUpdatedRoute] = useState(null);
 
+  const { t } = useTranslation(["buttons"]);
   const {
     point,
     updatePoint,
@@ -39,11 +46,10 @@ export const RouteMapDialog = ({
     enabled: open,
   });
 
-  // Search input value
-  const [query, setQuery] = useState("");
-
-  // Map camera state
-  const [viewState, setViewState] = useState(null);
+  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+  const isWaypointMode = Boolean(
+    waypointData?.startPoint && waypointData?.endPoint
+  );
 
   // Get current location from browser
   const getCurrentLocation = useCallback(
@@ -95,23 +101,29 @@ export const RouteMapDialog = ({
     setViewState(null);
     setQuery("");
 
-    // If we have an initial point, center on it
-    if (initialSelected?.lat != null && initialSelected?.lng != null) {
-      const lat = Number(initialSelected.lat);
-      const lng = Number(initialSelected.lng);
-
+    // In waypoint mode, center on start point and clear point state
+    if (isWaypointMode && waypointData?.startPoint) {
       setViewState({
-        latitude: lat,
-        longitude: lng,
+        latitude: waypointData.startPoint.lat,
+        longitude: waypointData.startPoint.lng,
         zoom: 13,
       });
-
       return;
     }
 
-    // Otherwise, try to get current location
+    // If we have an initial point, center on it
+    if (initialSelected?.lat) {
+      setViewState({
+        latitude: initialSelected.lat,
+        longitude: initialSelected.lng,
+        zoom: 13,
+      });
+      return;
+    }
+
+    // Fallback to current location
     getCurrentLocation({ fallbackToGranada: true });
-  }, [open, initialSelected?.lat, initialSelected?.lng, getCurrentLocation]);
+  }, [open]);
 
   // Recenter to current location and update pin
   const recenterToCurrentLocation = () => {
@@ -123,6 +135,14 @@ export const RouteMapDialog = ({
     const { lng, lat } = evt.lngLat;
     await updatePoint(lat, lng);
   };
+
+  const waypointRouteMetrics = useRouteMetrics({
+    start: isWaypointMode ? waypointData?.startPoint : null,
+    end: isWaypointMode ? waypointData?.endPoint : null,
+    waypoint: isWaypointMode ? point : null,
+    endpointUrl: `${ROUTES_URL}/metrics`,
+    enabled: isWaypointMode && Boolean(point),
+  });
 
   const showMap = viewState && point;
 
@@ -199,13 +219,63 @@ export const RouteMapDialog = ({
                 mapStyle="mapbox://styles/mapbox/outdoors-v12"
                 onClick={handleMapClick}
               >
-                {/* Pin marker */}
-                {point && (
-                  <Marker
+                {/* Route line in waypoint mode */}
+                {isWaypointMode &&
+                  (waypointRouteMetrics.data?.geometry ||
+                    waypointData?.routeGeometry) && (
+                    <Source
+                      key={`route-${Date.now()}`} // ← Sempre diverso
+                      id="current-route"
+                      type="geojson"
+                      data={{
+                        type: "Feature",
+                        geometry:
+                          waypointRouteMetrics.data?.geometry ||
+                          waypointData?.routeGeometry,
+                      }}
+                    >
+                      <Layer
+                        id="current-route-line"
+                        type="line"
+                        paint={{
+                          "line-color": "#FF6B35",
+                          "line-width": 5,
+                          "line-opacity": 0.9,
+                        }}
+                      />
+                    </Source>
+                  )}
+
+                {/* Normal mode markers */}
+                {!isWaypointMode && point && (
+                  <MarkerWithIcon
                     longitude={point.lng}
                     latitude={point.lat}
-                    anchor="bottom"
+                    type={mapTarget}
                   />
+                )}
+
+                {/* Waypoint mode markers */}
+                {isWaypointMode && (
+                  <>
+                    <MarkerWithIcon
+                      longitude={waypointData.startPoint.lng}
+                      latitude={waypointData.startPoint.lat}
+                      type="start"
+                    />
+                    <MarkerWithIcon
+                      longitude={waypointData.endPoint.lng}
+                      latitude={waypointData.endPoint.lat}
+                      type="end"
+                    />
+                    {point && (
+                      <MarkerWithIcon
+                        longitude={point.lng}
+                        latitude={point.lat}
+                        type="waypoint"
+                      />
+                    )}
+                  </>
                 )}
 
                 {/* Recenter button */}

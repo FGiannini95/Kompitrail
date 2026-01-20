@@ -88,6 +88,7 @@ export const WaypointItem = ({
       label={`${t("forms:waypoint")} ${index + 1}`}
       name="waypoint_display"
       value={getDisplayLabel(waypoint)}
+      title={getDisplayLabel(waypoint)}
       readOnly={true}
       clearable={false}
       endAdornment={

@@ -9,6 +9,7 @@ import React, { useEffect, useState, useRef } from "react";
 export const useRouteMetrics = ({
   start,
   end,
+  waypoint = null,
   enabled = true,
   debounceMs = 600,
   endpointUrl,
@@ -25,7 +26,8 @@ export const useRouteMetrics = ({
     start?.lat != null &&
     start?.lng != null &&
     end?.lat != null &&
-    end?.lng != null;
+    end?.lng != null &&
+    (!waypoint || (waypoint?.lat != null && waypoint?.lng != null));
 
   useEffect(() => {
     if (!enabled) return;
