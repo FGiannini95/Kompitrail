@@ -50,6 +50,7 @@ import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPi
 import { RouteMapDialog } from "../../../../components/Maps/RouteMapDialog/RouteMapDialog";
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 import { WaypointItem } from "../../../../components/Maps/WaypointItem/WaypointItem";
+import { useRef } from "react";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -81,6 +82,8 @@ export const RouteCreateDialog = () => {
   });
 
   const navigate = useNavigate();
+
+  const mapDialogRef = useRef(null);
 
   const hasStart =
     createOneRoute?.starting_point?.lat != null &&
@@ -469,6 +472,7 @@ export const RouteCreateDialog = () => {
       </Dialog>
 
       <RouteMapDialog
+        ref={mapDialogRef}
         open={isMapOpen}
         initialSelected={
           mapTarget === "start"
@@ -479,6 +483,10 @@ export const RouteCreateDialog = () => {
         }
         showConfirmButton={true}
         onCancel={() => {
+          if (mapTarget === "waypoint" && mapDialogRef.current?.resetPoint) {
+            mapDialogRef.current.resetPoint();
+          }
+
           setIsMapOpen(false);
           setMapTarget(null);
         }}

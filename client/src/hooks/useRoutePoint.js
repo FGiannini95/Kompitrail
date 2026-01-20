@@ -73,10 +73,17 @@ export const useRoutePoint = ({ initialPoint = null, enabled = true }) => {
     [reverseGeocode]
   );
 
+  const resetPoint = useCallback(() => {
+    setPoint(null);
+    setLoading(false);
+    setError(null);
+  });
+
   return {
     point,
     setPoint,
     updatePoint,
+    resetPoint,
     loading,
     error,
     getLabel,
