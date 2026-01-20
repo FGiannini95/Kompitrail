@@ -158,7 +158,7 @@ export const RouteMapDialog = forwardRef(
     const waypointRouteMetrics = useRouteMetrics({
       start: isWaypointMode ? waypointData?.startPoint : null,
       end: isWaypointMode ? waypointData?.endPoint : null,
-      waypoint: isWaypointMode ? point : null,
+      waypoints: isWaypointMode && point ? [point] : [],
       endpointUrl: `${ROUTES_URL}/metrics`,
       enabled: isWaypointMode && Boolean(point),
     });
@@ -287,6 +287,20 @@ export const RouteMapDialog = forwardRef(
                         latitude={waypointData.endPoint.lat}
                         type="end"
                       />
+
+                      {/* Show all existing waypoints */}
+                      {waypointData?.existingWaypoints?.map(
+                        (waypoint, index) => (
+                          <MarkerWithIcon
+                            key={`existing-waypoint-${index}`}
+                            longitude={waypoint.lng || waypoint.waypoint_lng}
+                            latitude={waypoint.lat || waypoint.waypoint_lat}
+                            type="waypoint"
+                          />
+                        )
+                      )}
+
+                      {/* Show current waypoint if present */}
                       {point && (
                         <MarkerWithIcon
                           longitude={point.lng}

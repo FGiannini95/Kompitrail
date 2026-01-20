@@ -9,7 +9,7 @@ import React, { useEffect, useState, useRef } from "react";
 export const useRouteMetrics = ({
   start,
   end,
-  waypoint = null,
+  waypoints = [],
   enabled = true,
   debounceMs = 600,
   endpointUrl,
@@ -21,13 +21,18 @@ export const useRouteMetrics = ({
   const timerRef = useRef(null);
   const abortRef = useRef(null);
 
+  // Valid waypoints
+  const hasValidWaypoints = waypoints.every(
+    (wp) => wp?.lat != null && wp?.lng != null
+  );
+
   // We have a starting and ending points
   const hasPoints =
     start?.lat != null &&
     start?.lng != null &&
     end?.lat != null &&
     end?.lng != null &&
-    (!waypoint || (waypoint?.lat != null && waypoint?.lng != null));
+    hasValidWaypoints;
 
   useEffect(() => {
     if (!enabled) return;
@@ -50,22 +55,36 @@ export const useRouteMetrics = ({
       if (abortRef.current) {
         abortRef.current.abort();
       }
-      // Create a new aborter controller for this request
+      // Create a new abort controller for this request
       const controller = new AbortController();
       abortRef.current = controller;
 
       setLoading(true);
 
       try {
+        // Build request body with waypoints support
+        const requestBody = {
+          start: { lat: start.lat, lng: start.lng },
+          end: { lat: end.lat, lng: end.lng },
+        };
+
+        // Add waypoints array if present and valid
+        if (waypoints && waypoints.length > 0) {
+          requestBody.waypoints = waypoints
+            .map((wp) => ({
+              lat: wp.lat || wp.waypoint_lat,
+              lng: wp.lng || wp.waypoint_lng,
+              position: wp.position || 0,
+            }))
+            .sort((a, b) => a.position - b.position); // Sort by position
+        }
+
         // Call backend to calculate distance and time
         const response = await fetch(endpointUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
-          body: JSON.stringify({
-            start: { lat: start.lat, lng: start.lng },
-            end: { lat: end.lat, lng: end.lng },
-          }),
+          body: JSON.stringify(requestBody),
         });
 
         if (!response.ok) {
@@ -100,6 +119,7 @@ export const useRouteMetrics = ({
     start?.lng,
     end?.lat,
     end?.lng,
+    waypoints,
     endpointUrl,
     debounceMs,
   ]);

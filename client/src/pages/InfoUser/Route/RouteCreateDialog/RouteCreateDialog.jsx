@@ -78,6 +78,7 @@ export const RouteCreateDialog = () => {
   const { data: metrics } = useRouteMetrics({
     start: createOneRoute.starting_point,
     end: createOneRoute.ending_point,
+    waypoints: waypoints,
     endpointUrl: metricsEndpoint,
     enabled: isOpen,
   });

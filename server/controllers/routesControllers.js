@@ -969,9 +969,9 @@ class routesControllers {
 
   calculateMetrics = async (req, res) => {
     try {
-      const { start, end } = req.body;
+      const { start, end, waypoints = [] } = req.body;
 
-      const orsResult = await getOrsRouteGeojson(start, end);
+      const orsResult = await getOrsRouteGeojson(start, end, waypoints);
 
       return res.json({
         distanceKm: orsResult.distanceKm,
