@@ -163,7 +163,7 @@ export const RouteMapDialog = forwardRef(
           ? [...(waypointData?.existingWaypoints || []), point] // Include existing + current
           : waypointData?.existingWaypoints || [], // Show existing
       endpointUrl: `${ROUTES_URL}/metrics`,
-      enabled: isWaypointMode && Boolean(point),
+      enabled: isWaypointMode,
     });
 
     const showMap = viewState && (point || isWaypointMode);
