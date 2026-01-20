@@ -93,8 +93,8 @@ class routesControllers {
     for (const w of waypoints) {
       if (
         !w ||
-        typeof w.label !== "string" ||
-        w.label.trim() === "" ||
+        !w.label_i18n ||
+        typeof w.label_i18n !== "object" ||
         w.lat == null ||
         w.lng == null ||
         w.position == null ||
@@ -156,7 +156,11 @@ class routesControllers {
       const start = { lat: Number(starting_lat), lng: Number(starting_lng) };
       const end = { lat: Number(ending_lat), lng: Number(ending_lng) };
 
-      const orsResult = await getOrsRouteGeojson(start, end);
+      const waypointsForOrs = waypoints.map((w) => ({
+        lat: w.lat,
+        lng: w.lng,
+      }));
+      const orsResult = await getOrsRouteGeojson(start, end, waypointsForOrs);
 
       routeGeometry = JSON.stringify(orsResult.geometry);
       computedDistance = orsResult.distanceKm;
@@ -259,7 +263,7 @@ class routesControllers {
             const values = ordered.map((w) => [
               routeId,
               Number(w.position),
-              w.label,
+              JSON.stringify(w.label_i18n),
               w.lat,
               w.lng,
             ]);
@@ -335,7 +339,7 @@ class routesControllers {
           `;
 
             const sqlSelectWaypoints = `
-              SELECT position, label, lat, lng
+              SELECT position, label_i18n, waypoint_lat, waypoint_lng
               FROM route_waypoint
               WHERE route_id = ?
               ORDER BY position ASC
@@ -352,10 +356,15 @@ class routesControllers {
               const route = result2[0];
               // Parse i18n JSON back to objects
               try {
-                route.starting_point_i18n = JSON.parse(
-                  route.starting_point_i18n
-                );
-                route.ending_point_i18n = JSON.parse(route.ending_point_i18n);
+                route.starting_point_i18n =
+                  typeof route.starting_point_i18n === "string"
+                    ? JSON.parse(route.starting_point_i18n)
+                    : route.starting_point_i18n;
+
+                route.ending_point_i18n =
+                  typeof route.ending_point_i18n === "string"
+                    ? JSON.parse(route.ending_point_i18n)
+                    : route.ending_point_i18n;
               } catch (parseErr) {
                 console.error("Error parsing i18n JSON:", parseErr);
               }
@@ -374,7 +383,19 @@ class routesControllers {
                     return res.status(500).json({ error: wpErr });
                   }
 
-                  route.waypoints = wpRows || [];
+                  // Parse label_i18n JSON for each waypoint
+                  const waypoints = (wpRows || []).map((wp) => ({
+                    position: wp.position,
+                    label_i18n: wp.label_i18n
+                      ? typeof wp.label_i18n === "string"
+                        ? JSON.parse(wp.label_i18n)
+                        : wp.label_i18n
+                      : null,
+                    lat: wp.waypoint_lat,
+                    lng: wp.waypoint_lng,
+                  }));
+
+                  route.waypoints = waypoints;
                   return res.status(200).json(route);
                 }
               );

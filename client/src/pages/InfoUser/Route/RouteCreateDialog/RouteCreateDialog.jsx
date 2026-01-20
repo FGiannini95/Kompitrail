@@ -139,6 +139,7 @@ export const RouteCreateDialog = () => {
         starting_lng: createOneRoute.starting_point.lng,
         ending_lat: createOneRoute.ending_point.lat,
         ending_lng: createOneRoute.ending_point.lng,
+        waypoints: waypoints,
         date: createOneRoute.date,
         level: createOneRoute.level,
         is_verified: createOneRoute.is_verified,
