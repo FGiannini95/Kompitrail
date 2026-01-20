@@ -44,6 +44,7 @@ export const RouteMapDialog = forwardRef(
     const { t } = useTranslation(["buttons"]);
     const {
       point,
+      setPoint,
       updatePoint,
       loading: isResolvingLabel,
       getLabel,
@@ -119,7 +120,7 @@ export const RouteMapDialog = forwardRef(
       // In waypoint mode, center on start point and clear point state
       if (isWaypointMode && waypointData?.startPoint) {
         // Force waypoint to be null
-        updatePoint(null, null);
+        setPoint(null);
 
         setViewState({
           latitude: waypointData.startPoint.lat,
