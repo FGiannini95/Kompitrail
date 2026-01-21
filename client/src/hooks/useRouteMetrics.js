@@ -20,11 +20,17 @@ export const useRouteMetrics = ({
 
   const timerRef = useRef(null);
   const abortRef = useRef(null);
+  const waypointsRef = useRef(waypoints);
 
   // Valid waypoints
   const hasValidWaypoints = waypoints.every(
     (wp) => wp?.lat != null && wp?.lng != null
   );
+
+  // Update ref when waypoints change
+  useEffect(() => {
+    waypointsRef.current = waypoints;
+  }, [waypoints]);
 
   // We have a starting and ending points
   const hasPoints =
@@ -49,13 +55,18 @@ export const useRouteMetrics = ({
       return;
     }
 
+    // Clear existing timers
+    if (timerRef.current) clearTimeout(timerRef.current);
+
     // Schedule route calculation after a short delay
     timerRef.current = setTimeout(async () => {
+      // Use fresh waypoints from ref to avoid stale closure
+      const freshWaypoints = waypointsRef.current;
+
       // Cancel any previous request still running
       if (abortRef.current) {
         abortRef.current.abort();
       }
-      // Create a new abort controller for this request
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -69,8 +80,8 @@ export const useRouteMetrics = ({
         };
 
         // Add waypoints array if present and valid
-        if (waypoints && waypoints.length > 0) {
-          requestBody.waypoints = waypoints
+        if (freshWaypoints && freshWaypoints.length > 0) {
+          requestBody.waypoints = freshWaypoints
             .map((wp) => ({
               lat: wp.lat || wp.waypoint_lat,
               lng: wp.lng || wp.waypoint_lng,

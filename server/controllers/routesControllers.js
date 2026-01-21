@@ -507,7 +507,7 @@ class routesControllers {
     });
   };
 
-  editRoute = (req, res) => {
+  editRoute = async (req, res) => {
     const {
       starting_point_i18n,
       ending_point_i18n,
@@ -538,26 +538,63 @@ class routesControllers {
     const startingPointI18nJson = JSON.stringify(starting_point_i18n);
     const endingPointI18nJson = JSON.stringify(ending_point_i18n);
 
-    let sqlUpdateRoute = `
-      UPDATE route SET 
-        starting_point_i18n = ?,
-        starting_lat = ?,
-        starting_lng = ?,
-        ending_point_i18n = ?,
-        ending_lat = ?,
-        ending_lng = ?,
-        route_geometry = ?,
-        date = ?, 
-        level = ?,  
-        distance = ?,  
-        is_verified = ?, 
-        suitable_motorbike_type = ?,  
-        estimated_time = ?, 
-        max_participants = ?, 
-        route_description = ?
-      WHERE route_id = ? AND is_deleted = 0
-    `;
+    // Recalculate route geometry, distance and time with updated waypoints
+    let routeGeometry;
+    let computedDistance;
+    let computedEstimatedTime;
 
+    try {
+      const start = { lat: Number(starting_lat), lng: Number(starting_lng) };
+      const end = { lat: Number(ending_lat), lng: Number(ending_lng) };
+
+      // Convert waypoints to ORS format (only coordinates needed)
+      const waypointsForOrs = waypoints.map((w) => ({
+        lat: w.lat,
+        lng: w.lng,
+      }));
+
+      // Calculate new route with current waypoints
+      const orsResult = await getOrsRouteGeojson(start, end, waypointsForOrs);
+
+      routeGeometry = JSON.stringify(orsResult.geometry);
+      computedDistance = orsResult.distanceKm;
+      computedEstimatedTime = orsResult.durationMinutes;
+    } catch (err) {
+      const status = err.status || err.response?.status || 500;
+
+      console.error("editRoute ORS error:", {
+        message: err.message,
+        code: err.code,
+        status,
+      });
+
+      return res.status(status).json({
+        error: err.message || "Error al calcular la ruta",
+      });
+    }
+
+    let sqlUpdateRoute = `
+    UPDATE route SET 
+      starting_point_i18n = ?,
+      starting_lat = ?,
+      starting_lng = ?,
+      ending_point_i18n = ?,
+      ending_lat = ?,
+      ending_lng = ?,
+      route_geometry = ?,
+      date = ?, 
+      level = ?,  
+      distance = ?,  
+      is_verified = ?, 
+      suitable_motorbike_type = ?,  
+      estimated_time = ?, 
+      max_participants = ?, 
+      route_description = ?
+    WHERE route_id = ? AND is_deleted = 0
+  `;
+
+    // Use computed values instead of old frontend values
+    // This ensures route data reflects the current waypoints configuration
     const routeParams = [
       startingPointI18nJson,
       starting_lat,
@@ -565,13 +602,13 @@ class routesControllers {
       endingPointI18nJson,
       ending_lat,
       ending_lng,
-      JSON.stringify(route_geometry),
+      routeGeometry, // ← Newly calculated geometry
       date,
       level,
-      distance,
+      computedDistance, // ← Newly calculated distance
       is_verified,
       motorbikeTypes,
-      estimated_time,
+      computedEstimatedTime, // ← Newly calculated time
       max_participants,
       route_description,
       route_id,
@@ -582,23 +619,26 @@ class routesControllers {
         return res.status(400).json({ err });
       }
 
+      // Clean existing waypoints and insert new ones
+      // This handles add, remove, and reorder operations
       const deleteWaypoints = `DELETE FROM route_waypoint WHERE route_id = ?`;
 
       connection.query(deleteWaypoints, [route_id], (delErr) => {
-        // ← Fixed typo
         if (delErr) {
           return res.status(400).json({ err: delErr });
         }
 
+        // If no waypoints, route update is complete
         if (waypoints.length === 0) {
           return res.status(200).json({ message: "Ruta modificada", result });
         }
 
+        // Insert updated waypoints with correct positions
         const sqlInsertWaypoints = `
-         INSERT INTO route_waypoint
-          (route_id, position, label_i18n, waypoint_lat, waypoint_lng)
-          VALUES ?  
-        `;
+       INSERT INTO route_waypoint
+        (route_id, position, label_i18n, waypoint_lat, waypoint_lng)
+        VALUES ?  
+      `;
 
         const values = waypoints.map((w) => [
           route_id,

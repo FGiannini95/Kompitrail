@@ -114,17 +114,6 @@ export const RouteEditDialog = () => {
     endpointUrl: metricsEndpoint,
   });
 
-  useEffect(() => {
-    if (routeMetrics) {
-      setEditRoute((prev) => ({
-        ...prev,
-        distance: routeMetrics.distanceKm,
-        estimated_time: routeMetrics.durationMinutes,
-        route_geometry: routeMetrics.geometry,
-      }));
-    }
-  }, [routeMetrics]);
-
   // Load route data when dialog opens
   useEffect(() => {
     if (isOpen && route_id) {
@@ -193,6 +182,7 @@ export const RouteEditDialog = () => {
       "editRoute",
       JSON.stringify({
         ...editRoute,
+        waypoints: waypoints,
         date: toMySQLDateTime(editRoute.date, "Europe/Madrid"),
       })
     );
