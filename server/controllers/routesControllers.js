@@ -524,6 +524,7 @@ class routesControllers {
       estimated_time,
       max_participants,
       route_description,
+      waypoints = [],
     } = JSON.parse(req.body.editRoute);
 
     const { id: route_id } = req.params;
@@ -581,7 +582,37 @@ class routesControllers {
         return res.status(400).json({ err });
       }
 
-      return res.status(200).json({ message: "Ruta modificada", result });
+      const deleteWaypoints = `DELETE FROM route_waypoint WHERE route_id = ?`;
+
+      connection.query(deleteWaypoints, [route_id], (delErr) => {
+        // ← Fixed typo
+        if (delErr) {
+          return res.status(400).json({ err: delErr });
+        }
+
+        if (waypoints.length === 0) {
+          return res.status(200).json({ message: "Ruta modificada", result });
+        }
+
+        const sqlInsertWaypoints = `
+         INSERT INTO route_waypoint
+          (route_id, position, label_i18n, waypoint_lat, waypoint_lng)
+          VALUES ?  
+        `;
+
+        const values = waypoints.map((w) => [
+          route_id,
+          w.position,
+          JSON.stringify(w.label_i18n),
+          w.lat,
+          w.lng,
+        ]);
+
+        connection.query(sqlInsertWaypoints, [values], (wpErr) => {
+          if (wpErr) return res.status(400).json({ err: wpErr });
+          return res.status(200).json({ message: "Ruta modificada", result });
+        });
+      });
     });
   };
 

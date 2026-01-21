@@ -245,8 +245,8 @@ export const RouteCreateDialog = () => {
         waypoint_lat: point.lat,
         waypoint_lng: point.lng,
         label_i18n: point.i18n,
-        position: currentWaypoints.length, // ← Use parameter
-        displayNumber: currentWaypoints.length + 1, // ← Use parameter
+        position: currentWaypoints.length,
+        displayNumber: currentWaypoints.length + 1,
       };
     },
     [waypoints.length]
@@ -523,7 +523,7 @@ export const RouteCreateDialog = () => {
             return;
           }
 
-          // Existing logic for start/end points
+          //  Logic for start/end points
           setCreateOneRoute((prev) => {
             if (mapTarget === "start") {
               return { ...prev, starting_point: point };
