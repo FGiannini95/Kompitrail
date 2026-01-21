@@ -641,11 +641,36 @@ class routesControllers {
         .split(",")
         .filter(Boolean);
 
-      const { participants_raw, ...rest } = r;
+      const sqlSelectWaypoints = `
+        SELECT position, label_i18n, waypoint_lat, waypoint_lng
+        FROM route_waypoint
+        WHERE route_id = ?
+        ORDER BY position ASC
+      `;
 
-      return res.status(200).json({
-        ...rest,
-        participants,
+      connection.query(sqlSelectWaypoints, [route_id], (wpErr, wpRows) => {
+        if (wpErr) {
+          return res.status(500).json({ error: wpErr });
+        }
+
+        // Use safe parsing for waypoints
+        const waypoints = (wpRows || []).map((wp) => ({
+          position: wp.position,
+          label_i18n:
+            wp.label_i18n && typeof wp.label_i18n === "string"
+              ? JSON.parse(wp.label_i18n)
+              : wp.label_i18n,
+          lat: wp.waypoint_lat,
+          lng: wp.waypoint_lng,
+        }));
+
+        const { participants_raw, ...rest } = r;
+
+        return res.status(200).json({
+          ...rest,
+          participants,
+          waypoints,
+        });
       });
     });
   };
@@ -1036,8 +1061,6 @@ class routesControllers {
       });
     }
   };
-
-  addWaypoint = (req, res) => {};
 }
 
 module.exports = new routesControllers();

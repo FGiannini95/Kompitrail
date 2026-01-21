@@ -31,6 +31,5 @@ router.delete("/leave/:id", routesControllers.leaveRoute);
 router.get("/frequent-companions/:id", routesControllers.getFrequentCompanions);
 router.post("/metrics", routesControllers.calculateMetrics);
 router.post("/translatedescription", routesControllers.translateDescription);
-router.post("/addwaypoint", routesControllers.addWaypoint);
 
 module.exports = router;

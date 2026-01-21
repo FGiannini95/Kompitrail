@@ -260,9 +260,7 @@ export const RouteMapDialog = forwardRef(
                           id="current-route-line"
                           type="line"
                           paint={{
-                            "line-color": "#FF6B35",
                             "line-width": 5,
-                            "line-opacity": 0.9,
                           }}
                         />
                       </Source>
