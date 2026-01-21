@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-import { Box, IconButton, Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 
 import { getPointLabel } from "../../../helpers/pointMetrics";
 import { getCurrentLang } from "../../../helpers/oneRouteUtils";

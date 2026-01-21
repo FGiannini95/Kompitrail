@@ -297,6 +297,7 @@ export const RouteMapDialog = forwardRef(
                             longitude={waypoint.lng || waypoint.waypoint_lng}
                             latitude={waypoint.lat || waypoint.waypoint_lat}
                             type="waypoint"
+                            number={waypoint.displayNumber || index + 1}
                           />
                         )
                       )}
@@ -307,6 +308,9 @@ export const RouteMapDialog = forwardRef(
                           longitude={point.lng}
                           latitude={point.lat}
                           type="waypoint"
+                          number={
+                            (waypointData?.existingWaypoints?.length || 0) + 1
+                          }
                         />
                       )}
                     </>

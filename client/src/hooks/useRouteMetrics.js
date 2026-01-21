@@ -11,7 +11,7 @@ export const useRouteMetrics = ({
   end,
   waypoints = [],
   enabled = true,
-  debounceMs = 600,
+  debounceMs = 2000,
   endpointUrl,
 }) => {
   const [data, setData] = useState(null);

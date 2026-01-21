@@ -238,14 +238,15 @@ export const RouteCreateDialog = () => {
 
   // Convert raw point to waypoint structure. Data transformer: input - point, output - waypoint
   const createWaypointFromPoint = useCallback(
-    (point) => {
+    (point, currentWaypoints) => {
       return {
         lat: point.lat,
         lng: point.lng,
         waypoint_lat: point.lat,
         waypoint_lng: point.lng,
         label_i18n: point.i18n,
-        position: waypoints.length,
+        position: currentWaypoints.length, // ← Use parameter
+        displayNumber: currentWaypoints.length + 1, // ← Use parameter
       };
     },
     [waypoints.length]
@@ -314,6 +315,7 @@ export const RouteCreateDialog = () => {
                     }
                   />
                 </Grid>
+
                 {waypoints.length > 0 && (
                   <Grid size={12} spacing={1.5}>
                     {waypoints.map((waypoint, index) => (
@@ -512,7 +514,7 @@ export const RouteCreateDialog = () => {
         onConfirm={(point) => {
           if (mapTarget === "waypoint") {
             // Create and add new waypoint
-            const newWaypoint = createWaypointFromPoint(point);
+            const newWaypoint = createWaypointFromPoint(point, waypoints);
             setWaypoints([...waypoints, newWaypoint]);
 
             // Close dialog and reset mapTarget

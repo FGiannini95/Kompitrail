@@ -106,7 +106,6 @@ export const RouteEditDialog = () => {
         editRoute.ending_lat &&
         editRoute.ending_lng
     ),
-    debounceMs: 600,
     endpointUrl: metricsEndpoint,
   });
 

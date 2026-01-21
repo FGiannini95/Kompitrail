@@ -3,14 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
-import {
-  Card,
-  CardContent,
-  Stack,
-  Typography,
-  Divider,
-  Box,
-} from "@mui/material";
+import { Card, CardContent, Stack, Typography, Divider } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
