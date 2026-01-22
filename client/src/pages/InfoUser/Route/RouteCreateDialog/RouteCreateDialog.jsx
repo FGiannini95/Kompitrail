@@ -306,6 +306,7 @@ export const RouteCreateDialog = () => {
                       setMapTarget("waypoint");
                       setIsMapOpen(true);
                     }}
+                    disabled={waypoints.length >= 10}
                     text={t("buttons:addWaypoint")}
                     icon={
                       <AddOutlinedIcon
