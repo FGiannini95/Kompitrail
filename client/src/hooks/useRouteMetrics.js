@@ -11,7 +11,7 @@ export const useRouteMetrics = ({
   end,
   waypoints = [],
   enabled = true,
-  debounceMs = 2000,
+  debounceMs = 800,
   endpointUrl,
 }) => {
   const [data, setData] = useState(null);
@@ -75,19 +75,25 @@ export const useRouteMetrics = ({
       try {
         // Build request body with waypoints support
         const requestBody = {
-          start: { lat: start.lat, lng: start.lng },
-          end: { lat: end.lat, lng: end.lng },
+          start: {
+            lat: Number(start.lat),
+            lng: Number(start.lng),
+          },
+          end: {
+            lat: Number(end.lat),
+            lng: Number(end.lng),
+          },
         };
 
         // Add waypoints array if present and valid
         if (freshWaypoints && freshWaypoints.length > 0) {
           requestBody.waypoints = freshWaypoints
             .map((wp) => ({
-              lat: wp.lat || wp.waypoint_lat,
-              lng: wp.lng || wp.waypoint_lng,
+              lat: Number(wp.lat || wp.waypoint_lat),
+              lng: Number(wp.lng || wp.waypoint_lng),
               position: wp.position || 0,
             }))
-            .sort((a, b) => a.position - b.position); // Sort by position
+            .sort((a, b) => a.position - b.position);
         }
 
         // Call backend to calculate distance and time

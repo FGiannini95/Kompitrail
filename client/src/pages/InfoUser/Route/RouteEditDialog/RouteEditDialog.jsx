@@ -105,6 +105,7 @@ export const RouteEditDialog = () => {
       lat: Number(editRoute.ending_lat),
       lng: Number(editRoute.ending_lng),
     },
+    waypoints: waypoints,
     enabled: Boolean(
       editRoute.starting_lat &&
         editRoute.starting_lng &&
@@ -113,6 +114,18 @@ export const RouteEditDialog = () => {
     ),
     endpointUrl: metricsEndpoint,
   });
+
+  // Sync route metrics with editRoute when they change
+  useEffect(() => {
+    if (routeMetrics) {
+      setEditRoute((prev) => ({
+        ...prev,
+        distance: routeMetrics.distanceKm,
+        estimated_time: routeMetrics.durationMinutes,
+        route_geometry: routeMetrics.geometry,
+      }));
+    }
+  }, [routeMetrics]);
 
   // Load route data when dialog opens
   useEffect(() => {
