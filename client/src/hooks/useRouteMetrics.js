@@ -64,9 +64,8 @@ export const useRouteMetrics = ({
       const freshWaypoints = waypointsRef.current;
 
       // Cancel any previous request still running
-      if (abortRef.current) {
-        abortRef.current.abort();
-      }
+      if (abortRef.current) abortRef.current.abort();
+
       const controller = new AbortController();
       abortRef.current = controller;
 

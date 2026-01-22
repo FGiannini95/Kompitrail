@@ -39,7 +39,6 @@ export const RouteMapDialog = forwardRef(
   ) => {
     const [query, setQuery] = useState(""); // Search input value
     const [viewState, setViewState] = useState(null); // Map camera state
-    const [updatedRoute, setUpdatedRoute] = useState(null);
 
     const { t } = useTranslation(["buttons"]);
     const {
