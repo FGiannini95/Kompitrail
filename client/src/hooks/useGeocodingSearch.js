@@ -1,19 +1,42 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export const useGeocodingSearch = (query, debounceMs = 800) => {
-  const [results, setResults] = useState(null);
+export const useGeocodingSearch = (
+  query,
+  endpointUrl,
+  language,
+  debounceMs = 800
+) => {
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const timeRef = useRef();
-  const abortRef = useRef();
+  const timerRef = useRef(null);
+  const abortRef = useRef(null);
 
-  // Function to search locations using ORS Geocoding API
-  const searchLocation = async (searchQuery) => {};
+  // Function to search locations using our backend
+  const searchLocations = async (searchQuery, language) => {
+    const response = await fetch(endpointUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query: searchQuery, language: language }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Search error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.results || [];
+  };
 
   useEffect(() => {
-    // Clear existing timers
-    if (timeRef.current) clearTimeout(timeRef.current);
+    // Clear previous timer
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
 
     // If query is empty or too short, clear results
     if (!query || query.trim().length < 2) {
@@ -21,24 +44,54 @@ export const useGeocodingSearch = (query, debounceMs = 800) => {
       setError(null);
 
       // Cancel any in-flight request
-      if (abortRef.current) abortRef.current.abort();
+      if (abortRef.current) {
+        abortRef.current.abort();
+      }
 
       return;
     }
 
     // Set up debounced search
-    timeRef.current = setTimeout(async () => {
-      if (abortRef.current) abortRef.current.abort();
+    timerRef.current = setTimeout(async () => {
+      // Cancel previous request
+      if (abortRef.current) {
+        abortRef.current.abort();
+      }
 
       const controller = new AbortController();
       abortRef.current = controller;
 
       setLoading(true);
       setError(null);
-    });
 
-    return () => {};
-  }, [query, debounceMs]);
+      try {
+        const searchResults = await searchLocations(query.trim(), language);
+
+        // Only update if request wasn't aborted
+        if (!controller.signal.aborted) {
+          setResults(searchResults);
+        }
+      } catch (err) {
+        // Only handle error if request wasn't aborted
+        if (err.name !== "AbortError" && !controller.signal.aborted) {
+          console.error("Geocoding search error:", err);
+          setError(err.message);
+          setResults([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    }, debounceMs);
+
+    // Cleanup function
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [query, endpointUrl, language, debounceMs]);
 
   return { results, loading, error };
 };

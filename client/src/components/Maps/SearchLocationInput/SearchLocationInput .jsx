@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   TextField,
@@ -8,39 +9,48 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
-  Typography,
 } from "@mui/material";
+
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-export const SearchLocationInput = ({
-  onLocationSelect,
-  placeholder = "Busca busca",
-  mapTarget = null,
-}) => {
+// Utils
+import { ROUTES_URL } from "../../../api";
+import { getCurrentLang } from "../../../helpers/oneRouteUtils";
+// Hooks & Providers
+import { useGeocodingSearch } from "../../../hooks/useGeocodingSearch";
+
+export const SearchLocationInput = ({ onLocationSelect, placeholder }) => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const { i18n } = useTranslation();
+  const currentLang = getCurrentLang(i18n);
+
+  const geocodingEndpoint = `${ROUTES_URL}/geocoding`;
+
+  const { results, loading, error } = useGeocodingSearch(
+    query,
+    geocodingEndpoint,
+    currentLang
+  );
 
   const handleInputChange = (event) => {
     const value = event.target.value;
     setQuery(value);
-    console.log("Search query:", value);
+    setShowDropdown(value.length >= 2);
   };
 
   const handleLocationSelect = (location) => {
-    console.log("Selected location", location);
     onLocationSelect(location);
 
     // Reset component state
     setQuery("");
-    setResults([]);
     setShowDropdown(false);
   };
 
   return (
-    <Box sx={{ pb: 2 }}>
+    <Box sx={{ pb: 2, position: "relative" }}>
       {/* Search input */}
       <TextField
         fullWidth
@@ -54,6 +64,8 @@ export const SearchLocationInput = ({
             <SearchOutlinedIcon />
           ),
         }}
+        error={!!error}
+        helperText={error && "Error en la búsqueda"}
       />
 
       {/* Results dropdown */}
@@ -67,7 +79,12 @@ export const SearchLocationInput = ({
             zIndex: 1000,
             maxHeight: 300,
             overflow: "auto",
-            mt: 1,
+            mt: -2,
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+            scrollbarWidth: "none", // Firefox
+            msOverflowStyle: "none", // IE/Edge
           }}
         >
           <List>

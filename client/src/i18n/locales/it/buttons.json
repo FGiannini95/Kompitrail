@@ -14,5 +14,6 @@
   "cancelEnrollment": "Annullare l'inscrizione",
   "joinRoute": "Unirsi",
   "fullRoute": "Percorso completo",
-  "addWaypoint": "Aggiungi tappa"
+  "addWaypoint": "Aggiungi tappa",
+  "search": "Cerca"
 }

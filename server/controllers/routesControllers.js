@@ -1132,6 +1132,106 @@ class routesControllers {
       });
     }
   };
+
+  calculateGeocoding = async (req, res) => {
+    try {
+      const { query, language = es } = req.body;
+
+      // Basic validation
+      if (!query || typeof query !== "string") {
+        return res.status(400).json({
+          error: "Query de búsqueda requerido",
+        });
+      }
+
+      const searchQuery = query.trim();
+
+      // Minimum length check
+      if (searchQuery.length < 2) {
+        return res.status(400).json({
+          error: "Query debe tener al menos 2 caracteres",
+        });
+      }
+
+      // Max length check to prevent abuse
+      if (searchQuery.length > 100) {
+        return res.status(400).json({
+          error: "Query demasiado largo",
+        });
+      }
+
+      const ORS_API_KEY = process.env.ORS_API_KEY;
+
+      if (!ORS_API_KEY) {
+        console.error("ORS API key not configured");
+        return res.status(500).json({
+          error: "Servicio temporalmente no disponible",
+        });
+      }
+
+      // Build ORS geocoding URL
+      const url = `https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(
+        searchQuery
+      )}&size=5&lang=${language}`;
+
+      // Call ORS Geocoding API
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        const status = response.status;
+        console.error(`ORS Geocoding error: ${status}`);
+
+        // Handle different error types
+        if (status === 429) {
+          return res.status(429).json({
+            error: "Demasiadas búsquedas, intenta más tarde",
+          });
+        }
+
+        return res.status(500).json({
+          error: "Error en el servicio de búsqueda",
+        });
+      }
+
+      const data = await response.json();
+
+      // Parse and format results
+      const results =
+        data.features?.map((feature) => ({
+          name: feature.properties.name,
+          displayName: feature.properties.label,
+          lat: feature.geometry.coordinates[1], // ORS returns [lng, lat]
+          lng: feature.geometry.coordinates[0], // Convert to [lat, lng]
+          confidence: feature.properties.confidence,
+          layer: feature.properties.layer, // locality, region, etc.
+        })) || [];
+
+      // Sort by relevance: localities first, then by confidence
+      const sortedResults = results.sort((a, b) => {
+        // Prioritize localities over regions
+        if (a.layer === "locality" && b.layer !== "locality") return -1;
+        if (b.layer === "locality" && a.layer !== "locality") return 1;
+
+        // Then sort by confidence (higher first)
+        return (b.confidence || 0) - (a.confidence || 0);
+      });
+
+      return res.status(200).json({
+        results: sortedResults,
+        query: searchQuery,
+        total: sortedResults.length,
+      });
+    } catch (err) {
+      console.error("Geocoding controller error:", {
+        message: err.message,
+        stack: err.stack,
+      });
+
+      return res.status(500).json({
+        error: "Error interno del servidor",
+      });
+    }
+  };
 }
 
 module.exports = new routesControllers();

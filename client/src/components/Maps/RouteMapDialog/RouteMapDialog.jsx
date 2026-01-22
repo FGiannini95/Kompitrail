@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { useTranslation } from "react-i18next";
 import Map, { Source, Layer } from "react-map-gl/mapbox";
 
@@ -8,21 +14,20 @@ import {
   DialogActions,
   Button,
   Box,
-  TextField,
   Typography,
   IconButton,
 } from "@mui/material";
 
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import MyLocationOutlinedIcon from "@mui/icons-material/MyLocationOutlined";
-
-import { useRoutePoint } from "../../../hooks/useRoutePoint";
-import { Loading } from "../../Loading/Loading";
-import { MarkerWithIcon } from "../MarkerWithIcon/MarkerWithIcon";
+// Utils
 import { ROUTES_URL } from "../../../api";
+// Hooks & Providers
+import { useRoutePoint } from "../../../hooks/useRoutePoint";
 import { useRouteMetrics } from "../../../hooks/useRouteMetrics";
-import { useImperativeHandle } from "react";
-import { forwardRef } from "react";
+// Components
+import { MarkerWithIcon } from "../MarkerWithIcon/MarkerWithIcon";
+import { Loading } from "../../Loading/Loading";
+import { SearchLocationInput } from "../SearchLocationInput/SearchLocationInput ";
 
 export const RouteMapDialog = forwardRef(
   (
@@ -37,7 +42,6 @@ export const RouteMapDialog = forwardRef(
     },
     ref
   ) => {
-    const [query, setQuery] = useState(""); // Search input value
     const [viewState, setViewState] = useState(null); // Map camera state
 
     const { t } = useTranslation(["buttons"]);
@@ -114,7 +118,6 @@ export const RouteMapDialog = forwardRef(
       if (!open) return;
 
       setViewState(null);
-      setQuery("");
 
       // In waypoint mode, center on start point and clear point state
       if (isWaypointMode && waypointData?.startPoint) {
@@ -175,6 +178,18 @@ export const RouteMapDialog = forwardRef(
       );
     }
 
+    const handleLocationSearch = async (location) => {
+      // Move map to selected location
+      setViewState({
+        latitude: location.lat,
+        longitude: location.lng,
+        zoom: 13,
+      });
+
+      // Set the point with correct marker type
+      await updatePoint(location.lat, location.lng);
+    };
+
     return (
       <Dialog
         open={open}
@@ -197,18 +212,12 @@ export const RouteMapDialog = forwardRef(
               flexDirection: "column",
             }}
           >
-            {/* Search input (placeholder for future feature) */}
-            <Box sx={{ pb: 2 }}>
-              <TextField
-                fullWidth
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar"
-                InputProps={{
-                  endAdornment: <SearchOutlinedIcon />,
-                }}
-              />
-            </Box>
+            {/* Search input */}
+            <SearchLocationInput
+              onLocationSelect={handleLocationSearch}
+              placeholder={t("buttons:search")}
+              mapTarget={mapTarget}
+            />
 
             {/* Display current point label in current UI language */}
             {point && (

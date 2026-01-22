@@ -14,5 +14,6 @@
   "cancelEnrollment": "Cancel registration",
   "joinRoute": "Join",
   "fullRoute": "Route complete",
-  "addWaypoint": "Add waypoint"
+  "addWaypoint": "Add waypoint",
+  "search": "Search"
 }
