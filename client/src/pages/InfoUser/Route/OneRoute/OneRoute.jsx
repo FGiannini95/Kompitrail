@@ -377,11 +377,20 @@ export const OneRoute = () => {
               <Stack
                 key={`waypoint-${index}`}
                 direction="row"
-                alignItems="center"
+                alignItems="flex-start"
                 spacing={1}
+                sx={{ width: "100%" }}
               >
                 <WaypointNumberBadge number={index + 1} />
-                <Typography color="text.primary" variant="body2">
+                <Typography
+                  color="text.primary"
+                  variant="body2"
+                  sx={{
+                    flex: 1,
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                  }}
+                >
                   {getPointLabel(
                     {
                       lat: waypoint.lat,
