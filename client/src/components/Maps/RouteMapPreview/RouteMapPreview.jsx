@@ -4,9 +4,15 @@ import Map, { Source, Layer, Marker } from "react-map-gl/mapbox";
 import { Box, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
+import { WaypointNumberBadge } from "../WaypointNumberBadge/WaypointNumberBadge";
 
 // Read-only map preview showing the route geometry with start/end markers
-export const RouteMapPreview = ({ routeGeometry, startPoint, endPoint }) => {
+export const RouteMapPreview = ({
+  routeGeometry,
+  startPoint,
+  endPoint,
+  waypoints = [],
+}) => {
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
   const mapRef = useRef();
@@ -84,9 +90,7 @@ export const RouteMapPreview = ({ routeGeometry, startPoint, endPoint }) => {
               id="route-line"
               type="line"
               paint={{
-                "line-color": "#FF6B35",
                 "line-width": 5,
-                "line-opacity": 0.9,
               }}
             />
           </Source>
@@ -102,7 +106,6 @@ export const RouteMapPreview = ({ routeGeometry, startPoint, endPoint }) => {
             <LocationOnOutlinedIcon
               sx={{
                 fontSize: 30,
-                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
                 color: "#000000",
               }}
             />
@@ -119,12 +122,23 @@ export const RouteMapPreview = ({ routeGeometry, startPoint, endPoint }) => {
             <FlagOutlinedIcon
               sx={{
                 fontSize: 30,
-                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
                 color: "#000000",
               }}
             />
           </Marker>
         )}
+
+        {/* Numbered waypoint markers */}
+        {waypoints.map((waypoint, index) => (
+          <Marker
+            key={`waypoint-${index}`}
+            longitude={waypoint.lng}
+            latitude={waypoint.lat}
+            anchor="center"
+          >
+            <WaypointNumberBadge number={index + 1} />
+          </Marker>
+        ))}
       </Map>
     </Box>
   );

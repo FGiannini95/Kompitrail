@@ -9,8 +9,9 @@ import React, { useEffect, useState, useRef } from "react";
 export const useRouteMetrics = ({
   start,
   end,
+  waypoints = [],
   enabled = true,
-  debounceMs = 600,
+  debounceMs = 800,
   endpointUrl,
 }) => {
   const [data, setData] = useState(null);
@@ -19,13 +20,25 @@ export const useRouteMetrics = ({
 
   const timerRef = useRef(null);
   const abortRef = useRef(null);
+  const waypointsRef = useRef(waypoints);
+
+  // Valid waypoints
+  const hasValidWaypoints = waypoints.every(
+    (wp) => wp?.lat != null && wp?.lng != null
+  );
+
+  // Update ref when waypoints change
+  useEffect(() => {
+    waypointsRef.current = waypoints;
+  }, [waypoints]);
 
   // We have a starting and ending points
   const hasPoints =
     start?.lat != null &&
     start?.lng != null &&
     end?.lat != null &&
-    end?.lng != null;
+    end?.lng != null &&
+    hasValidWaypoints;
 
   useEffect(() => {
     if (!enabled) return;
@@ -42,28 +55,52 @@ export const useRouteMetrics = ({
       return;
     }
 
+    // Clear existing timers
+    if (timerRef.current) clearTimeout(timerRef.current);
+
     // Schedule route calculation after a short delay
     timerRef.current = setTimeout(async () => {
+      // Use fresh waypoints from ref to avoid stale closure
+      const freshWaypoints = waypointsRef.current;
+
       // Cancel any previous request still running
-      if (abortRef.current) {
-        abortRef.current.abort();
-      }
-      // Create a new aborter controller for this request
+      if (abortRef.current) abortRef.current.abort();
+
       const controller = new AbortController();
       abortRef.current = controller;
 
       setLoading(true);
 
       try {
+        // Build request body with waypoints support
+        const requestBody = {
+          start: {
+            lat: Number(start.lat),
+            lng: Number(start.lng),
+          },
+          end: {
+            lat: Number(end.lat),
+            lng: Number(end.lng),
+          },
+        };
+
+        // Add waypoints array if present and valid
+        if (freshWaypoints && freshWaypoints.length > 0) {
+          requestBody.waypoints = freshWaypoints
+            .map((wp) => ({
+              lat: Number(wp.lat || wp.waypoint_lat),
+              lng: Number(wp.lng || wp.waypoint_lng),
+              position: wp.position || 0,
+            }))
+            .sort((a, b) => a.position - b.position);
+        }
+
         // Call backend to calculate distance and time
         const response = await fetch(endpointUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
-          body: JSON.stringify({
-            start: { lat: start.lat, lng: start.lng },
-            end: { lat: end.lat, lng: end.lng },
-          }),
+          body: JSON.stringify(requestBody),
         });
 
         if (!response.ok) {
@@ -98,6 +135,7 @@ export const useRouteMetrics = ({
     start?.lng,
     end?.lat,
     end?.lng,
+    waypoints,
     endpointUrl,
     debounceMs,
   ]);

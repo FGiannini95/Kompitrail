@@ -11,11 +11,13 @@ import {
   DialogContent,
   DialogTitle,
   DialogActions,
+  Box,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 // Utils
 import { ROUTES_URL } from "../../../../api";
@@ -45,14 +47,19 @@ import {
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
-import { RouteMapDialog } from "../../../../components/Dialogs/RouteMapDialog/RouteMapDialog";
+import { RouteMapDialog } from "../../../../components/Maps/RouteMapDialog/RouteMapDialog";
+import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
+import { WaypointItem } from "../../../../components/Maps/WaypointItem/WaypointItem";
+import { useRef } from "react";
+import { useCallback } from "react";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
   const [errors, setErrors] = useState({});
   const [isMapOpen, setIsMapOpen] = useState(false);
-  const [mapTarget, setMapTarget] = useState(null); // "start" or "end"
+  const [mapTarget, setMapTarget] = useState(null); // "start" | "end" | "waypoint"
   const [isCurrentLocation, setIsCurrentLocation] = useState(true);
+  const [waypoints, setWaypoints] = useState([]);
 
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
@@ -71,12 +78,14 @@ export const RouteCreateDialog = () => {
   const { data: metrics } = useRouteMetrics({
     start: createOneRoute.starting_point,
     end: createOneRoute.ending_point,
+    waypoints: waypoints,
     endpointUrl: metricsEndpoint,
     enabled: isOpen,
-    debounceMs: 600,
   });
 
   const navigate = useNavigate();
+
+  const mapDialogRef = useRef(null);
 
   const hasStart =
     createOneRoute?.starting_point?.lat != null &&
@@ -130,6 +139,7 @@ export const RouteCreateDialog = () => {
         starting_lng: createOneRoute.starting_point.lng,
         ending_lat: createOneRoute.ending_point.lat,
         ending_lng: createOneRoute.ending_point.lng,
+        waypoints: waypoints,
         date: createOneRoute.date,
         level: createOneRoute.level,
         is_verified: createOneRoute.is_verified,
@@ -226,6 +236,31 @@ export const RouteCreateDialog = () => {
     }));
   }, [metrics, setCreateOneRoute]);
 
+  // Convert raw point to waypoint structure. Data transformer: input - point, output - waypoint
+  const createWaypointFromPoint = useCallback(
+    (point, currentWaypoints) => {
+      return {
+        lat: point.lat,
+        lng: point.lng,
+        waypoint_lat: point.lat,
+        waypoint_lng: point.lng,
+        label_i18n: point.i18n,
+        position: currentWaypoints.length,
+        displayNumber: currentWaypoints.length + 1,
+      };
+    },
+    [waypoints.length]
+  );
+
+  // Add formatted waypoint to existing array
+  const waypointData = {
+    startPoint: createOneRoute.starting_point,
+    endPoint: createOneRoute.ending_point,
+    routeGeometry: metrics?.geometry,
+    existingWaypoints: waypoints,
+    onWaypointAdd: (newWaypoint) => setWaypoints([...waypoints, newWaypoint]),
+  };
+
   return (
     <>
       <Dialog
@@ -251,6 +286,7 @@ export const RouteCreateDialog = () => {
                 readOnly
                 clearable={false}
                 value={startingDisplayLabel}
+                title={startingDisplayLabel}
                 form={createOneRoute}
                 setForm={setCreateOneRoute}
                 errors={errors}
@@ -262,6 +298,42 @@ export const RouteCreateDialog = () => {
                 }}
               />
             </Grid>
+            {hasStart && hasEnd && hasMetrics && (
+              <>
+                <Grid size={12}>
+                  <OutlinedButton
+                    onClick={() => {
+                      setMapTarget("waypoint");
+                      setIsMapOpen(true);
+                    }}
+                    disabled={waypoints.length >= 10}
+                    text={t("buttons:addWaypoint")}
+                    icon={
+                      <AddOutlinedIcon
+                        style={{ paddingLeft: "5px", width: "20px" }}
+                        aria-hidden
+                      />
+                    }
+                  />
+                </Grid>
+
+                {waypoints.length > 0 && (
+                  <Grid size={12} spacing={1.5}>
+                    {waypoints.map((waypoint, index) => (
+                      <Box key={index} sx={{ mb: 1.5 }}>
+                        <WaypointItem
+                          waypoint={waypoint}
+                          index={index}
+                          allWaypoints={waypoints}
+                          setWaypoints={setWaypoints}
+                          totalCount={waypoints.length}
+                        />
+                      </Box>
+                    ))}
+                  </Grid>
+                )}
+              </>
+            )}
 
             <Grid size={12}>
               <FormTextfield
@@ -270,6 +342,11 @@ export const RouteCreateDialog = () => {
                 readOnly
                 clearable={false}
                 value={getPointLabel(
+                  createOneRoute.ending_point,
+                  currentLang,
+                  "full"
+                )}
+                title={getPointLabel(
                   createOneRoute.ending_point,
                   currentLang,
                   "full"
@@ -285,7 +362,6 @@ export const RouteCreateDialog = () => {
                 }}
               />
             </Grid>
-
             <Grid size={12}>
               <FormDataPicker
                 label={t("forms:dateLabel")}
@@ -296,7 +372,6 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-
             {hasStart && hasEnd && hasMetrics && (
               <>
                 <Grid size={6}>
@@ -328,7 +403,6 @@ export const RouteCreateDialog = () => {
                 </Grid>
               </>
             )}
-
             <Grid size={12}>
               <FormAutocomplete
                 label={t("forms:levelLabel")}
@@ -344,7 +418,6 @@ export const RouteCreateDialog = () => {
                 disablePortal
               />
             </Grid>
-
             <Grid size={12}>
               <FormAutocomplete
                 name="max_participants"
@@ -359,7 +432,6 @@ export const RouteCreateDialog = () => {
                 disablePortal
               />
             </Grid>
-
             <Grid size={12}>
               <FormAutocomplete
                 label={t("forms:motorbikeTypeLabel")}
@@ -375,7 +447,6 @@ export const RouteCreateDialog = () => {
                 disablePortal
               />
             </Grid>
-
             <Grid
               size={12}
               sx={{
@@ -397,7 +468,6 @@ export const RouteCreateDialog = () => {
                 }
               />
             </Grid>
-
             <Grid size={12} sx={{ mb: 2 }}>
               <FormTextfield
                 label={t("forms:descriptionLabel")}
@@ -424,20 +494,37 @@ export const RouteCreateDialog = () => {
       </Dialog>
 
       <RouteMapDialog
+        ref={mapDialogRef}
         open={isMapOpen}
         initialSelected={
           mapTarget === "start"
             ? createOneRoute?.starting_point
             : mapTarget === "end"
               ? createOneRoute?.ending_point
-              : null
+              : null // ← waypoint mode
         }
         showConfirmButton={true}
         onCancel={() => {
+          if (mapTarget === "waypoint" && mapDialogRef.current?.resetPoint) {
+            mapDialogRef.current.resetPoint();
+          }
+
           setIsMapOpen(false);
           setMapTarget(null);
         }}
         onConfirm={(point) => {
+          if (mapTarget === "waypoint") {
+            // Create and add new waypoint
+            const newWaypoint = createWaypointFromPoint(point, waypoints);
+            setWaypoints([...waypoints, newWaypoint]);
+
+            // Close dialog and reset mapTarget
+            setIsMapOpen(false);
+            setMapTarget(null);
+            return;
+          }
+
+          //  Logic for start/end points
           setCreateOneRoute((prev) => {
             if (mapTarget === "start") {
               return { ...prev, starting_point: point };
@@ -451,6 +538,8 @@ export const RouteCreateDialog = () => {
           setIsMapOpen(false);
           setMapTarget(null);
         }}
+        waypointData={mapTarget === "waypoint" ? waypointData : null}
+        mapTarget={mapTarget}
       />
     </>
   );

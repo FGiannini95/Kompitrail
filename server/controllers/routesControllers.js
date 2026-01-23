@@ -93,8 +93,8 @@ class routesControllers {
     for (const w of waypoints) {
       if (
         !w ||
-        typeof w.label !== "string" ||
-        w.label.trim() === "" ||
+        !w.label_i18n ||
+        typeof w.label_i18n !== "object" ||
         w.lat == null ||
         w.lng == null ||
         w.position == null ||
@@ -156,7 +156,11 @@ class routesControllers {
       const start = { lat: Number(starting_lat), lng: Number(starting_lng) };
       const end = { lat: Number(ending_lat), lng: Number(ending_lng) };
 
-      const orsResult = await getOrsRouteGeojson(start, end);
+      const waypointsForOrs = waypoints.map((w) => ({
+        lat: w.lat,
+        lng: w.lng,
+      }));
+      const orsResult = await getOrsRouteGeojson(start, end, waypointsForOrs);
 
       routeGeometry = JSON.stringify(orsResult.geometry);
       computedDistance = orsResult.distanceKm;
@@ -246,7 +250,10 @@ class routesControllers {
             if (!waypoints.length) return createChatRoom();
 
             const sqlInsertWaypoints = `
-              INSERT INTO route_waypoint (route_id, position, label, lat, lng) VALUES ?
+              INSERT INTO 
+                route_waypoint 
+                (route_id, position, label_i18n, waypoint_lat, waypoint_lng) 
+              VALUES ?
             `;
 
             const ordered = [...waypoints].sort(
@@ -256,7 +263,7 @@ class routesControllers {
             const values = ordered.map((w) => [
               routeId,
               Number(w.position),
-              w.label,
+              JSON.stringify(w.label_i18n),
               w.lat,
               w.lng,
             ]);
@@ -332,7 +339,7 @@ class routesControllers {
           `;
 
             const sqlSelectWaypoints = `
-              SELECT position, label, lat, lng
+              SELECT position, label_i18n, waypoint_lat, waypoint_lng
               FROM route_waypoint
               WHERE route_id = ?
               ORDER BY position ASC
@@ -349,10 +356,15 @@ class routesControllers {
               const route = result2[0];
               // Parse i18n JSON back to objects
               try {
-                route.starting_point_i18n = JSON.parse(
-                  route.starting_point_i18n
-                );
-                route.ending_point_i18n = JSON.parse(route.ending_point_i18n);
+                route.starting_point_i18n =
+                  typeof route.starting_point_i18n === "string"
+                    ? JSON.parse(route.starting_point_i18n)
+                    : route.starting_point_i18n;
+
+                route.ending_point_i18n =
+                  typeof route.ending_point_i18n === "string"
+                    ? JSON.parse(route.ending_point_i18n)
+                    : route.ending_point_i18n;
               } catch (parseErr) {
                 console.error("Error parsing i18n JSON:", parseErr);
               }
@@ -371,7 +383,19 @@ class routesControllers {
                     return res.status(500).json({ error: wpErr });
                   }
 
-                  route.waypoints = wpRows || [];
+                  // Parse label_i18n JSON for each waypoint
+                  const waypoints = (wpRows || []).map((wp) => ({
+                    position: wp.position,
+                    label_i18n: wp.label_i18n
+                      ? typeof wp.label_i18n === "string"
+                        ? JSON.parse(wp.label_i18n)
+                        : wp.label_i18n
+                      : null,
+                    lat: wp.waypoint_lat,
+                    lng: wp.waypoint_lng,
+                  }));
+
+                  route.waypoints = waypoints;
                   return res.status(200).json(route);
                 }
               );
@@ -483,7 +507,7 @@ class routesControllers {
     });
   };
 
-  editRoute = (req, res) => {
+  editRoute = async (req, res) => {
     const {
       starting_point_i18n,
       ending_point_i18n,
@@ -500,6 +524,7 @@ class routesControllers {
       estimated_time,
       max_participants,
       route_description,
+      waypoints = [],
     } = JSON.parse(req.body.editRoute);
 
     const { id: route_id } = req.params;
@@ -513,26 +538,63 @@ class routesControllers {
     const startingPointI18nJson = JSON.stringify(starting_point_i18n);
     const endingPointI18nJson = JSON.stringify(ending_point_i18n);
 
-    let sqlUpdateRoute = `
-      UPDATE route SET 
-        starting_point_i18n = ?,
-        starting_lat = ?,
-        starting_lng = ?,
-        ending_point_i18n = ?,
-        ending_lat = ?,
-        ending_lng = ?,
-        route_geometry = ?,
-        date = ?, 
-        level = ?,  
-        distance = ?,  
-        is_verified = ?, 
-        suitable_motorbike_type = ?,  
-        estimated_time = ?, 
-        max_participants = ?, 
-        route_description = ?
-      WHERE route_id = ? AND is_deleted = 0
-    `;
+    // Recalculate route geometry, distance and time with updated waypoints
+    let routeGeometry;
+    let computedDistance;
+    let computedEstimatedTime;
 
+    try {
+      const start = { lat: Number(starting_lat), lng: Number(starting_lng) };
+      const end = { lat: Number(ending_lat), lng: Number(ending_lng) };
+
+      // Convert waypoints to ORS format (only coordinates needed)
+      const waypointsForOrs = waypoints.map((w) => ({
+        lat: w.lat,
+        lng: w.lng,
+      }));
+
+      // Calculate new route with current waypoints
+      const orsResult = await getOrsRouteGeojson(start, end, waypointsForOrs);
+
+      routeGeometry = JSON.stringify(orsResult.geometry);
+      computedDistance = orsResult.distanceKm;
+      computedEstimatedTime = orsResult.durationMinutes;
+    } catch (err) {
+      const status = err.status || err.response?.status || 500;
+
+      console.error("editRoute ORS error:", {
+        message: err.message,
+        code: err.code,
+        status,
+      });
+
+      return res.status(status).json({
+        error: err.message || "Error al calcular la ruta",
+      });
+    }
+
+    let sqlUpdateRoute = `
+    UPDATE route SET 
+      starting_point_i18n = ?,
+      starting_lat = ?,
+      starting_lng = ?,
+      ending_point_i18n = ?,
+      ending_lat = ?,
+      ending_lng = ?,
+      route_geometry = ?,
+      date = ?, 
+      level = ?,  
+      distance = ?,  
+      is_verified = ?, 
+      suitable_motorbike_type = ?,  
+      estimated_time = ?, 
+      max_participants = ?, 
+      route_description = ?
+    WHERE route_id = ? AND is_deleted = 0
+  `;
+
+    // Use computed values instead of old frontend values
+    // This ensures route data reflects the current waypoints configuration
     const routeParams = [
       startingPointI18nJson,
       starting_lat,
@@ -540,13 +602,13 @@ class routesControllers {
       endingPointI18nJson,
       ending_lat,
       ending_lng,
-      JSON.stringify(route_geometry),
+      routeGeometry, // ← Newly calculated geometry
       date,
       level,
-      distance,
+      computedDistance, // ← Newly calculated distance
       is_verified,
       motorbikeTypes,
-      estimated_time,
+      computedEstimatedTime, // ← Newly calculated time
       max_participants,
       route_description,
       route_id,
@@ -557,7 +619,40 @@ class routesControllers {
         return res.status(400).json({ err });
       }
 
-      return res.status(200).json({ message: "Ruta modificada", result });
+      // Clean existing waypoints and insert new ones
+      // This handles add, remove, and reorder operations
+      const deleteWaypoints = `DELETE FROM route_waypoint WHERE route_id = ?`;
+
+      connection.query(deleteWaypoints, [route_id], (delErr) => {
+        if (delErr) {
+          return res.status(400).json({ err: delErr });
+        }
+
+        // If no waypoints, route update is complete
+        if (waypoints.length === 0) {
+          return res.status(200).json({ message: "Ruta modificada", result });
+        }
+
+        // Insert updated waypoints with correct positions
+        const sqlInsertWaypoints = `
+       INSERT INTO route_waypoint
+        (route_id, position, label_i18n, waypoint_lat, waypoint_lng)
+        VALUES ?  
+      `;
+
+        const values = waypoints.map((w) => [
+          route_id,
+          w.position,
+          JSON.stringify(w.label_i18n),
+          w.lat,
+          w.lng,
+        ]);
+
+        connection.query(sqlInsertWaypoints, [values], (wpErr) => {
+          if (wpErr) return res.status(400).json({ err: wpErr });
+          return res.status(200).json({ message: "Ruta modificada", result });
+        });
+      });
     });
   };
 
@@ -617,11 +712,36 @@ class routesControllers {
         .split(",")
         .filter(Boolean);
 
-      const { participants_raw, ...rest } = r;
+      const sqlSelectWaypoints = `
+        SELECT position, label_i18n, waypoint_lat, waypoint_lng
+        FROM route_waypoint
+        WHERE route_id = ?
+        ORDER BY position ASC
+      `;
 
-      return res.status(200).json({
-        ...rest,
-        participants,
+      connection.query(sqlSelectWaypoints, [route_id], (wpErr, wpRows) => {
+        if (wpErr) {
+          return res.status(500).json({ error: wpErr });
+        }
+
+        // Use safe parsing for waypoints
+        const waypoints = (wpRows || []).map((wp) => ({
+          position: wp.position,
+          label_i18n:
+            wp.label_i18n && typeof wp.label_i18n === "string"
+              ? JSON.parse(wp.label_i18n)
+              : wp.label_i18n,
+          lat: wp.waypoint_lat,
+          lng: wp.waypoint_lng,
+        }));
+
+        const { participants_raw, ...rest } = r;
+
+        return res.status(200).json({
+          ...rest,
+          participants,
+          waypoints,
+        });
       });
     });
   };
@@ -966,9 +1086,9 @@ class routesControllers {
 
   calculateMetrics = async (req, res) => {
     try {
-      const { start, end } = req.body;
+      const { start, end, waypoints = [] } = req.body;
 
-      const orsResult = await getOrsRouteGeojson(start, end);
+      const orsResult = await getOrsRouteGeojson(start, end, waypoints);
 
       return res.json({
         distanceKm: orsResult.distanceKm,
@@ -1009,6 +1129,106 @@ class routesControllers {
       res.status(500).json({
         error: "Error en la tradución",
         translatedText: req.body.text, // fallback to original text
+      });
+    }
+  };
+
+  calculateGeocoding = async (req, res) => {
+    try {
+      const { query, language = es } = req.body;
+
+      // Basic validation
+      if (!query || typeof query !== "string") {
+        return res.status(400).json({
+          error: "Query de búsqueda requerido",
+        });
+      }
+
+      const searchQuery = query.trim();
+
+      // Minimum length check
+      if (searchQuery.length < 2) {
+        return res.status(400).json({
+          error: "Query debe tener al menos 2 caracteres",
+        });
+      }
+
+      // Max length check to prevent abuse
+      if (searchQuery.length > 100) {
+        return res.status(400).json({
+          error: "Query demasiado largo",
+        });
+      }
+
+      const ORS_API_KEY = process.env.ORS_API_KEY;
+
+      if (!ORS_API_KEY) {
+        console.error("ORS API key not configured");
+        return res.status(500).json({
+          error: "Servicio temporalmente no disponible",
+        });
+      }
+
+      // Build ORS geocoding URL
+      const url = `https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(
+        searchQuery
+      )}&size=5&lang=${language}`;
+
+      // Call ORS Geocoding API
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        const status = response.status;
+        console.error(`ORS Geocoding error: ${status}`);
+
+        // Handle different error types
+        if (status === 429) {
+          return res.status(429).json({
+            error: "Demasiadas búsquedas, intenta más tarde",
+          });
+        }
+
+        return res.status(500).json({
+          error: "Error en el servicio de búsqueda",
+        });
+      }
+
+      const data = await response.json();
+
+      // Parse and format results
+      const results =
+        data.features?.map((feature) => ({
+          name: feature.properties.name,
+          displayName: feature.properties.label,
+          lat: feature.geometry.coordinates[1], // ORS returns [lng, lat]
+          lng: feature.geometry.coordinates[0], // Convert to [lat, lng]
+          confidence: feature.properties.confidence,
+          layer: feature.properties.layer, // locality, region, etc.
+        })) || [];
+
+      // Sort by relevance: localities first, then by confidence
+      const sortedResults = results.sort((a, b) => {
+        // Prioritize localities over regions
+        if (a.layer === "locality" && b.layer !== "locality") return -1;
+        if (b.layer === "locality" && a.layer !== "locality") return 1;
+
+        // Then sort by confidence (higher first)
+        return (b.confidence || 0) - (a.confidence || 0);
+      });
+
+      return res.status(200).json({
+        results: sortedResults,
+        query: searchQuery,
+        total: sortedResults.length,
+      });
+    } catch (err) {
+      console.error("Geocoding controller error:", {
+        message: err.message,
+        stack: err.stack,
+      });
+
+      return res.status(500).json({
+        error: "Error interno del servidor",
       });
     }
   };

@@ -24,5 +24,6 @@
   "motorbikeTypeLabel": "Motos aptas",
   "descriptionLabel": "Descripción",
   "checkbox": "¿Primera vez en esta ruta?",
-  "currentLocation": "Posición actual"
+  "currentLocation": "Posición actual",
+  "waypoint": "Etapa"
 }

@@ -32,6 +32,19 @@ export const useReverseGeocoding = () => {
     return null;
   };
 
+  // Converts full address to "street, city" format, removes postal codes and country info for better UI display
+  const createCleanLabel = (rawLabel) => {
+    if (!rawLabel || typeof rawLabel !== "string") return "Zona no definida";
+
+    // Split by comma and take first 2 parts (street + city)
+    // Example: "Chain Street, Manchester, M1 4DZ, United Kingdom" → "Chain Street, Manchester"
+    const parts = rawLabel.split(",").map((p) => p.trim());
+    if (parts.length >= 2) {
+      return `${parts[0]}, ${parts[1]}`;
+    }
+    return parts[0] || "Zona no definida";
+  };
+
   const reverseGeocode = useCallback(
     async ({ lat, lng, language = currentLang }) => {
       if (!mapboxToken)
@@ -64,10 +77,16 @@ export const useReverseGeocoding = () => {
         const data = await res.json();
         const features = data?.features || [];
         const fullLabelRaw = features?.[0]?.place_name;
+
+        // Instead of using raw full label, create clean version (street, city only)
+        // This removes postal codes and country names for better UI display
         const fullLabel =
-          typeof fullLabelRaw === "string" && fullLabelRaw.trim() !== ""
-            ? fullLabelRaw.trim()
+          fullLabelRaw &&
+          typeof fullLabelRaw === "string" &&
+          fullLabelRaw.trim() !== ""
+            ? createCleanLabel(fullLabelRaw.trim())
             : "Zona no definida";
+
         const shortLabel = pickShortLabel(features) || "Zona no definida";
 
         return {

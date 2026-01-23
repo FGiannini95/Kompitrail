@@ -3,14 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
-import {
-  Card,
-  CardContent,
-  Stack,
-  Typography,
-  Divider,
-  Box,
-} from "@mui/material";
+import { Card, CardContent, Stack, Typography, Divider } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
@@ -47,7 +40,8 @@ import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/Ou
 import { ContainedButton } from "../../../../components/Buttons/ContainedButton/ContainedButton";
 import { Header } from "../../../../components/Header/Header";
 import { RouteActionButton } from "../RouteActionButton/RouteActionButton";
-import { RouteMapPreview } from "../../../../components/RouteMapPreview/RouteMapPreview";
+import { RouteMapPreview } from "../../../../components/Maps/RouteMapPreview/RouteMapPreview";
+import { WaypointNumberBadge } from "../../../../components/Maps/WaypointNumberBadge/WaypointNumberBadge";
 
 const InfoItem = ({ label, value }) => (
   <Grid xs={6}>
@@ -60,7 +54,6 @@ const InfoItem = ({ label, value }) => (
 
 export const OneRoute = () => {
   const { state } = useLocation();
-  const [data, setData] = useState(state ?? null);
   const { id: route_id } = useParams();
   const { user: currentUser } = useContext(KompitrailContext);
   const { isCopied, handleShare } = useShareUrl({
@@ -68,13 +61,17 @@ export const OneRoute = () => {
     routeId: route_id,
   });
   const { t, i18n } = useTranslation(["buttons", "oneRoute", "forms"]);
+
+  const [data, setData] = useState(state ?? null);
+  const [translatedDescription, setTranslatedDescription] = useState("");
+
+  const { waypoints = [] } = data || {};
+
+  const participantsSectionRef = useRef();
   const navigate = useNavigate();
 
   const currentLang = getCurrentLang(i18n);
   const locale = LOCALE_MAP[currentLang] ?? "es-ES";
-
-  const participantsSectionRef = useRef();
-  const [translatedDescription, setTranslatedDescription] = useState("");
 
   // Funzione semplice senza loading
   const handleTranslateDescription = async () => {
@@ -176,6 +173,7 @@ export const OneRoute = () => {
     date,
     { locale }
   );
+
   const weekdayCap = isValid ? capitalizeFirstLetter(weekday) : "";
 
   const isCurrentUserEnrolled = useMemo(() => {
@@ -184,7 +182,6 @@ export const OneRoute = () => {
 
   const currentParticipants = 1 + participants.length;
   const isRouteFull = currentParticipants >= max_participants;
-
   const canAccessChat = isCurrentUserEnrolled || isOwner;
 
   const handleOpenCalendar = !isRouteLocked
@@ -363,15 +360,42 @@ export const OneRoute = () => {
             routeGeometry={data?.route_geometry}
             startPoint={startingPoint}
             endPoint={endingPoint}
+            waypoints={waypoints}
           />
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 1 }} />
           <Stack spacing={2}>
+            {/* START point */}
             <Stack direction="row" alignItems="center" spacing={1}>
               <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
               <Typography color="text.primary" variant="body2">
                 {startingLabelFull}
               </Typography>
             </Stack>
+
+            {/* WAYPOINTS */}
+            {waypoints.map((waypoint, index) => (
+              <Stack
+                key={`waypoint-${index}`}
+                direction="row"
+                alignItems="center"
+                spacing={1}
+              >
+                <WaypointNumberBadge number={index + 1} />
+                <Typography color="text.primary" variant="body2">
+                  {getPointLabel(
+                    {
+                      lat: waypoint.lat,
+                      lng: waypoint.lng,
+                      i18n: waypoint.label_i18n,
+                    },
+                    currentLang,
+                    "full"
+                  )}
+                </Typography>
+              </Stack>
+            ))}
+
+            {/* END point */}
             <Stack direction="row" alignItems="center" spacing={1}>
               <FlagOutlinedIcon fontSize="medium" aria-hidden />
               <Typography color="text.primary" variant="body2">

@@ -20,6 +20,7 @@ export const FormTextfield = ({
   maxLength,
   onClick,
   value: valueProp,
+  title,
 }) => {
   const formValue =
     name.split(".").reduce((acc, key) => acc?.[key], form) ?? "";
@@ -86,6 +87,7 @@ export const FormTextfield = ({
         error={!!errorKey}
         helperText={helperText}
         onClick={onClick}
+        title={title}
         inputProps={{ readOnly, maxLength }}
         InputProps={{
           endAdornment:

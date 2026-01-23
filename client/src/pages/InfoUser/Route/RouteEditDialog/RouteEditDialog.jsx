@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
 import {
+  Box,
   Button,
   Checkbox,
   Dialog,
@@ -15,6 +16,7 @@ import Grid from "@mui/material/Grid2";
 
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 // Utils
 import { ROUTES_URL } from "../../../../api";
@@ -40,13 +42,16 @@ import {
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
-import { RouteMapDialog } from "../../../../components/Dialogs/RouteMapDialog/RouteMapDialog";
+import { RouteMapDialog } from "../../../../components/Maps/RouteMapDialog/RouteMapDialog";
+import { WaypointItem } from "../../../../components/Maps/WaypointItem/WaypointItem";
+import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 
 export const RouteEditDialog = () => {
   const [editRoute, setEditRoute] = useState(ROUTE_INITIAL_VALUE);
   const [errors, setErrors] = useState({});
   const [isMapOpen, setIsMapOpen] = useState(false);
-  const [mapTarget, setMapTarget] = useState(null); // "start" or "end"
+  const [mapTarget, setMapTarget] = useState(null); // "start" | "end" | "waypoint"
+  const [waypoints, setWaypoints] = useState([]);
 
   const metricsEndpoint = `${ROUTES_URL}/metrics`;
 
@@ -100,16 +105,17 @@ export const RouteEditDialog = () => {
       lat: Number(editRoute.ending_lat),
       lng: Number(editRoute.ending_lng),
     },
+    waypoints: waypoints,
     enabled: Boolean(
       editRoute.starting_lat &&
         editRoute.starting_lng &&
         editRoute.ending_lat &&
         editRoute.ending_lng
     ),
-    debounceMs: 600,
     endpointUrl: metricsEndpoint,
   });
 
+  // Sync route metrics with editRoute when they change
   useEffect(() => {
     if (routeMetrics) {
       setEditRoute((prev) => ({
@@ -127,7 +133,24 @@ export const RouteEditDialog = () => {
       axios
         .get(`${ROUTES_URL}/oneroute/${route_id}`)
         .then((res) => {
-          setEditRoute(res.data);
+          const routeData = res.data;
+
+          // Reshape to match create structure
+          setEditRoute({
+            ...routeData,
+            starting_point: {
+              lat: routeData.starting_lat,
+              lng: routeData.starting_lng,
+              i18n: routeData.starting_point_i18n,
+            },
+            ending_point: {
+              lat: routeData.ending_lat,
+              lng: routeData.ending_lng,
+              i18n: routeData.ending_point_i18n,
+            },
+          });
+
+          setWaypoints(routeData?.waypoints || []);
         })
         .catch((err) => {
           console.log(err);
@@ -139,6 +162,7 @@ export const RouteEditDialog = () => {
     closeDialog();
     setEditRoute(ROUTE_INITIAL_VALUE);
     setErrors({});
+    setWaypoints([]);
   };
 
   const handleConfirm = (e) => {
@@ -171,6 +195,7 @@ export const RouteEditDialog = () => {
       "editRoute",
       JSON.stringify({
         ...editRoute,
+        waypoints: waypoints,
         date: toMySQLDateTime(editRoute.date, "Europe/Madrid"),
       })
     );
@@ -189,6 +214,27 @@ export const RouteEditDialog = () => {
         console.log(err);
         showSnackbar(t("snackbars:routeUpdatedError"), "error");
       });
+  };
+
+  // Helper function to create waypoint from point
+  const createWaypointFromPoint = useCallback((point, currentWaypoints) => {
+    return {
+      lat: point.lat,
+      lng: point.lng,
+      waypoint_lat: point.lat,
+      waypoint_lng: point.lng,
+      label_i18n: point.i18n,
+      position: currentWaypoints.length,
+      displayNumber: currentWaypoints.length + 1,
+    };
+  }, []);
+
+  const waypointData = {
+    startPoint: editRoute.starting_point,
+    endPoint: editRoute.ending_point,
+    routeGeometry: routeMetrics?.geometry,
+    existingWaypoints: waypoints,
+    onWaypointAdd: (newWaypoint) => setWaypoints([...waypoints, newWaypoint]),
   };
 
   return (
@@ -225,6 +271,40 @@ export const RouteEditDialog = () => {
                 }}
               />
             </Grid>
+
+            <Grid size={12}>
+              <OutlinedButton
+                onClick={() => {
+                  setMapTarget("waypoint");
+                  setIsMapOpen(true);
+                }}
+                disabled={waypoints.length >= 10}
+                text={t("buttons:addWaypoint")}
+                icon={
+                  <AddOutlinedIcon
+                    style={{ paddingLeft: "5px", width: "20px" }}
+                    aria-hidden
+                  />
+                }
+              />
+            </Grid>
+
+            {waypoints.length > 0 && (
+              <Grid size={12} spacing={1.5}>
+                {waypoints.map((waypoint, index) => (
+                  <Box key={index} sx={{ mb: 1.5 }}>
+                    <WaypointItem
+                      waypoint={waypoint}
+                      index={index}
+                      allWaypoints={waypoints}
+                      setWaypoints={setWaypoints}
+                      totalCount={waypoints.length}
+                    />
+                  </Box>
+                ))}
+              </Grid>
+            )}
+
             <Grid size={12}>
               <FormTextfield
                 label={t("forms:endingPointLabel")}
@@ -390,6 +470,18 @@ export const RouteEditDialog = () => {
           setMapTarget(null);
         }}
         onConfirm={(point) => {
+          if (mapTarget === "waypoint") {
+            // Create and add new waypoint
+            const newWaypoint = createWaypointFromPoint(point, waypoints);
+            setWaypoints([...waypoints, newWaypoint]);
+
+            // Close dialog and reset mapTarget
+            setIsMapOpen(false);
+            setMapTarget(null);
+            return;
+          }
+
+          // Logic for start/end points
           setEditRoute((prev) => {
             if (mapTarget === "start") {
               return {
@@ -413,6 +505,8 @@ export const RouteEditDialog = () => {
           setIsMapOpen(false);
           setMapTarget(null);
         }}
+        waypointData={mapTarget === "waypoint" ? waypointData : null}
+        mapTarget={mapTarget}
       />
     </>
   );
