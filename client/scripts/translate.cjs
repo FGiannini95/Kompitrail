@@ -18,20 +18,21 @@ if (!API_KEY) {
 }
 
 // Call DeepL to translate an array of texts from ES to targetLang (EN / IT)
+// Call DeepL to translate an array of texts from ES to targetLang (EN / IT)
 async function translateTexts(texts, targetLang) {
   if (texts.length === 0) return [];
 
-  const params = new URLSearchParams();
-  params.append("auth_key", API_KEY);
-  params.append("source_lang", "ES");
-  params.append("target_lang", targetLang);
-
-  texts.forEach((t) => params.append("text", t));
-
   const response = await fetch(DEEPL_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: params.toString(),
+    headers: {
+      Authorization: `DeepL-Auth-Key ${API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      text: texts,
+      source_lang: "ES",
+      target_lang: targetLang,
+    }),
   });
 
   if (!response.ok) {
