@@ -31,6 +31,7 @@ export const NavBarApp = ({ children }) => {
       RoutesString.editRoute,
       RoutesString.route,
       RoutesString.routeDetail,
+      RoutesString.navigation,
       RoutesString.chatbot,
     ].includes(location.pathname) ||
     location.pathname.startsWith("/route/") ||

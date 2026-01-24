@@ -16,6 +16,7 @@ import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
+import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
 
 // Utils
 import {
@@ -460,6 +461,30 @@ export const OneRoute = () => {
           onCancelEnrollment={() =>
             participantsSectionRef.current?.handleOpenLeaveRoute()
           }
+        />
+      </Stack>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        justifyContent="center"
+        sx={{ p: "10px" }}
+      >
+        <OutlinedButton
+          text={t("oneRoute:navigation")}
+          icon={
+            <NearMeOutlinedIcon
+              style={{ paddingLeft: "5px", width: "20px" }}
+              aria-hidden
+            />
+          }
+          onClick={() => {
+            navigate("/navigation", {
+              state: {
+                routeData: data,
+              },
+            });
+          }}
         />
       </Stack>
     </Grid>
