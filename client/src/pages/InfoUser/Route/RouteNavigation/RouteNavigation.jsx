@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Map, { Source, Layer } from "react-map-gl/mapbox";
 
 import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
 
@@ -49,11 +50,44 @@ export const RouteNavigation = () => {
         height: "100vh",
         width: "100%",
         position: "relative",
-        bgcolor: "black",
         overflow: "hidden",
       }}
     >
-      {/* TOP INFO BAR - Route info placeholder */}
+      {/* MAP */}
+      <Map
+        mapboxAccessToken={mapboxToken}
+        {...viewState}
+        onMove={(evt) => setViewState(evt.viewState)}
+        mapStyle="mapbox://styles/mapbox/navigation-day-v1"
+        style={{
+          width: "100%",
+          height: "100vh",
+        }}
+      >
+        {/* Route line */}
+        {routeData.route_geometry && (
+          <Source
+            id="navigation-route"
+            type="geojson"
+            data={{
+              type: "Feature",
+              geometry: routeData.route_geometry,
+            }}
+          >
+            <Layer
+              id="navigation-route-line"
+              type="line"
+              paint={{
+                "line-width": 6,
+                "line-color": "#1976d2",
+                "line-opacity": 0.8,
+              }}
+            />
+          </Source>
+        )}
+      </Map>
+
+      {/* TOP BANNER */}
       <Paper
         sx={{
           position: "absolute",
@@ -73,34 +107,17 @@ export const RouteNavigation = () => {
         <Typography variant="body2">Next instruction will be here</Typography>
       </Paper>
 
-      {/* MAP */}
-      <Box
-        sx={{
-          height: "100%",
-          pt: "100px", // Space for top banner
-          pb: "120px", // Space for bottom banner
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          bgcolor: "grey.300",
-        }}
-      >
-        <Typography variant="h4" color="text.secondary">
-          🗺️ MAP PLACEHOLDER
-        </Typography>
-      </Box>
-
-      {/* BOTTOM BANNER */}
+      {/* BOTTOM BANNER - Floating over map */}
       <Paper
         sx={{
           position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
+          bottom: 16,
+          left: 16,
+          right: 16,
           zIndex: 1000,
-          bgcolor: "black",
+          bgcolor: "rgba(0, 0, 0, 0.8)",
           color: "white",
-          borderRadius: 0,
+          borderRadius: 2,
           p: 2,
         }}
       >
@@ -129,7 +146,7 @@ export const RouteNavigation = () => {
               variant="h5"
               sx={{
                 fontWeight: "bold",
-                color: "#4CAF50", // Green like the image
+                color: "#4CAF50",
               }}
             >
               {routeData.estimated_time || "0"} min
@@ -139,7 +156,7 @@ export const RouteNavigation = () => {
             </Typography>
           </Stack>
 
-          {/* RIGHT - Settings/Options icon placeholder */}
+          {/* RIGHT  */}
           <IconButton
             onClick={handleExit}
             sx={{
