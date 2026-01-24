@@ -9,6 +9,7 @@ import CloseIcon from "@mui/icons-material/Close";
 export const RouteNavigation = () => {
   const [viewState, setViewState] = useState();
   const [currentPosition, setCurrentPosition] = useState();
+  const [currentETA, setCurrentETA] = useState("--:--");
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -39,6 +40,32 @@ export const RouteNavigation = () => {
   };
 
   // Get current location and recenter map
+
+  // Calculate ETA based on current time + estimated_time
+  const calculateETA = () => {
+    if (!routeData.estimated_time) return "--:--";
+
+    const now = new Date();
+    const etaTime = new Date(
+      now.getTime() + routeData.estimated_time * 60 * 1000
+    ); // Calcualted in milliseconds
+
+    return etaTime.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  };
+
+  // Update ETA every minute
+  useEffect(() => {
+    setCurrentETA(calculateETA());
+    const interval = setInterval(() => {
+      setCurrentETA(calculateETA());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [routeData.estimated_time]);
 
   if (!routeData || !viewState) {
     return null;
@@ -152,7 +179,7 @@ export const RouteNavigation = () => {
               {routeData.estimated_time || "0"} min
             </Typography>
             <Typography variant="body2" color="grey.300">
-              {routeData.distance || "0"} km • ETA: --:--
+              {routeData.distance || "0"} km • {currentETA}
             </Typography>
           </Stack>
 
