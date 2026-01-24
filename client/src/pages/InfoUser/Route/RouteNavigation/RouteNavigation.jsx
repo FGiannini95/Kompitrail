@@ -7,6 +7,7 @@ import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { useGPSTracking } from "../../../../hooks/useGPSTracking";
+import { RecenterButton } from "../../../../components/Maps/RecenterButton/RecenterButton";
 
 export const RouteNavigation = () => {
   const [viewState, setViewState] = useState();
@@ -187,7 +188,7 @@ export const RouteNavigation = () => {
         <Typography variant="body2">Next instruction will be here</Typography>
       </Paper>
 
-      {/* BOTTOM BANNER - Floating over map */}
+      {/* BOTTOM BANNER */}
       <Paper
         sx={{
           position: "absolute",
@@ -236,19 +237,13 @@ export const RouteNavigation = () => {
             </Typography>
           </Stack>
 
-          {/* RIGHT  */}
-          <IconButton
-            onClick={handleExit}
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              color: "white",
-              "&:hover": {
-                bgcolor: "rgba(255, 255, 255, 0.3)",
-              },
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
+          {/* RIGHT  - Recenter button */}
+          <RecenterButton
+            currentPosition={currentPosition}
+            onRecenter={(newViewState) =>
+              setViewState((prev) => ({ ...prev, ...newViewState }))
+            }
+          />
         </Stack>
       </Paper>
     </Box>

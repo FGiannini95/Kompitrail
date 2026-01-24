@@ -28,6 +28,8 @@ import { useRouteMetrics } from "../../../hooks/useRouteMetrics";
 import { MarkerWithIcon } from "../MarkerWithIcon/MarkerWithIcon";
 import { Loading } from "../../Loading/Loading";
 import { SearchLocationInput } from "../SearchLocationInput/SearchLocationInput ";
+import { RecenterButton } from "../RecenterButton/RecenterButton";
+import { getCurrentGPSPosition } from "../../../helpers/getCurrentGPSPosition";
 
 export const RouteMapDialog = forwardRef(
   (
@@ -70,50 +72,6 @@ export const RouteMapDialog = forwardRef(
       waypointData?.startPoint && waypointData?.endPoint
     );
 
-    // Get current location from browser
-    const getCurrentLocation = useCallback(
-      ({ fallbackToGranada = false, setPin = false } = {}) => {
-        if (!navigator.geolocation) return;
-
-        navigator.geolocation.getCurrentPosition(
-          async (pos) => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-
-            // Recenter the camera
-            setViewState({
-              latitude: lat,
-              longitude: lng,
-              zoom: 13,
-            });
-
-            // Move the pin and fetch i18n labels
-            if (setPin) {
-              await updatePoint(lat, lng);
-            }
-          },
-          (error) => {
-            console.error("Geolocation error", error);
-
-            // Fallback to Granada if timeout and explicitly requested
-            if (fallbackToGranada && error.code === 3) {
-              setViewState({
-                latitude: 37.1773,
-                longitude: -3.5986,
-                zoom: 13,
-              });
-            }
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 20000,
-            maximumAge: 60000,
-          }
-        );
-      },
-      [updatePoint]
-    );
-
     useEffect(() => {
       if (!open) return;
 
@@ -121,9 +79,7 @@ export const RouteMapDialog = forwardRef(
 
       // In waypoint mode, center on start point and clear point state
       if (isWaypointMode && waypointData?.startPoint) {
-        // Force waypoint to be null
         setPoint(null);
-
         setViewState({
           latitude: waypointData.startPoint.lat,
           longitude: waypointData.startPoint.lng,
@@ -142,14 +98,18 @@ export const RouteMapDialog = forwardRef(
         return;
       }
 
-      // Fallback to current location
-      getCurrentLocation({ fallbackToGranada: true });
+      // Fallback to current location using helper
+      getCurrentGPSPosition({
+        onSuccess: (position) => {
+          setViewState({
+            latitude: position.latitude,
+            longitude: position.longitude,
+            zoom: 13,
+          });
+        },
+        fallbackToGranada: true,
+      });
     }, [open]);
-
-    // Recenter to current location and update pin
-    const recenterToCurrentLocation = () => {
-      getCurrentLocation({ fallbackToGranada: false, setPin: true });
-    };
 
     // Handle map click: update point coordinates + fetch i18n labels
     const handleMapClick = async (evt) => {
@@ -254,7 +214,7 @@ export const RouteMapDialog = forwardRef(
                     (waypointRouteMetrics.data?.geometry ||
                       waypointData?.routeGeometry) && (
                       <Source
-                        key={`route-${Date.now()}`} // ← Sempre diverso
+                        key={`route-${Date.now()}`}
                         id="current-route"
                         type="geojson"
                         data={{
@@ -273,7 +233,6 @@ export const RouteMapDialog = forwardRef(
                         />
                       </Source>
                     )}
-
                   {/* Normal mode markers */}
                   {!isWaypointMode && point && (
                     <MarkerWithIcon
@@ -282,7 +241,6 @@ export const RouteMapDialog = forwardRef(
                       type={mapTarget}
                     />
                   )}
-
                   {/* Waypoint mode markers */}
                   {isWaypointMode && (
                     <>
@@ -323,28 +281,11 @@ export const RouteMapDialog = forwardRef(
                       )}
                     </>
                   )}
-
                   {/* Recenter button */}
-                  <IconButton
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      recenterToCurrentLocation();
-                    }}
-                    sx={(theme) => ({
-                      position: "absolute",
-                      left: 12,
-                      bottom: 12,
-                      pointerEvents: "auto",
-                      bgcolor: theme.palette.kompitrail.card,
-                      border: `1px solid ${theme.palette.divider}`,
-                      boxShadow: 2,
-                    })}
-                  >
-                    <MyLocationOutlinedIcon fontSize="small" />
-                  </IconButton>
+                  <RecenterButton
+                    onRecenter={setViewState}
+                    onUpdatePoint={updatePoint}
+                  />
                 </Map>
               )}
             </Box>
