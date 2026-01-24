@@ -17,4 +17,5 @@ export const RoutesString = {
   routeDetail: "/route/:id",
   theme: "/theme",
   language: "/language",
+  navigation: "/navigation",
 };
