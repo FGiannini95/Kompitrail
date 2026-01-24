@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Map, { Source, Layer } from "react-map-gl/mapbox";
+import Map, { Source, Layer, Marker } from "react-map-gl/mapbox";
 
 import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 
+import { useGPSTracking } from "../../../../hooks/useGPSTracking";
+
 export const RouteNavigation = () => {
   const [viewState, setViewState] = useState();
-  const [currentPosition, setCurrentPosition] = useState();
   const [currentETA, setCurrentETA] = useState("--:--");
 
   const location = useLocation();
   const navigate = useNavigate();
 
   const { routeData } = location.state || {};
+  const { currentPosition, isTracking, error, startTracking, stopTracking } =
+    useGPSTracking();
 
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
-  // Redirect back if no route data
   useEffect(() => {
+    // Redirect back if no route data
     if (!routeData) {
       navigate(-1);
       return;
@@ -33,17 +36,37 @@ export const RouteNavigation = () => {
       bearing: 0,
       pitch: 30, // view perspective
     });
-  }, [routeData, navigate]);
+
+    // Start GPS tracking for navigation
+    startTracking();
+
+    return () => {
+      stopTracking();
+    };
+  }, [routeData, navigate, startTracking, stopTracking]);
 
   const handleExit = () => {
     navigate(-1);
   };
 
+  // Update map center when GPS position changes
+  useEffect(() => {
+    if (currentPosition && viewState) {
+      setViewState((prev) => ({
+        ...prev,
+        latitude: currentPosition.latitude,
+        longitude: currentPosition.longitude,
+        bearing: currentPosition.heading || prev.bearing || 0,
+        zoom: 17,
+      }));
+    }
+  }, [currentPosition]);
+
   // Get current location and recenter map
 
   // Calculate ETA based on current time + estimated_time
   const calculateETA = () => {
-    if (!routeData.estimated_time) return "--:--";
+    if (!routeData?.estimated_time) return "--:--";
 
     const now = new Date();
     const etaTime = new Date(
@@ -85,7 +108,7 @@ export const RouteNavigation = () => {
         mapboxAccessToken={mapboxToken}
         {...viewState}
         onMove={(evt) => setViewState(evt.viewState)}
-        mapStyle="mapbox://styles/mapbox/navigation-day-v1"
+        mapStyle="mapbox://styles/mapbox/outdoors-v12"
         style={{
           width: "100%",
           height: "100vh",
@@ -111,6 +134,36 @@ export const RouteNavigation = () => {
               }}
             />
           </Source>
+        )}
+
+        {/* Current position marker - GPS live tracking */}
+        {currentPosition && (
+          <Marker
+            longitude={currentPosition.longitude}
+            latitude={currentPosition.latitude}
+          >
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                position: "relative",
+                transform: currentPosition.heading
+                  ? `rotate(${currentPosition.heading}deg)`
+                  : "rotate(0deg)",
+                transition: "transform 0.3s ease",
+              }}
+            >
+              <Box
+                sx={{
+                  width: 0,
+                  height: 0,
+                  borderLeft: "10px solid transparent",
+                  borderRight: "10px solid transparent",
+                  borderBottom: "20px solid #2196F3",
+                }}
+              />
+            </Box>
+          </Marker>
         )}
       </Map>
 
