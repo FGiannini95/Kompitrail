@@ -60,6 +60,7 @@ export const RouteCreateDialog = () => {
   const [mapTarget, setMapTarget] = useState(null); // "start" | "end" | "waypoint"
   const [isCurrentLocation, setIsCurrentLocation] = useState(true);
   const [waypoints, setWaypoints] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user } = useContext(KompitrailContext);
   const { showSnackbar } = useSnackbar();
@@ -95,7 +96,6 @@ export const RouteCreateDialog = () => {
     createOneRoute?.ending_point?.lng != null;
   const hasMetrics =
     metrics?.distanceKm != null && metrics?.durationMinutes != null;
-  const waypointCount = createOneRoute?.waypoints?.length || 0;
 
   // Define if the starting position matches the current positionconst isStartingPointCurrent =
   const isStartingPointCurrent =
@@ -126,6 +126,8 @@ export const RouteCreateDialog = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
+
+    setIsSubmitting(true);
 
     const currentLang = getCurrentLang(i18n);
 
@@ -162,6 +164,9 @@ export const RouteCreateDialog = () => {
       .catch((err) => {
         console.log(err);
         showSnackbar(t("snackbars:routeCreatedError"), "error");
+      })
+      .finally(() => {
+        setIsSubmitting(false);
       });
   };
 
@@ -484,10 +489,14 @@ export const RouteCreateDialog = () => {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={cleanDialog} color="error">
+          <Button onClick={cleanDialog} color="error" disabled={isSubmitting}>
             {t("buttons:cancel")}
           </Button>
-          <Button onClick={handleConfirm} color="success">
+          <Button
+            onClick={handleConfirm}
+            color="success"
+            disabled={isSubmitting}
+          >
             {t("buttons:confirmar")}
           </Button>
         </DialogActions>

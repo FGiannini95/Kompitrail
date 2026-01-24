@@ -52,6 +52,7 @@ export const RouteEditDialog = () => {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [mapTarget, setMapTarget] = useState(null); // "start" | "end" | "waypoint"
   const [waypoints, setWaypoints] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const metricsEndpoint = `${ROUTES_URL}/metrics`;
 
@@ -190,6 +191,8 @@ export const RouteEditDialog = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     const newFormData = new FormData();
     newFormData.append(
       "editRoute",
@@ -213,6 +216,9 @@ export const RouteEditDialog = () => {
       .catch((err) => {
         console.log(err);
         showSnackbar(t("snackbars:routeUpdatedError"), "error");
+      })
+      .finally(() => {
+        setIsSubmitting(false);
       });
   };
 
@@ -440,10 +446,14 @@ export const RouteEditDialog = () => {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cleanDialog} color="error">
+          <Button onClick={cleanDialog} color="error" disabled={isSubmitting}>
             {t("buttons:cancel")}
           </Button>
-          <Button onClick={handleConfirm} color="success">
+          <Button
+            onClick={handleConfirm}
+            color="success"
+            disabled={isSubmitting}
+          >
             {t("buttons:confirmar")}
           </Button>
         </DialogActions>

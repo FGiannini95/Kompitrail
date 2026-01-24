@@ -1,8 +1,11 @@
 import React, { forwardRef } from "react";
+import { useTheme } from "@mui/material/styles";
 import { Button } from "@mui/material";
 
 export const OutlinedButton = forwardRef(
   ({ onClick, text, icon, sx, children, ...rest }, ref) => {
+    const theme = useTheme();
+
     return (
       <Button
         ref={ref}
@@ -10,15 +13,14 @@ export const OutlinedButton = forwardRef(
         variant="outlined"
         fullWidth
         onClick={onClick}
+        style={{
+          border: `2px solid ${theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.23)" : "rgba(255, 255, 255, 0.23)"}`,
+        }}
         sx={(theme) => ({
           backgroundColor: "transparent",
           color: theme.palette.text.primary,
-          borderColor: theme.palette.kompitrail.card,
-          borderWidth: "3px",
           "&:hover": {
             backgroundColor: theme.palette.kompitrail.card,
-            borderColor: theme.palette.kompitrail.card,
-            borderWidth: "3px",
           },
           ...sx,
         })}
