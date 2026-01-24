@@ -15,6 +15,7 @@ export const WaypointNumberBadge = ({ number, size = 20 }) => {
         justifyContent: "center",
         fontWeight: "bold",
         border: `1px solid ${theme.palette.text.primary}`,
+        flexShrink: 0,
       })}
     >
       {number}

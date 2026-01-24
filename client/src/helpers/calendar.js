@@ -92,7 +92,7 @@ export const openCalendar = ({
     start.getTime() + Number(estimated_time) * 60 * 60 * 1000
   );
 
-  const title = `Ruta ${starting_point} - ${ending_point}`;
+  const title = `${starting_point} - ${ending_point}`;
 
   if (isIOS()) {
     const ics = buildICS({ title, start, end });
