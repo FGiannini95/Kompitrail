@@ -3,14 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Map, { Source, Layer, Marker } from "react-map-gl/mapbox";
 import { useTranslation, Trans } from "react-i18next";
 
-import {
-  Box,
-  Button,
-  IconButton,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -19,9 +12,10 @@ import { useGPSTracking } from "../../../../hooks/useGPSTracking";
 // Components
 import { RecenterButton } from "../../../../components/Maps/RecenterButton/RecenterButton";
 import { MarkerWithIcon } from "../../../../components/Maps/MarkerWithIcon/MarkerWithIcon";
+import { Loading } from "../../../../components/Loading/Loading";
 
 export const RouteNavigation = () => {
-  const [viewState, setViewState] = useState();
+  const [viewState, setViewState] = useState(null);
   const [currentETA, setCurrentETA] = useState("--:--");
 
   const location = useLocation();
@@ -34,23 +28,13 @@ export const RouteNavigation = () => {
 
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
+  // Start GPS tracking for navigation
   useEffect(() => {
-    // Redirect back if no route data
     if (!routeData) {
       navigate(-1);
       return;
     }
 
-    // Inizialize map on route start
-    setViewState({
-      latitude: routeData.starting_lat,
-      longitude: routeData.starting_lng,
-      zoom: 16,
-      bearing: 0,
-      pitch: 30, // view perspective
-    });
-
-    // Start GPS tracking for navigation
     startTracking();
 
     return () => {
@@ -58,24 +42,6 @@ export const RouteNavigation = () => {
     };
   }, [routeData, navigate, startTracking, stopTracking]);
 
-  const handleExit = () => {
-    navigate(-1);
-  };
-
-  // Update map center when GPS position changes
-  useEffect(() => {
-    if (currentPosition && viewState) {
-      setViewState((prev) => ({
-        ...prev,
-        latitude: currentPosition.latitude,
-        longitude: currentPosition.longitude,
-        bearing: currentPosition.heading || prev.bearing || 0,
-        zoom: 17,
-      }));
-    }
-  }, [currentPosition]);
-
-  // Calculate distance and display correct info
   const isNearStartingPoint = useMemo(() => {
     if (!currentPosition || !routeData) {
       return false;
@@ -91,7 +57,32 @@ export const RouteNavigation = () => {
     return distance <= 0.5;
   }, [currentPosition, routeData]);
 
-  // Get current location and recenter map
+  // Initial centering
+  useEffect(() => {
+    if (!currentPosition || !routeData) return;
+
+    if (isNearStartingPoint) {
+      setViewState({
+        latitude: currentPosition.latitude,
+        longitude: currentPosition.longitude,
+        zoom: 17,
+        bearing: currentPosition.heading || 0,
+        pitch: 30,
+      });
+    } else {
+      setViewState({
+        latitude: routeData.starting_lat,
+        longitude: routeData.starting_lng,
+        zoom: 13,
+        bearing: 0,
+        pitch: 30,
+      });
+    }
+  }, [currentPosition, routeData, isNearStartingPoint]);
+
+  const handleExit = () => {
+    navigate(-1);
+  };
 
   // Calculate ETA based on current time + estimated_time
   const calculateETA = () => {
@@ -119,8 +110,25 @@ export const RouteNavigation = () => {
     return () => clearInterval(interval);
   }, [routeData?.estimated_time]);
 
-  if (!routeData || !viewState) {
+  if (!routeData) {
     return null;
+  }
+
+  if (!currentPosition || !viewState) {
+    return (
+      <Box
+        sx={{
+          height: "100vh",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          bgcolor: "black",
+        }}
+      >
+        <Loading />
+      </Box>
+    );
   }
 
   return (
