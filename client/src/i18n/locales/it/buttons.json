@@ -15,5 +15,6 @@
   "joinRoute": "Unirsi",
   "fullRoute": "Percorso completo",
   "addWaypoint": "Aggiungi tappa",
-  "search": "Cerca"
+  "search": "Cerca",
+  "openMaps": "📍 Vai al punto di <1>partenza</1>!"
 }

@@ -1,13 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Map, { Source, Layer, Marker } from "react-map-gl/mapbox";
+import { useTranslation, Trans } from "react-i18next";
 
-import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 
+import { calculateDistance } from "../../../../helpers/calculateDistance";
 import { useGPSTracking } from "../../../../hooks/useGPSTracking";
+// Components
 import { RecenterButton } from "../../../../components/Maps/RecenterButton/RecenterButton";
+import { MarkerWithIcon } from "../../../../components/Maps/MarkerWithIcon/MarkerWithIcon";
 
 export const RouteNavigation = () => {
   const [viewState, setViewState] = useState();
@@ -19,6 +30,7 @@ export const RouteNavigation = () => {
   const { routeData } = location.state || {};
   const { currentPosition, isTracking, error, startTracking, stopTracking } =
     useGPSTracking();
+  const { t } = useTranslation(["buttons"]);
 
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -63,6 +75,22 @@ export const RouteNavigation = () => {
     }
   }, [currentPosition]);
 
+  // Calculate distance and display correct info
+  const isNearStartingPoint = useMemo(() => {
+    if (!currentPosition || !routeData) {
+      return false;
+    }
+
+    const distance = calculateDistance(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      routeData.starting_lat,
+      routeData.starting_lng
+    );
+
+    return distance <= 0.5;
+  }, [currentPosition, routeData]);
+
   // Get current location and recenter map
 
   // Calculate ETA based on current time + estimated_time
@@ -89,7 +117,7 @@ export const RouteNavigation = () => {
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [routeData.estimated_time]);
+  }, [routeData?.estimated_time]);
 
   if (!routeData || !viewState) {
     return null;
@@ -136,8 +164,7 @@ export const RouteNavigation = () => {
             />
           </Source>
         )}
-
-        {/* Current position marker - GPS live tracking */}
+        {/* Current position marker */}
         {currentPosition && (
           <Marker
             longitude={currentPosition.longitude}
@@ -166,6 +193,31 @@ export const RouteNavigation = () => {
             </Box>
           </Marker>
         )}
+
+        {/* Start point */}
+        <MarkerWithIcon
+          longitude={routeData.starting_lng}
+          latitude={routeData.starting_lat}
+          type="start"
+        />
+
+        {/* End point */}
+        <MarkerWithIcon
+          longitude={routeData.ending_lng}
+          latitude={routeData.ending_lat}
+          type="end"
+        />
+
+        {/* Waypoints */}
+        {routeData.waypoints?.map((waypoint, index) => (
+          <MarkerWithIcon
+            key={`nav-waypoint-${index}`}
+            longitude={waypoint.lng}
+            latitude={waypoint.lat}
+            type="waypoint"
+            number={index + 1}
+          />
+        ))}
       </Map>
 
       {/* TOP BANNER */}
@@ -182,10 +234,9 @@ export const RouteNavigation = () => {
           p: 2,
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          📍 Route Info Placeholder
+        <Typography variant="body2">
+          Segui il percorso motociclistico
         </Typography>
-        <Typography variant="body2">Next instruction will be here</Typography>
       </Paper>
 
       {/* BOTTOM BANNER */}
@@ -221,20 +272,46 @@ export const RouteNavigation = () => {
             <CloseIcon />
           </IconButton>
 
-          {/* CENTER - Time and distance */}
+          {/* CENTER - Go to starting point or Time and distance*/}
           <Stack alignItems="center">
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: "bold",
-                color: "#4CAF50",
-              }}
-            >
-              {routeData.estimated_time || "0"} min
-            </Typography>
-            <Typography variant="body2" color="grey.300">
-              {routeData.distance || "0"} km • {currentETA}
-            </Typography>
+            {!isNearStartingPoint ? (
+              <Typography textAlign="center">
+                <Trans
+                  i18nKey="openMaps"
+                  ns="buttons"
+                  components={{
+                    1: (
+                      <Link
+                        onClick={() => {
+                          const url = `https://www.google.com/maps/dir/?api=1&destination=${routeData.starting_lat},${routeData.starting_lng}`;
+                          window.open(url, "_blank");
+                        }}
+                        style={{
+                          color: "white",
+                          textDecoration: "underline",
+                        }}
+                        underline="hover"
+                      />
+                    ),
+                  }}
+                />
+              </Typography>
+            ) : (
+              <>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#4CAF50",
+                  }}
+                >
+                  {routeData?.estimated_time || "0"} min
+                </Typography>
+                <Typography variant="body2" color="grey.300">
+                  {routeData?.distance || "0"} km • {currentETA}
+                </Typography>
+              </>
+            )}
           </Stack>
 
           {/* RIGHT  - Recenter button */}
