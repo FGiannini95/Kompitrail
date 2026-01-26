@@ -471,7 +471,7 @@ export const OneRoute = () => {
         sx={{ p: "10px" }}
       >
         <OutlinedButton
-          text={t("oneRoute:navigation")}
+          text={t("oneRoute:navigation.start")}
           icon={
             <NearMeOutlinedIcon
               style={{ paddingLeft: "5px", width: "20px" }}

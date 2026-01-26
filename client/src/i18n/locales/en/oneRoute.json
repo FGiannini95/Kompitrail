@@ -17,5 +17,8 @@
   },
   "calendar": "Calendar",
   "chat": "Chat",
-  "navigation": "Start route"
+  "navigation": {
+    "start": "Start route",
+    "nextWaypoint": "Arrival at waypoint {{number}} in {{distance}} {{unit}}"
+  }
 }

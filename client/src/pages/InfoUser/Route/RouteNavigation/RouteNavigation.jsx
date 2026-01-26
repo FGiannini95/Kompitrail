@@ -8,6 +8,7 @@ import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { calculateDistance } from "../../../../helpers/calculateDistance";
+import { getNextWaypointData } from "../../../../helpers/navigationHelpers";
 import { useGPSTracking } from "../../../../hooks/useGPSTracking";
 // Components
 import { RecenterButton } from "../../../../components/Maps/RecenterButton/RecenterButton";
@@ -24,7 +25,11 @@ export const RouteNavigation = () => {
   const { routeData } = location.state || {};
   const { currentPosition, isTracking, error, startTracking, stopTracking } =
     useGPSTracking();
-  const { t } = useTranslation(["buttons"]);
+  const { t } = useTranslation(["buttons", "oneRoute"]);
+  const waypointData = getNextWaypointData(
+    currentPosition,
+    routeData.waypoints
+  );
 
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -242,8 +247,13 @@ export const RouteNavigation = () => {
           p: 2,
         }}
       >
-        <Typography variant="body2">
-          Segui il percorso motociclistico
+        <Typography variant="body2" sx={{ textAlign: "center" }}>
+          {waypointData &&
+            t("oneRoute:navigation.nextWaypoint", {
+              number: waypointData.waypointNumber,
+              distance: waypointData.distance,
+              unit: waypointData.unit,
+            })}
         </Typography>
       </Paper>
 
