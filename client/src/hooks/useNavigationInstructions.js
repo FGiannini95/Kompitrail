@@ -45,7 +45,6 @@ export const useNavigationInstructions = (routeData, currentPosition) => {
           );
         }
 
-        console.log("Got", data.route.totalSteps, "navigation steps");
         setInstructions(data.route.instructions);
       } catch (err) {
         console.error("Navigation instructions error", err);

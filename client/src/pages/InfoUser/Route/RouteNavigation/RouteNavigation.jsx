@@ -1,33 +1,27 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Map, { Source, Layer, Marker } from "react-map-gl/mapbox";
-import { useTranslation, Trans } from "react-i18next";
 
-import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
-
-import CloseIcon from "@mui/icons-material/Close";
+import { Box } from "@mui/material";
 
 import { calculateDistance } from "../../../../helpers/calculateDistance";
 import { useGPSTracking } from "../../../../hooks/useGPSTracking";
 import { useNavigationInstructions } from "../../../../hooks/useNavigationInstructions";
 // Components
-import { RecenterButton } from "../../../../components/Maps/RecenterButton/RecenterButton";
 import { MarkerWithIcon } from "../../../../components/Maps/MarkerWithIcon/MarkerWithIcon";
 import { Loading } from "../../../../components/Loading/Loading";
 import { ROUTES_URL } from "../../../../api";
 import { TopBannerNavigation } from "../../../../components/Maps/TopBannerNavigation.jsx/TopBannerNavigation";
+import { BottomBannerNavigation } from "../../../../components/Maps/BottomBannerNavigation/BottomBannerNavigation";
 
 export const RouteNavigation = () => {
   const [viewState, setViewState] = useState(null);
-  const [currentETA, setCurrentETA] = useState("--:--");
 
   const location = useLocation();
   const navigate = useNavigate();
 
   const { routeData } = location.state || {};
-  const { currentPosition, isTracking, error, startTracking, stopTracking } =
-    useGPSTracking();
-  const { t } = useTranslation(["buttons", "oneRoute"]);
+  const { currentPosition, startTracking, stopTracking } = useGPSTracking();
   const { currentInstruction } = useNavigationInstructions(
     routeData,
     currentPosition,
@@ -87,44 +81,10 @@ export const RouteNavigation = () => {
     }
   }, [currentPosition, routeData, isNearStartingPoint]);
 
-  const handleExit = () => {
-    navigate(-1);
-  };
-
-  // Calculate ETA based on current time + estimated_time
-  const calculateETA = () => {
-    if (!routeData?.estimated_time) return "--:--";
-
-    const now = new Date();
-    const etaTime = new Date(
-      now.getTime() + routeData.estimated_time * 60 * 1000,
-    ); // Calcualted in milliseconds
-
-    return etaTime.toLocaleTimeString("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
-
-  // Update ETA every minute
-  useEffect(() => {
-    setCurrentETA(calculateETA());
-    const interval = setInterval(() => {
-      setCurrentETA(calculateETA());
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [routeData?.estimated_time]);
-
   // Add this useEffect temporarily in RouteNavigation for testing
   useEffect(() => {
     const testNavigation = async () => {
-      console.log("🧪 Testing navigation endpoint...");
-
       try {
-        console.log("📤 Starting fetch request...");
-
         const response = await fetch(`${ROUTES_URL}/navigation`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -136,12 +96,9 @@ export const RouteNavigation = () => {
           }),
         });
 
-        console.log("📥 Got response:", response.status, response.statusText);
-
         const data = await response.json();
-        console.log("✅ Navigation response:", data);
       } catch (error) {
-        console.error("❌ Navigation error:", error);
+        console.error(" Navigation error:", error);
       }
     };
 
@@ -210,6 +167,7 @@ export const RouteNavigation = () => {
             />
           </Source>
         )}
+
         {/* Current position marker */}
         {currentPosition && (
           <Marker
@@ -270,89 +228,15 @@ export const RouteNavigation = () => {
       <TopBannerNavigation currentInstruction={currentInstruction} />
 
       {/* BOTTOM BANNER */}
-      <Paper
-        sx={{
-          position: "absolute",
-          bottom: 16,
-          left: 16,
-          right: 16,
-          zIndex: 1000,
-          bgcolor: "rgba(0, 0, 0, 0.8)",
-          color: "white",
-          borderRadius: 2,
-          p: 2,
-        }}
-      >
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          {/* LEFT - Close button */}
-          <IconButton
-            onClick={handleExit}
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              color: "white",
-              "&:hover": {
-                bgcolor: "rgba(255, 255, 255, 0.3)",
-              },
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-
-          {/* CENTER - Go to starting point or Time and distance*/}
-          <Stack alignItems="center">
-            {!isNearStartingPoint ? (
-              <Typography textAlign="center">
-                <Trans
-                  i18nKey="openMaps"
-                  ns="buttons"
-                  components={{
-                    1: (
-                      <Link
-                        onClick={() => {
-                          const url = `https://www.google.com/maps/dir/?api=1&destination=${routeData.starting_lat},${routeData.starting_lng}`;
-                          window.open(url, "_blank");
-                        }}
-                        style={{
-                          color: "white",
-                          textDecoration: "underline",
-                        }}
-                        underline="hover"
-                      />
-                    ),
-                  }}
-                />
-              </Typography>
-            ) : (
-              <>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#4CAF50",
-                  }}
-                >
-                  {routeData?.estimated_time || "0"} min
-                </Typography>
-                <Typography variant="body2" color="grey.300">
-                  {routeData?.distance || "0"} km • {currentETA}
-                </Typography>
-              </>
-            )}
-          </Stack>
-
-          {/* RIGHT  - Recenter button */}
-          <RecenterButton
-            currentPosition={currentPosition}
-            onRecenter={(newViewState) =>
-              setViewState((prev) => ({ ...prev, ...newViewState }))
-            }
-          />
-        </Stack>
-      </Paper>
+      <BottomBannerNavigation
+        routeData={routeData}
+        currentPosition={currentPosition}
+        isNearStartingPoint={isNearStartingPoint}
+        onExit={() => navigate(-1)}
+        onRecenter={(newViewState) =>
+          setViewState((prev) => ({ ...prev, ...newViewState }))
+        }
+      />
     </Box>
   );
 };
