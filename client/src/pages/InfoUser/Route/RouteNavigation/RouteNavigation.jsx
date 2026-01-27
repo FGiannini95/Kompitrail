@@ -201,7 +201,9 @@ export const RouteNavigation = () => {
       </Map>
 
       {/* TOP BANNER */}
-      <TopBannerNavigation currentInstruction={currentInstruction} />
+      {isNearStartingPoint && (
+        <TopBannerNavigation currentInstruction={currentInstruction} />
+      )}
 
       {/* BOTTOM BANNER */}
       <BottomBannerNavigation
