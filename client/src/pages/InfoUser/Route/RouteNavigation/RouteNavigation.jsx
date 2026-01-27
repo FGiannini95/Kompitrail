@@ -16,6 +16,7 @@ import { BottomBannerNavigation } from "../../../../components/Maps/BottomBanner
 
 export const RouteNavigation = () => {
   const [viewState, setViewState] = useState(null);
+  const [navigationStarted, setNavigationStarted] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -43,11 +44,14 @@ export const RouteNavigation = () => {
     };
   }, [routeData, navigate, startTracking, stopTracking]);
 
+  // Check if should start navigation
   const isNearStartingPoint = useMemo(() => {
-    if (!currentPosition || !routeData) {
-      return false;
-    }
+    if (!currentPosition || !routeData) return false;
 
+    // If navigation already started, keep it active
+    if (navigationStarted) return true;
+
+    // Check if close to starting point to BEGIN navigation
     const distance = calculateDistance(
       currentPosition.latitude,
       currentPosition.longitude,
@@ -55,8 +59,15 @@ export const RouteNavigation = () => {
       routeData.starting_lng,
     );
 
-    return distance <= 0.5;
-  }, [currentPosition, routeData]);
+    const nearStart = distance <= 0.5;
+
+    // Start navigation if near starting point
+    if (nearStart && !navigationStarted) {
+      setNavigationStarted(true);
+    }
+
+    return nearStart;
+  }, [currentPosition, routeData, navigationStarted]);
 
   // Initial centering
   useEffect(() => {
