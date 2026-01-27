@@ -3,14 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Map, { Source, Layer, Marker } from "react-map-gl/mapbox";
 
 import { Box } from "@mui/material";
-
+// Helpers
 import { calculateDistance } from "../../../../helpers/calculateDistance";
+// Hooks
 import { useGPSTracking } from "../../../../hooks/useGPSTracking";
 import { useNavigationInstructions } from "../../../../hooks/useNavigationInstructions";
 // Components
 import { MarkerWithIcon } from "../../../../components/Maps/MarkerWithIcon/MarkerWithIcon";
 import { Loading } from "../../../../components/Loading/Loading";
-import { ROUTES_URL } from "../../../../api";
 import { TopBannerNavigation } from "../../../../components/Maps/TopBannerNavigation.jsx/TopBannerNavigation";
 import { BottomBannerNavigation } from "../../../../components/Maps/BottomBannerNavigation/BottomBannerNavigation";
 
@@ -80,30 +80,6 @@ export const RouteNavigation = () => {
       });
     }
   }, [currentPosition, routeData, isNearStartingPoint]);
-
-  // Add this useEffect temporarily in RouteNavigation for testing
-  useEffect(() => {
-    const testNavigation = async () => {
-      try {
-        const response = await fetch(`${ROUTES_URL}/navigation`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            coordinates: [
-              { lng: -3.5986, lat: 37.1773 },
-              { lng: -3.6, lat: 37.18 },
-            ],
-          }),
-        });
-
-        const data = await response.json();
-      } catch (error) {
-        console.error(" Navigation error:", error);
-      }
-    };
-
-    testNavigation();
-  }, []);
 
   if (!routeData) {
     return null;
