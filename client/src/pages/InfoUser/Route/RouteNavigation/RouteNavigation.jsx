@@ -8,13 +8,14 @@ import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { calculateDistance } from "../../../../helpers/calculateDistance";
-import { getNextWaypointData } from "../../../../helpers/navigationHelpers";
 import { useGPSTracking } from "../../../../hooks/useGPSTracking";
+import { useNavigationInstructions } from "../../../../hooks/useNavigationInstructions";
 // Components
 import { RecenterButton } from "../../../../components/Maps/RecenterButton/RecenterButton";
 import { MarkerWithIcon } from "../../../../components/Maps/MarkerWithIcon/MarkerWithIcon";
 import { Loading } from "../../../../components/Loading/Loading";
 import { ROUTES_URL } from "../../../../api";
+import { TopBannerNavigation } from "../../../../components/Maps/TopBannerNavigation.jsx/TopBannerNavigation";
 
 export const RouteNavigation = () => {
   const [viewState, setViewState] = useState(null);
@@ -27,9 +28,9 @@ export const RouteNavigation = () => {
   const { currentPosition, isTracking, error, startTracking, stopTracking } =
     useGPSTracking();
   const { t } = useTranslation(["buttons", "oneRoute"]);
-  const waypointData = getNextWaypointData(
+  const { currentInstruction } = useNavigationInstructions(
+    routeData,
     currentPosition,
-    routeData.waypoints,
   );
 
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -118,12 +119,13 @@ export const RouteNavigation = () => {
 
   // Add this useEffect temporarily in RouteNavigation for testing
   useEffect(() => {
-    // Test button click or automatic call
     const testNavigation = async () => {
       console.log("🧪 Testing navigation endpoint...");
 
       try {
-        const response = await fetch(`/${ROUTES_URL}/navigation`, {
+        console.log("📤 Starting fetch request...");
+
+        const response = await fetch(`${ROUTES_URL}/navigation`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -134,6 +136,8 @@ export const RouteNavigation = () => {
           }),
         });
 
+        console.log("📥 Got response:", response.status, response.statusText);
+
         const data = await response.json();
         console.log("✅ Navigation response:", data);
       } catch (error) {
@@ -141,9 +145,8 @@ export const RouteNavigation = () => {
       }
     };
 
-    // Call test function
     testNavigation();
-  }, []); // Empty dependency = runs once
+  }, []);
 
   if (!routeData) {
     return null;
@@ -264,28 +267,7 @@ export const RouteNavigation = () => {
       </Map>
 
       {/* TOP BANNER */}
-      <Paper
-        sx={{
-          position: "absolute",
-          top: 16,
-          left: 16,
-          right: 16,
-          zIndex: 1000,
-          bgcolor: "rgba(0, 128, 0, 0.9)",
-          color: "white",
-          borderRadius: 2,
-          p: 2,
-        }}
-      >
-        <Typography variant="body2" sx={{ textAlign: "center" }}>
-          {waypointData &&
-            t("oneRoute:navigation.nextWaypoint", {
-              number: waypointData.waypointNumber,
-              distance: waypointData.distance,
-              unit: waypointData.unit,
-            })}
-        </Typography>
-      </Paper>
+      <TopBannerNavigation currentInstruction={currentInstruction} />
 
       {/* BOTTOM BANNER */}
       <Paper

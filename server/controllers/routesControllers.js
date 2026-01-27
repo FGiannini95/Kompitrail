@@ -1232,16 +1232,83 @@ class routesControllers {
     }
   };
 
-  navigationRoutes = (req, res) => {
-    console.log("🚀 Navigation route called");
-    console.log("📍 Request body:", JSON.stringify(req.body, null, 2));
-    console.log("🔧 Method:", req.method);
+  navigationRoutes = async (req, res) => {
+    try {
+      const { coordinates } = req.body;
 
-    // Basic response for now
-    res.json({
-      message: "Navigation endpoint working",
-      received: req.body,
-    });
+      // Validate input - need at least 2 points for a route
+      if (!coordinates || coordinates.length < 2) {
+        return res
+          .status(400)
+          .json({ error: "Two coordinates required for navigation" });
+      }
+
+      // Check if Mapbox token is configured
+      const MAPBOX_TOKEN = process.env.MAPBOX_TOKEN;
+      if (!MAPBOX_TOKEN) {
+        return res.status(500).json({
+          error: "Mapbox token not configured",
+        });
+      }
+
+      // Format coordinates for Mapbox API
+      const coordinateString = coordinates
+        .map((coord) => `${coord.lng},${coord.lat}`)
+        .join(";");
+
+      // Build Mapbox URL
+      const mapboxUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinateString}?steps=true&geometries=geojson&access_token=${MAPBOX_TOKEN}`;
+
+      // Call Mapbox API
+      const response = await fetch(mapboxUrl);
+      if (!response.ok) {
+        throw new Error(
+          `Mapbox API error: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      const data = await response.json();
+      // Check if the route is valid
+      if (!data.routes || data.routes.length === 0) {
+        return res.status(500).json({ error: "No routes found" });
+      }
+
+      const route = data.routes[0];
+
+      // Extract and flatten all turn-by-turn instructions from all route legs
+      const instructions = route.legs.flatMap((leg) =>
+        leg.steps.map((step, index) => ({
+          instruction: step.maneuver.instruction,
+          location: step.maneuver.location,
+          distance: step.distance,
+          duration: step.duration,
+          type: step.maneuver.type,
+          modifier: step.maneuver.modifier,
+          streetName: step.name || "Unknown road",
+          stepIndex: index,
+        })),
+      );
+
+      res.json({
+        success: true,
+        route: {
+          geometry: route.geometry,
+          totalDistance: route.distance, // meters
+          totalDuration: route.duration, // seconds
+          totalDistanceKm: (route.distance / 1000).toFixed(2), // km for display
+          totalDurationMin: Math.round(route.duration / 60), // minutes for display
+          instructions: instructions,
+          totalSteps: instructions.length,
+        },
+      });
+    } catch (error) {
+      console.error("Navigation error:", error.message);
+
+      return res.status(500).json({
+        error: "Failed to calculate navigation route",
+        message: error.message,
+      });
+    }
   };
 }
 

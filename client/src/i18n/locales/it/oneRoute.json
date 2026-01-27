@@ -19,6 +19,7 @@
   "chat": "Chat",
   "navigation": {
     "start": "Avviare il percorso",
-    "nextWaypoint": "Arrivo alla tappa {{numero}} in {{distanza}} {{unità}}"
+    "nextWaypoint": "Tra {{distance}} {{unit}}: {{instruction}}",
+    "destinationReached": "Avete raggiunto la vostra destinazione!"
   }
 }
