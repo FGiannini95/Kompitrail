@@ -14,6 +14,7 @@ import { useGPSTracking } from "../../../../hooks/useGPSTracking";
 import { RecenterButton } from "../../../../components/Maps/RecenterButton/RecenterButton";
 import { MarkerWithIcon } from "../../../../components/Maps/MarkerWithIcon/MarkerWithIcon";
 import { Loading } from "../../../../components/Loading/Loading";
+import { ROUTES_URL } from "../../../../api";
 
 export const RouteNavigation = () => {
   const [viewState, setViewState] = useState(null);
@@ -28,7 +29,7 @@ export const RouteNavigation = () => {
   const { t } = useTranslation(["buttons", "oneRoute"]);
   const waypointData = getNextWaypointData(
     currentPosition,
-    routeData.waypoints
+    routeData.waypoints,
   );
 
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -56,7 +57,7 @@ export const RouteNavigation = () => {
       currentPosition.latitude,
       currentPosition.longitude,
       routeData.starting_lat,
-      routeData.starting_lng
+      routeData.starting_lng,
     );
 
     return distance <= 0.5;
@@ -95,7 +96,7 @@ export const RouteNavigation = () => {
 
     const now = new Date();
     const etaTime = new Date(
-      now.getTime() + routeData.estimated_time * 60 * 1000
+      now.getTime() + routeData.estimated_time * 60 * 1000,
     ); // Calcualted in milliseconds
 
     return etaTime.toLocaleTimeString("es-ES", {
@@ -114,6 +115,35 @@ export const RouteNavigation = () => {
 
     return () => clearInterval(interval);
   }, [routeData?.estimated_time]);
+
+  // Add this useEffect temporarily in RouteNavigation for testing
+  useEffect(() => {
+    // Test button click or automatic call
+    const testNavigation = async () => {
+      console.log("🧪 Testing navigation endpoint...");
+
+      try {
+        const response = await fetch(`/${ROUTES_URL}/navigation`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            coordinates: [
+              { lng: -3.5986, lat: 37.1773 },
+              { lng: -3.6, lat: 37.18 },
+            ],
+          }),
+        });
+
+        const data = await response.json();
+        console.log("✅ Navigation response:", data);
+      } catch (error) {
+        console.error("❌ Navigation error:", error);
+      }
+    };
+
+    // Call test function
+    testNavigation();
+  }, []); // Empty dependency = runs once
 
   if (!routeData) {
     return null;

@@ -7,23 +7,23 @@ const multerSingle = require("../middleware/multerSingle");
 router.post(
   "/createroute",
   multerSingle("routes"),
-  routesControllers.createRoute
+  routesControllers.createRoute,
 );
 router.get("/showallroutesoneuser/:id", routesControllers.showAllRoutesOneUser);
 router.get("/showallroutes", routesControllers.showAllRoutes);
 router.get("/oneroute/:id", routesControllers.showOneRoute);
 router.get(
   "/createdroutes-analytics/:id",
-  routesControllers.showCreatedRoutesAnalytics
+  routesControllers.showCreatedRoutesAnalytics,
 );
 router.get(
   "/joinedroutes-analytics/:id",
-  routesControllers.showJoineddRoutesAnalytics
+  routesControllers.showJoineddRoutesAnalytics,
 );
 router.put(
   "/editroute/:id",
   multerSingle("rutes"),
-  routesControllers.editRoute
+  routesControllers.editRoute,
 );
 router.put("/deleteroute/:id", routesControllers.deleteRoute);
 router.post("/join/:id", routesControllers.joinRoute);
@@ -32,5 +32,6 @@ router.get("/frequent-companions/:id", routesControllers.getFrequentCompanions);
 router.post("/metrics", routesControllers.calculateMetrics);
 router.post("/translatedescription", routesControllers.translateDescription);
 router.post("/geocoding", routesControllers.calculateGeocoding);
+router.post("/navigation", routesControllers.navigationRoutes);
 
 module.exports = router;

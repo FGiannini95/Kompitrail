@@ -2,10 +2,9 @@ const connection = require("../config/db");
 const { connect } = require("../routes/motorbikes");
 require("dotenv").config();
 const path = require("path");
-const Contract = require(path.resolve(
-  __dirname,
-  "../../shared/chat-contract/index"
-));
+const Contract = require(
+  path.resolve(__dirname, "../../shared/chat-contract/index"),
+);
 const { EVENTS } = Contract;
 const getOrsRouteGeojson = require("../utils/orsRoute");
 const translateText = require("../utils/translator");
@@ -257,7 +256,7 @@ class routesControllers {
             `;
 
             const ordered = [...waypoints].sort(
-              (a, b) => Number(a.position) - Number(b.position)
+              (a, b) => Number(a.position) - Number(b.position),
             );
 
             const values = ordered.map((w) => [
@@ -397,7 +396,7 @@ class routesControllers {
 
                   route.waypoints = waypoints;
                   return res.status(200).json(route);
-                }
+                },
               );
             });
           };
@@ -821,7 +820,7 @@ class routesControllers {
             return res
               .status(200)
               .json({ message: "Ruta eliminada", deleteResult });
-          }
+          },
         );
       });
     });
@@ -914,7 +913,7 @@ class routesControllers {
                 };
                 // Broadcast a system line to everyone in this chat room (route_id)
                 io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
-              }
+              },
             );
 
             res.status(201).json({
@@ -1003,7 +1002,7 @@ class routesControllers {
               return res
                 .status(200)
                 .json({ message: "Inscripción cancelada", deleteResult });
-            }
+            },
           );
         });
       });
@@ -1171,7 +1170,7 @@ class routesControllers {
 
       // Build ORS geocoding URL
       const url = `https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(
-        searchQuery
+        searchQuery,
       )}&size=5&lang=${language}`;
 
       // Call ORS Geocoding API
@@ -1231,6 +1230,18 @@ class routesControllers {
         error: "Error interno del servidor",
       });
     }
+  };
+
+  navigationRoutes = (req, res) => {
+    console.log("🚀 Navigation route called");
+    console.log("📍 Request body:", JSON.stringify(req.body, null, 2));
+    console.log("🔧 Method:", req.method);
+
+    // Basic response for now
+    res.json({
+      message: "Navigation endpoint working",
+      received: req.body,
+    });
   };
 }
 
