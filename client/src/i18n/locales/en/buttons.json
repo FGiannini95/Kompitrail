@@ -15,5 +15,6 @@
   "joinRoute": "Join",
   "fullRoute": "Route complete",
   "addWaypoint": "Add waypoint",
-  "search": "Search"
+  "search": "Search",
+  "openMaps": "📍 Go to the <1>starting</1> point!"
 }

@@ -30,6 +30,7 @@ import { ScrollToTop } from "../components/ScrollToTop/ScrollToTop";
 import { CaptureAndForward } from "../auth/CaptureAndForward/CaptureAndForward";
 import { ChatRoomGroupPage } from "../pages/Chat/ChatRoomGroupPage/ChatRoomGroupPage";
 import { ChatRoomBotPage } from "../pages/Chat/ChatRoomBotPage/ChatRoomBotPage";
+import { RouteNavigation } from "../pages/InfoUser/Route/RouteNavigation/RouteNavigation";
 
 export const GlobalRouter = ({
   toggleMode,
@@ -114,6 +115,10 @@ export const GlobalRouter = ({
                       <Route
                         path={RoutesString.routeDetail}
                         element={<OneRoute />}
+                      />
+                      <Route
+                        path={RoutesString.navigation}
+                        element={<RouteNavigation />}
                       />
                       <Route
                         path={RoutesString.editPassword}

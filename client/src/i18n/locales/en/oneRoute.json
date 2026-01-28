@@ -16,5 +16,11 @@
     "newRoute": "New route - let's go to the adventure"
   },
   "calendar": "Calendar",
-  "chat": "Chat"
+  "chat": "Chat",
+  "navigation": {
+    "start": "Start route",
+    "nextWaypoint": "On {{distance}} {{unit}}: {{instruction}}",
+    "destinationReached": "You have reached your destination!",
+    "estimatedArrival": "Scheduled arrival in:"
+  }
 }

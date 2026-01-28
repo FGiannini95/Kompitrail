@@ -33,6 +33,7 @@ export const TopBar = () => {
       RoutesString.createRoute,
       RoutesString.editRoute,
       RoutesString.route,
+      RoutesString.navigation,
       RoutesString.chatbot,
     ].includes(location.pathname) ||
     location.pathname.startsWith("/route/") ||

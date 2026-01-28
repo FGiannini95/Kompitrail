@@ -2,10 +2,9 @@ const connection = require("../config/db");
 const { connect } = require("../routes/motorbikes");
 require("dotenv").config();
 const path = require("path");
-const Contract = require(path.resolve(
-  __dirname,
-  "../../shared/chat-contract/index"
-));
+const Contract = require(
+  path.resolve(__dirname, "../../shared/chat-contract/index"),
+);
 const { EVENTS } = Contract;
 const getOrsRouteGeojson = require("../utils/orsRoute");
 const translateText = require("../utils/translator");
@@ -257,7 +256,7 @@ class routesControllers {
             `;
 
             const ordered = [...waypoints].sort(
-              (a, b) => Number(a.position) - Number(b.position)
+              (a, b) => Number(a.position) - Number(b.position),
             );
 
             const values = ordered.map((w) => [
@@ -397,7 +396,7 @@ class routesControllers {
 
                   route.waypoints = waypoints;
                   return res.status(200).json(route);
-                }
+                },
               );
             });
           };
@@ -821,7 +820,7 @@ class routesControllers {
             return res
               .status(200)
               .json({ message: "Ruta eliminada", deleteResult });
-          }
+          },
         );
       });
     });
@@ -914,7 +913,7 @@ class routesControllers {
                 };
                 // Broadcast a system line to everyone in this chat room (route_id)
                 io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
-              }
+              },
             );
 
             res.status(201).json({
@@ -1003,7 +1002,7 @@ class routesControllers {
               return res
                 .status(200)
                 .json({ message: "Inscripción cancelada", deleteResult });
-            }
+            },
           );
         });
       });
@@ -1171,7 +1170,7 @@ class routesControllers {
 
       // Build ORS geocoding URL
       const url = `https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(
-        searchQuery
+        searchQuery,
       )}&size=5&lang=${language}`;
 
       // Call ORS Geocoding API
@@ -1229,6 +1228,85 @@ class routesControllers {
 
       return res.status(500).json({
         error: "Error interno del servidor",
+      });
+    }
+  };
+
+  navigationRoutes = async (req, res) => {
+    try {
+      const { coordinates } = req.body;
+
+      // Validate input - need at least 2 points for a route
+      if (!coordinates || coordinates.length < 2) {
+        return res
+          .status(400)
+          .json({ error: "Two coordinates required for navigation" });
+      }
+
+      // Check if Mapbox token is configured
+      const MAPBOX_TOKEN = process.env.MAPBOX_TOKEN;
+      if (!MAPBOX_TOKEN) {
+        return res.status(500).json({
+          error: "Mapbox token not configured",
+        });
+      }
+
+      // Format coordinates for Mapbox API
+      const coordinateString = coordinates
+        .map((coord) => `${coord.lng},${coord.lat}`)
+        .join(";");
+
+      // Build Mapbox URL
+      const mapboxUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinateString}?steps=true&geometries=geojson&access_token=${MAPBOX_TOKEN}`;
+
+      // Call Mapbox API
+      const response = await fetch(mapboxUrl);
+      if (!response.ok) {
+        throw new Error(
+          `Mapbox API error: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      const data = await response.json();
+      // Check if the route is valid
+      if (!data.routes || data.routes.length === 0) {
+        return res.status(500).json({ error: "No routes found" });
+      }
+
+      const route = data.routes[0];
+
+      // Extract and flatten all turn-by-turn instructions from all route legs
+      const instructions = route.legs.flatMap((leg) =>
+        leg.steps.map((step, index) => ({
+          instruction: step.maneuver.instruction,
+          location: step.maneuver.location,
+          distance: step.distance,
+          duration: step.duration,
+          type: step.maneuver.type,
+          modifier: step.maneuver.modifier,
+          streetName: step.name || "Unknown road",
+          stepIndex: index,
+        })),
+      );
+
+      res.json({
+        success: true,
+        route: {
+          geometry: route.geometry,
+          totalDistance: route.distance, // meters
+          totalDuration: route.duration, // seconds
+          totalDistanceKm: (route.distance / 1000).toFixed(2), // km for display
+          totalDurationMin: Math.round(route.duration / 60), // minutes for display
+          instructions: instructions,
+          totalSteps: instructions.length,
+        },
+      });
+    } catch (error) {
+      console.error("Navigation error:", error.message);
+
+      return res.status(500).json({
+        error: "Failed to calculate navigation route",
+        message: error.message,
       });
     }
   };

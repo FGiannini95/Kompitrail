@@ -15,5 +15,6 @@
   "joinRoute": "Únete",
   "fullRoute": "Ruta completa",
   "addWaypoint": "Añadir etapa",
-  "search": "Buscar"
+  "search": "Buscar",
+  "openMaps": " 📍 Ir al punto de <1>salida</1>!"
 }
