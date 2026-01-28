@@ -100,7 +100,7 @@ export const OneRoute = () => {
       try {
         // Fetch the route
         const { data: routeRaw } = await axios.get(
-          `${ROUTES_URL}/oneroute/${route_id}?lang=${currentLang}`
+          `${ROUTES_URL}/oneroute/${route_id}?lang=${currentLang}`,
         );
         const route = routeRaw ?? {};
 
@@ -167,12 +167,12 @@ export const OneRoute = () => {
 
   const { isPastRoute, isEnrollmentClosed, isRouteLocked } = getRouteStatus(
     date,
-    estimated_time
+    estimated_time,
   );
 
   const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } = formatDateTime(
     date,
-    { locale }
+    { locale },
   );
 
   const weekdayCap = isValid ? capitalizeFirstLetter(weekday) : "";
@@ -399,7 +399,7 @@ export const OneRoute = () => {
                       i18n: waypoint.label_i18n,
                     },
                     currentLang,
-                    "full"
+                    "full",
                   )}
                 </Typography>
               </Stack>
@@ -446,6 +446,33 @@ export const OneRoute = () => {
         </Stack>
       </Stack>
 
+      {/* Navigation button */}
+      {!isPastRoute && (
+        <Stack
+          direction="row"
+          spacing={2}
+          justifyContent="center"
+          sx={{ p: "10px" }}
+        >
+          <OutlinedButton
+            text={t("oneRoute:navigation.start")}
+            icon={
+              <NearMeOutlinedIcon
+                style={{ paddingLeft: "5px", width: "20px" }}
+                aria-hidden
+              />
+            }
+            onClick={() => {
+              navigate("/navigation", {
+                state: {
+                  routeData: data,
+                },
+              });
+            }}
+          />
+        </Stack>
+      )}
+
       {/* Actions button */}
       <Stack sx={{ px: 1 }}>
         <RouteActionButton
@@ -461,30 +488,6 @@ export const OneRoute = () => {
           onCancelEnrollment={() =>
             participantsSectionRef.current?.handleOpenLeaveRoute()
           }
-        />
-      </Stack>
-
-      <Stack
-        direction="row"
-        spacing={2}
-        justifyContent="center"
-        sx={{ p: "10px" }}
-      >
-        <OutlinedButton
-          text={t("oneRoute:navigation.start")}
-          icon={
-            <NearMeOutlinedIcon
-              style={{ paddingLeft: "5px", width: "20px" }}
-              aria-hidden
-            />
-          }
-          onClick={() => {
-            navigate("/navigation", {
-              state: {
-                routeData: data,
-              },
-            });
-          }}
         />
       </Stack>
     </Grid>
