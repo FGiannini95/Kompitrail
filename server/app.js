@@ -5,6 +5,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 
 const usersRouter = require("./routes/users");
 const motorbikesRouter = require("./routes/motorbikes");
@@ -12,6 +13,18 @@ const routesRouter = require("./routes/route");
 const authRouter = require("./routes/auth");
 const chatRouter = require("./routes/chat");
 const chatBotRouter = require("./routes/chatbot");
+
+// Global rate limiting configuration
+const globalRateLimit = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes window
+  max: 150, // Limit each IP to 150 requests per windowMs
+  message: {
+    error: "Demasiadas solicitudes, intèntalo de nuevo más tarde",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req, res) => res.statusCode < 400,
+});
 
 var app = express();
 
@@ -25,8 +38,10 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
+
+app.use(globalRateLimit);
 
 app.use(logger("dev"));
 app.use(express.json());
