@@ -4,11 +4,11 @@ import { calculateDistance } from "../helpers/calculateDistance";
 
 // Hook to get and manage turn-by-turn navigation instructions
 // Fetches from backend and determines current instruction based on GPS positio
-
 export const useNavigationInstructions = (routeData, currentPosition) => {
   const [instructions, setInstructions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentInstructionIndex, setCurrentInstructionIndex] = useState(0);
 
   // Fetch navigation instructions from backend when route data is available
   useEffect(() => {
@@ -17,6 +17,7 @@ export const useNavigationInstructions = (routeData, currentPosition) => {
     const fetchInstructions = async () => {
       setLoading(true);
       setError(null);
+      setCurrentInstructionIndex(0);
 
       try {
         // Build coordinates array
@@ -57,40 +58,67 @@ export const useNavigationInstructions = (routeData, currentPosition) => {
     fetchInstructions();
   }, [routeData]);
 
-  // Find current instruction based on GPS position
+  // Calculate distance to current instruction
+  const currentInstructionData = useMemo(() => {
+    if (
+      !currentPosition ||
+      !instructions.length ||
+      currentInstructionIndex >= instructions.length
+    ) {
+      return null;
+    }
+
+    const instruction = instructions[currentInstructionIndex];
+    const distanceKm = calculateDistance(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      instruction.location[1], // lat
+      instruction.location[0], // lng
+    );
+
+    const meters = Math.round(distanceKm * 1000);
+
+    return {
+      instruction,
+      distanceKm,
+      meters,
+    };
+  }, [currentPosition, instructions, currentInstructionIndex]);
+
+  // Check if should advance to next instruction
+  useEffect(() => {
+    if (!currentInstructionData) return;
+
+    const { meters } = currentInstructionData;
+
+    // If very close to current instruction, advance to next
+    if (meters < 50 && currentInstructionIndex < instructions.length - 1) {
+      setCurrentInstructionIndex((prev) => prev + 1);
+    }
+  }, [currentInstructionData, currentInstructionIndex, instructions.length]);
+
+  // Calculate current instruction to display
   const currentInstruction = useMemo(() => {
-    if (!currentPosition || !instructions.length) {
-      return { type: "loading" };
-    }
+    if (loading || !instructions.length) return { type: "loading" };
+    if (currentInstructionIndex >= instructions.length)
+      return { type: "completed" };
+    if (!currentInstructionData) return { type: "loading" };
 
-    // Find next instruction user hasn't reached yet
-    for (const step of instructions) {
-      const distanceKm = calculateDistance(
-        currentPosition.latitude,
-        currentPosition.longitude,
-        step.location[1],
-        step.location[0],
-      );
+    const { instruction, distanceKm, meters } = currentInstructionData;
 
-      // Skip instructions we've already passed
-      if (distanceKm < 0.05) continue;
-
-      // Found next instruction
-      const distanceMeters = Math.round(distanceKm * 1000);
-
-      return {
-        type: "instruction",
-        text: step.instruction,
-        distance:
-          distanceMeters > 1000 ? distanceKm.toFixed(1) : distanceMeters,
-        unit: distanceMeters > 1000 ? "km" : "m",
-        streetName: step.streetName,
-      };
-    }
-
-    // All instructions completed
-    return { type: "completed" };
-  }, [currentPosition, instructions]);
+    return {
+      type: "instruction",
+      text: instruction.instruction,
+      distance: meters > 1000 ? distanceKm.toFixed(1) : meters,
+      unit: meters > 1000 ? "km" : "m",
+      streetName: instruction.streetName,
+    };
+  }, [
+    loading,
+    instructions.length,
+    currentInstructionIndex,
+    currentInstructionData,
+  ]);
 
   return {
     instructions,
@@ -98,5 +126,6 @@ export const useNavigationInstructions = (routeData, currentPosition) => {
     loading,
     error,
     totalSteps: instructions.length,
+    currentStep: currentInstructionIndex + 1,
   };
 };
