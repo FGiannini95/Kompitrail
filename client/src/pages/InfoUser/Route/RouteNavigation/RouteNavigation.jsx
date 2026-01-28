@@ -69,7 +69,7 @@ export const RouteNavigation = () => {
     return nearStart;
   }, [currentPosition, routeData, navigationStarted]);
 
-  // Initial centering
+  // Initial centering with smooth transitions
   useEffect(() => {
     if (!currentPosition || !routeData) return;
 
@@ -80,6 +80,8 @@ export const RouteNavigation = () => {
         zoom: 17,
         bearing: currentPosition.heading || 0,
         pitch: 30,
+        transitionDuration: 2000,
+        transitionEasing: (t) => t * (2 - t),
       });
     } else {
       setViewState({
@@ -88,6 +90,7 @@ export const RouteNavigation = () => {
         zoom: 13,
         bearing: 0,
         pitch: 30,
+        transitionDuration: 1000,
       });
     }
   }, [currentPosition, routeData, isNearStartingPoint]);
