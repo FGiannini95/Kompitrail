@@ -106,7 +106,7 @@ export const BottomBannerNavigation = ({
           <CloseIcon />
         </IconButton>
 
-        {/* CENTER - Go to starting point or Time and distance*/}
+        {/* CENTER - Go to starting point or distance to destination */}
         <Stack alignItems="center">
           {!isNearStartingPoint ? (
             <Typography textAlign="center">
