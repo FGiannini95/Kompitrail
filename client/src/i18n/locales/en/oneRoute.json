@@ -20,6 +20,7 @@
   "navigation": {
     "start": "Start route",
     "nextWaypoint": "On {{distance}} {{unit}}: {{instruction}}",
-    "destinationReached": "You have reached your destination!"
+    "destinationReached": "You have reached your destination!",
+    "estimatedArrival": "Scheduled arrival in:"
   }
 }

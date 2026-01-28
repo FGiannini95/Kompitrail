@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { Paper, Typography, Stack, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { RecenterButton } from "../RecenterButton/RecenterButton";
+import { calculateDistance } from "../../../helpers/calculateDistance";
 
 export const BottomBannerNavigation = ({
   routeData,
@@ -14,7 +15,55 @@ export const BottomBannerNavigation = ({
   onExit,
   onRecenter,
 }) => {
-  const [currentETA, setCurrentETA] = useState("--:--");
+  const [remainingDistance, setRemainingDistance] = useState(0);
+  const { t } = useTranslation(["oneRoute"]);
+
+  // Calculate remaining distance based on current position
+  const calculateRemainingRouteDistance = (currentPos, routeGeometry) => {
+    if (!routeGeometry?.coordinates) return 0;
+
+    const coordinates = routeGeometry.coordinates;
+
+    // Find the closest point on the route
+    let closestIndex = 0;
+    let minDistance = Infinity;
+
+    coordinates.forEach((coord, index) => {
+      const [lng, lat] = coord;
+      const distance = calculateDistance(
+        currentPos.latitude,
+        currentPos.longitude,
+        lat,
+        lng,
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    // Calculate remaining distance from closestIndex to the end
+    let remainingDistance = 0;
+    for (let i = closestIndex; i < coordinates.length - 1; i++) {
+      const [lng1, lat1] = coordinates[i];
+      const [lng2, lat2] = coordinates[i + 1];
+      remainingDistance += calculateDistance(lat1, lng1, lat2, lng2);
+    }
+
+    return remainingDistance;
+  };
+
+  useEffect(() => {
+    if (!currentPosition || !routeData) return;
+
+    const distanceKm = calculateRemainingRouteDistance(
+      currentPosition,
+      routeData.route_geometry,
+    );
+
+    setRemainingDistance(distanceKm);
+  }, [currentPosition, routeData]);
 
   const handleExit = () => {
     if (onExit) {
@@ -27,32 +76,6 @@ export const BottomBannerNavigation = ({
       onRecenter(newViewState);
     }
   };
-
-  // Calculate ETA based on current time + estimated_time
-  const calculateETA = () => {
-    if (!routeData?.estimated_time) return "--:--";
-
-    const now = new Date();
-    const etaTime = new Date(
-      now.getTime() + routeData.estimated_time * 60 * 1000,
-    ); // Calcualted in milliseconds
-
-    return etaTime.toLocaleTimeString("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
-
-  // Update ETA every minute
-  useEffect(() => {
-    setCurrentETA(calculateETA());
-    const interval = setInterval(() => {
-      setCurrentETA(calculateETA());
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [routeData?.estimated_time]);
 
   return (
     <Paper
@@ -109,6 +132,9 @@ export const BottomBannerNavigation = ({
             </Typography>
           ) : (
             <>
+              <Typography variant="body2">
+                {t("oneRoute:navigation.estimatedArrival")}
+              </Typography>
               <Typography
                 variant="h5"
                 sx={{
@@ -116,10 +142,7 @@ export const BottomBannerNavigation = ({
                   color: "#4CAF50",
                 }}
               >
-                {routeData?.estimated_time || "0"} min
-              </Typography>
-              <Typography variant="body2" color="grey.300">
-                {routeData?.distance || "0"} km • {currentETA}
+                {remainingDistance.toFixed(1)} km
               </Typography>
             </>
           )}
