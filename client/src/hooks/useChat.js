@@ -33,14 +33,17 @@ export const useChat = (chatId) => {
             timeZone: "Europe/Madrid",
           });
 
-          return {
+          const formatted = {
             id: msg.id,
             text: msg.text,
             fromMe: !isSystem && msg.userId === currentUser.user_id,
             at: time_hh_mm,
             createdAt: msg.createdAt,
             isSystem,
+            displayName: msg.displayName,
           };
+
+          return formatted;
         });
 
         setMessages(formattedMessages);

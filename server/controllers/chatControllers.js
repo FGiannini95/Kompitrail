@@ -113,9 +113,11 @@ class chatControllers {
             cm.user_id AS userId,
             cm.body AS text,
             cm.is_system AS isSystem,
-            cm.created_at AS createdAt
+            cm.created_at AS createdAt,
+            u.name AS displayName
           FROM chat_message cm
           INNER JOIN chat_room cr ON cm.chat_room_id = cr.chat_room_id
+          LEFT JOIN user u ON cm.user_id = u.user_id
           WHERE cr.route_id = ?
           ORDER BY cm.created_at ASC
         `;

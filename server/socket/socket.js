@@ -127,44 +127,53 @@ module.exports = (io) => {
 
       // Extract user info from payload
       const userId = socket.data.user?.id;
-      const displayName = socket.data.user?.name || "Un usuario";
       if (!userId) return;
 
       // Find related chat_room_id in DB
       const chatRoomId = await getChatRoomIdByRoute(chatId);
       if (!chatRoomId) return;
 
-      // Save message to DB
-      const insertSql = `
-        INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
-        VALUES (?, ?, ?, 0, NOW())
-      `;
-
+      // Get user name from database instead of socket.data
       connection.query(
-        insertSql,
-        [chatRoomId, userId, text.trim()],
-        (err, result) => {
-          if (err) {
-            console.error("Error saving message:", err);
-            return;
-          }
+        "SELECT name FROM user WHERE user_id = ? LIMIT 1",
+        [userId],
+        (userErr, userRows) => {
+          const displayName =
+            !userErr && userRows?.[0]?.name ? userRows[0].name : "Un usuario";
 
-          const messageId = result.insertId;
-          const createdAt = new Date().toISOString();
+          // Save message to DB
+          const insertSql = `
+            INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+            VALUES (?, ?, ?, 0, NOW())
+          `;
 
-          // Broadcast to everyone in the room
-          io.to(chatId).emit(EVENTS.S2C.MESSAGE_NEW, {
-            chatId,
-            message: {
-              id: messageId,
-              chatId,
-              userId,
-              text: text.trim(),
-              isSystem: false,
-              createdAt,
-              displayName: displayName,
+          connection.query(
+            insertSql,
+            [chatRoomId, userId, text.trim()],
+            (err, result) => {
+              if (err) {
+                console.error("Error saving message:", err);
+                return;
+              }
+
+              const messageId = result.insertId;
+              const createdAt = new Date().toISOString();
+
+              // Broadcast to everyone in the room
+              io.to(chatId).emit(EVENTS.S2C.MESSAGE_NEW, {
+                chatId,
+                message: {
+                  id: messageId,
+                  chatId,
+                  userId,
+                  text: text.trim(),
+                  isSystem: false,
+                  createdAt,
+                  displayName: displayName,
+                },
+              });
             },
-          });
+          );
         },
       );
     });
