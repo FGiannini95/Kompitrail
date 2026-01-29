@@ -869,57 +869,9 @@ class routesControllers {
             return res.status(400).json({ err: err3 });
           }
 
-          // Fetch user display name for the system message
-          const userSql = `SELECT name FROM user WHERE user_id='${user_id}' LIMIT 1`;
-
-          connection.query(userSql, (userError, userResult) => {
-            const displayName =
-              !userError && userResult?.[0]?.name
-                ? String(userResult[0].name)
-                : "Un usuario";
-
-            const systemMessageText = `${displayName} ha entrado en el chat`;
-            const createdAt = new Date();
-
-            // Save system msg in the db
-            const insertMessageSql = `
-              INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
-              SELECT chat_room_id, ?, ?, 1, ?
-              FROM chat_room
-              WHERE route_id = ?
-            `;
-
-            connection.query(
-              insertMessageSql,
-              [user_id, systemMessageText, createdAt, route_id],
-              (msgErr, msgResult) => {
-                if (msgErr) {
-                  console.error("Error saving system message", msgErr);
-                }
-
-                const messageId = msgErr
-                  ? `sys-${Date.now()}-join`
-                  : msgResult.insertId;
-
-                const payload = {
-                  chatId: route_id,
-                  message: {
-                    id: messageId,
-                    chatId: route_id,
-                    userId: "system",
-                    text: systemMessageText,
-                    createdAt: createdAt.toISOString(),
-                  },
-                };
-                // Broadcast a system line to everyone in this chat room (route_id)
-                io.to(route_id).emit(EVENTS.S2C.MESSAGE_NEW, payload);
-              },
-            );
-
-            res.status(201).json({
-              message: "Inscripción completada",
-              route_participant_id: insertRes.insertId,
-            });
+          res.status(201).json({
+            message: "Inscripción completada",
+            route_participant_id: insertRes.insertId,
           });
         });
       });

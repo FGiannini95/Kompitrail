@@ -14,7 +14,7 @@ module.exports = (io) => {
         (err, rows) => {
           if (err) return reject(err);
           resolve(rows && rows.length ? rows[0].chat_room_id : null);
-        }
+        },
       );
     });
   }
@@ -88,9 +88,10 @@ module.exports = (io) => {
         // First entry ever → create the system message in DB (no broadcast here)
         const bodyForOthers = `${displayName} ha entrado en el chat`;
         const insertSql = `
-      INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
-      VALUES (?, ?, ?, 1, NOW())
-    `;
+          INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+          VALUES (?, ?, ?, 1, NOW())
+        `;
+
         connection.query(
           insertSql,
           [chatRoomId, userId, bodyForOthers],
@@ -102,9 +103,18 @@ module.exports = (io) => {
             const messageId = resIns.insertId;
             const createdAtIso = new Date().toISOString();
 
-            // Self-only confirmation line for the joiner (reuse DB id)
-            emitSelfEnter(messageId, createdAtIso);
-          }
+            io.to(chatId).emit(EVENTS.S2C.MESSAGE_NEW, {
+              chatId,
+              message: {
+                id: messageId,
+                chatId,
+                userId: "system",
+                text: bodyForOthers,
+                isSystem: true,
+                createdAt: createdAtIso,
+              },
+            });
+          },
         );
       });
     });

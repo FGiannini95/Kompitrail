@@ -20,7 +20,7 @@ export const useChat = (chatId) => {
       try {
         setIsLoading(true);
         const response = await axios.get(
-          `${CHAT_URL}/rooms/${chatId}/messages?user_id=${currentUser.user_id}`
+          `${CHAT_URL}/rooms/${chatId}/messages?user_id=${currentUser.user_id}`,
         );
 
         // Format messages for MessageList
@@ -84,7 +84,7 @@ export const useChat = (chatId) => {
         ];
       });
     },
-    [chatId, currentUser?.user_id]
+    [chatId, currentUser?.user_id],
   );
 
   // Send message function
@@ -97,7 +97,7 @@ export const useChat = (chatId) => {
         text,
       });
     },
-    [chatId]
+    [chatId],
   );
 
   // Join/leave room management
@@ -109,8 +109,9 @@ export const useChat = (chatId) => {
     // Join the socket room
     const join = () => {
       if (joinedRef.current) return;
-      socket.emit(EVENTS.C2S.ROOM_JOIN, payload);
       joinedRef.current = true;
+
+      socket.emit(EVENTS.C2S.ROOM_JOIN, payload);
     };
 
     // Handle reconnection
@@ -134,13 +135,12 @@ export const useChat = (chatId) => {
           chatId,
           user: currentUser,
         });
-        joinedRef.current = false;
       }
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
     };
-  }, [chatId, currentUser, handleNewMessage]);
+  }, [chatId, currentUser?.user_id]);
 
   return {
     messages,
