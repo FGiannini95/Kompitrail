@@ -51,10 +51,17 @@ const groupMessagesByDate = (messages) => {
 export const MessageList = ({ items = [] }) => {
   const scrollRef = useRef(null);
 
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
+    // Get the scrollable container element
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollTop = el.scrollHeight;
+
+    // Find the last message element in the container and ensures it appears at the bottom of visible area
+    const lastMessage = el.lastElementChild;
+    if (lastMessage) {
+      lastMessage.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }, [items]);
 
   const groupedItems = groupMessagesByDate(items);
