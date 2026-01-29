@@ -100,9 +100,11 @@ module.exports = (io) => {
               console.error("Insert enter failed", errIns);
               return;
             }
+
             const messageId = resIns.insertId;
             const createdAtIso = new Date().toISOString();
 
+            // Broadcast to everyone in the room
             io.to(chatId).emit(EVENTS.S2C.MESSAGE_NEW, {
               chatId,
               message: {
@@ -117,6 +119,54 @@ module.exports = (io) => {
           },
         );
       });
+    });
+
+    // MESSAGE_SEND handler
+    socket.on(EVENTS.C2S.MESSAGE_SEND, async ({ chatId, text }) => {
+      if (!chatId || !text?.trim()) return;
+
+      // Extract user info from payload
+      const userId = socket.data.user?.id;
+      const displayName = socket.data.user?.name || "Un usuario";
+      if (!userId) return;
+
+      // Find related chat_room_id in DB
+      const chatRoomId = await getChatRoomIdByRoute(chatId);
+      if (!chatRoomId) return;
+
+      // Save message to DB
+      const insertSql = `
+        INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+        VALUES (?, ?, ?, 0, NOW())
+      `;
+
+      connection.query(
+        insertSql,
+        [chatRoomId, userId, text.trim()],
+        (err, result) => {
+          if (err) {
+            console.error("Error saving message:", err);
+            return;
+          }
+
+          const messageId = result.insertId;
+          const createdAt = new Date().toISOString();
+
+          // Broadcast to everyone in the room
+          io.to(chatId).emit(EVENTS.S2C.MESSAGE_NEW, {
+            chatId,
+            message: {
+              id: messageId,
+              chatId,
+              userId,
+              text: text.trim(),
+              isSystem: false,
+              createdAt,
+              displayName: displayName,
+            },
+          });
+        },
+      );
     });
   });
 };

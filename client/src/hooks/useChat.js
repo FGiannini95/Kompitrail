@@ -80,6 +80,7 @@ export const useChat = (chatId) => {
             at: time_hh_mm,
             createdAt: msg.createdAt,
             isSystem,
+            displayName: msg.displayName,
           },
         ];
       });
