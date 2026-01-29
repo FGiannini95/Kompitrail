@@ -26,7 +26,7 @@ module.exports = (io) => {
       socket.emit("pong", { echo: payload?.echo ?? null, ts: Date.now() });
     });
 
-    // ROOM_JOIN, fired when a user opens a chat
+    /* ROOM_JOIN, fired when a user opens a chat */
     socket.on(EVENTS.C2S.ROOM_JOIN, async ({ chatId, user }) => {
       if (!chatId) return;
 
@@ -121,7 +121,7 @@ module.exports = (io) => {
       });
     });
 
-    // MESSAGE_SEND handler
+    /* MESSAGE_SEND handler */
     socket.on(EVENTS.C2S.MESSAGE_SEND, async ({ chatId, text }) => {
       if (!chatId || !text?.trim()) return;
 
@@ -176,6 +176,40 @@ module.exports = (io) => {
           );
         },
       );
+    });
+
+    /* TYPING_START handler */
+    socket.on(EVENTS.C2S.TYPING_START, async ({ chatId }) => {
+      if (!chatId) return;
+
+      // Extract user info from payload
+      const userId = socket.data.user?.id;
+      if (!userId) return;
+      const displayName = socket.data.user?.name;
+
+      // Broadcast to others in room (not to sender)
+      socket.to(chatId).emit(EVENTS.S2C.TYPING_UPDATE, {
+        chatId,
+        userId,
+        displayName,
+        isTyping: true,
+      });
+    });
+
+    /* TYPING_STOP handler */
+    socket.on(EVENTS.C2S.TYPING_STOP, async ({ chatId }) => {
+      if (!chatId || !socket.data.user?.id) return;
+
+      // Extract user info from payload
+      const userId = socket.data.user?.id;
+      if (!userId) return;
+
+      // Broadcast to others in room (not to sender)
+      socket.to(chatId).emit(EVENTS.S2C.TYPING_UPDATE, {
+        chatId,
+        userId,
+        isTyping: false,
+      });
     });
   });
 };
