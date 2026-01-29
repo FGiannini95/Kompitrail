@@ -143,9 +143,17 @@ export const useChat = (chatId) => {
           user: currentUser,
         });
       }
+
+      // Clear typing timeout on cleanup
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
+
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
+      socket.off(EVENTS.S2C.TYPING_UPDATE, handleTypingUpdate);
     };
   }, [chatId, currentUser?.user_id]);
 
