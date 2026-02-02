@@ -16,6 +16,7 @@ import { useOtherUserProfile } from "../../hooks/useOtherUserProfile";
 import { useFrequentCompanions } from "../../hooks/useFrequentCompanions";
 import { useShareUrl } from "../../hooks/useShareUrl";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
+import { useMotorbikes } from "../../context/MotorbikesContext/MotorbikesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
 
 // Components
@@ -44,6 +45,7 @@ export const Profile = () => {
     otherUserId,
     currentUserId: currentUser?.user_id,
   });
+  const { allMotorbikes } = useMotorbikes();
   const { t, i18n } = useTranslation(["buttons", "general"]);
   const currentLang = getCurrentLang(i18n);
 
@@ -204,13 +206,14 @@ export const Profile = () => {
         <FrequentCompanions companions={displayCompanions} />
       </Grid>
 
-      <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
-        <Typography color="text.primary">
-          {t("general:motorbikesText")}
-        </Typography>
-        <FrequentCompanions companions={displayCompanions} />
-      </Grid>
-
+      {allMotorbikes.length > 0 && (
+        <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
+          <Typography color="text.primary">
+            {t("general:motorbikesText")}
+          </Typography>
+          <FrequentCompanions companions={displayCompanions} />
+        </Grid>
+      )}
       <RouteEditDialog />
     </Box>
   );
