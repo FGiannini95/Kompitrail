@@ -45,12 +45,12 @@ export const ChatRoom = ({
       }}
     >
       <Box
-        sx={{
+        sx={(theme) => ({
           position: "sticky",
           top: 0,
           zIndex: 2,
-          backgroundColor: (t) => t.palette.background.default,
-        }}
+          backgroundColor: theme.palette.kompitrail.card,
+        })}
       >
         <Grid
           container
