@@ -203,6 +203,14 @@ export const Profile = () => {
         </Typography>
         <FrequentCompanions companions={displayCompanions} />
       </Grid>
+
+      <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
+        <Typography color="text.primary">
+          {t("general:motorbikesText")}
+        </Typography>
+        <FrequentCompanions companions={displayCompanions} />
+      </Grid>
+
       <RouteEditDialog />
     </Box>
   );
