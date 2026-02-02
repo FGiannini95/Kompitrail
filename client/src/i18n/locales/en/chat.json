@@ -1,3 +1,6 @@
 {
-  "subtitle": "{{weekday}} {{date}} at {{time}}"
+  "subtitle": "{{weekday}} {{date}} at {{time}}",
+  "oneUserTyping": "{{displayName}} is writing...",
+  "twoUserTyping": "{{user1}} and {{user2}} are writing...",
+  "moreUserTyping": "{{count}} people are writing..."
 }

@@ -4,18 +4,21 @@ import { useTranslation } from "react-i18next";
 import { Box, Typography } from "@mui/material";
 
 export const TypingIndicator = ({ typingUsers = [] }) => {
-  const { t } = useTranslation(["general"]);
+  const { t } = useTranslation(["chat"]);
 
   if (typingUsers.length === 0) return null;
 
   const getTypingText = () => {
     if (typingUsers.length === 1) {
-      return `${typingUsers[0].displayName} sta scrivendo...`;
+      return t("oneUserTyping", { displayName: typingUsers[0].displayName });
     }
     if (typingUsers.length === 2) {
-      return `${typingUsers[0].displayName} e ${typingUsers[1].displayName} stanno scrivendo...`;
+      return t("twoUserTyping", {
+        user1: typingUsers[0].displayName,
+        user2: typingUsers[1].displayName,
+      });
     }
-    return `${typingUsers.length} persone stanno scrivendo...`;
+    return t("moreUserTyping", { count: typingUsers.length });
   };
 
   return (
