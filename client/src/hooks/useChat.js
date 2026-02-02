@@ -9,7 +9,10 @@ import { CHAT_URL } from "../api";
 export const useChat = (chatId) => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [typingUsers, setTypingUsers] = useState([]);
+
   const joinedRef = useRef(false);
+  const typingTimeoutRef = useRef(null);
   const { user: currentUser } = useContext(KompitrailContext);
 
   // Fetch messages from the db
@@ -20,7 +23,7 @@ export const useChat = (chatId) => {
       try {
         setIsLoading(true);
         const response = await axios.get(
-          `${CHAT_URL}/rooms/${chatId}/messages?user_id=${currentUser.user_id}`
+          `${CHAT_URL}/rooms/${chatId}/messages?user_id=${currentUser.user_id}`,
         );
 
         // Format messages for MessageList
@@ -33,14 +36,17 @@ export const useChat = (chatId) => {
             timeZone: "Europe/Madrid",
           });
 
-          return {
+          const formatted = {
             id: msg.id,
             text: msg.text,
             fromMe: !isSystem && msg.userId === currentUser.user_id,
             at: time_hh_mm,
             createdAt: msg.createdAt,
             isSystem,
+            displayName: msg.displayName,
           };
+
+          return formatted;
         });
 
         setMessages(formattedMessages);
@@ -80,11 +86,12 @@ export const useChat = (chatId) => {
             at: time_hh_mm,
             createdAt: msg.createdAt,
             isSystem,
+            displayName: msg.displayName,
           },
         ];
       });
     },
-    [chatId, currentUser?.user_id]
+    [chatId, currentUser?.user_id],
   );
 
   // Send message function
@@ -97,8 +104,61 @@ export const useChat = (chatId) => {
         text,
       });
     },
-    [chatId]
+    [chatId],
   );
+
+  // Handle typing updates -others
+  const handleTypingUpdate = useCallback(
+    (payload) => {
+      if (!payload || payload.chatId !== chatId) return;
+
+      const { userId, displayName, isTyping } = payload;
+
+      setTypingUsers((prev) => {
+        if (isTyping) {
+          // Add user to typing list (avoid duplicates)
+          return prev.some((u) => u.userId === userId)
+            ? prev
+            : [...prev, { userId, displayName }];
+        } else {
+          // Remove user from typing list
+          return prev.filter((u) => u.userId !== userId);
+        }
+      });
+    },
+    [chatId],
+  );
+
+  // Send typing events - me
+  const handleTypingStart = useCallback(() => {
+    if (!chatId) return;
+
+    // Conenction with the server
+    socket.emit(EVENTS.C2S.TYPING_START, { chatId });
+
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Set timeout to stop typing after 3 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit(EVENTS.C2S.TYPING_STOP, { chatId });
+    }, 3000);
+  }, [chatId]);
+
+  // Send typing events - me
+  const handleTypingStop = useCallback(() => {
+    if (!chatId) return;
+
+    // Conenction with the server
+    socket.emit(EVENTS.C2S.TYPING_STOP, { chatId });
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+  }, [chatId]);
 
   // Join/leave room management
   useEffect(() => {
@@ -109,8 +169,9 @@ export const useChat = (chatId) => {
     // Join the socket room
     const join = () => {
       if (joinedRef.current) return;
-      socket.emit(EVENTS.C2S.ROOM_JOIN, payload);
       joinedRef.current = true;
+
+      socket.emit(EVENTS.C2S.ROOM_JOIN, payload);
     };
 
     // Handle reconnection
@@ -124,6 +185,7 @@ export const useChat = (chatId) => {
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
+    socket.on(EVENTS.S2C.TYPING_UPDATE, handleTypingUpdate);
 
     // If already connected, join immediately
     if (socket.connected) join();
@@ -134,17 +196,27 @@ export const useChat = (chatId) => {
           chatId,
           user: currentUser,
         });
-        joinedRef.current = false;
       }
+
+      // Clear typing timeout on cleanup
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
+
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
+      socket.off(EVENTS.S2C.TYPING_UPDATE, handleTypingUpdate);
     };
-  }, [chatId, currentUser, handleNewMessage]);
+  }, [chatId, currentUser?.user_id, handleNewMessage, handleTypingUpdate]);
 
   return {
     messages,
     sendMessage,
     isLoading,
+    handleTypingStart,
+    handleTypingStop,
+    typingUsers,
   };
 };

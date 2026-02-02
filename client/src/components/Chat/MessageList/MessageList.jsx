@@ -8,12 +8,12 @@ const formatDateDivider = (dateString) => {
   const dateOnly = new Date(
     date.getFullYear(),
     date.getMonth(),
-    date.getDate()
+    date.getDate(),
   );
   const todayOnly = new Date(
     today.getFullYear(),
     today.getMonth(),
-    today.getDate()
+    today.getDate(),
   );
 
   if (dateOnly.getTime() === todayOnly.getTime()) {
@@ -51,10 +51,17 @@ const groupMessagesByDate = (messages) => {
 export const MessageList = ({ items = [] }) => {
   const scrollRef = useRef(null);
 
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
+    // Get the scrollable container element
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollTop = el.scrollHeight;
+
+    // Find the last message element in the container and ensures it appears at the bottom of visible area
+    const lastMessage = el.lastElementChild;
+    if (lastMessage) {
+      lastMessage.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }, [items]);
 
   const groupedItems = groupMessagesByDate(items);
@@ -154,7 +161,26 @@ export const MessageList = ({ items = [] }) => {
                     : t.palette.text.primary,
               }}
             >
+              {/* User name */}
+              {!mine && item.displayName && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    opacity: 0.8,
+                    display: "block",
+                    mb: 0.5,
+                    fontWeight: 600,
+                    fontSize: "0.7rem",
+                  }}
+                >
+                  {item.displayName}
+                </Typography>
+              )}
+
+              {/* Text message */}
               <Typography variant="body2">{item.text}</Typography>
+
+              {/* Timestamp */}
               {item.at && (
                 <Typography
                   variant="caption"

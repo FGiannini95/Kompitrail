@@ -14,7 +14,7 @@ module.exports = (io) => {
         (err, rows) => {
           if (err) return reject(err);
           resolve(rows && rows.length ? rows[0].chat_room_id : null);
-        }
+        },
       );
     });
   }
@@ -26,7 +26,7 @@ module.exports = (io) => {
       socket.emit("pong", { echo: payload?.echo ?? null, ts: Date.now() });
     });
 
-    // ROOM_JOIN, fired when a user opens a chat
+    /* ROOM_JOIN, fired when a user opens a chat */
     socket.on(EVENTS.C2S.ROOM_JOIN, async ({ chatId, user }) => {
       if (!chatId) return;
 
@@ -88,9 +88,10 @@ module.exports = (io) => {
         // First entry ever → create the system message in DB (no broadcast here)
         const bodyForOthers = `${displayName} ha entrado en el chat`;
         const insertSql = `
-      INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
-      VALUES (?, ?, ?, 1, NOW())
-    `;
+          INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+          VALUES (?, ?, ?, 1, NOW())
+        `;
+
         connection.query(
           insertSql,
           [chatRoomId, userId, bodyForOthers],
@@ -99,13 +100,115 @@ module.exports = (io) => {
               console.error("Insert enter failed", errIns);
               return;
             }
+
             const messageId = resIns.insertId;
             const createdAtIso = new Date().toISOString();
 
-            // Self-only confirmation line for the joiner (reuse DB id)
-            emitSelfEnter(messageId, createdAtIso);
-          }
+            // Broadcast to everyone in the room
+            io.to(chatId).emit(EVENTS.S2C.MESSAGE_NEW, {
+              chatId,
+              message: {
+                id: messageId,
+                chatId,
+                userId: "system",
+                text: bodyForOthers,
+                isSystem: true,
+                createdAt: createdAtIso,
+              },
+            });
+          },
         );
+      });
+    });
+
+    /* MESSAGE_SEND handler */
+    socket.on(EVENTS.C2S.MESSAGE_SEND, async ({ chatId, text }) => {
+      if (!chatId || !text?.trim()) return;
+
+      // Extract user info from payload
+      const userId = socket.data.user?.id;
+      if (!userId) return;
+
+      // Find related chat_room_id in DB
+      const chatRoomId = await getChatRoomIdByRoute(chatId);
+      if (!chatRoomId) return;
+
+      // Get user name from database instead of socket.data
+      connection.query(
+        "SELECT name FROM user WHERE user_id = ? LIMIT 1",
+        [userId],
+        (userErr, userRows) => {
+          const displayName =
+            !userErr && userRows?.[0]?.name ? userRows[0].name : "Un usuario";
+
+          // Save message to DB
+          const insertSql = `
+            INSERT INTO chat_message (chat_room_id, user_id, body, is_system, created_at)
+            VALUES (?, ?, ?, 0, NOW())
+          `;
+
+          connection.query(
+            insertSql,
+            [chatRoomId, userId, text.trim()],
+            (err, result) => {
+              if (err) {
+                console.error("Error saving message:", err);
+                return;
+              }
+
+              const messageId = result.insertId;
+              const createdAt = new Date().toISOString();
+
+              // Broadcast to everyone in the room
+              io.to(chatId).emit(EVENTS.S2C.MESSAGE_NEW, {
+                chatId,
+                message: {
+                  id: messageId,
+                  chatId,
+                  userId,
+                  text: text.trim(),
+                  isSystem: false,
+                  createdAt,
+                  displayName: displayName,
+                },
+              });
+            },
+          );
+        },
+      );
+    });
+
+    /* TYPING_START handler */
+    socket.on(EVENTS.C2S.TYPING_START, async ({ chatId }) => {
+      if (!chatId) return;
+
+      // Extract user info from payload
+      const userId = socket.data.user?.id;
+      if (!userId) return;
+      const displayName = socket.data.user?.name;
+
+      // Broadcast to others in room (not to sender)
+      socket.to(chatId).emit(EVENTS.S2C.TYPING_UPDATE, {
+        chatId,
+        userId,
+        displayName,
+        isTyping: true,
+      });
+    });
+
+    /* TYPING_STOP handler */
+    socket.on(EVENTS.C2S.TYPING_STOP, async ({ chatId }) => {
+      if (!chatId || !socket.data.user?.id) return;
+
+      // Extract user info from payload
+      const userId = socket.data.user?.id;
+      if (!userId) return;
+
+      // Broadcast to others in room (not to sender)
+      socket.to(chatId).emit(EVENTS.S2C.TYPING_UPDATE, {
+        chatId,
+        userId,
+        isTyping: false,
       });
     });
   });

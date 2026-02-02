@@ -11,54 +11,52 @@ class chatControllers {
     const lang = req.query.lang || "es";
 
     const sql = `
-    SELECT
-      r.route_id,
-      COALESCE(rt.starting_point, r.starting_point) AS starting_point,
-      COALESCE(rt.ending_point,   r.ending_point)   AS ending_point,
-      r.date,
-      last.chat_message_id,
-      last.user_id,
-      last.body,
-      last.is_system,
-      last.created_at,
-      COALESCE(last.created_at, r.date) AS last_activity
-    FROM route r
-    INNER JOIN chat_room cr
-      ON cr.route_id = r.route_id
-    LEFT JOIN route_translation rt
-      ON rt.route_id = r.route_id AND rt.lang = ?
-    LEFT JOIN route_participant rp
-      ON rp.route_id = r.route_id
-     AND rp.user_id = ?
-    LEFT JOIN (
       SELECT
-        msg.chat_message_id,
-        msg.chat_room_id,
-        msg.user_id,
-        msg.body,
-        msg.is_system,
-        msg.created_at
-      FROM chat_message AS msg
-      INNER JOIN (
-        SELECT chat_room_id, MAX(chat_message_id) AS max_id
-        FROM chat_message
-        GROUP BY chat_room_id
-      ) AS latest_per_room
-        ON latest_per_room.chat_room_id = msg.chat_room_id
-       AND latest_per_room.max_id = msg.chat_message_id
-    ) AS last
-      ON last.chat_room_id = cr.chat_room_id
-    WHERE r.is_deleted = 0
-      AND (rp.user_id IS NOT NULL OR r.user_id = ?)
-    ORDER BY
-      CASE WHEN last.created_at IS NULL THEN 1 ELSE 0 END ASC,
-      CASE WHEN last.created_at IS NULL THEN DATE(r.date) END DESC,
-      CASE WHEN last.created_at IS NULL THEN TIME(r.date) END ASC,
-      last.created_at DESC,
-      r.route_id DESC;
-  `;
+        r.route_id,
+        JSON_UNQUOTE(JSON_EXTRACT(r.starting_point_i18n, CONCAT('$.', ?, '.short'))) AS starting_point,
+        JSON_UNQUOTE(JSON_EXTRACT(r.ending_point_i18n, CONCAT('$.', ?, '.short'))) AS ending_point,
+        r.date,
+        last.chat_message_id,
+        last.user_id,
+        last.body,
+        last.is_system,
+        last.created_at,
+        COALESCE(last.created_at, r.date) AS last_activity
+      FROM route r
+      INNER JOIN chat_room cr
+        ON cr.route_id = r.route_id
+      LEFT JOIN route_participant rp
+        ON rp.route_id = r.route_id
+      AND rp.user_id = ?
+      LEFT JOIN (
+        SELECT
+          msg.chat_message_id,
+          msg.chat_room_id,
+          msg.user_id,
+          msg.body,
+          msg.is_system,
+          msg.created_at
+        FROM chat_message AS msg
+        INNER JOIN (
+          SELECT chat_room_id, MAX(chat_message_id) AS max_id
+          FROM chat_message
+          GROUP BY chat_room_id
+        ) AS latest_per_room
+          ON latest_per_room.chat_room_id = msg.chat_room_id
+        AND latest_per_room.max_id = msg.chat_message_id
+      ) AS last
+        ON last.chat_room_id = cr.chat_room_id
+      WHERE r.is_deleted = 0
+        AND (rp.user_id IS NOT NULL OR r.user_id = ?)
+      ORDER BY
+        CASE WHEN last.created_at IS NULL THEN 1 ELSE 0 END ASC,
+        CASE WHEN last.created_at IS NULL THEN DATE(r.date) END DESC,
+        CASE WHEN last.created_at IS NULL THEN TIME(r.date) END ASC,
+        last.created_at DESC,
+        r.route_id DESC;
+    `;
 
-    connection.query(sql, [lang, userId, userId], (err, rows) => {
+    connection.query(sql, [lang, lang, userId, userId], (err, rows) => {
       if (err) {
         console.error("Error in listUserRooms:", err);
         return res.status(500).json({ error: "Internal server error" });
@@ -115,9 +113,11 @@ class chatControllers {
             cm.user_id AS userId,
             cm.body AS text,
             cm.is_system AS isSystem,
-            cm.created_at AS createdAt
+            cm.created_at AS createdAt,
+            u.name AS displayName
           FROM chat_message cm
           INNER JOIN chat_room cr ON cm.chat_room_id = cr.chat_room_id
+          LEFT JOIN user u ON cm.user_id = u.user_id
           WHERE cr.route_id = ?
           ORDER BY cm.created_at ASC
         `;
@@ -128,7 +128,7 @@ class chatControllers {
           }
           return res.status(200).json({ messages: messages || [] });
         });
-      }
+      },
     );
   };
 }

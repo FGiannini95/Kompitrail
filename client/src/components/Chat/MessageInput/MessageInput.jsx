@@ -7,6 +7,8 @@ export const MessageInput = ({
   onSend,
   placeholder = "Message",
   disabled = false,
+  onTypingStart,
+  onTypingStop,
 }) => {
   const [value, setValue] = useState("");
   const inputRef = useRef(null);
@@ -28,7 +30,13 @@ export const MessageInput = ({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    } else if (e.key !== "Enter") {
+      onTypingStart?.();
     }
+  };
+
+  const handleBlur = () => {
+    onTypingStop?.();
   };
 
   return (
@@ -57,6 +65,7 @@ export const MessageInput = ({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
           placeholder={placeholder}
           disabled={disabled}
           multiline
