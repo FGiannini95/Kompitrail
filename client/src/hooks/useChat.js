@@ -107,56 +107,6 @@ export const useChat = (chatId) => {
     [chatId],
   );
 
-  // Join/leave room management
-  useEffect(() => {
-    if (!chatId || !currentUser?.user_id) return;
-
-    const payload = { chatId, user: currentUser };
-
-    // Join the socket room
-    const join = () => {
-      if (joinedRef.current) return;
-      joinedRef.current = true;
-
-      socket.emit(EVENTS.C2S.ROOM_JOIN, payload);
-    };
-
-    // Handle reconnection
-    const onConnect = () => join();
-
-    const onDisconnect = () => {
-      joinedRef.current = false;
-    };
-
-    // Register socket  listeners
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
-
-    // If already connected, join immediately
-    if (socket.connected) join();
-
-    return () => {
-      if (joinedRef.current) {
-        socket.emit(EVENTS.C2S.ROOM_LEAVE, {
-          chatId,
-          user: currentUser,
-        });
-      }
-
-      // Clear typing timeout on cleanup
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-        typingTimeoutRef.current = null;
-      }
-
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
-      socket.off(EVENTS.S2C.TYPING_UPDATE, handleTypingUpdate);
-    };
-  }, [chatId, currentUser?.user_id]);
-
   // Handle typing updates -others
   const handleTypingUpdate = useCallback(
     (payload) => {
@@ -210,12 +160,63 @@ export const useChat = (chatId) => {
     }
   }, [chatId]);
 
+  // Join/leave room management
+  useEffect(() => {
+    if (!chatId || !currentUser?.user_id) return;
+
+    const payload = { chatId, user: currentUser };
+
+    // Join the socket room
+    const join = () => {
+      if (joinedRef.current) return;
+      joinedRef.current = true;
+
+      socket.emit(EVENTS.C2S.ROOM_JOIN, payload);
+    };
+
+    // Handle reconnection
+    const onConnect = () => join();
+
+    const onDisconnect = () => {
+      joinedRef.current = false;
+    };
+
+    // Register socket  listeners
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
+    socket.on(EVENTS.S2C.TYPING_UPDATE, handleTypingUpdate);
+
+    // If already connected, join immediately
+    if (socket.connected) join();
+
+    return () => {
+      if (joinedRef.current) {
+        socket.emit(EVENTS.C2S.ROOM_LEAVE, {
+          chatId,
+          user: currentUser,
+        });
+      }
+
+      // Clear typing timeout on cleanup
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
+
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off(EVENTS.S2C.MESSAGE_NEW, handleNewMessage);
+      socket.off(EVENTS.S2C.TYPING_UPDATE, handleTypingUpdate);
+    };
+  }, [chatId, currentUser?.user_id, handleNewMessage, handleTypingUpdate]);
+
   return {
     messages,
     sendMessage,
     isLoading,
     handleTypingStart,
     handleTypingStop,
-    handleTypingUpdate,
+    typingUsers,
   };
 };

@@ -9,6 +9,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 // Components
 import { MessageList } from "../MessageList/MessageList";
 import { MessageInput } from "../MessageInput/MessageInput";
+import { TypingIndicator } from "../TypingIndicator/TypingIndicator";
 
 export const ChatRoom = ({
   mode = "group",
@@ -18,6 +19,10 @@ export const ChatRoom = ({
   isLoading = false,
   isSending = false,
   title: propTitle = null,
+  typingUsers = [],
+  onTypingStart,
+  onTypingStop,
+  isPastRoute = false,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -104,19 +109,27 @@ export const ChatRoom = ({
       >
         <MessageList items={messages} />
       </Box>
-      <Box
-        sx={{
-          position: "sticky",
-          bottom: 0,
-          zIndex: 2,
-          backgroundColor: (t) => t.palette.background.default,
-          borderTop: (t) => `1px solid ${t.palette.divider}`,
-          py: 1,
-          px: 1,
-        }}
-      >
-        <MessageInput onSend={sendMessage} disabled={isSending || isLoading} />
-      </Box>
+      {!isPastRoute && (
+        <Box
+          sx={{
+            position: "sticky",
+            bottom: 0,
+            zIndex: 2,
+            backgroundColor: (t) => t.palette.background.default,
+            borderTop: (t) => `1px solid ${t.palette.divider}`,
+            py: 1,
+            px: 1,
+          }}
+        >
+          <TypingIndicator typingUsers={typingUsers} />
+          <MessageInput
+            onSend={sendMessage}
+            disabled={isSending || isLoading}
+            onTypingStart={onTypingStart}
+            onTypingStop={onTypingStop}
+          />
+        </Box>
+      )}
     </Box>
   );
 };
