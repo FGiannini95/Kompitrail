@@ -14,9 +14,9 @@ import { getCurrentLang } from "../../helpers/oneRouteUtils";
 import { useUserAnalytics } from "../../hooks/useUserAnalytics";
 import { useOtherUserProfile } from "../../hooks/useOtherUserProfile";
 import { useFrequentCompanions } from "../../hooks/useFrequentCompanions";
+import { useShareUrl } from "../../hooks/useShareUrl";
 import { useRoutes } from "../../context/RoutesContext/RoutesContext";
 import { KompitrailContext } from "../../context/KompitrailContext";
-import { useShareUrl } from "../../hooks/useShareUrl";
 
 // Components
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
@@ -94,7 +94,7 @@ export const Profile = () => {
               // Participant match: viewed user appears in participants
               const viewedUserIsParticipant = Array.isArray(route?.participants)
                 ? route.participants.some(
-                    (p) => Number(p?.user_id) === Number(otherUserId)
+                    (p) => Number(p?.user_id) === Number(otherUserId),
                   )
                 : false;
               return ownerIsViewedUser || viewedUserIsParticipant;
