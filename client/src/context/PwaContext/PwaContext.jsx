@@ -7,7 +7,7 @@ import React, {
 } from "react";
 
 export const PwaContext = createContext();
-// Helpful for debugging with ReactDev Tools
+
 PwaContext.displayName = "PwaContext";
 
 export const PwaProvider = ({ children }) => {
@@ -28,7 +28,7 @@ export const PwaProvider = ({ children }) => {
     return () => {
       window.removeEventListener(
         "beforeinstallprompt",
-        handleBeforeInstallPrompt
+        handleBeforeInstallPrompt,
       );
     };
   }, []);

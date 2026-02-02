@@ -10,7 +10,7 @@ import axios from "axios";
 import { MOTORBIKES_URL } from "../../api";
 
 export const MotorbikesContext = createContext();
-// Helpful for debugging with ReactDev Tools
+
 MotorbikesContext.displayName = "MotorbikesContext";
 
 export const MotorbikesProvider = ({ children }) => {
@@ -55,14 +55,14 @@ export const MotorbikesProvider = ({ children }) => {
       prev.map((motorbike) =>
         motorbike.motorbike_id === updatedMotorbike.motorbike_id
           ? { ...motorbike, ...updatedMotorbike }
-          : motorbike
-      )
+          : motorbike,
+      ),
     );
   }, []);
 
   const deleteMotorbike = useCallback((motorbike_id) => {
     setAllMotorbikes((prev) =>
-      prev.filter((x) => x.motorbike_id !== motorbike_id)
+      prev.filter((x) => x.motorbike_id !== motorbike_id),
     );
   }, []);
 
@@ -88,7 +88,7 @@ export const MotorbikesProvider = ({ children }) => {
       openDialog,
       closeDialog,
       loading,
-    ]
+    ],
   );
 
   return (
