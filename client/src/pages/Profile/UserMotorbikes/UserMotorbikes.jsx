@@ -1,33 +1,22 @@
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import { Box, Card, CardContent, CardMedia, Typography } from "@mui/material";
 
-import { CardPlaceholder } from "../../../components/CardPlaceholder/CardPlaceholder";
 import { useMotorbikes } from "../../../context/MotorbikesContext/MotorbikesContext";
-import { Loading } from "../../../components/Loading/Loading";
+
 import { FullScreenImg } from "../../../components/FullScreenImg/FullScreenImg";
 import { API_BASE } from "../../../api";
+
+import { Loading } from "../../../components/Loading/Loading";
 
 export const UserMotorbikes = () => {
   const [openImg, setOpenImg] = useState(false);
   const [selectedImg, setSelectedImg] = useState(null);
 
   const { allMotorbikes, loading } = useMotorbikes();
-  const { t } = useTranslation("emptyState");
-
-  console.log(allMotorbikes);
 
   if (loading) {
     return <Loading />;
-  }
-
-  // if (error) {
-  //   return <Typography>Error al cargar la sección</Typography>;
-  // }
-
-  if (!Array.isArray(allMotorbikes) || allMotorbikes.length === 0) {
-    return <CardPlaceholder text={t("frequentCompanionPlaceholder")} />;
   }
 
   const isTwoOrLess = allMotorbikes.length <= 2;
