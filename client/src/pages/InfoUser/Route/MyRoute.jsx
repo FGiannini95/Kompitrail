@@ -103,7 +103,7 @@ export const MyRoute = () => {
               mb={2}
             >
               <RouteCard
-                {...route}
+                route={route}
                 onEdit={openEditDialog}
                 onDelete={handleOpenDeleteDialog}
                 isOwner={route.user_id === user.user_id}

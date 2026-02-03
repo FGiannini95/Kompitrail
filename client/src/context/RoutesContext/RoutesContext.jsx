@@ -39,14 +39,18 @@ export const RoutesProvider = ({ children }) => {
     isOpen: false,
     mode: null,
     selectedId: null,
+    routeData: null,
   });
 
-  const openDialog = useCallback(({ mode, route_id = null }) => {
-    setDialog({ isOpen: true, mode, selectedId: route_id });
-  }, []);
+  const openDialog = useCallback(
+    ({ mode, route_id = null, routeData = null }) => {
+      setDialog({ isOpen: true, mode, selectedId: route_id, routeData });
+    },
+    [],
+  );
 
   const closeDialog = useCallback(() => {
-    setDialog({ isOpen: false, mode: null, selectedId: null });
+    setDialog({ isOpen: false, mode: null, selectedId: null, routeData: null });
   }, []);
 
   const loadAllRoutes = useCallback(
