@@ -14,7 +14,7 @@ import { ROUTES_URL } from "../../api";
 import { getCurrentLang } from "../../helpers/oneRouteUtils";
 
 export const RoutesContext = createContext();
-// Helpful for debugging with ReactDev Tools
+
 RoutesContext.displayName = "RoutesContext";
 
 export const RoutesProvider = ({ children }) => {
@@ -70,7 +70,7 @@ export const RoutesProvider = ({ children }) => {
           setHasLoadedOnce(true); // track that we loaded at least once
         });
     },
-    [currentLang]
+    [currentLang],
   );
 
   const loadUserRoutes = useCallback((user_id) => {
@@ -113,7 +113,7 @@ export const RoutesProvider = ({ children }) => {
   const editRoute = useCallback((updateRoute) => {
     const apply = (array) =>
       array.map((a) =>
-        a.route_id === updateRoute.route_id ? { ...a, ...updateRoute } : a
+        a.route_id === updateRoute.route_id ? { ...a, ...updateRoute } : a,
       );
 
     setUserRoutes(apply);
@@ -160,13 +160,13 @@ export const RoutesProvider = ({ children }) => {
           });
         });
     },
-    [loadAllRoutes]
+    [loadAllRoutes],
   );
 
   // Helper to know if a specific route is currently joining
   const isJoiningRoute = useCallback(
     (route_id) => joiningRouteId.has(route_id), // <-- return the boolean
-    [joiningRouteId]
+    [joiningRouteId],
   );
 
   // LEAVE action
@@ -183,7 +183,7 @@ export const RoutesProvider = ({ children }) => {
           console.log(err);
         });
     },
-    [loadAllRoutes]
+    [loadAllRoutes],
   );
 
   const value = useMemo(
@@ -220,7 +220,7 @@ export const RoutesProvider = ({ children }) => {
       joinRoute,
       isJoiningRoute,
       leaveRoute,
-    ]
+    ],
   );
 
   return (

@@ -6,11 +6,13 @@ import React, {
   useState,
 } from "react";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 import { MOTORBIKES_URL } from "../../api";
+import { getLocalStorage } from "../../helpers/localStorageUtils";
 
 export const MotorbikesContext = createContext();
-// Helpful for debugging with ReactDev Tools
+
 MotorbikesContext.displayName = "MotorbikesContext";
 
 export const MotorbikesProvider = ({ children }) => {
@@ -46,23 +48,24 @@ export const MotorbikesProvider = ({ children }) => {
       });
   }, []);
 
-  const createMotorbike = useCallback((motorbike) => {
-    setAllMotorbikes((prev) => [motorbike, ...prev]);
-  }, []);
+  const createMotorbike = useCallback(() => {
+    const { user_id } = jwtDecode(getLocalStorage("token")).user;
+    loadMotorbikes(user_id);
+  }, [loadMotorbikes]);
 
   const editMotorbike = useCallback((updatedMotorbike) => {
     setAllMotorbikes((prev) =>
       prev.map((motorbike) =>
         motorbike.motorbike_id === updatedMotorbike.motorbike_id
           ? { ...motorbike, ...updatedMotorbike }
-          : motorbike
-      )
+          : motorbike,
+      ),
     );
   }, []);
 
   const deleteMotorbike = useCallback((motorbike_id) => {
     setAllMotorbikes((prev) =>
-      prev.filter((x) => x.motorbike_id !== motorbike_id)
+      prev.filter((x) => x.motorbike_id !== motorbike_id),
     );
   }, []);
 
@@ -88,7 +91,7 @@ export const MotorbikesProvider = ({ children }) => {
       openDialog,
       closeDialog,
       loading,
-    ]
+    ],
   );
 
   return (

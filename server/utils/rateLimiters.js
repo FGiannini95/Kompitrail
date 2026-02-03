@@ -1,33 +1,33 @@
 const rateLimit = require("express-rate-limit");
 
-// Heavy API operations rate limits
+// Heavy API operations rate limits (geocoding, metrics, navigation)
 const heavyApiLimit = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes window
-  max: 40, // 40 requests per 5 minutes for intensive operations
+  max: 15, // 15 requests per 5 minutes for intensive operations
   message: {
-    error: "Demasiadas solicitudes, intenta de nuevo más tarde",
+    error: "Demasiadas solicitudes. Intenta de nuevo en 5 minutos.",
   },
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Moderate API operations rate limits
+// Moderate API operations rate limits (CRUD: create, edit, join, leave)
 const moderateApiLimit = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes window
-  max: 8, // 8 requests per 5 minutes for CRUD operations
+  max: 30, // 30 requests per 5 minutes for CRUD operations
   message: {
-    error: "Demasiadas solicitudes, intenta de nuevo más tarde",
+    error: "Demasiadas solicitudes. Intenta de nuevo en 5 minutos.",
   },
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Light operations rate limits
+// Light operations rate limits (read operations, lists, polling)
 const lightApiLimit = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes window
-  max: 60, // 60 requests per 10 minutes for read operations
+  windowMs: 5 * 60 * 1000, // 5 minutes window
+  max: 150, // 150 requests per 5 minutes for read operations
   message: {
-    error: "Demasiadas solicitudes, intenta de nuevo más tarde",
+    error: "Demasiadas solicitudes. Intenta de nuevo en 5 minutos.",
   },
   standardHeaders: true,
   legacyHeaders: false,

@@ -9,17 +9,19 @@ import React, {
 import { Alert, Snackbar } from "@mui/material";
 
 export const SnackbarContext = createContext();
-// Helpful for debugging with ReactDev Tools
+
 SnackbarContext.displayName = "SnackbarContext";
 
 export const SnackbarProvider = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("success");
+  const [snackbarKey, setSnackbarKey] = useState(0);
 
   const showSnackbar = useCallback((message, severity = "success") => {
     setMessage(message);
     setSeverity(severity);
+    setSnackbarKey((prev) => prev + 1);
     setOpen(true);
   }, []);
 
@@ -32,13 +34,14 @@ export const SnackbarProvider = ({ children }) => {
       showSnackbar,
       closeSnackbar,
     }),
-    [showSnackbar, closeSnackbar]
+    [showSnackbar, closeSnackbar],
   );
 
   return (
     <SnackbarContext.Provider value={value}>
       {children}
       <Snackbar
+        key={snackbarKey}
         open={open}
         autoHideDuration={2000}
         onClose={closeSnackbar}

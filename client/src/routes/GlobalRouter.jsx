@@ -5,7 +5,6 @@ import { Box } from "@mui/material";
 import { NavBarApp } from "../components/NavBarApp/NavBarApp";
 import { RoutesString } from "./routes";
 import { Home } from "../pages/Home/Home";
-import { Search } from "../pages/Search/Search";
 import { Profile } from "../pages/Profile/Profile";
 import { Register } from "../auth/Register/Register";
 import { LandingPage } from "../auth/LandingPage/LandingPage";
@@ -70,7 +69,6 @@ export const GlobalRouter = ({
                         element={<Navigate to={RoutesString.home} />}
                       />
                       <Route path={RoutesString.home} element={<Home />} />
-                      <Route path={RoutesString.search} element={<Search />} />
                       <Route path={RoutesString.chat} element={<Chat />} />
                       <Route
                         path={RoutesString.chatDetail}

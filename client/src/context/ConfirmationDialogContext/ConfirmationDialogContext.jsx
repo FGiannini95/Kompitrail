@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 
 export const ConfirmationDialogContext = createContext();
-// Helpful for debugging with ReactDev Tools
+
 ConfirmationDialogContext.displayName = "ConfirmationDialogContext";
 
 export const ConfirmationDialogProvider = ({ children }) => {
@@ -51,7 +51,7 @@ export const ConfirmationDialogProvider = ({ children }) => {
       openDialog,
       closeDialog,
     }),
-    [openDialog, closeDialog]
+    [openDialog, closeDialog],
   );
 
   return (
@@ -79,7 +79,7 @@ export const useConfirmationDialog = () => {
   const ctx = useContext(ConfirmationDialogContext);
   if (!ctx)
     throw new Error(
-      "useConfirmationDialog must be used within DeleteDialogProvider"
+      "useConfirmationDialog must be used within DeleteDialogProvider",
     );
   return ctx;
 };

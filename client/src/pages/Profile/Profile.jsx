@@ -14,9 +14,10 @@ import { getCurrentLang } from "../../helpers/oneRouteUtils";
 import { useUserAnalytics } from "../../hooks/useUserAnalytics";
 import { useOtherUserProfile } from "../../hooks/useOtherUserProfile";
 import { useFrequentCompanions } from "../../hooks/useFrequentCompanions";
-import { useRoutes } from "../../context/RoutesContext/RoutesContext";
-import { KompitrailContext } from "../../context/KompitrailContext";
 import { useShareUrl } from "../../hooks/useShareUrl";
+import { useRoutes } from "../../context/RoutesContext/RoutesContext";
+import { useMotorbikes } from "../../context/MotorbikesContext/MotorbikesContext";
+import { KompitrailContext } from "../../context/KompitrailContext";
 
 // Components
 import { UserRoutesCarousel } from "../InfoUser/Route/UserRoutesCarousel/UserRoutesCarousel";
@@ -28,6 +29,7 @@ import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 import { FrequentCompanions } from "./FrequentCompanions/FrequentCompanions";
 import { Header } from "../../components/Header/Header";
 import { Loading } from "../../components/Loading/Loading";
+import { UserMotorbikes } from "./UserMotorbikes/UserMotorbikes";
 
 export const Profile = () => {
   const { allRoutes, loadAllRoutes } = useRoutes();
@@ -44,6 +46,7 @@ export const Profile = () => {
     otherUserId,
     currentUserId: currentUser?.user_id,
   });
+  const { allMotorbikes, loadMotorbikes } = useMotorbikes();
   const { t, i18n } = useTranslation(["buttons", "general"]);
   const currentLang = getCurrentLang(i18n);
 
@@ -94,7 +97,7 @@ export const Profile = () => {
               // Participant match: viewed user appears in participants
               const viewedUserIsParticipant = Array.isArray(route?.participants)
                 ? route.participants.some(
-                    (p) => Number(p?.user_id) === Number(otherUserId)
+                    (p) => Number(p?.user_id) === Number(otherUserId),
                   )
                 : false;
               return ownerIsViewedUser || viewedUserIsParticipant;
@@ -123,6 +126,13 @@ export const Profile = () => {
   const profileUserId = isOtherProfile
     ? Number(otherUserId)
     : currentUser?.user_id;
+
+  // Load own motorbikes
+  useEffect(() => {
+    if (isOwnProfile && currentUser?.user_id) {
+      loadMotorbikes(currentUser.user_id);
+    }
+  }, [isOwnProfile, currentUser?.user_id, loadMotorbikes]);
 
   if (isOtherProfile && (otherUserLoading || !otherUserData)) {
     return <Loading />;
@@ -203,6 +213,21 @@ export const Profile = () => {
         </Typography>
         <FrequentCompanions companions={displayCompanions} />
       </Grid>
+
+      {(isOtherProfile
+        ? displayMotorbikes?.motorbikes?.length > 0
+        : allMotorbikes?.length > 0) && (
+        <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
+          <Typography color="text.primary">
+            {t("general:motorbikesText")}
+          </Typography>
+          <UserMotorbikes
+            motorbikes={
+              isOtherProfile ? displayMotorbikes.motorbikes : allMotorbikes
+            }
+          />
+        </Grid>
+      )}
       <RouteEditDialog />
     </Box>
   );

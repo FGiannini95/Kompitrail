@@ -153,12 +153,25 @@ export const MessageList = ({ items = [] }) => {
                 px: 1.5,
                 py: 1,
                 borderRadius: 3,
-                bgcolor: (t) =>
-                  mine ? t.palette.primary.main : t.palette.background.paper,
-                color: (t) =>
-                  mine
-                    ? t.palette.primary.contrastText
-                    : t.palette.text.primary,
+                bgcolor: (t) => {
+                  if (mine) {
+                    return t.palette.mode === "dark"
+                      ? t.palette.kompitrail.card
+                      : t.palette.kompitrail.card;
+                  } else {
+                    // Altri messaggi: usa colori normali
+                    return t.palette.background.paper;
+                  }
+                },
+                color: (t) => {
+                  if (mine) {
+                    return t.palette.mode === "dark"
+                      ? t.palette.text.primary
+                      : t.palette.background;
+                  } else {
+                    return t.palette.text.primary;
+                  }
+                },
               }}
             >
               {/* User name */}

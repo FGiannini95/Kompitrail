@@ -49,7 +49,7 @@ export const ChatRoom = ({
           position: "sticky",
           top: 0,
           zIndex: 2,
-          backgroundColor: (t) => t.palette.background.default,
+          backgroundColor: (t) => t.palette.kompitrail.card,
         }}
       >
         <Grid

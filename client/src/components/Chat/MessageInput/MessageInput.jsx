@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { Box, Paper, IconButton, Tooltip, OutlinedInput } from "@mui/material";
-import SendRounded from "@mui/icons-material/SendRounded";
+import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
 
 export const MessageInput = ({
   onSend,
@@ -91,18 +91,18 @@ export const MessageInput = ({
           <Tooltip title="Send">
             <span style={{ flex: 1 }}>
               <IconButton
-                color="primary"
                 onClick={handleSend}
                 disabled={disabled || value.trim().length === 0}
                 aria-label="send"
                 sx={{
+                  color: (t) => t.palette.text.primary,
                   m: 0,
                   borderRadius: 0,
                   height: "100%",
                   width: "100%",
                 }}
               >
-                <SendRounded />
+                <SendOutlinedIcon />
               </IconButton>
             </span>
           </Tooltip>

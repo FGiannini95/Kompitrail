@@ -23,6 +23,7 @@ export const useOtherUserProfile = (otherUserId) => {
         const [
           userRes,
           motorbikeAnalyticRes,
+          motorbikeDataRes,
           createdRoutesRes,
           joinedRutesRes,
           routeRes,
@@ -30,6 +31,7 @@ export const useOtherUserProfile = (otherUserId) => {
         ] = await Promise.all([
           axios.get(`${USERS_URL}/oneuser/${otherUserId}`),
           axios.get(`${MOTORBIKES_URL}/motorbikes-analytics/${otherUserId}`),
+          axios.get(`${MOTORBIKES_URL}/showallmotorbikes/${otherUserId}`),
           axios.get(`${ROUTES_URL}/createdroutes-analytics/${otherUserId}`),
           axios.get(`${ROUTES_URL}/joinedroutes-analytics/${otherUserId}`),
           axios.get(`${ROUTES_URL}/showallroutesoneuser/${otherUserId}`),
@@ -38,6 +40,7 @@ export const useOtherUserProfile = (otherUserId) => {
 
         const user = userRes.data;
         const motorbikesAnalytics = motorbikeAnalyticRes.data[0];
+        const motorbikesData = motorbikeDataRes.data;
         const createdRoutesAnalytics = createdRoutesRes.data[0];
         const joinedRoutesAnalytics = joinedRutesRes.data[0];
         const routes = Array.isArray(routeRes.data)
@@ -51,7 +54,10 @@ export const useOtherUserProfile = (otherUserId) => {
         // Consolidate all data into a single object
         setData({
           user: user,
-          motorbikes: motorbikesAnalytics,
+          motorbikes: {
+            ...motorbikesAnalytics,
+            motorbikes: motorbikesData || [],
+          },
           createdRoutes: createdRoutesAnalytics,
           joinedRoutes: joinedRoutesAnalytics,
           routes,
