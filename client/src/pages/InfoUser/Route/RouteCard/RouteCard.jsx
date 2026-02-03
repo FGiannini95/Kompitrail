@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import {
   Card,
@@ -26,6 +27,7 @@ import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
 import { getRouteStatus } from "../../../../helpers/oneRouteUtils";
 import { getPointLabel } from "../../../../helpers/pointMetrics";
+import { ROUTES_URL } from "../../../../api";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 // Hooks & Providers
@@ -134,9 +136,26 @@ export const RouteCard = ({
     });
   };
 
-  const handleReuseRoute = (e) => {
+  const handleReuseRoute = async (e) => {
     e.stopPropagation();
-    openDialog({ mode: "reuse", routeData: route });
+
+    try {
+      // Fetch full route details including waypoints
+      const response = await axios.get(`${ROUTES_URL}/oneroute/${route_id}`);
+      const fullRouteData = response.data;
+
+      openDialog({
+        mode: "reuse",
+        routeData: fullRouteData,
+      });
+    } catch (error) {
+      console.error("Error fetching route details:", error);
+      // Fallback: open dialog without waypoints
+      openDialog({
+        mode: "reuse",
+        routeData: route,
+      });
+    }
   };
 
   return (

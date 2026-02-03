@@ -287,7 +287,7 @@ export const RouteCreateDialog = () => {
         i18n: initialData.ending_point_i18n,
       },
       // Route settings - copy from original
-      max_participants: initialData.max_participants,
+      max_participants: String(initialData.max_participants),
       suitable_motorbike_type: initialData.suitable_motorbike_type || [],
       level: initialData.level,
       is_verified: initialData.is_verified,
