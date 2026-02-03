@@ -9,17 +9,18 @@ import { API_BASE } from "../../../api";
 
 import { Loading } from "../../../components/Loading/Loading";
 
-export const UserMotorbikes = () => {
+export const UserMotorbikes = ({ motorbikes: motorbikesProp }) => {
   const [openImg, setOpenImg] = useState(false);
   const [selectedImg, setSelectedImg] = useState(null);
 
-  const { allMotorbikes, loading } = useMotorbikes();
+  const { allMotorbikes: myMotorbikes, loading } = useMotorbikes();
+  const motorbikes = motorbikesProp ?? myMotorbikes;
 
   if (loading) {
     return <Loading />;
   }
 
-  const isTwoOrLess = allMotorbikes.length <= 2;
+  const isTwoOrLess = motorbikes.length <= 2;
 
   const handleOpenImg = (img) => {
     setSelectedImg(img);
@@ -45,7 +46,7 @@ export const UserMotorbikes = () => {
           },
         }}
       >
-        {allMotorbikes.map((motorbike) => {
+        {motorbikes.map((motorbike) => {
           const imgUrl = `${API_BASE}/images/motorbikes/${motorbike.img}`;
 
           return (
@@ -57,6 +58,7 @@ export const UserMotorbikes = () => {
                 bgcolor: theme.palette.kompitrail.card,
                 borderRadius: 2,
                 flexShrink: 0,
+                boxShadow: "none",
               })}
               onClick={() => handleOpenImg(imgUrl)}
             >

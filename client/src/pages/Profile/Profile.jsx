@@ -46,7 +46,7 @@ export const Profile = () => {
     otherUserId,
     currentUserId: currentUser?.user_id,
   });
-  const { allMotorbikes } = useMotorbikes();
+  const { allMotorbikes, loadMotorbikes } = useMotorbikes();
   const { t, i18n } = useTranslation(["buttons", "general"]);
   const currentLang = getCurrentLang(i18n);
 
@@ -126,6 +126,13 @@ export const Profile = () => {
   const profileUserId = isOtherProfile
     ? Number(otherUserId)
     : currentUser?.user_id;
+
+  // Load own motorbikes
+  useEffect(() => {
+    if (isOwnProfile && currentUser?.user_id) {
+      loadMotorbikes(currentUser.user_id);
+    }
+  }, [isOwnProfile, currentUser?.user_id, loadMotorbikes]);
 
   if (isOtherProfile && (otherUserLoading || !otherUserData)) {
     return <Loading />;
@@ -207,12 +214,18 @@ export const Profile = () => {
         <FrequentCompanions companions={displayCompanions} />
       </Grid>
 
-      {allMotorbikes.length > 0 && (
+      {(isOtherProfile
+        ? displayMotorbikes?.motorbikes?.length > 0
+        : allMotorbikes?.length > 0) && (
         <Grid sx={{ width: "95%", marginLeft: "10px", marginTop: "10px" }}>
           <Typography color="text.primary">
             {t("general:motorbikesText")}
           </Typography>
-          <UserMotorbikes />
+          <UserMotorbikes
+            motorbikes={
+              isOtherProfile ? displayMotorbikes.motorbikes : allMotorbikes
+            }
+          />
         </Grid>
       )}
       <RouteEditDialog />
