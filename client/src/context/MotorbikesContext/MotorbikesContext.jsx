@@ -6,8 +6,10 @@ import React, {
   useState,
 } from "react";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 import { MOTORBIKES_URL } from "../../api";
+import { getLocalStorage } from "../../helpers/localStorageUtils";
 
 export const MotorbikesContext = createContext();
 
@@ -46,9 +48,10 @@ export const MotorbikesProvider = ({ children }) => {
       });
   }, []);
 
-  const createMotorbike = useCallback((motorbike) => {
-    setAllMotorbikes((prev) => [motorbike, ...prev]);
-  }, []);
+  const createMotorbike = useCallback(() => {
+    const { user_id } = jwtDecode(getLocalStorage("token")).user;
+    loadMotorbikes(user_id);
+  }, [loadMotorbikes]);
 
   const editMotorbike = useCallback((updatedMotorbike) => {
     setAllMotorbikes((prev) =>
