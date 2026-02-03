@@ -44,10 +44,8 @@ export const MotorbikeCard = ({
           title="motorbike"
           onClick={handleOpenImg}
         />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            {brand}
-          </Typography>
+        <CardContent sx={{ mb: -2 }}>
+          <Typography>{brand}</Typography>
           <Typography
             variant="body2"
             sx={(theme) => ({

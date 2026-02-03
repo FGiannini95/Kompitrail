@@ -29,6 +29,7 @@ import { UserAvatar } from "../../components/Avatars/UserAvatar/UserAvatar";
 import { FrequentCompanions } from "./FrequentCompanions/FrequentCompanions";
 import { Header } from "../../components/Header/Header";
 import { Loading } from "../../components/Loading/Loading";
+import { UserMotorbikes } from "./UserMotorbikes/UserMotorbikes";
 
 export const Profile = () => {
   const { allRoutes, loadAllRoutes } = useRoutes();
@@ -211,7 +212,7 @@ export const Profile = () => {
           <Typography color="text.primary">
             {t("general:motorbikesText")}
           </Typography>
-          <FrequentCompanions companions={displayCompanions} />
+          <UserMotorbikes />
         </Grid>
       )}
       <RouteEditDialog />
