@@ -77,13 +77,14 @@ export const RouteCreateDialog = () => {
     (dialog.isOpen && dialog.mode === "create") || dialog.mode === "reuse";
   const initialData = dialog.mode === "reuse" ? dialog.routeData : null;
   const { reverseGeocode, currentLang } = useReverseGeocoding();
+  const isReuseMode = dialog.mode === "reuse";
 
   const { data: metrics } = useRouteMetrics({
     start: createOneRoute.starting_point,
     end: createOneRoute.ending_point,
     waypoints: waypoints,
     endpointUrl: metricsEndpoint,
-    enabled: isOpen,
+    enabled: isOpen && !isReuseMode,
   });
 
   const navigate = useNavigate();
@@ -98,6 +99,7 @@ export const RouteCreateDialog = () => {
     createOneRoute?.ending_point?.lng != null;
   const hasMetrics =
     metrics?.distanceKm != null && metrics?.durationMinutes != null;
+  const shouldShowMetrics = hasMetrics || isReuseMode;
 
   // Define if the starting position matches the current positionconst isStartingPointCurrent =
   const isStartingPointCurrent =
@@ -176,6 +178,7 @@ export const RouteCreateDialog = () => {
   useEffect(() => {
     if (!isOpen) return;
     if (hasStart) return;
+    if (isReuseMode) return;
 
     if (!navigator.geolocation) return;
 
@@ -226,6 +229,7 @@ export const RouteCreateDialog = () => {
   }, [
     isOpen,
     hasStart,
+    isReuseMode,
     reverseGeocode,
     currentLang,
     createOneRoute.starting_point?.lat,
@@ -234,14 +238,14 @@ export const RouteCreateDialog = () => {
 
   // Update distance and time when metrics are calculated
   useEffect(() => {
-    if (!metrics) return;
+    if (!metrics || isReuseMode) return;
 
     setCreateOneRoute((prev) => ({
       ...prev,
       distance: metrics.distanceKm,
       estimated_time: metrics.durationMinutes,
     }));
-  }, [metrics, setCreateOneRoute]);
+  }, [metrics, setCreateOneRoute, isReuseMode]);
 
   // Convert raw point to waypoint structure. Data transformer: input - point, output - waypoint
   const createWaypointFromPoint = useCallback(
@@ -291,6 +295,8 @@ export const RouteCreateDialog = () => {
       suitable_motorbike_type: initialData.suitable_motorbike_type || [],
       level: initialData.level,
       is_verified: initialData.is_verified,
+      distance: initialData.distance,
+      estimated_time: initialData.estimated_time,
       // date and route_description remain empty intentionally
     });
 
@@ -337,7 +343,7 @@ export const RouteCreateDialog = () => {
                 }}
               />
             </Grid>
-            {hasStart && hasEnd && hasMetrics && (
+            {hasStart && hasEnd && shouldShowMetrics && (
               <>
                 <Grid size={12}>
                   <OutlinedButton
@@ -411,7 +417,7 @@ export const RouteCreateDialog = () => {
                 setForm={setCreateOneRoute}
               />
             </Grid>
-            {hasStart && hasEnd && hasMetrics && (
+            {hasStart && hasEnd && shouldShowMetrics && (
               <>
                 <Grid size={6}>
                   <FormTextfield
