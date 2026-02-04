@@ -82,6 +82,17 @@ export const FormAutocomplete = ({
       isOptionEqualToValue={isEqual}
       getOptionLabel={getLabel}
       openOnFocus
+      onClick={
+        readOnly
+          ? (e) => {
+              // Make whole autocomplete clickable when readOnly
+              if (e.target.tagName !== "BUTTON") {
+                const button = e.currentTarget.querySelector("[title='Open']");
+                if (button) button.click();
+              }
+            }
+          : undefined
+      }
       {...restAutocompleteProps}
       renderInput={(params) => (
         <TextField
@@ -100,16 +111,6 @@ export const FormAutocomplete = ({
                 }
               : undefined,
             onTouchStart: readOnly ? (e) => e.preventDefault() : undefined,
-            onClick: readOnly
-              ? (e) => {
-                  // Make whole input clickable to open dropdown
-                  const autocomplete = e.target.closest(
-                    ".MuiAutocomplete-root",
-                  );
-                  const button = autocomplete?.querySelector("[title='Open']");
-                  if (button) button.click();
-                }
-              : undefined,
           }}
         />
       )}
