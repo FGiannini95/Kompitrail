@@ -93,13 +93,7 @@ export const FormAutocomplete = ({
             ...params.inputProps,
             readOnly: readOnly,
             inputMode: readOnly ? "none" : "text",
-            onFocus: readOnly
-              ? (e) => {
-                  e.target.blur();
-                  e.preventDefault();
-                }
-              : undefined,
-            onTouchStart: readOnly ? (e) => e.preventDefault() : undefined,
+            onFocus: readOnly ? (e) => e.target.blur() : undefined,
           }}
         />
       )}
