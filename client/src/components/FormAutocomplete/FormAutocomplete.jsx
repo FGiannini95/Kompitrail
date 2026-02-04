@@ -99,16 +99,18 @@ export const FormAutocomplete = ({
                   e.preventDefault();
                 }
               : undefined,
-          }}
-          onClick={
-            readOnly
+            onTouchStart: readOnly ? (e) => e.preventDefault() : undefined,
+            onClick: readOnly
               ? (e) => {
-                  // Force open dropdown on click when readOnly
-                  e.target.focus();
-                  setTimeout(() => e.target.blur(), 10);
+                  // Make whole input clickable to open dropdown
+                  const autocomplete = e.target.closest(
+                    ".MuiAutocomplete-root",
+                  );
+                  const button = autocomplete?.querySelector("[title='Open']");
+                  if (button) button.click();
                 }
-              : undefined
-          }
+              : undefined,
+          }}
         />
       )}
     />
