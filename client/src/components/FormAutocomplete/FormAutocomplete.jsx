@@ -78,21 +78,12 @@ export const FormAutocomplete = ({
       onChange={handleChange}
       disablePortal={disablePortal}
       disableClearable={!clearable}
+      readOnly={readOnly}
+      disabled={readOnly}
       filterSelectedOptions
       isOptionEqualToValue={isEqual}
       getOptionLabel={getLabel}
       openOnFocus
-      onClick={
-        readOnly
-          ? (e) => {
-              // Make whole autocomplete clickable when readOnly
-              if (e.target.tagName !== "BUTTON") {
-                const button = e.currentTarget.querySelector("[title='Open']");
-                if (button) button.click();
-              }
-            }
-          : undefined
-      }
       {...restAutocompleteProps}
       renderInput={(params) => (
         <TextField
@@ -100,18 +91,7 @@ export const FormAutocomplete = ({
           label={label}
           error={!!errorKey}
           helperText={helperText}
-          inputProps={{
-            ...params.inputProps,
-            readOnly: readOnly,
-            inputMode: readOnly ? "none" : "text",
-            onFocus: readOnly
-              ? (e) => {
-                  e.target.blur();
-                  e.preventDefault();
-                }
-              : undefined,
-            onTouchStart: readOnly ? (e) => e.preventDefault() : undefined,
-          }}
+          inputProps={{ ...params.inputProps, readOnly: readOnly }}
         />
       )}
     />
