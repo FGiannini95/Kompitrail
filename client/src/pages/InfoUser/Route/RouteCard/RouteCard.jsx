@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import {
   Card,
@@ -19,44 +20,48 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import ForwardOutlinedIcon from "@mui/icons-material/ForwardOutlined";
 import FiberNewOutlinedIcon from "@mui/icons-material/FiberNewOutlined";
+import AutorenewOutlinedIcon from "@mui/icons-material/AutorenewOutlined";
 
 // Utils
 import { formatDateTime } from "../../../../helpers/utils";
 import { RoutesString } from "../../../../routes/routes";
 import { getRouteStatus } from "../../../../helpers/oneRouteUtils";
 import { getPointLabel } from "../../../../helpers/pointMetrics";
+import { ROUTES_URL } from "../../../../api";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 // Hooks & Providers
 import { useReverseGeocoding } from "../../../../hooks/useReverseGeocoding";
+import { useRoutes } from "../../../../context/RoutesContext/RoutesContext";
+import { RouteCreateDialog } from "../RouteCreateDialog/RouteCreateDialog";
 
 export const RouteCard = ({
-  route_id,
-  user_id,
-  starting_point_i18n,
-  ending_point_i18n,
-  starting_lat,
-  starting_lng,
-  ending_lat,
-  ending_lng,
-  date,
-  level,
-  distance,
-  suitable_motorbike_type,
-  estimated_time,
-  max_participants,
-  participants = [],
-  is_verified,
-  route_description,
-  create_name,
-  user_img,
+  route,
   isOwner,
   showActions = true,
-  created_at,
   lastRoutesVisit,
   enableNewBadge = false,
 }) => {
+  const {
+    route_id,
+    user_id,
+    starting_point_i18n,
+    ending_point_i18n,
+    starting_lat,
+    starting_lng,
+    ending_lat,
+    ending_lng,
+    date,
+    estimated_time,
+    max_participants,
+    participants = [],
+    create_name,
+    user_img,
+    created_at,
+  } = route;
+
   const { currentLang } = useReverseGeocoding();
+  const { openDialog } = useRoutes();
   const { date_dd_mm_yyyy, time_hh_mm } = formatDateTime(date);
   const navigate = useNavigate();
 
@@ -125,131 +130,157 @@ export const RouteCard = ({
     const url = generatePath(RoutesString.routeDetail, { id: route_id });
     navigate(url, {
       state: {
-        starting_point_i18n,
-        ending_point_i18n,
-        starting_lat,
-        starting_lng,
-        ending_lat,
-        ending_lng,
-        date,
-        level,
-        distance,
-        suitable_motorbike_type,
-        estimated_time,
-        max_participants,
-        is_verified,
-        route_description,
-        user_id,
-        participants,
-        create_name,
-        user_img,
+        ...route,
         isOwner,
       },
     });
   };
 
+  const handleReuseRoute = async (e) => {
+    e.stopPropagation();
+
+    try {
+      // Fetch full route details including waypoints
+      const response = await axios.get(`${ROUTES_URL}/oneroute/${route_id}`);
+      const fullRouteData = response.data;
+
+      openDialog({
+        mode: "reuse",
+        routeData: fullRouteData,
+      });
+    } catch (error) {
+      console.error("Error fetching route details:", error);
+      // Fallback: open dialog without waypoints
+      openDialog({
+        mode: "reuse",
+        routeData: route,
+      });
+    }
+  };
+
   return (
-    <Card
-      sx={(theme) => ({
-        width: "100%",
-        bgcolor: theme.palette.kompitrail.card,
-        borderRadius: 2,
-        display: "flex",
-        flexDirection: "column",
-        disabled: { isRouteLocked },
-      })}
-    >
-      <CardContent>
-        <Box
-          onClick={handleOpenDetails}
-          sx={{
-            cursor: "pointer",
-            color: isRouteLocked ? "text.disabled" : "text.primary",
-          }}
-        >
+    <>
+      <Card
+        sx={(theme) => ({
+          width: "100%",
+          bgcolor: theme.palette.kompitrail.card,
+          borderRadius: 2,
+          display: "flex",
+          flexDirection: "column",
+          disabled: { isRouteLocked },
+        })}
+      >
+        <CardContent>
           <Box
+            onClick={handleOpenDetails}
             sx={{
-              display: showNewIcon ? "flex" : "none",
-              justifyContent: "flex-end",
-              alignItems: "flex-start",
+              cursor: "pointer",
+              color: isRouteLocked ? "text.disabled" : "text.primary",
             }}
           >
-            <FiberNewOutlinedIcon
-              fontSize="large"
-              aria-hidden
-              sx={{ color: "green" }}
-            />
-          </Box>
+            <Box
+              sx={{
+                display: showNewIcon ? "flex" : "none",
+                justifyContent: "flex-end",
+                alignItems: "flex-start",
+              }}
+            >
+              <FiberNewOutlinedIcon
+                fontSize="large"
+                aria-hidden
+                sx={{ color: "green" }}
+              />
+            </Box>
 
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
-            <Typography>{startingLabel}</Typography>
-          </Stack>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <FlagOutlinedIcon fontSize="medium" aria-hidden />
-            <Typography>{endingLabel}</Typography>
-          </Stack>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <CalendarMonthIcon fontSize="medium" aria-hidden />
-            <Typography>{date_dd_mm_yyyy}</Typography>
-            <AccessTimeOutlinedIcon fontSize="medium" aria-hidden />
-            <Typography>{time_hh_mm}</Typography>
-          </Stack>
-        </Box>
-        <RouteParticipantsSection
-          ref={participantsSectionRef}
-          route_id={route_id}
-          user_id={user_id}
-          create_name={create_name}
-          user_img={user_img}
-          participants={participants}
-          max_participants={max_participants}
-          isOwner={isOwner}
-          isRouteLocked={isRouteLocked}
-        />
-      </CardContent>
-      {showActions && !isRouteLocked && (
-        <CardActions disableSpacing>
-          {isOwner && (
-            <>
-              <IconButton
-                onClick={() =>
-                  participantsSectionRef.current?.handleOpenEditDialog(route_id)
-                }
-              >
-                <EditOutlinedIcon
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <LocationOnOutlinedIcon fontSize="medium" aria-hidden />
+              <Typography>{startingLabel}</Typography>
+            </Stack>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <FlagOutlinedIcon fontSize="medium" aria-hidden />
+              <Typography>{endingLabel}</Typography>
+            </Stack>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <CalendarMonthIcon fontSize="medium" aria-hidden />
+              <Typography>{date_dd_mm_yyyy}</Typography>
+              <AccessTimeOutlinedIcon fontSize="medium" aria-hidden />
+              <Typography>{time_hh_mm}</Typography>
+            </Stack>
+          </Box>
+          <RouteParticipantsSection
+            ref={participantsSectionRef}
+            route_id={route_id}
+            user_id={user_id}
+            create_name={create_name}
+            user_img={user_img}
+            participants={participants}
+            max_participants={max_participants}
+            isOwner={isOwner}
+            isRouteLocked={isRouteLocked}
+          />
+        </CardContent>
+
+        {showActions && (
+          <CardActions disableSpacing>
+            {!isRouteLocked && isOwner && (
+              <>
+                <IconButton
+                  onClick={() =>
+                    participantsSectionRef.current?.handleOpenEditDialog(
+                      route_id,
+                    )
+                  }
+                >
+                  <EditOutlinedIcon
+                    fontSize="medium"
+                    aria-hidden
+                    sx={(theme) => ({
+                      color: theme.palette.text.primary,
+                    })}
+                  />
+                </IconButton>
+                <IconButton
+                  onClick={() =>
+                    participantsSectionRef.current?.handleOpenDeleteDialog()
+                  }
+                >
+                  <DeleteOutlineIcon
+                    fontSize="medium"
+                    aria-hidden
+                    sx={(theme) => ({
+                      color: theme.palette.text.primary,
+                    })}
+                  />
+                </IconButton>
+              </>
+            )}
+
+            <IconButton
+              sx={{ ml: "auto" }}
+              onClick={isRouteLocked ? handleReuseRoute : handleOpenDetails}
+            >
+              {isRouteLocked ? (
+                <AutorenewOutlinedIcon
                   fontSize="medium"
                   aria-hidden
                   sx={(theme) => ({
                     color: theme.palette.text.primary,
                   })}
                 />
-              </IconButton>
-              <IconButton
-                onClick={() =>
-                  participantsSectionRef.current?.handleOpenDeleteDialog()
-                }
-              >
-                <DeleteOutlineIcon
+              ) : (
+                <ForwardOutlinedIcon
                   fontSize="medium"
                   aria-hidden
                   sx={(theme) => ({
                     color: theme.palette.text.primary,
                   })}
                 />
-              </IconButton>
-            </>
-          )}
-          <Stack
-            sx={{ ml: "auto" }}
-            justifyContent="end"
-            alignItems="flex-end"
-            onClick={handleOpenDetails}
-          >
-            <ForwardOutlinedIcon fontSize="medium" aria-hidden />
-          </Stack>
-        </CardActions>
-      )}
-    </Card>
+              )}
+            </IconButton>
+          </CardActions>
+        )}
+      </Card>
+      <RouteCreateDialog />
+    </>
   );
 };

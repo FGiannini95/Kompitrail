@@ -70,7 +70,7 @@ export const Home = () => {
   }
 
   const futureRoutes = allRoutes.filter(
-    (route) => new Date(route.date) >= new Date()
+    (route) => new Date(route.date) >= new Date(),
   );
 
   return (
@@ -112,7 +112,7 @@ export const Home = () => {
                 mb={2}
               >
                 <RouteCard
-                  {...route}
+                  route={route}
                   isOwner={route.user_id === user.user_id}
                   lastRoutesVisit={lastRoutesVisit}
                   enableNewBadge={true}
