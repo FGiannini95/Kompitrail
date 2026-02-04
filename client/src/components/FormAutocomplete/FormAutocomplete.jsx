@@ -91,8 +91,15 @@ export const FormAutocomplete = ({
           helperText={helperText}
           inputProps={{
             ...params.inputProps,
-            inputMode: readOnly ? "none" : "text",
             readOnly: readOnly,
+            inputMode: readOnly ? "none" : "text",
+            onFocus: readOnly
+              ? (e) => {
+                  e.target.blur();
+                  e.preventDefault();
+                }
+              : undefined,
+            onTouchStart: readOnly ? (e) => e.preventDefault() : undefined,
           }}
         />
       )}
