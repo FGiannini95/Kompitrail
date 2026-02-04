@@ -93,8 +93,22 @@ export const FormAutocomplete = ({
             ...params.inputProps,
             readOnly: readOnly,
             inputMode: readOnly ? "none" : "text",
-            onFocus: readOnly ? (e) => e.target.blur() : undefined,
+            onFocus: readOnly
+              ? (e) => {
+                  e.target.blur();
+                  e.preventDefault();
+                }
+              : undefined,
           }}
+          onClick={
+            readOnly
+              ? (e) => {
+                  // Force open dropdown on click when readOnly
+                  e.target.focus();
+                  setTimeout(() => e.target.blur(), 10);
+                }
+              : undefined
+          }
         />
       )}
     />
