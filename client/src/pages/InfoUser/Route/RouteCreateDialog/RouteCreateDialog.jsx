@@ -461,6 +461,7 @@ export const RouteCreateDialog = () => {
                 optionValueKey="name"
                 getOptionLabel={(opt) => t(`forms:level.${opt.name}`)}
                 disablePortal
+                readOnly={true}
               />
             </Grid>
             <Grid size={12}>
@@ -475,6 +476,7 @@ export const RouteCreateDialog = () => {
                 optionLabelKey="name"
                 optionValueKey="name"
                 disablePortal
+                readOnly={true}
               />
             </Grid>
             <Grid size={12}>
@@ -490,6 +492,7 @@ export const RouteCreateDialog = () => {
                 optionValueKey="name"
                 multiple
                 disablePortal
+                readOnly={true}
               />
             </Grid>
             <Grid
