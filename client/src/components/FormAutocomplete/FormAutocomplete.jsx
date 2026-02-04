@@ -78,8 +78,6 @@ export const FormAutocomplete = ({
       onChange={handleChange}
       disablePortal={disablePortal}
       disableClearable={!clearable}
-      readOnly={readOnly}
-      disabled={readOnly}
       filterSelectedOptions
       isOptionEqualToValue={isEqual}
       getOptionLabel={getLabel}
@@ -91,7 +89,11 @@ export const FormAutocomplete = ({
           label={label}
           error={!!errorKey}
           helperText={helperText}
-          inputProps={{ ...params.inputProps, readOnly: readOnly }}
+          inputProps={{
+            ...params.inputProps,
+            inputMode: readOnly ? "none" : "text",
+            readOnly: readOnly,
+          }}
         />
       )}
     />
