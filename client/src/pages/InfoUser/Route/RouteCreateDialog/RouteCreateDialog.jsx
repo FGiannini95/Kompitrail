@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -46,12 +52,11 @@ import {
 // Components
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
+import { FormSelect } from "../../../../components/FormSelect/FormSelect.JSX";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 import { RouteMapDialog } from "../../../../components/Maps/RouteMapDialog/RouteMapDialog";
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
 import { WaypointItem } from "../../../../components/Maps/WaypointItem/WaypointItem";
-import { useRef } from "react";
-import { useCallback } from "react";
 
 export const RouteCreateDialog = () => {
   const [createOneRoute, setCreateOneRoute] = useState(ROUTE_INITIAL_VALUE);
@@ -449,7 +454,7 @@ export const RouteCreateDialog = () => {
               </>
             )}
             <Grid size={12}>
-              <FormAutocomplete
+              <FormSelect
                 label={t("forms:levelLabel")}
                 name="level"
                 errors={errors}
@@ -465,7 +470,7 @@ export const RouteCreateDialog = () => {
               />
             </Grid>
             <Grid size={12}>
-              <FormAutocomplete
+              <FormSelect
                 name="max_participants"
                 label={t("forms:maxParticipantsLabel")}
                 errors={errors}
@@ -492,7 +497,6 @@ export const RouteCreateDialog = () => {
                 optionValueKey="name"
                 multiple
                 disablePortal
-                readOnly={true}
               />
             </Grid>
             <Grid

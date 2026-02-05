@@ -82,17 +82,15 @@ export const FormAutocomplete = ({
       isOptionEqualToValue={isEqual}
       getOptionLabel={getLabel}
       openOnFocus
-      onClick={
-        readOnly
-          ? (e) => {
-              // Make whole autocomplete clickable when readOnly
-              if (e.target.tagName !== "BUTTON") {
-                const button = e.currentTarget.querySelector("[title='Open']");
-                if (button) button.click();
-              }
-            }
-          : undefined
-      }
+      ListboxProps={{
+        sx: {
+          // Hide scrollbar
+          scrollbarWidth: "none", // Firefox
+          "&::-webkit-scrollbar": {
+            display: "none", // Chrome, Safari, Edge
+          },
+        },
+      }}
       {...restAutocompleteProps}
       renderInput={(params) => (
         <TextField
@@ -100,18 +98,7 @@ export const FormAutocomplete = ({
           label={label}
           error={!!errorKey}
           helperText={helperText}
-          inputProps={{
-            ...params.inputProps,
-            readOnly: readOnly,
-            inputMode: readOnly ? "none" : "text",
-            onFocus: readOnly
-              ? (e) => {
-                  e.target.blur();
-                  e.preventDefault();
-                }
-              : undefined,
-            onTouchStart: readOnly ? (e) => e.preventDefault() : undefined,
-          }}
+          inputProps={{ ...params.inputProps }}
         />
       )}
     />
