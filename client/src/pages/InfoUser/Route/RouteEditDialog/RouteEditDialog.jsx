@@ -41,6 +41,7 @@ import {
 // Components
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
+import { FormSelect } from "../../../../components/FormSelect/FormSelect.JSX";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 import { RouteMapDialog } from "../../../../components/Maps/RouteMapDialog/RouteMapDialog";
 import { WaypointItem } from "../../../../components/Maps/WaypointItem/WaypointItem";
@@ -84,7 +85,7 @@ export const RouteEditDialog = () => {
       i18n: editRoute.starting_point_i18n,
     },
     currentLang,
-    "full"
+    "full",
   );
 
   const endingLabel = getPointLabel(
@@ -94,7 +95,7 @@ export const RouteEditDialog = () => {
       i18n: editRoute.ending_point_i18n,
     },
     currentLang,
-    "full"
+    "full",
   );
 
   const { data: routeMetrics } = useRouteMetrics({
@@ -111,7 +112,7 @@ export const RouteEditDialog = () => {
       editRoute.starting_lat &&
         editRoute.starting_lng &&
         editRoute.ending_lat &&
-        editRoute.ending_lng
+        editRoute.ending_lng,
     ),
     endpointUrl: metricsEndpoint,
   });
@@ -200,7 +201,7 @@ export const RouteEditDialog = () => {
         ...editRoute,
         waypoints: waypoints,
         date: toMySQLDateTime(editRoute.date, "Europe/Madrid"),
-      })
+      }),
     );
 
     axios
@@ -366,7 +367,7 @@ export const RouteEditDialog = () => {
               />
             </Grid>
             <Grid size={12}>
-              <FormAutocomplete
+              <FormSelect
                 name="level"
                 label={t("forms:levelLabel")}
                 errors={errors}
@@ -381,7 +382,7 @@ export const RouteEditDialog = () => {
               />
             </Grid>
             <Grid size={12}>
-              <FormAutocomplete
+              <FormSelect
                 name="max_participants"
                 label={t("forms:maxParticipantsLabel")}
                 errors={errors}

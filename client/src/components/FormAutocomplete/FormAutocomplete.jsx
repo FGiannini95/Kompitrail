@@ -95,10 +95,16 @@ export const FormAutocomplete = ({
       filterSelectedOptions
       isOptionEqualToValue={isEqual}
       getOptionLabel={getLabel}
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
-      openOnFocus={!readOnly}
+      openOnFocus
+      ListboxProps={{
+        sx: {
+          // Hide scrollbar
+          scrollbarWidth: "none", // Firefox
+          "&::-webkit-scrollbar": {
+            display: "none", // Chrome, Safari, Edge
+          },
+        },
+      }}
       {...restAutocompleteProps}
       renderInput={(params) => (
         <TextField
@@ -106,14 +112,7 @@ export const FormAutocomplete = ({
           label={label}
           error={!!errorKey}
           helperText={helperText}
-          onPointerDown={handleReadOnlyPointerDown}
-          onMouseDown={handleReadOnlyPointerDown}
-          onTouchStart={handleReadOnlyPointerDown}
-          inputProps={{
-            ...params.inputProps,
-            readOnly: readOnly,
-            inputMode: readOnly ? "none" : "text",
-          }}
+          inputProps={{ ...params.inputProps }}
         />
       )}
     />
