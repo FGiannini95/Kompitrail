@@ -42,6 +42,8 @@ export const ChatRoom = ({
         backgroundColor: (t) => t.palette.background.default,
         overflow: "hidden",
         height: "100dvh",
+        maxHeight: "100dvh",
+        minHeight: 0,
       }}
     >
       <Box
@@ -99,12 +101,13 @@ export const ChatRoom = ({
         sx={{
           flex: 1,
           minHeight: 0,
-          overflowY: "auto",
+          overflow: "hidden auto",
           overscrollBehavior: "contain",
           WebkitOverflowScrolling: "touch",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
           "&::-webkit-scrollbar": { display: "none" },
+          paddingBottom: "env(keyboard-inset-height, 0px)",
         }}
       >
         <MessageList items={messages} />
@@ -117,6 +120,8 @@ export const ChatRoom = ({
             zIndex: 2,
             backgroundColor: (t) => t.palette.background.default,
             borderTop: (t) => `1px solid ${t.palette.divider}`,
+            pb: "max(env(safe-area-inset-bottom), env(keyboard-inset-height, 0px))",
+
             py: 1,
             px: 1,
           }}
