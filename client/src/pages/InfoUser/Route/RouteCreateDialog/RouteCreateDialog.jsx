@@ -52,7 +52,7 @@ import {
 // Components
 import { FormTextfield } from "../../../../components/FormTextfield/FormTextfield";
 import { FormAutocomplete } from "../../../../components/FormAutocomplete/FormAutocomplete";
-import { FormSelect } from "../../../../components/FormSelect/FormSelect.JSX";
+import { FormSelect } from "../../../../components/FormSelect/FormSelect";
 import { FormDataPicker } from "../../../../components/FormDataPicker/FormDataPicker";
 import { RouteMapDialog } from "../../../../components/Maps/RouteMapDialog/RouteMapDialog";
 import { OutlinedButton } from "../../../../components/Buttons/OutlinedButton/OutlinedButton";
