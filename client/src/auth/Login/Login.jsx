@@ -17,9 +17,9 @@ import { KompitrailContext } from "../../context/KompitrailContext";
 import { useRedirectParam } from "../../hooks/useRedirectParam";
 import { usePostAuthRedirect } from "../../hooks/usePostAuthRedirect";
 // Components
+import { Loading } from "../../components/Loading/Loading";
 import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
 import { SocialAuthButtons } from "../../components/Buttons/SocialAuthButtons/SocialAuthButtons";
-import { Loading } from "../../components/Loading/Loading";
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { ContainedButton } from "../../components/Buttons/ContainedButton/ContainedButton";
 
