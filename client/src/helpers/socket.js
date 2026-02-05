@@ -10,7 +10,10 @@ import { io } from "socket.io-client";
  * - transports includes 'websocket' to reduce polling issues in dev.
  */
 
-export const socket = io("https://kompitrail.es", {
-  withCredentials: true,
-  transports: ["websocket", "polling"],
-});
+export const socket = io(
+  import.meta.env.DEV ? "http://localhost:3000" : "https://kompitrail.es",
+  {
+    withCredentials: true,
+    transports: ["websocket", "polling"],
+  },
+);
