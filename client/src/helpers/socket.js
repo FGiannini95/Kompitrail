@@ -1,7 +1,3 @@
-/**
- * getMessages(routeId, { offset, limit: 20 }) → returns last 20, older on scroll. getParticipants(routeId) (optional). REST is for history & pagination; sockets are for live.
- */
-
 import { io } from "socket.io-client";
 
 /**
@@ -10,10 +6,22 @@ import { io } from "socket.io-client";
  * - transports includes 'websocket' to reduce polling issues in dev.
  */
 
-export const socket = io(
-  import.meta.env.DEV ? "http://localhost:3000" : "https://kompitrail.es",
-  {
-    withCredentials: true,
-    transports: ["websocket", "polling"],
-  },
-);
+const getSocketURL = () => {
+  // If we're accessing via network IP, use network IP for socket too
+  if (
+    typeof window !== "undefined" &&
+    window.location.hostname === "192.168.0.43"
+  ) {
+    return "http://192.168.0.43:3000";
+  }
+
+  // Otherwise use standard dev/prod logic
+  return import.meta.env.DEV
+    ? "http://localhost:3000"
+    : "https://kompitrail.es";
+};
+
+export const socket = io(getSocketURL(), {
+  withCredentials: true,
+  transports: ["websocket", "polling"],
+});

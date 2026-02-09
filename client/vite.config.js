@@ -12,11 +12,12 @@ export default defineConfig({
       "@shared": path.resolve(__dirname, "../shared"),
       "@shared/chat-contract": path.resolve(
         __dirname,
-        "../shared/chat-contract"
+        "../shared/chat-contract",
       ),
     },
   },
   server: {
+    host: true,
     fs: {
       allow: [".."],
     },

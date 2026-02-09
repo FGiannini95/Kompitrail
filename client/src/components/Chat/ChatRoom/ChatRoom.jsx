@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { Box, Divider, IconButton, Typography } from "@mui/material";
@@ -10,6 +10,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { MessageList } from "../MessageList/MessageList";
 import { MessageInput } from "../MessageInput/MessageInput";
 import { TypingIndicator } from "../TypingIndicator/TypingIndicator";
+import { useKeyboardHeight } from "../../../hooks/useKeyboardHeight";
 
 export const ChatRoom = ({
   mode = "group",
@@ -26,6 +27,7 @@ export const ChatRoom = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { messagesBoxRef, keyboardHeight } = useKeyboardHeight();
 
   const title =
     propTitle ||
@@ -41,7 +43,9 @@ export const ChatRoom = ({
         flexDirection: "column",
         backgroundColor: (t) => t.palette.background.default,
         overflow: "hidden",
-        height: "100dvh",
+        height: `calc(100dvh - ${keyboardHeight}px)`,
+        maxHeight: `calc(100dvh - ${keyboardHeight}px)`,
+        minHeight: 0,
       }}
     >
       <Box
@@ -96,15 +100,17 @@ export const ChatRoom = ({
         <Divider sx={{ "&::before, &::after": { borderTopWidth: 2 } }} />
       </Box>
       <Box
+        ref={messagesBoxRef}
         sx={{
           flex: 1,
           minHeight: 0,
-          overflowY: "auto",
+          overflow: "hidden auto",
           overscrollBehavior: "contain",
           WebkitOverflowScrolling: "touch",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
           "&::-webkit-scrollbar": { display: "none" },
+          marginBottom: 1,
         }}
       >
         <MessageList items={messages} />
@@ -117,6 +123,7 @@ export const ChatRoom = ({
             zIndex: 2,
             backgroundColor: (t) => t.palette.background.default,
             borderTop: (t) => `1px solid ${t.palette.divider}`,
+            paddingBottom: "env(safe-area-inset-bottom, 16px)",
             py: 1,
             px: 1,
           }}
