@@ -124,11 +124,17 @@ export const Chat = () => {
   return (
     <Box
       sx={{
-        height: "100dvh",
+        height: "calc(100vh - 120px)",
+        overflow: "auto",
         p: 1,
         display: "flex",
         flexDirection: "column",
         gap: 1,
+        // Hide scrollbar
+        scrollbarWidth: "none", // Firefox
+        "&::-webkit-scrollbar": {
+          display: "none", // Chrome, Safari, Edge
+        },
       }}
     >
       {ordered.map((row) => {
