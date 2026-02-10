@@ -14,7 +14,8 @@
     "logout": "Disconnettersi",
     "language": "Lingua",
     "theme": "Tema",
-    "pwa": "Aggiungere a Home"
+    "pwa": "Aggiungere a Home",
+    "notifications": "Notifiche"
   },
   "darkMode": "Modalità scura",
   "lightMode": "Modalità chiara",

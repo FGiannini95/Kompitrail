@@ -14,7 +14,8 @@
     "logout": "Log out",
     "language": "Language",
     "theme": "Mode",
-    "pwa": "Create shortcut"
+    "pwa": "Create shortcut",
+    "notifications": "Notifications"
   },
   "darkMode": "Dark mode",
   "lightMode": "Light mode",

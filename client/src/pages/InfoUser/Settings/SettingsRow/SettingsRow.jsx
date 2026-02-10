@@ -20,6 +20,7 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import ColorLensOutlinedIcon from "@mui/icons-material/ColorLensOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import { useTranslation } from "react-i18next";
 
 const ACTION_CONFIG = {
@@ -142,6 +143,17 @@ const ACTION_CONFIG = {
     label: "Crear acceso directo",
     icon: (
       <WidgetsOutlinedIcon
+        fontSize="large"
+        sx={(theme) => ({
+          color: theme.palette.text.primary,
+        })}
+      />
+    ),
+  },
+  notifications: {
+    label: "Notificas",
+    icon: (
+      <NotificationsOutlinedIcon
         fontSize="large"
         sx={(theme) => ({
           color: theme.palette.text.primary,

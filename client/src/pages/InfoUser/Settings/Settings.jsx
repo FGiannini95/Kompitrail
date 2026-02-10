@@ -52,6 +52,8 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
   const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
   const [isLanguageDialogOpen, setIsLanguageDialogOpen] = useState(false);
   const [isPwaDialogOpen, setIsPwaDialogOpen] = useState(false);
+  const [isNotificationsDialogOpen, setIsNotificationsDialogOpen] =
+    useState(false);
 
   const { t } = useTranslation(["general", "dialogs"]);
 
@@ -93,6 +95,11 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
   const handleOpenPwaDialog = () => setIsPwaDialogOpen(true);
   const handleClosePwaDialog = () => setIsPwaDialogOpen(false);
 
+  const handleOpenNotificationsDialog = () =>
+    setIsNotificationsDialogOpen(true);
+  const handleCloseNotificationsDialog = () =>
+    setIsNotificationsDialogOpen(false);
+
   return (
     <Grid container direction="column" spacing={2}>
       {/* Header */}
@@ -119,6 +126,11 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
           action="changePassword"
           onClick={() => navigate(RoutesString.editPassword)}
         />
+        <SettingsRow
+          action="notifications"
+          onClick={handleOpenNotificationsDialog}
+        />
+
         <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
       </Section>
 
@@ -137,6 +149,7 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
       />
 
       <DialogPwa open={isPwaDialogOpen} onClose={handleClosePwaDialog} />
+      {/* <NotificationsDialog open={isNotificationsDialogOpen} onClose={handleCloseNotificationsDialog}/> */}
     </Grid>
   );
 };
