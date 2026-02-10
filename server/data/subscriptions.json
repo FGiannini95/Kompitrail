@@ -1,3 +1,16 @@
 {
-  "subscriptions": []
+  "subscriptions": [
+    {
+      "userId": 1,
+      "subscription": {
+        "endpoint": "test",
+        "keys": {
+          "p256dh": "test1",
+          "auth": "test2"
+        }
+      },
+      "enabled": true,
+      "createdAt": "2026-02-10T15:21:10.356Z"
+    }
+  ]
 }
