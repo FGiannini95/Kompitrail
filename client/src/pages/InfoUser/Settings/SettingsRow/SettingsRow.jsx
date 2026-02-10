@@ -151,7 +151,7 @@ const ACTION_CONFIG = {
     ),
   },
   notifications: {
-    label: "Notificas",
+    label: "Notificación",
     icon: (
       <NotificationsOutlinedIcon
         fontSize="large"

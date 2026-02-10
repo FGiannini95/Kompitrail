@@ -23,6 +23,7 @@ import { SettingsRow } from "./SettingsRow/SettingsRow";
 import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
 import { ChangeLanguageDialog } from "./ChangeLanguageDialog/ChangeLanguageDialog";
 import { DialogPwa } from "../../../components/Dialogs/DialogPwa/DialogPwa";
+import { NotificationsDialog } from "./NotificationsDialog/NotificationsDialog";
 
 function Section({ title, children }) {
   return (
@@ -149,7 +150,10 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
       />
 
       <DialogPwa open={isPwaDialogOpen} onClose={handleClosePwaDialog} />
-      {/* <NotificationsDialog open={isNotificationsDialogOpen} onClose={handleCloseNotificationsDialog}/> */}
+      <NotificationsDialog
+        open={isNotificationsDialogOpen}
+        onClose={handleCloseNotificationsDialog}
+      />
     </Grid>
   );
 };
