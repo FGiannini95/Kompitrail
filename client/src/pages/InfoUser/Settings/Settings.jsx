@@ -18,6 +18,7 @@ import { USERS_URL } from "../../../api";
 // Providers & Hooks
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
+import { usePushNotifications } from "../../../hooks/usePushNotifications";
 // Components
 import { SettingsRow } from "./SettingsRow/SettingsRow";
 import { ModeToggleDialog } from "./ModeToggleDialog/ModeToggleDialog";
@@ -57,6 +58,7 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
     useState(false);
 
   const { t } = useTranslation(["general", "dialogs"]);
+  const { isSupported } = usePushNotifications();
 
   const deleteProfile = () => {
     const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -127,10 +129,13 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
           action="changePassword"
           onClick={() => navigate(RoutesString.editPassword)}
         />
-        <SettingsRow
-          action="notifications"
-          onClick={handleOpenNotificationsDialog}
-        />
+
+        {isSupported && (
+          <SettingsRow
+            action="notifications"
+            onClick={handleOpenNotificationsDialog}
+          />
+        )}
 
         <SettingsRow action="deleteAccount" onClick={handleDeleteProfile} />
       </Section>

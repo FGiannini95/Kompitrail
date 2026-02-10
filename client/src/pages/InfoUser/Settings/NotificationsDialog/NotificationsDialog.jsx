@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -15,11 +15,13 @@ import {
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
 import NotificationsOffOutlinedIcon from "@mui/icons-material/NotificationsOffOutlined";
 
-export const NotificationsDialog = ({ open, onClose }) => {
-  const [isNotificationActive, setIsNotificationActive] = useState(false);
-  const { t } = useTranslation(["dialogs", "buttons", "settings"]);
+import { usePushNotifications } from "../../../../hooks/usePushNotifications";
 
-  const isActive = isNotificationActive;
+export const NotificationsDialog = ({ open, onClose }) => {
+  const { t } = useTranslation(["dialogs", "buttons", "settings"]);
+  const { isSubscribed, subscribe } = usePushNotifications();
+
+  const isActive = isSubscribed;
   const notificationTitle = isActive
     ? t("dialogs:notificationTitleDisabled")
     : t("dialogs:notificationTitleEnabled");
@@ -27,11 +29,11 @@ export const NotificationsDialog = ({ open, onClose }) => {
     ? t("dialogs:notificationTextDisabled")
     : t("dialogs:notificactionTextEnabled");
 
-  const handleToggleNotifications = () => {
+  const handleToggleNotifications = async () => {
     if (isActive) {
-      setIsNotificationActive(false);
+      console.log("Unsubscribe non ancora implementato");
     } else {
-      setIsNotificationActive(true);
+      await subscribe();
     }
   };
 
