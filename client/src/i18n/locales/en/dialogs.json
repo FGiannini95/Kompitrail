@@ -18,5 +18,9 @@
   "pwaTitle": "Create shortcut",
   "pwaText": "Do you want to install the application for a better experience?",
   "pwaTitleIos": "Add to home screen",
-  "pwaTextIos": "Open the share menu and choose 'Add to home screen' to install Kompitrail"
+  "pwaTextIos": "Open the share menu and choose 'Add to home screen' to install Kompitrail",
+  "notificationTitleEnabled": "Don't miss your routes",
+  "notificactionTextEnabled": "Activate notifications and receive a reminder 30 minutes before each departure.",
+  "notificationTitleDisabled": "Deactivate reminders",
+  "notificationTextDisabled": "You will no longer receive notifications before your routes. You can reactivate them whenever you want."
 }
