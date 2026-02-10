@@ -13,6 +13,7 @@ const routesRouter = require("./routes/route");
 const authRouter = require("./routes/auth");
 const chatRouter = require("./routes/chat");
 const chatBotRouter = require("./routes/chatbot");
+const notificationRouter = require("./routes/notifications");
 
 // Global rate limiting configuration
 const globalRateLimit = rateLimit({
@@ -62,6 +63,7 @@ app.use("/routes", routesRouter);
 app.use("/auth", authRouter);
 app.use("/chat", chatRouter);
 app.use("/chatbot", chatBotRouter);
+app.use("/notifications", notificationRouter);
 
 // Static assets from Vite build (client/dist)
 const clientBuildPath = path.join(__dirname, "..", "client", "dist");
