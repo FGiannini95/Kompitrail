@@ -67,14 +67,16 @@ class notificationsController {
       const decoded = jwt.verify(token, process.env.SECRET);
       const userId = decoded.user.user_id;
 
-      console.log("Unsubscribing User ID:", userId);
-
       // Load current subscriptions from JSON file
       const data = loadSubscriptions();
-      console.log("Current subscriptions count:", data.subscriptions.length);
 
       // Remove subscription for this user
-      // TODO
+      const initialLength = data.subscriptions.length;
+      data.subscriptions = data.subscriptions.filter(
+        (sub) => sub.userId !== userId,
+      );
+      const removedCount = initialLength - data.subscriptions.length;
+
       // Save updated subscriptions back to file
       saveSubscriptions(data);
 

@@ -20,7 +20,8 @@ import { usePushNotifications } from "../../../../hooks/usePushNotifications";
 
 export const NotificationsDialog = ({ open, onClose }) => {
   const { t } = useTranslation(["dialogs", "buttons", "settings"]);
-  const { isSubscribed, loading, subscribe } = usePushNotifications();
+  const { isSubscribed, loading, subscribe, unsubscribe } =
+    usePushNotifications();
 
   const isActive = isSubscribed;
   const notificationTitle = isActive
@@ -32,7 +33,7 @@ export const NotificationsDialog = ({ open, onClose }) => {
 
   const handleToggleNotifications = async () => {
     if (isActive) {
-      console.log("Unsubscribe non ancora implementato");
+      unsubscribe();
     } else {
       await subscribe();
     }
