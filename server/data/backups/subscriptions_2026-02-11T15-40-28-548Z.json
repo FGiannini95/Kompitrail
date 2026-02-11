@@ -12,19 +12,6 @@
       },
       "enabled": true,
       "createdAt": "2026-02-11T00:07:08.205Z"
-    },
-    {
-      "userId": 2,
-      "subscription": {
-        "endpoint": "https://fcm.googleapis.com/fcm/send/ffUBHvxE0uI:APA91bHTofiCtjzYWU4OosHib4NZpBrrc8T1MR9WLMmFCfRTPkgZiVyLHymYi5hAv2CtfrDuRFg8F_zIlQHXG3r2RrBgptXxUntKSM9FLe21M2disccJighyDeewR1388lRfO2u1b2Qh",
-        "expirationTime": null,
-        "keys": {
-          "p256dh": "BIkKY8Qa__MTCLR2D8DjHtvKnzqLWw2sOPYIdJ6ANx8C_X1LkRDiur1byZdzoLFd1zHLUd1aqv_5FmS8HfR-z78",
-          "auth": "JW0k7bnebH4wjsmyB60qlw"
-        }
-      },
-      "enabled": true,
-      "createdAt": "2026-02-11T15:40:28.548Z"
     }
   ]
 }
