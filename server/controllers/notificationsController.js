@@ -1,9 +1,7 @@
-const connection = require("../config/db");
 const {
   loadSubscriptions,
   saveSubscriptions,
 } = require("../utils/subscriptions");
-const webpush = require("web-push");
 const jwt = require("jsonwebtoken");
 
 class notificationsController {

@@ -99,9 +99,8 @@ const cleanupOldBackups = () => {
   }
 };
 
-// Load subscriptions with auto-recovery
+// Load subscriptions
 const loadSubscriptions = () => {
-  // Auto-recover if needed before loading
   autoRecoverIfNeeded();
 
   try {
