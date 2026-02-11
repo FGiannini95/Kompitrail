@@ -44,7 +44,7 @@ class notificationsController {
 
       res.json({
         success: true,
-        message: "Push subscription test successful!",
+        message: "Push subscription enabled successfully",
         totalSubscriptions: data.subscriptions.length,
       });
     } catch (error) {
@@ -53,7 +53,43 @@ class notificationsController {
     }
   };
 
-  unsubscribe = async (req, res) => {};
+  unsubscribe = async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      const token = authHeader && authHeader.split(" ")[1];
+
+      if (!token) {
+        return res
+          .status(401)
+          .json({ success: false, error: "No token provided" });
+      }
+
+      const decoded = jwt.verify(token, process.env.SECRET);
+      const userId = decoded.user.user_id;
+
+      console.log("Unsubscribing User ID:", userId);
+
+      // Load current subscriptions from JSON file
+      const data = loadSubscriptions();
+      console.log("Current subscriptions count:", data.subscriptions.length);
+
+      // Remove subscription for this user
+      // TODO
+      // Save updated subscriptions back to file
+      saveSubscriptions(data);
+
+      res.json({
+        success: true,
+        message: "Push notifications disabled successfully",
+        userId: userId,
+        removedCount: removedCount,
+        totalSubscriptions: data.subscriptions.length,
+      });
+    } catch (error) {
+      console.error("Unsubscribe error:", error);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  };
 }
 
 module.exports = new notificationsController();
