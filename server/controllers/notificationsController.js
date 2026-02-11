@@ -9,16 +9,22 @@ const jwt = require("jsonwebtoken");
 class notificationsController {
   subscribe = async (req, res) => {
     try {
-      // Skip JWT for testing
-      const userId = 1; // Hardcoded
-      const { subscription } = req.body;
+      const authHeader = req.headers.authorization;
+      const token = authHeader && authHeader.split(" ")[1];
 
-      console.log("User ID:", userId);
-      console.log("Subscription received:", subscription);
+      if (!token) {
+        return res
+          .status(401)
+          .json({ success: false, error: "No token provided" });
+      }
+
+      const decoded = jwt.verify(token, process.env.SECRET);
+      const userId = decoded.user.user_id;
+
+      const { subscription } = req.body;
 
       // Load current subscriptions from JSON file
       const data = loadSubscriptions();
-      console.log("Current subscriptions count:", data.subscriptions.length);
 
       // Remove old subscription for this user (prevent duplicates)
       data.subscriptions = data.subscriptions.filter(
@@ -35,10 +41,6 @@ class notificationsController {
 
       // Save to file
       saveSubscriptions(data);
-      console.log(
-        "Subscription saved! Total subscriptions:",
-        data.subscriptions.length,
-      );
 
       res.json({
         success: true,

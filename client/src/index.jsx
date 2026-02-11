@@ -8,17 +8,15 @@ import "mapbox-gl/dist/mapbox-gl.css";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <App />
-  </StrictMode>
+  </StrictMode>,
 );
 
 // Register the service worker in production
-if ("serviceWorker" in navigator && import.meta.env.PROD) {
+if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("/service-worker.js")
-      .then((registration) => {
-        console.log("[SW] Registered:", registration);
-      })
+      .then((registration) => {})
       .catch((error) => {
         console.error("[SW] Registration failed:", error);
       });

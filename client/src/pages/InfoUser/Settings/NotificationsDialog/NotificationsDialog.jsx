@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -19,7 +20,7 @@ import { usePushNotifications } from "../../../../hooks/usePushNotifications";
 
 export const NotificationsDialog = ({ open, onClose }) => {
   const { t } = useTranslation(["dialogs", "buttons", "settings"]);
-  const { isSubscribed, subscribe } = usePushNotifications();
+  const { isSubscribed, loading, subscribe } = usePushNotifications();
 
   const isActive = isSubscribed;
   const notificationTitle = isActive
@@ -90,9 +91,13 @@ export const NotificationsDialog = ({ open, onClose }) => {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="text.primary">
-          {t("buttons:close")}
-        </Button>
+        {loading ? (
+          <CircularProgress sx={{ color: "inherit" }} size={20} />
+        ) : (
+          <Button onClick={onClose} color="text.primary">
+            {t("buttons:close")}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
