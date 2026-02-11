@@ -12,6 +12,19 @@
       },
       "enabled": true,
       "createdAt": "2026-02-11T00:07:08.205Z"
+    },
+    {
+      "userId": 2,
+      "subscription": {
+        "endpoint": "https://fcm.googleapis.com/fcm/send/ccZv7nOQdWI:APA91bGUcuoNhJ8TMHXiwPYBBjHoAxDDG0FTcNBsIiYRTBM8n17pUOFSDGcaRJEveMLj_08ZbS4_CEHEmmYtDLQfqPypkPnx7xIIPcLLBWk2bNiL4YQVoKgyXSoxrQcfSlaBhl949ZUn",
+        "expirationTime": null,
+        "keys": {
+          "p256dh": "BN2kfUca1kEilDMTBgndifGExvOhDNiF87KKya3OWPutH5WE5kMj5p5gD3E6XzWfQgbyesDBLepx5Utd7A_cwdA",
+          "auth": "uft06IdBCmPUO5A58XStPQ"
+        }
+      },
+      "enabled": true,
+      "createdAt": "2026-02-11T16:52:31.450Z"
     }
   ]
 }
