@@ -120,6 +120,9 @@ export const usePushNotifications = () => {
 
       if (response.data.success) {
         setIsSubscribed(false);
+
+        // Small delay to show the new state before removing loading
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setLoading(false);
         return true;
       }

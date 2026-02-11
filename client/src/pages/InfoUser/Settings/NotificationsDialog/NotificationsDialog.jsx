@@ -33,7 +33,7 @@ export const NotificationsDialog = ({ open, onClose }) => {
 
   const handleToggleNotifications = async () => {
     if (isActive) {
-      unsubscribe();
+      await unsubscribe();
     } else {
       await subscribe();
     }
