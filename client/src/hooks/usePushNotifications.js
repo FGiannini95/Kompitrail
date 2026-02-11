@@ -15,6 +15,21 @@ export const usePushNotifications = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const getServiceWorkerRegistration = async () => {
+    return await navigator.serviceWorker.ready;
+  };
+
+  const getCurrentSubscription = async () => {
+    const registration = await getServiceWorkerRegistration();
+    return await registration.pushManager.getSubscription();
+  };
+
+  const getAuthToken = () => {
+    const token = getLocalStorage("token");
+    if (!token) throw new Error("No auth token found");
+    return token;
+  };
+
   // Check browser support both api
   useEffect(() => {
     setIsSupported("serviceWorker" in navigator && "PushManager" in window);
@@ -22,8 +37,7 @@ export const usePushNotifications = () => {
 
   const checkSubscription = async () => {
     try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
+      const subscription = await getCurrentSubscription();
 
       if (subscription) {
         setIsSubscribed(true);
@@ -50,8 +64,7 @@ export const usePushNotifications = () => {
         return false;
       }
 
-      const registration = await navigator.serviceWorker.ready;
-
+      const registration = await getServiceWorkerRegistration();
       // Subscribe to push manager
       const pushSubscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
@@ -61,14 +74,13 @@ export const usePushNotifications = () => {
       });
 
       // Send subscription data to our backend
-      const token = getLocalStorage("token");
       const response = await axios.post(
         `${NOTIFICATIONS_URL}/subscribe`,
         {
           subscription: pushSubscription,
         },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${getAuthToken()}` },
         },
       );
 
@@ -84,15 +96,39 @@ export const usePushNotifications = () => {
     return false;
   };
 
-  // const unsubscribe = async () => {
-  //   setLoading(true);
-  //   try {
-  //   } catch (error) {
-  //     console.error("Unsubscribe error", error);
-  //     setLoading(false);
-  //     return false;
-  //   }
-  // };
+  const unsubscribe = async () => {
+    setLoading(true);
+    try {
+      const subscription = await getCurrentSubscription();
 
-  return { isSupported, isSubscribed, loading, subscribe };
+      // Unsubscribe from browser push manager
+      if (subscription) {
+        const unsubscribed = await subscription.unsubscribe();
+        if (!unsubscribed) {
+          throw new Error("Failed to unsubscribe from browser push manager");
+        }
+      }
+
+      // Notify backend to remove subscription from json file
+      const response = await axios.post(
+        `${NOTIFICATIONS_URL}/unsubscribe`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${getAuthToken()}` },
+        },
+      );
+
+      if (response.data.success) {
+        setIsSubscribed(false);
+        setLoading(false);
+        return true;
+      }
+    } catch (error) {
+      console.error("Unsubscribe error", error);
+      setLoading(false);
+      return false;
+    }
+  };
+
+  return { isSupported, isSubscribed, loading, subscribe, unsubscribe };
 };
