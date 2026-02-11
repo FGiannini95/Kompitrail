@@ -23,12 +23,11 @@ const createNotificationPayload = (routeData) => {
 // Send push notification to specific user
 const sendNotificationToUser = async (userId, routeData) => {
   try {
-    console.log(`📤 Attempting to send notification to user ${userId}`);
     // Load current subscriptions from JSON file
     const subscriptionsData = loadSubscriptions();
 
     // Find subscription for specific user
-    const userSubscription = subscriptionsData.subcriptions.find(
+    const userSubscription = subscriptionsData.subscriptions.find(
       (sub) => sub.userId === userId && sub.enabled,
     );
 
@@ -38,21 +37,15 @@ const sendNotificationToUser = async (userId, routeData) => {
         error: "User not subscribed or subscription disabled",
       };
     }
-    console.log(`Found subscription for user ${userId}`);
 
     // Create notification payload
     const payload = createNotificationPayload(routeData);
-    console.log(`📝 Notification payload created`);
 
     // Step 4: Send push notification via web-push library
-    console.log(`🚀 Sending push notification...`);
     const response = await webpush.sendNotification(
       userSubscription.subscription,
       payload,
     );
-
-    console.log(`✅ Notification sent successfully to user ${userId}`);
-    console.log(`📊 Response status: ${response.statusCode}`);
 
     return {
       success: true,
@@ -65,6 +58,12 @@ const sendNotificationToUser = async (userId, routeData) => {
       `Error sending notification to user ${userId}:`,
       error.message,
     );
+    return {
+      success: false,
+      error: `${error.name}: ${error.message}`,
+      statusCode: error.statusCode,
+      userId: userId,
+    };
   }
 };
 
