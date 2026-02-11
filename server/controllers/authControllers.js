@@ -63,7 +63,7 @@ class authControllers {
             user: { user_id: userId },
           },
           process.env.SECRET,
-          { expiresIn: "1d" }
+          { expiresIn: "90d" },
         );
       };
 
@@ -84,7 +84,7 @@ class authControllers {
           const hasNoPhoto =
             !existingUser.img || existingUser.img.trim() === "";
           const isGooglePhoto = existingUser.img?.includes(
-            "googleusercontent.com"
+            "googleusercontent.com",
           );
           const shouldUpdatePhoto = (hasNoPhoto || isGooglePhoto) && picture;
 
@@ -98,15 +98,15 @@ class authControllers {
                 if (updateErr) {
                   console.error(
                     "Error actualizando la imagen de Google",
-                    updateErr
+                    updateErr,
                   );
                 } else {
                   console.log(
                     "Foto de Google actualizada con éxito para el user_id:",
-                    existingUser.user_id
+                    existingUser.user_id,
                   );
                 }
-              }
+              },
             );
           } else {
             console.log("El usuario tiene una foto personalizada");
@@ -165,7 +165,7 @@ class authControllers {
                 token,
                 user: formatUser(newUser),
               });
-            }
+            },
           );
         });
       });
