@@ -49,7 +49,6 @@ export const PwaProvider = ({ children }) => {
 
     // Wait for the user's choice
     const { outcome } = await promptEvent.userChoice;
-    console.log("[PWA] User install choice:", outcome);
 
     return { outcome };
   }, [deferredPrompt]);

@@ -18,5 +18,9 @@
   "pwaTitle": "Crear acceso directo",
   "pwaText": "¿Quiere instalar la aplicación para una experiencia mejor?",
   "pwaTitleIos": "Añadir a la pantalla de inicio",
-  "pwaTextIos": "Abre el menú de compartir y elige ‘Añadir a la pantalla de inicio’ para instalar Kompitrail"
+  "pwaTextIos": "Abre el menú de compartir y elige ‘Añadir a la pantalla de inicio’ para instalar Kompitrail",
+  "notificationTitleEnabled": "No te pierdas tus rutas",
+  "notificactionTextEnabled": "Activa las notificaciones y recibe un recordatorio 30 minutos antes de cada salida.",
+  "notificationTitleDisabled": "Desactivar recordatorios",
+  "notificationTextDisabled": "Ya no recibirás notificaciones antes de tus rutas. Podrás reactivarlas cuando quieras."
 }

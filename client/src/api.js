@@ -28,3 +28,4 @@ export const IMAGES_URL = `${API_BASE}/images`;
 export const AUTH_URL = `${API_BASE}/auth`;
 export const CHAT_URL = `${API_BASE}/chat`;
 export const BOT_URL = `${API_BASE}/chatbot`;
+export const NOTIFICATIONS_URL = `${API_BASE}/notifications`;

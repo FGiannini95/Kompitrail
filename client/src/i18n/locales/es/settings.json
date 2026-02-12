@@ -14,7 +14,8 @@
     "logout": "Log out",
     "language": "Idioma",
     "theme": "Tema",
-    "pwa": "Crear acceso directo"
+    "pwa": "Crear acceso directo",
+    "notifications": "Notificaciones"
   },
   "darkMode": "Modo oscuro",
   "lightMode": "Modo claro",

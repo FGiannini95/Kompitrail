@@ -1,0 +1,30 @@
+{
+  "subscriptions": [
+    {
+      "userId": 1,
+      "subscription": {
+        "endpoint": "https://fcm.googleapis.com/fcm/send/fLlz8-PpT70:APA91bGhWBDqvOU1T74cjswgo3y7zO3m8CtV0uxbr9Jn3Ui9QLpg0qATM33n_M-YVpjd4hknDhffV6kYVlQ3pAmIH7Sks5UAWpWCYDyklKCWklqSKcRg1gcreypTpCqFcXvi9Us-fEff",
+        "expirationTime": null,
+        "keys": {
+          "p256dh": "BA_PMkCOOxDolMCJufFSuhnoeIhTA2MB_NdDqQLBREw4rZW4rMViQyuDsYSI7zJMfaBzHUU4zbA6UidMzu8XglQ",
+          "auth": "UHYTKpwp_N6FDiPa13QULQ"
+        }
+      },
+      "enabled": true,
+      "createdAt": "2026-02-11T00:07:08.205Z"
+    },
+    {
+      "userId": 2,
+      "subscription": {
+        "endpoint": "https://fcm.googleapis.com/fcm/send/dH_-y5eRZrU:APA91bHh5AN06sKUD0kTifd1Ic7axn2ZRXyOzhIU50hjVO2o4TxWR3ltvR73xUbnhKL3yJYOGtrFtwMrOTUHzzFMb0EnbKFhpMC25TRkZqPpLc9Ek06MTTnaiL_Sfuc2ocZWImithMPY",
+        "expirationTime": null,
+        "keys": {
+          "p256dh": "BClKdjOn2q3jUFALnTKcTCNO2u_jco_2mQ9rA3azC0sR0ElndR9JEbXofPBYkp22q2AiuAfJKlPeldEu2mAaaIE",
+          "auth": "DS6Nw4a-PQKyN4jZh84XPQ"
+        }
+      },
+      "enabled": true,
+      "createdAt": "2026-02-11T16:54:47.178Z"
+    }
+  ]
+}

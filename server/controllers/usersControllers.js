@@ -58,7 +58,7 @@ class usersControllers {
                 },
               },
               process.env.SECRET,
-              { expiresIn: "1d" }
+              { expiresIn: "90d" },
             );
 
             res.status(200).json({ token, user });
@@ -192,7 +192,7 @@ class usersControllers {
             const path = require("path");
             const oldImagePath = path.join(
               __dirname,
-              `../public/images/users/${currentImg}`
+              `../public/images/users/${currentImg}`,
             );
             fs.unlink(oldImagePath, (err) => {
               if (err) console.log("Could not delete old image:", err);
@@ -207,7 +207,7 @@ class usersControllers {
             const path = require("path");
             const oldImagePath = path.join(
               __dirname,
-              `../public/images/users/${currentImg}`
+              `../public/images/users/${currentImg}`,
             );
             fs.unlink(oldImagePath, (err) => {
               if (err) console.log("Could not delete old image:", err);
@@ -258,7 +258,7 @@ class usersControllers {
 
               return res.status(200).json(userData[0]);
             });
-          }
+          },
         );
       });
     } catch (err) {

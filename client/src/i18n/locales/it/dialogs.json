@@ -18,5 +18,9 @@
   "pwaTitle": "Aggiungere a Home",
   "pwaText": "Volete installare l'applicazione per un'esperienza migliore?",
   "pwaTitleIos": "Aggiungi alla schermata iniziale",
-  "pwaTextIos": "Aprite il menu di condivisione e scegliete \"Aggiungi alla schermata iniziale\" per installare Kompitrail."
+  "pwaTextIos": "Aprite il menu di condivisione e scegliete \"Aggiungi alla schermata iniziale\" per installare Kompitrail.",
+  "notificationTitleEnabled": "Non perdere i tuoi percorsi",
+  "notificactionTextEnabled": "Attiva le notifiche e ricevi un promemoria 30 minuti prima di ogni partenza.",
+  "notificationTitleDisabled": "Disattivare i promemoria",
+  "notificationTextDisabled": "Non riceverai più notifiche prima dei tuoi percorsi. È possibile riattivarle quando si vuole."
 }
