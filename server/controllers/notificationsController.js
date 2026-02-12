@@ -41,43 +41,6 @@ class notificationsController {
       // Save to file
       saveSubscriptions(data);
 
-      // TODO: TO DELETE
-      console.log(
-        "Subscription saved! Total subscriptions:",
-        data.subscriptions.length,
-      );
-
-      // ✅ TEMPORARY: Welcome test notification for production testing
-      const testRouteData = {
-        route_id: 999,
-        name: "Welcome Test",
-        // Add more realistic data for test
-        starting_lat: 40.4168,
-        starting_lng: -3.7038,
-        starting_point_i18n: {
-          es: { short: "Madrid", full: "Madrid, España" },
-          it: { short: "Madrid", full: "Madrid, Spagna" },
-          en: { short: "Madrid", full: "Madrid, Spain" },
-        },
-        ending_lat: 41.3851,
-        ending_lng: 2.1734,
-        ending_point_i18n: {
-          es: { short: "Barcelona", full: "Barcelona, España" },
-          it: { short: "Barcellona", full: "Barcellona, Spagna" },
-          en: { short: "Barcelona", full: "Barcelona, Spain" },
-        },
-      };
-
-      const notificationResult = await sendNotificationToUser(
-        userId,
-        testRouteData,
-      );
-
-      console.log(
-        "Test notification result:",
-        notificationResult.success ? "✅ Sent" : "❌ Failed",
-      );
-
       res.json({
         success: true,
         message: "Push subscription enabled successfully",

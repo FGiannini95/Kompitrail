@@ -35,7 +35,6 @@ self.addEventListener("push", (event) => {
     const options = {
       body: data.body,
       icon: "/icons/icona_512.png",
-      badge: "/icons/icona_512.png",
       tag: "kompitrail-route-reminder",
       data: data.data || {},
       actions: [
