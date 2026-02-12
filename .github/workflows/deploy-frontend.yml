@@ -25,6 +25,7 @@ jobs:
       VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
       VITE_DEEPL_API_KEY: ${{ secrets.VITE_DEEPL_API_KEY }}
       VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
+      VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
       BUILD_DIR: dist # output vite
 
     steps:
