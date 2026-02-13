@@ -103,7 +103,7 @@ class notificationsController {
 
     // Get current time and calculate time window (20-30 minutes from now)
     const now = new Date();
-    const timeMin = new Date(now.getTime() + 20 * 60 * 1000);
+    const timeMin = new Date(now.getTime() + 25 * 60 * 1000);
     const timeMax = new Date(now.getTime() + 30 * 60 * 1000);
 
     const upcomingRoutes = `
@@ -119,7 +119,7 @@ class notificationsController {
         return res.status(500).json({ success: false, error: err.message });
       }
 
-      console.log(`📅 Found ${routes.length} routes in 20-30 min window`);
+      console.log(`📅 Found ${routes.length} routes in 25-30 min window`);
 
       if (routes.length === 0) {
         return res.json({ message: "No routes found", routesFound: 0 });
