@@ -11,20 +11,20 @@ export const validateRouteForm = (routeData) => {
 
   if (!routeData.date) {
     errors.date = "route.dateRequired";
-  }
+  } else {
+    const now = new Date();
+    const routeStart = new Date(routeData.date);
+    const ONE_HOUR_MS = 60 * 60 * 1000;
+    const enrollmentDeadline = new Date(routeStart.getTime() - ONE_HOUR_MS);
 
-  // To remove later
-  if (!routeData.distance) {
-    errors.distance = "route.distanceRequired";
+    // If current time is past enrollment deadline, route is too soon
+    if (now >= enrollmentDeadline) {
+      errors.date = "route.dateTooSoon";
+    }
   }
 
   if (!routeData.level) {
     errors.level = "route.levelRequired";
-  }
-
-  // To remove later
-  if (!routeData.estimated_time) {
-    errors.estimated_time = "route.estimatedTimeRequired";
   }
 
   if (!routeData.max_participants) {

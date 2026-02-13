@@ -8,13 +8,12 @@
     "startingPointRequired": "Starting point required",
     "endingPointRequired": "Arrival point required",
     "dateRequired": "Date required",
-    "distanceRequired": "Distance required",
     "levelRequired": "Level required",
-    "estimatedTimeRequired": "Duration required ",
     "maxParticipantsRequired": "No. of pilots required",
     "motorbikeTypeRequired": "Suitable motorbikes required",
     "descriptionRequired": "Description required",
-    "maxParticipantsTooLow": "There are already {{occupiedSeats}} users registered for this route. You cannot reduce the number of seats below this amount."
+    "maxParticipantsTooLow": "There are already {{occupiedSeats}} users registered for this route. You cannot reduce the number of seats below this amount.",
+    "dateTooSoon": "The route should start at least 1 hour after now."
   },
   "login": {
     "emailRequired": "Mailing is mandatory",
