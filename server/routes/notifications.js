@@ -5,5 +5,6 @@ const notificationsController = require("../controllers/notificationsController"
 // ruta base http://localhost:3000/notifications
 router.post("/subscribe", notificationsController.subscribe);
 router.post("/unsubscribe", notificationsController.unsubscribe);
+router.get("/send-route-reminders", notificationsController.sendRouteReminders);
 
 module.exports = router;

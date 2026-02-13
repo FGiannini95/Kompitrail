@@ -1,9 +1,15 @@
+const connection = require("../config/db");
+
 const {
   loadSubscriptions,
   saveSubscriptions,
 } = require("../utils/subscriptions");
 const jwt = require("jsonwebtoken");
 const { sendNotificationToUser } = require("../utils/pushService");
+const {
+  isRouteAlreadySent,
+  markRouteAsSent,
+} = require("../utils/notificationTracker");
 
 class notificationsController {
   subscribe = async (req, res) => {
@@ -40,43 +46,6 @@ class notificationsController {
 
       // Save to file
       saveSubscriptions(data);
-
-      // TODO: TO DELETE
-      console.log(
-        "Subscription saved! Total subscriptions:",
-        data.subscriptions.length,
-      );
-
-      // ✅ TEMPORARY: Welcome test notification for production testing
-      const testRouteData = {
-        route_id: 999,
-        name: "Welcome Test",
-        // Add more realistic data for test
-        starting_lat: 40.4168,
-        starting_lng: -3.7038,
-        starting_point_i18n: {
-          es: { short: "Madrid", full: "Madrid, España" },
-          it: { short: "Madrid", full: "Madrid, Spagna" },
-          en: { short: "Madrid", full: "Madrid, Spain" },
-        },
-        ending_lat: 41.3851,
-        ending_lng: 2.1734,
-        ending_point_i18n: {
-          es: { short: "Barcelona", full: "Barcelona, España" },
-          it: { short: "Barcellona", full: "Barcellona, Spagna" },
-          en: { short: "Barcelona", full: "Barcelona, Spain" },
-        },
-      };
-
-      const notificationResult = await sendNotificationToUser(
-        userId,
-        testRouteData,
-      );
-
-      console.log(
-        "Test notification result:",
-        notificationResult.success ? "✅ Sent" : "❌ Failed",
-      );
 
       res.json({
         success: true,
@@ -127,6 +96,105 @@ class notificationsController {
       console.error("Unsubscribe error:", error);
       res.status(500).json({ success: false, error: error.message });
     }
+  };
+
+  sendRouteReminders = async (req, res) => {
+    console.log("🔄 Checking for routes needing notifications...");
+
+    // Get current time and calculate time window (20-30 minutes from now)
+    const now = new Date();
+    const timeMin = new Date(now.getTime() + 25 * 60 * 1000);
+    const timeMax = new Date(now.getTime() + 30 * 60 * 1000);
+
+    const upcomingRoutes = `
+      SELECT route_id, user_id, date, starting_point_i18n, ending_point_i18n, 
+            starting_lat, starting_lng, ending_lat, ending_lng
+      FROM route
+      WHERE date BETWEEN ? AND ?
+      AND is_deleted = false
+    `;
+
+    connection.query(upcomingRoutes, [timeMin, timeMax], (err, routes) => {
+      if (err) {
+        return res.status(500).json({ success: false, error: err.message });
+      }
+
+      console.log(`📅 Found ${routes.length} routes in 25-30 min window`);
+
+      if (routes.length === 0) {
+        return res.json({ message: "No routes found", routesFound: 0 });
+      }
+
+      let routesProcessed = 0;
+      let totalNotificationsSent = 0;
+      let processedCount = 0;
+
+      // Helper function to send final response
+      const checkAndRespond = () => {
+        return res.json({
+          success: true,
+          message: "Route reminders processed successfully",
+          routesFound: routes.length,
+          routesProcessed: routesProcessed,
+          notificationsSent: totalNotificationsSent,
+        });
+      };
+
+      // Define participants query
+      const participantsQuery = `
+        SELECT user_id FROM (
+          SELECT user_id FROM route WHERE route_id = ?
+          UNION 
+          SELECT user_id FROM route_participant WHERE route_id = ?
+        ) participants
+      `;
+
+      routes.forEach((route) => {
+        if (isRouteAlreadySent(route.route_id)) {
+          processedCount++;
+          if (processedCount === routes.length) checkAndRespond();
+          return;
+        }
+
+        console.log(`📤 Processing route ${route.route_id}`);
+
+        connection.query(
+          participantsQuery,
+          [route.route_id, route.route_id],
+          async (err2, participants) => {
+            if (err2) {
+              processedCount++;
+              if (processedCount === routes.length) checkAndRespond();
+              return;
+            }
+
+            // Send notifications to all participants
+            for (const participant of participants) {
+              const result = await sendNotificationToUser(
+                participant.user_id,
+                route,
+                "es",
+              );
+
+              if (result.success) {
+                totalNotificationsSent++;
+              }
+            }
+
+            // Mark as sent to prevent duplicates
+            markRouteAsSent(route.route_id);
+            routesProcessed++;
+            processedCount++;
+
+            console.log(
+              `✅ Notifications sent to ${participants.length} users for route ${route.route_id}`,
+            );
+
+            if (processedCount === routes.length) checkAndRespond();
+          },
+        );
+      });
+    });
   };
 }
 

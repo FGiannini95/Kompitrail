@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+
 const webpush = require("web-push");
 const { loadSubscriptions } = require("../utils/subscriptions");
 
@@ -8,20 +11,65 @@ webpush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY,
 );
 
-// Create message
-const createNotificationPayload = (routeData) => {
+// Load notification templates
+const loadNotificationTemplates = () => {
+  try {
+    const templatesPath = path.join(
+      __dirname,
+      "../data/notification_templates.json",
+    );
+    const data = fs.readFileSync(templatesPath, "utf8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error loading notification templates:", error);
+    return null;
+  }
+};
+
+const getPointLabel = (point, currentLang, type = "full") => {
+  if (!point?.i18n) return "";
+
+  const langData = point.i18n[currentLang] || point.i18n.es || {};
+  return type === "short" ? langData.short : langData.full;
+};
+
+// Create notification payload
+const createNotificationPayload = (routeData, userLanguage = "es") => {
+  const templates = loadNotificationTemplates();
+  const template =
+    templates.route_reminder[userLanguage] || templates.route_reminder["es"];
+
+  // Get translated place names
+  const startingLabel = getPointLabel(
+    { i18n: routeData.starting_point_i18n },
+    userLanguage,
+    "short",
+  );
+  const endingLabel = getPointLabel(
+    { i18n: routeData.ending_point_i18n },
+    userLanguage,
+    "short",
+  );
+
+  // Replace placeholders
+  const body = template.body
+    .replace("{startingPoint}", startingLabel)
+    .replace("{endingPoint}", endingLabel);
+
   return JSON.stringify({
-    title: "Kompitrail",
-    body: "Tu ruta empieza en 30 minutos. ¡Prepárate!",
-    buttonText: "Visualizar ruta",
-    data: {
-      routeId: routeData.routeId || routeData.id,
-    },
+    title: template.title,
+    body: body,
+    buttonText: template.buttonText,
+    data: { routeId: routeData.route_id },
   });
 };
 
 // Send push notification to specific user
-const sendNotificationToUser = async (userId, routeData) => {
+const sendNotificationToUser = async (
+  userId,
+  routeData,
+  userLanguage = "es",
+) => {
   try {
     // Load current subscriptions from JSON file
     const subscriptionsData = loadSubscriptions();
@@ -39,7 +87,7 @@ const sendNotificationToUser = async (userId, routeData) => {
     }
 
     // Create notification payload
-    const payload = createNotificationPayload(routeData);
+    const payload = createNotificationPayload(routeData, userLanguage);
 
     // Step 4: Send push notification via web-push library
     const response = await webpush.sendNotification(
@@ -51,6 +99,7 @@ const sendNotificationToUser = async (userId, routeData) => {
       success: true,
       message: "Notification sent successfully",
       userId: userId,
+      language: userLanguage,
       statusCode: response.statusCode,
     };
   } catch (error) {
