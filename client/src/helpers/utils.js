@@ -19,9 +19,9 @@ export const capitalizeFirstLetter = (string) => {
         .map((part) =>
           part
             ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-            : part
+            : part,
         )
-        .join("-")
+        .join("-"),
     )
     .join(" ");
 };
@@ -36,7 +36,7 @@ export const capitalizeFullName = (name, lastname) => {
 
 export const formatDateTime = (
   input,
-  { locale = "es-ES", timeZone = "Europe/Madrid" } = {}
+  { locale = "es-ES", timeZone = "Europe/London" } = {},
 ) => {
   const d = input instanceof Date ? input : new Date(input);
 
