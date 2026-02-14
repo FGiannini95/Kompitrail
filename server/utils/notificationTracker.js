@@ -1,14 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 
+const templatesPath = path.join(__dirname, "../data/sent_notifications.json");
+
 // Load notification templates (JSON file → JavaScript object)
 const loadSentNotifications = () => {
   try {
-    const templatesPath = path.join(
-      __dirname,
-      "../data/notification_templates.json",
-    );
-
     if (!fs.existsSync(templatesPath)) {
       return { sent: [] };
     }
