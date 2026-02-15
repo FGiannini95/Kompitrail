@@ -2,7 +2,10 @@ const fs = require("fs");
 const path = require("path");
 
 const webpush = require("web-push");
-const { loadSubscriptions } = require("../utils/subscriptions");
+const {
+  loadSubscriptions,
+  saveSubscriptions,
+} = require("../utils/subscriptions");
 
 // Configure VAPID details for authentication with FCM/Mozilla servers
 webpush.setVapidDetails(
@@ -89,19 +92,11 @@ const sendNotificationToUser = async (
     // Create notification payload
     const payload = createNotificationPayload(routeData, userLanguage);
 
-    console.log(
-      `🚀 Sending to FCM endpoint: ${userSubscription.subscription.endpoint}`,
-    );
-    console.log("📦 Payload:", payload);
-
     // Step 4: Send push notification via web-push library
     const response = await webpush.sendNotification(
       userSubscription.subscription,
       payload,
     );
-
-    console.log(`✅ FCM Response Status: ${response.statusCode}`);
-    console.log("📊 FCM Response Headers:", response.headers);
 
     return {
       success: true,
@@ -117,6 +112,18 @@ const sendNotificationToUser = async (
       statusCode: error.statusCode,
       body: error.body,
     });
+
+    // Auto-cleanup expired subscriptions
+    if (error.statusCode === 410) {
+      // Remove expired subscription from file
+      const data = loadSubscriptions();
+      data.subscriptions = data.subscriptions.filter(
+        (sub) => sub.userId !== userId,
+      );
+      saveSubscriptions(data);
+
+      return { success: false, error: "Subscription expired and removed" };
+    }
     return {
       success: false,
       error: `${error.name}: ${error.message}`,

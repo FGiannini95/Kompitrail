@@ -26,7 +26,7 @@ class notificationsController {
       const decoded = jwt.verify(token, process.env.SECRET);
       const userId = decoded.user.user_id;
 
-      const { subscription } = req.body;
+      const { subscription, language } = req.body;
 
       // Load current subscriptions from JSON file
       const data = loadSubscriptions();
@@ -41,6 +41,7 @@ class notificationsController {
         userId: userId,
         subscription: subscription,
         enabled: true,
+        language: language || "es",
         createdAt: new Date().toISOString(),
       });
 
