@@ -92,7 +92,7 @@ const sendNotificationToUser = async (
     console.log(
       `🚀 Sending to FCM endpoint: ${userSubscription.subscription.endpoint}`,
     );
-    console.log(`📦 Payload:`, payload);
+    console.log("📦 Payload:", payload);
 
     // Step 4: Send push notification via web-push library
     const response = await webpush.sendNotification(
@@ -101,7 +101,7 @@ const sendNotificationToUser = async (
     );
 
     console.log(`✅ FCM Response Status: ${response.statusCode}`);
-    console.log(`📊 FCM Response Headers:`, response.headers);
+    console.log("📊 FCM Response Headers:", response.headers);
 
     return {
       success: true,
@@ -111,7 +111,7 @@ const sendNotificationToUser = async (
       statusCode: response.statusCode,
     };
   } catch (error) {
-    console.error(`FCM Error Details:`, {
+    console.error("FCM Error Details:", {
       name: error.name,
       message: error.message,
       statusCode: error.statusCode,
