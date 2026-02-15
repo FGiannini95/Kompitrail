@@ -73,11 +73,14 @@ export const usePushNotifications = () => {
         ),
       });
 
+      const currentLanguage = getLocalStorage("kompitrailLanguage") || "es";
+
       // Send subscription data to our backend
       const response = await axios.post(
         `${NOTIFICATIONS_URL}/subscribe`,
         {
           subscription: pushSubscription,
+          language: currentLanguage,
         },
         {
           headers: { Authorization: `Bearer ${getAuthToken()}` },
