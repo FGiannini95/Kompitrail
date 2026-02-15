@@ -89,11 +89,19 @@ const sendNotificationToUser = async (
     // Create notification payload
     const payload = createNotificationPayload(routeData, userLanguage);
 
+    console.log(
+      `🚀 Sending to FCM endpoint: ${userSubscription.subscription.endpoint}`,
+    );
+    console.log(`📦 Payload:`, payload);
+
     // Step 4: Send push notification via web-push library
     const response = await webpush.sendNotification(
       userSubscription.subscription,
       payload,
     );
+
+    console.log(`✅ FCM Response Status: ${response.statusCode}`);
+    console.log(`📊 FCM Response Headers:`, response.headers);
 
     return {
       success: true,
@@ -103,10 +111,12 @@ const sendNotificationToUser = async (
       statusCode: response.statusCode,
     };
   } catch (error) {
-    console.error(
-      `Error sending notification to user ${userId}:`,
-      error.message,
-    );
+    console.error(`FCM Error Details:`, {
+      name: error.name,
+      message: error.message,
+      statusCode: error.statusCode,
+      body: error.body,
+    });
     return {
       success: false,
       error: `${error.name}: ${error.message}`,
