@@ -1,17 +1,17 @@
 {
   "route_reminder": {
     "es": {
-      "title": "Kompitrail",
+      "title": "",
       "body": "La ruta {startingPoint}-{endingPoint} inicia en 30 min. ¡Prepárate!",
       "buttonText": "Visualizar ruta"
     },
     "it": {
-      "title": "Kompitrail",
+      "title": "",
       "body": "Il percorso {startingPoint}-{endingPoint} inizia tra 30 min. Preparati!",
       "buttonText": "Visualizza percorso"
     },
     "en": {
-      "title": "Kompitrail",
+      "title": "",
       "body": "Route {startingPoint}-{endingPoint} starts in 30 min. Get ready!",
       "buttonText": "View route"
     }
