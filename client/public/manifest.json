@@ -1,5 +1,6 @@
 {
   "name": "Kompitrail",
+  "short_name": "Kompitrail",
   "lang": "es",
   "start_url": "/",
   "scope": "/",
