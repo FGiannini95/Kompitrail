@@ -55,6 +55,7 @@ self.addEventListener("push", (event) => {
       self.registration.showNotification("Kompitrail", {
         body: "Tienes una nueva notificación",
         icon: "/icons/icona_192.png",
+        badge: "/icons/icona_192.png",
       }),
     );
   }
