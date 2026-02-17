@@ -9,7 +9,8 @@
     "levelLabel": "Nivel",
     "generalInfoTitle": "Información general",
     "maxParticipantsLabel": "Max. {{count}} pilotos",
-    "motorbikeTypeLabel": "Motos aptas: {{types}}"
+    "motorbikeTypeLabel": "Motos aptas: {{types}}",
+    "registrationCutoffLabel": "Las inscripciones terminan una hora antes del horario de salida"
   },
   "status": {
     "knownRoute": "Ruta conocida — ya probada",
