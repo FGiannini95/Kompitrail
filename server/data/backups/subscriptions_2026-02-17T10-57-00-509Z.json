@@ -1,0 +1,18 @@
+{
+  "subscriptions": [
+    {
+      "userId": 1,
+      "subscription": {
+        "endpoint": "https://fcm.googleapis.com/fcm/send/f4Oj8SQOzhw:APA91bHujddpwNu-DReMA_g8FHencQs5xlT0R_8ygGChOl4eYfNPwErXRL08-h11XgKzpkG88fcpaWQgk6iq7EeePfpj6ZcNv9nSq6ahNRB5aQ9okm_wFbn4lVqIlXOi_3g7vuFYJ2c9",
+        "expirationTime": null,
+        "keys": {
+          "p256dh": "BNE7SAr6K0M2o6MIVEUCsxw3LSJ4WBrZ_mwvB4drLrCeIXFkHvO4MfGLPn3Cu2diAwTPGtAdOQQ4ZSoNYudJKbY",
+          "auth": "7aoVHMNbV0VoZUimWAu64w"
+        }
+      },
+      "enabled": true,
+      "language": "es",
+      "createdAt": "2026-02-17T10:56:49.409Z"
+    }
+  ]
+}

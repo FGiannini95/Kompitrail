@@ -3,15 +3,16 @@
     {
       "userId": 1,
       "subscription": {
-        "endpoint": "https://fcm.googleapis.com/fcm/send/fLlz8-PpT70:APA91bGhWBDqvOU1T74cjswgo3y7zO3m8CtV0uxbr9Jn3Ui9QLpg0qATM33n_M-YVpjd4hknDhffV6kYVlQ3pAmIH7Sks5UAWpWCYDyklKCWklqSKcRg1gcreypTpCqFcXvi9Us-fEff",
+        "endpoint": "https://fcm.googleapis.com/fcm/send/cyXtzCaPbn0:APA91bFxRILULU24COFsrvsezOQpA7iFerqjaquKeLI1gAp4onD0r5LUww-oZCbkKZnDQuuE8E0G4TfB4iG81OqyDWm_BEfuT4QWErrXpA43l9uFP4jYWZXTMABBOfElZFuk92lPG6Uy",
         "expirationTime": null,
         "keys": {
-          "p256dh": "BA_PMkCOOxDolMCJufFSuhnoeIhTA2MB_NdDqQLBREw4rZW4rMViQyuDsYSI7zJMfaBzHUU4zbA6UidMzu8XglQ",
-          "auth": "UHYTKpwp_N6FDiPa13QULQ"
+          "p256dh": "BOPiqPrJuK3xpDSgQa6-cWybp_0KLCNMxjv1wqH6NE-R5uHaOkbQbW0-xu5bI11OpttTfWkt-Qba22EFrnAlhZg",
+          "auth": "cXRN3nQ7QbknKpvnSYlnUQ"
         }
       },
       "enabled": true,
-      "createdAt": "2026-02-11T00:07:08.205Z"
+      "language": "en",
+      "createdAt": "2026-02-17T10:57:07.212Z"
     }
   ]
 }
