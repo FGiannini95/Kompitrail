@@ -42,8 +42,17 @@ export const MyRoute = () => {
   const currentLang = getCurrentLang(i18n);
 
   useEffect(() => {
+    // Initial load when component mounts
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     loadUserRoutes(user_id);
+
+    // Start polling every 15s while on MyRoute page
+    const interval = setInterval(() => {
+      loadUserRoutes(user_id);
+    }, 15000);
+
+    // Stop polling when leaving MyRoute
+    return () => clearInterval(interval);
   }, [tokenLocalStorage, loadUserRoutes, currentLang]);
 
   const openCreateDialog = () => {
