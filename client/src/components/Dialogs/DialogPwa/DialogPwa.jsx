@@ -24,13 +24,8 @@ export const DialogPwa = ({ open, onClose }) => {
 
   // We consider the user authenticated cause Home is only rendered when token && user are present
   const isAuthenticated = Boolean(user);
-  const { IsPwaDialogOpen, handleAccept, handleDismiss } =
+  const { IsPwaDialogOpen, handleAccept, handleDismiss, isIos } =
     usePwaPrompt(isAuthenticated);
-
-  // Detect iOS device
-  const isIos =
-    typeof window != "undefined" &&
-    /iphone|ipad|ipod/i.test(window.navigator.userAgent || "");
 
   // On iOS there is no beforeinstallprompt, so isInstallable will be false.
   // In that case we show instructions instead of trying to trigger the native prompt.

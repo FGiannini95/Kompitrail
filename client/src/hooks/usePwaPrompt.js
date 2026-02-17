@@ -15,37 +15,51 @@ export const usePwaPrompt = (isAuthenticated) => {
   const { isInstallable, triggerInstall } = usePwa();
   const [IsPwaDialogOpen, setIsPwaDialogOpen] = useState(false);
 
+  // Detect iOS device
+  const isIos =
+    typeof window != "undefined" &&
+    /iphone|ipad|ipod/i.test(window.navigator.userAgent || "");
+
   useEffect(() => {
     if (!isAuthenticated) return;
-    if (!isInstallable) return;
+    if (!isInstallable && !isIos) return;
+
     // If the user already installed the PWA
     const alreadyAccepted =
       getLocalStorage(PWA_INSTALL_ACCEPTED_KEY) === "true";
     if (alreadyAccepted) return;
+
     // If the user already dismissed the popup in the past
     const alreadyDismissed =
       getLocalStorage(PWA_INSTALL_DISMISSED_KEY) === "true";
     if (alreadyDismissed) return;
 
     setIsPwaDialogOpen(true);
-  }, [isAuthenticated, isInstallable]);
+  }, [isAuthenticated, isInstallable, isIos]);
 
   const handleAccept = useCallback(async () => {
-    // Trigger the native install prompt provided by the browser.
-    const { outcome } = await triggerInstall();
+    // Android: trigger the native install prompt provided by the browser.
+    if (isInstallable) {
+      const { outcome } = await triggerInstall();
 
-    if (outcome === "accepted") {
-      saveLocalStorage(PWA_INSTALL_ACCEPTED_KEY, "true");
-      delLocalStorage(PWA_INSTALL_DISMISSED_KEY);
+      if (outcome === "accepted") {
+        saveLocalStorage(PWA_INSTALL_ACCEPTED_KEY, "true");
+        delLocalStorage(PWA_INSTALL_DISMISSED_KEY);
+        setIsPwaDialogOpen(false);
+        return { outcome };
+      }
+
+      // If the user saw the native prompt but dismissed it,
+      saveLocalStorage(PWA_INSTALL_DISMISSED_KEY, "true");
       setIsPwaDialogOpen(false);
       return { outcome };
     }
 
-    // If the user saw the native prompt but dismissed it,
+    // iOS: close dialog
     saveLocalStorage(PWA_INSTALL_DISMISSED_KEY, "true");
     setIsPwaDialogOpen(false);
-    return { outcome };
-  }, [triggerInstall]);
+    return { outcome: "dismissed" };
+  }, [triggerInstall, isInstallable]);
 
   const handleDismiss = useCallback(() => {
     saveLocalStorage(PWA_INSTALL_DISMISSED_KEY, "true");
@@ -56,5 +70,6 @@ export const usePwaPrompt = (isAuthenticated) => {
     IsPwaDialogOpen,
     handleAccept,
     handleDismiss,
+    isIos,
   };
 };
