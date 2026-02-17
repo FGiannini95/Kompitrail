@@ -55,6 +55,7 @@ app.use(cookieParser());
 // Static assets from server/public (images, etc.)
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "public/images")));
+app.use("/api/images", express.static(path.join(__dirname, "public/images")));
 
 // API routes
 app.use("/users", usersRouter);
