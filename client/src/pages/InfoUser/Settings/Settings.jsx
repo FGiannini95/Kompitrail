@@ -107,7 +107,7 @@ export const Settings = ({ toggleMode, mode, language, changeLanguage }) => {
     <Grid container direction="column" spacing={2}>
       {/* Header */}
       <Grid container alignItems="center">
-        <IconButton onClick={() => navigate(-1)}>
+        <IconButton onClick={() => navigate(RoutesString.infouser)}>
           <ArrowBackIosIcon
             aria-hidden
             sx={(theme) => ({

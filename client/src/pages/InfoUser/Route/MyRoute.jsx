@@ -11,6 +11,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { getCurrentLang } from "../../../helpers/oneRouteUtils";
+import { RoutesString } from "../../../routes/routes";
 // Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
@@ -81,7 +82,7 @@ export const MyRoute = () => {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid container alignItems="center">
-        <IconButton onClick={() => navigate(-1)}>
+        <IconButton onClick={() => navigate(RoutesString.infouser)}>
           <ArrowBackIosIcon
             aria-hidden
             sx={(theme) => ({
