@@ -28,6 +28,10 @@ import { RoutesString } from "../../../../routes/routes";
 import { getRouteStatus } from "../../../../helpers/oneRouteUtils";
 import { getPointLabel } from "../../../../helpers/pointMetrics";
 import { ROUTES_URL } from "../../../../api";
+import {
+  getLocalStorage,
+  saveLocalStorage,
+} from "../../../../helpers/localStorageUtils";
 // Components
 import { RouteParticipantsSection } from "../../../../components/RouteParticipantsSection/RouteParticipantsSection";
 // Hooks & Providers
@@ -101,11 +105,18 @@ export const RouteCard = ({
     return createdAtDate > lastRoutesVisit;
   })();
 
-  const [showNewIcon, setShowNewIcon] = useState(() => isNew);
+  // Check if we've already shown the NEW icon for this route to this user
+  const hasSeenNewIcon =
+    getLocalStorage(`route-new-seen-${route_id}`) === "true";
+
+  // Show NEW only if route is new AND we haven't shown the icon before
+  const shouldShowNew = isNew && !hasSeenNewIcon;
+
+  const [showNewIcon, setShowNewIcon] = useState(shouldShowNew);
 
   // If the route is considered new, show the icon for 3s
   useEffect(() => {
-    if (!isNew) {
+    if (!shouldShowNew) {
       setShowNewIcon(false);
       return;
     }
@@ -114,10 +125,12 @@ export const RouteCard = ({
 
     const timeoutId = setTimeout(() => {
       setShowNewIcon(false);
+      // Mark as seen AFTER the 3s timeout
+      saveLocalStorage(`route-new-seen-${route_id}`, "true");
     }, 3000);
 
     return () => clearTimeout(timeoutId);
-  }, [isNew]);
+  }, [shouldShowNew, route_id]);
 
   const participantsSectionRef = useRef();
 
