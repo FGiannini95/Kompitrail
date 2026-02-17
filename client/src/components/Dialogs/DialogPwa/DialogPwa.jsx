@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -9,6 +10,9 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
+
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+
 import { KompitrailContext } from "../../../context/KompitrailContext";
 import { usePwaPrompt } from "../../../hooks/usePwaPrompt";
 import { usePwa } from "../../../context/PwaContext/PwaContext";
@@ -67,11 +71,24 @@ export const DialogPwa = ({ open, onClose }) => {
       </DialogTitle>
       <DialogContent>
         <Typography>
-          {isIosInstructionFlow
-            ? t("dialogs:pwaTextIos")
-            : t("dialogs:pwaText")}
+          {isIosInstructionFlow ? (
+            <Box component="span">
+              {t("dialogs:pwaTextIosFirst")}
+              <IosShareOutlinedIcon
+                sx={{
+                  verticalAlign: "top",
+                  fontSize: "1.2em",
+                  mx: 0.5,
+                }}
+              />
+              {t("dialogs:pwaTextIosSecond")}
+            </Box>
+          ) : (
+            t("dialogs:pwaText")
+          )}
         </Typography>
       </DialogContent>
+
       <DialogActions>
         {isIosInstructionFlow ? (
           <Button onClick={handleClose} color="error">
