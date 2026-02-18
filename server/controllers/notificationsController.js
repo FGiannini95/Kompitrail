@@ -151,31 +151,52 @@ class notificationsController {
       `;
 
       routes.forEach((route) => {
+        console.log(`🔍 Processing route ${route.route_id}`); // ← ADD
+
         if (isRouteAlreadySent(route.route_id)) {
+          console.log(`⏭️ Route ${route.route_id} already sent, skipping`); // ← ADD
           processedCount++;
           if (processedCount === routes.length) checkAndRespond();
           return;
         }
 
-        console.log(`📤 Processing route ${route.route_id}`);
+        console.log(`📤 Starting to process route ${route.route_id}`); // ← ADD
 
         connection.query(
           participantsQuery,
           [route.route_id, route.route_id],
           async (err2, participants) => {
             if (err2) {
+              console.log(
+                `❌ Error getting participants for route ${route.route_id}:`,
+                err2,
+              ); // ← ADD
               processedCount++;
               if (processedCount === routes.length) checkAndRespond();
               return;
             }
 
+            console.log(
+              `👥 Found ${participants.length} participants for route ${route.route_id}:`,
+              participants,
+            ); // ← ADD
+
             // Send notifications to all participants
             for (const participant of participants) {
+              console.log(
+                `📱 Sending notification to user ${participant.user_id} for route ${route.route_id}`,
+              ); // ← ADD
+
               const result = await sendNotificationToUser(
                 participant.user_id,
                 route,
                 "es",
               );
+
+              console.log(
+                `📋 Notification result for user ${participant.user_id}:`,
+                result,
+              ); // ← ADD
 
               if (result.success) {
                 totalNotificationsSent++;
