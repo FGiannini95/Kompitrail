@@ -160,12 +160,6 @@ export const Profile = () => {
     return <Loading />;
   }
 
-  // Se sei own profile, aggiungi anche:
-  if (!isOtherProfile && allRoutes?.length > 0) {
-    console.log("🔍 Sample route:", allRoutes[0]);
-    console.log("🔍 Current user:", currentUser?.user_id);
-  }
-
   return (
     <Box
       sx={(theme) => ({

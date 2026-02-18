@@ -27,7 +27,8 @@ export const getRouteStatus = (date, estimated_time) => {
   const routeStart = new Date(date);
 
   const ONE_HOUR_MS = 60 * 60 * 1000;
-  const routeDurationMs = (Number(estimated_time) || 0) * ONE_HOUR_MS;
+  const ONE_MINUTE_MS = 60 * 1000;
+  const routeDurationMs = (Number(estimated_time) || 0) * ONE_MINUTE_MS;
 
   const routeEnd = new Date(routeStart.getTime() + routeDurationMs);
   const enrollmentDeadline = new Date(routeStart.getTime() - ONE_HOUR_MS);
