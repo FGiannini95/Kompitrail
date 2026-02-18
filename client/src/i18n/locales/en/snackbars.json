@@ -14,5 +14,9 @@
   "motorbikeUpdatedSuccess": "Motorbike successfully upgraded",
   "motorbikeUpdatedError": "Error when updating the motorbike",
   "motorbikeDeleteSuccess": "Motorbike successfully removed",
-  "motorbikeDeleteError": "Error when deleting the motorbike"
+  "motorbikeDeleteError": "Error when deleting the motorbike",
+  "notificationsEnabledSuccess": "Notifications activated",
+  "notificationsEnabledError": "Error activating notifications",
+  "notificationsDisabledSuccess": "Notifications disabled",
+  "notificationsDisabledError": "Error when disabling notifications"
 }

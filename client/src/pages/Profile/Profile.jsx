@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -9,7 +9,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 // Utils
 import { RoutesString } from "../../routes/routes";
-import { getCurrentLang } from "../../helpers/oneRouteUtils";
+import { getCurrentLang, getRouteStatus } from "../../helpers/oneRouteUtils";
 // Providers & Hooks
 import { useUserAnalytics } from "../../hooks/useUserAnalytics";
 import { useOtherUserProfile } from "../../hooks/useOtherUserProfile";
@@ -37,8 +37,7 @@ export const Profile = () => {
   const { user: currentUser } = useContext(KompitrailContext);
   const { data: otherUserData, loading: otherUserLoading } =
     useOtherUserProfile(otherUserId);
-  const { motorbikes, createdRoutes, joinedRoutes, loading } =
-    useUserAnalytics();
+  const { motorbikes, createdRoutes, loading } = useUserAnalytics();
   const { companions: myCompanions = [] } = useFrequentCompanions();
   const navigate = useNavigate();
   const { isCopied, handleShare } = useShareUrl({
@@ -70,16 +69,12 @@ export const Profile = () => {
     ? otherUserData?.createdRoutes
     : createdRoutes;
 
-  const displayJoinedRoutes = isOtherProfile
-    ? otherUserData?.joinedRoutes
-    : joinedRoutes;
-
   const displayCompanions = isOtherProfile
     ? (otherUserData?.companions ?? [])
     : myCompanions;
 
   /* Decide which routes to render in the carousel.
-  Own profile  -> use allRoutes.
+  Own profile --> filter routes where current user is involved
   Other profile -> combine what the API returns for that user with what we can infer from the global list, then de-duplicate by id.*/
   const displayRoutes = isOtherProfile
     ? (() => {
@@ -119,7 +114,29 @@ export const Profile = () => {
 
         return combinedRoutesForViewedUser;
       })()
-    : (allRoutes ?? []);
+    : Array.isArray(allRoutes)
+      ? allRoutes.filter((route) => {
+          // Owner match: I created this route
+          const ownerIsMe =
+            Number(route?.user_id) === Number(currentUser?.user_id);
+          // Participant match: I'm in participants list
+          const iAmParticipant = Array.isArray(route?.participants)
+            ? route.participants.some(
+                (p) => Number(p?.user_id) === Number(currentUser?.user_id),
+              )
+            : false;
+          return ownerIsMe || iAmParticipant;
+        })
+      : [];
+
+  const totalRoutes = useMemo(() => {
+    if (!displayRoutes) return 0;
+
+    return displayRoutes.filter((route) => {
+      const { isPastRoute } = getRouteStatus(route.date, route.estimated_time);
+      return isPastRoute;
+    }).length;
+  }, [displayRoutes]);
 
   const isLoading = isOtherProfile ? otherUserLoading : loading;
 
@@ -192,7 +209,7 @@ export const Profile = () => {
         <AnalyticsTable
           motorbikes={displayMotorbikes?.total_motorbikes}
           createdRoutes={displayCreatedRoutes?.total_createdroutes}
-          joinedRoutes={displayJoinedRoutes?.total_joinedroutes}
+          totalRoutes={totalRoutes}
           loading={isLoading}
         />
       </Grid>

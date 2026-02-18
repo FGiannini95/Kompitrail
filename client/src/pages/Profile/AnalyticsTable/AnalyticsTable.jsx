@@ -36,7 +36,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export const AnalyticsTable = ({
   motorbikes,
   createdRoutes,
-  joinedRoutes,
+  totalRoutes,
   loading,
 }) => {
   const { t } = useTranslation("general");
@@ -73,7 +73,7 @@ export const AnalyticsTable = ({
               {loading ? <Loading /> : createdRoutes || 0}
             </StyledTableCell>
             <StyledTableCell align="center">
-              {loading ? <Loading /> : joinedRoutes || 0}
+              {loading ? <Loading /> : totalRoutes || 0}
             </StyledTableCell>
           </StyledTableRow>
         </TableBody>

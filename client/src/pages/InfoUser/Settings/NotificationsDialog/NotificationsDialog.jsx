@@ -17,11 +17,13 @@ import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsAc
 import NotificationsOffOutlinedIcon from "@mui/icons-material/NotificationsOffOutlined";
 
 import { usePushNotifications } from "../../../../hooks/usePushNotifications";
+import { useSnackbar } from "../../../../context/SnackbarContext/SnackbarContext";
 
 export const NotificationsDialog = ({ open, onClose }) => {
   const { t } = useTranslation(["dialogs", "buttons", "settings"]);
   const { isSubscribed, loading, subscribe, unsubscribe } =
     usePushNotifications();
+  const { showSnackbar } = useSnackbar();
 
   const isActive = isSubscribed;
   const notificationTitle = isActive
@@ -32,10 +34,24 @@ export const NotificationsDialog = ({ open, onClose }) => {
     : t("dialogs:notificactionTextEnabled");
 
   const handleToggleNotifications = async () => {
-    if (isActive) {
-      await unsubscribe();
-    } else {
-      await subscribe();
+    try {
+      if (isActive) {
+        await unsubscribe();
+        showSnackbar(t("snackbars:notificationsDisabledSuccess"));
+        onClose();
+      } else {
+        await subscribe();
+        showSnackbar(t("snackbars:notificationsEnabledSuccess"));
+        onClose();
+      }
+    } catch (err) {
+      console.log(err);
+
+      const errorMessage = isActive
+        ? t("snackbars:notificationsDisabledError")
+        : t("snackbars:notificationsEnabledError");
+
+      showSnackbar(errorMessage, "error");
     }
   };
 

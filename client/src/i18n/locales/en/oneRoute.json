@@ -9,7 +9,8 @@
     "levelLabel": "Level",
     "generalInfoTitle": "General information",
     "maxParticipantsLabel": "Max. {{count}} pilots",
-    "motorbikeTypeLabel": "Eligible motorbikes: {{types}}"
+    "motorbikeTypeLabel": "Eligible motorbikes: {{types}}",
+    "registrationCutoffLabel": "Registration closes one hour before departure time"
   },
   "status": {
     "knownRoute": "Known route - already tested",

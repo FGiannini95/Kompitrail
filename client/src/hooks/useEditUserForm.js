@@ -125,7 +125,7 @@ export const useEditUserForm = () => {
 
   const handleCancel = () => {
     setEditUser(initialValue);
-    navigate(-1);
+    navigate(RoutesString.infouser);
   };
 
   useEffect(() => {

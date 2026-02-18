@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Box, Typography } from "@mui/material";
@@ -14,7 +14,11 @@ import {
   getLocalStorage,
   saveLocalStorage,
 } from "../../helpers/localStorageUtils";
-import { getCurrentLang } from "../../helpers/oneRouteUtils";
+import {
+  getCurrentLang,
+  getEnrollmentStatus,
+  getRouteStatus,
+} from "../../helpers/oneRouteUtils";
 // Components
 import { RouteCard } from "../InfoUser/Route/RouteCard/RouteCard";
 import { EmptyState } from "../../components/EmptyState/EmptyState";
@@ -65,19 +69,44 @@ export const Home = () => {
     openCreateEditDialog({ mode: "create" });
   };
 
+  const myUpcomingRoutes = useMemo(() => {
+    return allRoutes.filter((route) => {
+      const { isPastRoute } = getRouteStatus(route.date, route.estimated_time);
+      if (isPastRoute) return false;
+
+      const { isOwner, isCurrentUserEnrolled } = getEnrollmentStatus(
+        route,
+        user.user_id,
+      );
+      return isOwner || isCurrentUserEnrolled;
+    });
+  }, [allRoutes, user.user_id]);
+
+  const availableRoutes = useMemo(() => {
+    return allRoutes.filter((route) => {
+      const { isEnrollmentClosed, isPastRoute } = getRouteStatus(
+        route.date,
+        route.estimated_time,
+      );
+      const { isRouteFull } = getEnrollmentStatus(route, user.user_id);
+
+      return !isEnrollmentClosed && !isRouteFull && !isPastRoute;
+    });
+  }, [allRoutes, user.user_id]);
+
   if (loading) {
     return <Loading />;
   }
 
-  const futureRoutes = allRoutes.filter(
-    (route) => new Date(route.date) >= new Date(),
-  );
+  if (!user?.user_id) {
+    return <Loading />;
+  }
 
   return (
     <Box sx={{ maxWidth: 480, mx: "auto", px: 2, pb: 2 }}>
       <DialogPwa />
       <UserRoutesCarousel
-        allRoutes={futureRoutes}
+        allRoutes={myUpcomingRoutes}
         title={t("general:upComingNextRoutesText")}
         showOnlyFuture={true}
         sortOrder="asc"
@@ -92,7 +121,7 @@ export const Home = () => {
           />
         }
         sx={{
-          mt: futureRoutes.length === 0 ? 2 : 0,
+          mt: myUpcomingRoutes.length === 0 ? 2 : 0,
         }}
       />
       <Grid sx={{ pt: 2 }}>
@@ -100,8 +129,8 @@ export const Home = () => {
           {t("general:yourRoutesText")}
         </Typography>
       </Grid>
-      {futureRoutes.length > 0 ? (
-        futureRoutes
+      {availableRoutes.length > 0 ? (
+        availableRoutes
           .sort((a, b) => new Date(a.date) - new Date(b.date))
           .map((route) => {
             return (

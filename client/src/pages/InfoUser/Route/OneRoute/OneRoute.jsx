@@ -434,17 +434,30 @@ export const OneRoute = () => {
           <Typography color="text.primary">
             {t("oneRoute:info.motorbikeTypeLabel", {
               types: suitable_motorbike_type,
-            })}{" "}
+            })}
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.75}>
           <DescriptionOutlinedIcon fontSize="medium" aria-hidden />
           <Typography color="text.primary">
-            {" "}
             {translatedDescription || route_description}
           </Typography>
         </Stack>
       </Stack>
+
+      {!isPastRoute && (
+        <Stack alignItems="center">
+          <Typography
+            variant="caption"
+            sx={{
+              fontStyle: "italic",
+              textAlign: "center",
+            }}
+          >
+            {t("oneRoute:info.registrationCutoffLabel")}
+          </Typography>
+        </Stack>
+      )}
 
       {/* Navigation button */}
       {!isPastRoute && (
@@ -452,7 +465,7 @@ export const OneRoute = () => {
           direction="row"
           spacing={2}
           justifyContent="center"
-          sx={{ p: "10px" }}
+          sx={{ px: "10px" }}
         >
           <OutlinedButton
             text={t("oneRoute:navigation.start")}

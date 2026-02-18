@@ -17,7 +17,14 @@ self.addEventListener("activate", (event) => {
 
 // We DO NOT intercept fetch requests.
 self.addEventListener("fetch", (event) => {
-  // Intentionally left empty
+  // Only handle navigation requests to our domain
+  if (
+    event.request.mode === "navigate" &&
+    event.request.url.startsWith(self.location.origin)
+  ) {
+    // Let the PWA handle the URL instead of opening browser
+    event.respondWith(fetch(event.request));
+  }
 });
 
 // Listen for push notifications from backend
@@ -66,10 +73,11 @@ self.addEventListener("notificationclick", (event) => {
   // Close the notification popup
   event.notification.close();
 
+  const completeUrl = event.notification.data?.url;
   // Get route ID from notification data
   const routeId = event.notification.data?.routeId;
 
-  const targetUrl = routeId ? `/route/${routeId}` : "/route";
+  const targetUrl = completeUrl || (routeId ? `/route/${routeId}` : "/route");
 
   // Try to focus existing app window, or open new one
   event.waitUntil(

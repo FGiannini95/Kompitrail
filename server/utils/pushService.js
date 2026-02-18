@@ -59,11 +59,14 @@ const createNotificationPayload = (routeData, userLanguage = "es") => {
     .replace("{startingPoint}", startingLabel)
     .replace("{endingPoint}", endingLabel);
 
+  const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  const routeUrl = `${baseUrl}/route/${routeData.route_id}`;
+
   return JSON.stringify({
     title: template.title,
     body: body,
     buttonText: template.buttonText,
-    data: { routeId: routeData.route_id },
+    data: { routeId: routeData.route_id, url: routeUrl },
   });
 };
 

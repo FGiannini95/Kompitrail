@@ -5,6 +5,8 @@ import { Box, Typography } from "@mui/material";
 
 import { KompitrailContext } from "../../../../context/KompitrailContext";
 
+import { getRouteStatus } from "../../../../helpers/oneRouteUtils";
+
 import { RouteCard } from "../RouteCard/RouteCard";
 import { CardPlaceholder } from "../../../../components/CardPlaceholder/CardPlaceholder";
 
@@ -27,8 +29,6 @@ export const UserRoutesCarousel = ({
   const userRoutes = useMemo(() => {
     if (!Array.isArray(allRoutes) || !targetUserId) return [];
 
-    const now = new Date();
-
     const filtered = allRoutes.filter((route) => {
       const isUserRoute =
         Number(route.user_id) === targetUserId ||
@@ -37,7 +37,11 @@ export const UserRoutesCarousel = ({
       if (!isUserRoute) return false;
 
       if (showOnlyFuture) {
-        return new Date(route.date) >= now;
+        const { isPastRoute } = getRouteStatus(
+          route.date,
+          route.estimated_time,
+        );
+        return !isPastRoute;
       }
 
       return true;

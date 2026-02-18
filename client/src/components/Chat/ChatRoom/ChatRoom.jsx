@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { Box, Divider, IconButton, Typography } from "@mui/material";
@@ -6,6 +6,8 @@ import Grid from "@mui/material/Grid2";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
+import { RoutesString } from "../../../routes/routes";
 // Components
 import { MessageList } from "../MessageList/MessageList";
 import { MessageInput } from "../MessageInput/MessageInput";
@@ -63,7 +65,10 @@ export const ChatRoom = ({
           wrap="nowrap"
           sx={{ px: 1, py: 1 }}
         >
-          <IconButton onClick={() => navigate(-1)} aria-label="back">
+          <IconButton
+            onClick={() => navigate(RoutesString.infouser)}
+            aria-label="back"
+          >
             <ArrowBackIosIcon
               aria-hidden
               sx={(theme) => ({

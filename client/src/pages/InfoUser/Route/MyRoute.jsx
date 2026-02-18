@@ -11,6 +11,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { getCurrentLang } from "../../../helpers/oneRouteUtils";
+import { RoutesString } from "../../../routes/routes";
 // Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
@@ -41,8 +42,17 @@ export const MyRoute = () => {
   const currentLang = getCurrentLang(i18n);
 
   useEffect(() => {
+    // Initial load when component mounts
     const { user_id } = jwtDecode(tokenLocalStorage).user;
     loadUserRoutes(user_id);
+
+    // Start polling every 15s while on MyRoute page
+    const interval = setInterval(() => {
+      loadUserRoutes(user_id);
+    }, 15000);
+
+    // Stop polling when leaving MyRoute
+    return () => clearInterval(interval);
   }, [tokenLocalStorage, loadUserRoutes, currentLang]);
 
   const openCreateDialog = () => {
@@ -81,7 +91,7 @@ export const MyRoute = () => {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid container alignItems="center">
-        <IconButton onClick={() => navigate(-1)}>
+        <IconButton onClick={() => navigate(RoutesString.infouser)}>
           <ArrowBackIosIcon
             aria-hidden
             sx={(theme) => ({

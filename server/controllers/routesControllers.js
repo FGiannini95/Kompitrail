@@ -413,17 +413,51 @@ class routesControllers {
     const sql = `
       SELECT
         r.*,
-        u.name AS create_name, 
-        u.lastname AS create_lastname,
-        u.img AS user_img 
+        creator_user.name AS create_name, 
+        creator_user.lastname AS create_lastname,
+        creator_user.img AS user_img,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(
+            route_participant.user_id, ':',
+            COALESCE(participant_user.name, ''), ':',
+            COALESCE(participant_user.img, '')
+          )
+          ORDER BY route_participant.joined_at ASC
+          SEPARATOR '|'
+        ) AS participants_raw
       FROM route r
-      LEFT JOIN \`user\` u ON u.user_id = r.user_id
-      WHERE r.user_id = ? AND r.is_deleted = 0 AND r.date >= NOW()
+      LEFT JOIN \`user\` creator_user ON creator_user.user_id = r.user_id
+      LEFT JOIN route_participant ON route_participant.route_id = r.route_id
+      LEFT JOIN \`user\` participant_user ON participant_user.user_id = route_participant.user_id
+      WHERE r.user_id = ? AND (r.date + INTERVAL r.estimated_time MINUTE) >= NOW() 
+      GROUP BY r.route_id
       ORDER BY r.route_id DESC
     `;
 
-    connection.query(sql, [user_id], (error, result) => {
-      error ? res.status(500).json({ error }) : res.status(200).json(result);
+    connection.query(sql, [user_id], (error, rows) => {
+      if (error) return res.status(500).json({ error });
+
+      const data = rows.map((r) => {
+        const participants = (r.participants_raw || "")
+          .split("|")
+          .filter(Boolean)
+          .map((triple) => {
+            const parts = triple.split(":");
+            const uid = Number(parts.shift());
+            const name = parts.shift() || "";
+            const img = parts.join(":") || "";
+            return { user_id: Number(uid), name, img };
+          });
+
+        r.suitable_motorbike_type = (r.suitable_motorbike_type || "")
+          .split(",")
+          .filter(Boolean);
+
+        const { participants_raw, ...rest } = r;
+        return { ...rest, participants };
+      });
+
+      return res.status(200).json(data);
     });
   };
 
@@ -980,7 +1014,7 @@ class routesControllers {
         FROM route r
         JOIN route_participant rp ON r.route_id = rp.route_id
         WHERE r.user_id = '${user_id}'
-          AND r.date < NOW()
+          AND (r.date + INTERVAL r.estimated_time MINUTE) < NOW()
           AND r.is_deleted = 0
           AND rp.user_id != '${user_id}'
         
@@ -995,7 +1029,7 @@ class routesControllers {
         FROM route r
         JOIN route_participant rp ON r.route_id = rp.route_id
         WHERE rp.user_id = '${user_id}'
-          AND r.date < NOW()
+          AND (r.date + INTERVAL r.estimated_time MINUTE) < NOW()
           AND r.is_deleted = 0
           AND r.user_id != '${user_id}'
         
@@ -1012,7 +1046,7 @@ class routesControllers {
         JOIN route_participant rp2 ON r.route_id = rp2.route_id
         WHERE rp.user_id = '${user_id}'
           AND r.date < NOW()
-          AND r.is_deleted = 0
+          AND (r.date + INTERVAL r.estimated_time MINUTE) < NOW()
           AND rp2.user_id != '${user_id}'
           AND rp2.user_id != r.user_id
           

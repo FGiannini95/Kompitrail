@@ -13,6 +13,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 // Utils
 import { getLocalStorage } from "../../../helpers/localStorageUtils";
 import { API_BASE, MOTORBIKES_URL } from "../../../api";
+import { RoutesString } from "../../../routes/routes";
 // Providers & Hooks
 import { useConfirmationDialog } from "../../../context/ConfirmationDialogContext/ConfirmationDialogContext";
 import { useSnackbar } from "../../../context/SnackbarContext/SnackbarContext";
@@ -89,7 +90,7 @@ export const Motorbike = () => {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid container alignItems="center">
-        <IconButton onClick={() => navigate(-1)}>
+        <IconButton onClick={() => navigate(RoutesString.infouser)}>
           <ArrowBackIosIcon
             aria-hidden
             sx={(theme) => ({

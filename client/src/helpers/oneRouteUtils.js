@@ -27,7 +27,8 @@ export const getRouteStatus = (date, estimated_time) => {
   const routeStart = new Date(date);
 
   const ONE_HOUR_MS = 60 * 60 * 1000;
-  const routeDurationMs = (Number(estimated_time) || 0) * ONE_HOUR_MS;
+  const ONE_MINUTE_MS = 60 * 1000;
+  const routeDurationMs = (Number(estimated_time) || 0) * ONE_MINUTE_MS;
 
   const routeEnd = new Date(routeStart.getTime() + routeDurationMs);
   const enrollmentDeadline = new Date(routeStart.getTime() - ONE_HOUR_MS);
@@ -38,4 +39,30 @@ export const getRouteStatus = (date, estimated_time) => {
   const isRouteLocked = isPastRoute || isEnrollmentClosed;
 
   return { isPastRoute, isEnrollmentClosed, isRouteLocked, routeEnd };
+};
+
+export const getEnrollmentStatus = (route, currentUserId) => {
+  const { participants = [], max_participants, user_id: creatorId } = route;
+  // Creator + enrolled user
+  const currentParticipants = 1 + participants.length;
+
+  const slotsAvailable = max_participants - currentParticipants;
+  const isRouteFull = slotsAvailable <= 0;
+
+  // Check if current user is already enrolled
+  const isCurrentUserEnrolled = participants.some(
+    (p) => p.user_id === currentUserId,
+  );
+  const isOwner = creatorId === currentUserId;
+  const canJoinRoute = !isOwner && !isCurrentUserEnrolled && !isRouteFull;
+
+  return {
+    currentParticipants,
+    isRouteFull,
+    isCurrentUserEnrolled,
+    isOwner,
+    canJoinRoute,
+    slotsAvailable,
+    emptySlotsCount: Math.max(0, slotsAvailable),
+  };
 };
