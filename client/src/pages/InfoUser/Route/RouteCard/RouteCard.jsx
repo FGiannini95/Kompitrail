@@ -134,7 +134,7 @@ export const RouteCard = ({
 
   const participantsSectionRef = useRef();
 
-  const { isRouteLocked } = getRouteStatus(date, estimated_time);
+  const { isRouteLocked, isPastRoute } = getRouteStatus(date, estimated_time);
 
   const handleOpenDetails = () => {
     // Guard to avoid pushing an invalid URL
@@ -270,9 +270,9 @@ export const RouteCard = ({
 
             <IconButton
               sx={{ ml: "auto" }}
-              onClick={isRouteLocked ? handleReuseRoute : handleOpenDetails}
+              onClick={isPastRoute ? handleReuseRoute : handleOpenDetails}
             >
-              {isRouteLocked ? (
+              {isPastRoute ? (
                 <AutorenewOutlinedIcon
                   fontSize="medium"
                   aria-hidden

@@ -440,23 +440,24 @@ export const OneRoute = () => {
         <Stack direction="row" spacing={0.75}>
           <DescriptionOutlinedIcon fontSize="medium" aria-hidden />
           <Typography color="text.primary">
-            {" "}
             {translatedDescription || route_description}
           </Typography>
         </Stack>
       </Stack>
 
-      <Stack alignItems="center">
-        <Typography
-          variant="caption"
-          sx={{
-            fontStyle: "italic",
-            textAlign: "center",
-          }}
-        >
-          {t("oneRoute:info.registrationCutoffLabel")}
-        </Typography>
-      </Stack>
+      {!isPastRoute && (
+        <Stack alignItems="center">
+          <Typography
+            variant="caption"
+            sx={{
+              fontStyle: "italic",
+              textAlign: "center",
+            }}
+          >
+            {t("oneRoute:info.registrationCutoffLabel")}
+          </Typography>
+        </Stack>
+      )}
 
       {/* Navigation button */}
       {!isPastRoute && (
