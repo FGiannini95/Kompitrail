@@ -31,7 +31,7 @@ export const RouteParticipantsSection = forwardRef(
       isOwner,
       isRouteLocked,
     },
-    ref
+    ref,
   ) => {
     const {
       joinRoute,
@@ -53,7 +53,7 @@ export const RouteParticipantsSection = forwardRef(
 
       // Check if current user is already enrolled
       const isCurrentUserEnrolled = participants.some(
-        (p) => p.user_id === currentUser?.user_id
+        (p) => p.user_id === currentUser?.user_id,
       );
 
       const slotsAvailable = max_participants - currentParticipants;
@@ -62,7 +62,7 @@ export const RouteParticipantsSection = forwardRef(
       // Number of empty slots  to display
       const emptySlotsCount = Math.max(
         0,
-        max_participants - currentParticipants
+        max_participants - currentParticipants,
       );
 
       return {
@@ -193,7 +193,7 @@ export const RouteParticipantsSection = forwardRef(
         ))}
       </Box>
     );
-  }
+  },
 );
 
 RouteParticipantsSection.displayName = "RouteParticipantsSection";
