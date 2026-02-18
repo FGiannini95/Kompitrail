@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const templatesPath = path.join(__dirname, "../data/sent_notifications.json");
+const templatesPath = "/var/www/kompitrail/shared/data/sent_notifications.json";
 
 // Load notification templates (JSON file → JavaScript object)
 const loadSentNotifications = () => {
