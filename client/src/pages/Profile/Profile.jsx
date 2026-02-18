@@ -37,8 +37,7 @@ export const Profile = () => {
   const { user: currentUser } = useContext(KompitrailContext);
   const { data: otherUserData, loading: otherUserLoading } =
     useOtherUserProfile(otherUserId);
-  const { motorbikes, createdRoutes, joinedRoutes, loading } =
-    useUserAnalytics();
+  const { motorbikes, createdRoutes, loading } = useUserAnalytics();
   const { companions: myCompanions = [] } = useFrequentCompanions();
   const navigate = useNavigate();
   const { isCopied, handleShare } = useShareUrl({
@@ -69,10 +68,6 @@ export const Profile = () => {
   const displayCreatedRoutes = isOtherProfile
     ? otherUserData?.createdRoutes
     : createdRoutes;
-
-  const displayJoinedRoutes = isOtherProfile
-    ? otherUserData?.joinedRoutes
-    : joinedRoutes;
 
   const displayCompanions = isOtherProfile
     ? (otherUserData?.companions ?? [])
