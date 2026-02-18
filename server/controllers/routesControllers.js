@@ -429,7 +429,7 @@ class routesControllers {
       LEFT JOIN \`user\` creator_user ON creator_user.user_id = r.user_id
       LEFT JOIN route_participant ON route_participant.route_id = r.route_id
       LEFT JOIN \`user\` participant_user ON participant_user.user_id = route_participant.user_id
-      WHERE r.user_id = ? AND r.is_deleted = 0 AND r.date >= NOW()
+      WHERE r.user_id = ? AND (r.date + INTERVAL r.estimated_time MINUTE) >= NOW() 
       GROUP BY r.route_id
       ORDER BY r.route_id DESC
     `;
@@ -1014,7 +1014,7 @@ class routesControllers {
         FROM route r
         JOIN route_participant rp ON r.route_id = rp.route_id
         WHERE r.user_id = '${user_id}'
-          AND r.date < NOW()
+          AND (r.date + INTERVAL r.estimated_time MINUTE) < NOW()
           AND r.is_deleted = 0
           AND rp.user_id != '${user_id}'
         
@@ -1029,7 +1029,7 @@ class routesControllers {
         FROM route r
         JOIN route_participant rp ON r.route_id = rp.route_id
         WHERE rp.user_id = '${user_id}'
-          AND r.date < NOW()
+          AND (r.date + INTERVAL r.estimated_time MINUTE) < NOW()
           AND r.is_deleted = 0
           AND r.user_id != '${user_id}'
         
@@ -1046,7 +1046,7 @@ class routesControllers {
         JOIN route_participant rp2 ON r.route_id = rp2.route_id
         WHERE rp.user_id = '${user_id}'
           AND r.date < NOW()
-          AND r.is_deleted = 0
+          AND (r.date + INTERVAL r.estimated_time MINUTE) < NOW()
           AND rp2.user_id != '${user_id}'
           AND rp2.user_id != r.user_id
           
