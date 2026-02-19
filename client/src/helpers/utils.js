@@ -36,7 +36,7 @@ export const capitalizeFullName = (name, lastname) => {
 
 export const formatDateTime = (
   input,
-  { locale = "es-ES", timeZone = "Europe/London" } = {},
+  { locale = "es-ES", timeZone = "Europe/Madrid" } = {},
 ) => {
   const d = input instanceof Date ? input : new Date(input);
 
