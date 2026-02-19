@@ -144,7 +144,7 @@ export const Chat = () => {
 
         // Return Tuesday 22/11/2024 at 10:45
         const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } =
-          formatDateTime(row.route_date, { locale, timeZone: "Europe/London" });
+          formatDateTime(row.route_date, { locale, timeZone: "Europe/Madrid" });
 
         const weekdayCap =
           isValid && weekday
