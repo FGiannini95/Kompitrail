@@ -24,7 +24,7 @@ export const getCurrentGPSPosition = ({
       console.error("GPS error:", error);
 
       // Fallback to Granada
-      if (fallbackToGranada && error.code === 3) {
+      if (fallbackToGranada && (error.code === 1 || error.code === 3)) {
         onSuccess?.({
           latitude: 37.1773,
           longitude: -3.5986,
@@ -39,6 +39,6 @@ export const getCurrentGPSPosition = ({
       enableHighAccuracy,
       timeout,
       maximumAge,
-    }
+    },
   );
 };
