@@ -144,14 +144,14 @@ export const Chat = () => {
 
         // Return Tuesday 22/11/2024 at 10:45
         const { date_dd_mm_yyyy, time_hh_mm, weekday, isValid } =
-          formatDateTime(row.route_date, { locale, timeZone: "Europe/Madrid" });
+          formatDateTime(row.route_date, { locale, timeZone: "Europe/London" });
 
         const weekdayCap =
           isValid && weekday
             ? weekday.charAt(0).toUpperCase() + weekday.slice(1)
             : "";
 
-        const subtitle = isValid
+        const routeDate = isValid
           ? t("subtitle", {
               weekday: weekdayCap,
               date: date_dd_mm_yyyy,
@@ -223,6 +223,7 @@ export const Chat = () => {
                   {title}
                 </Typography>
 
+                {/* Date */}
                 <Typography
                   variant="caption"
                   color="text.secondary"
@@ -232,14 +233,15 @@ export const Chat = () => {
                     fontSize: "0.7rem",
                     whiteSpace: "normal",
                     wordBreak: "break-word",
-                    mt: 0.25,
+                    mb: 1,
                   }}
                 >
-                  {subtitle}
+                  {routeDate}
                 </Typography>
 
+                {/* Last Message */}
                 <Typography
-                  variant="body2"
+                  variant="caption"
                   color="text.secondary"
                   noWrap
                   sx={{

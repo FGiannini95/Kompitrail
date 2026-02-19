@@ -66,7 +66,7 @@ export const ChatRoom = ({
           sx={{ px: 1, py: 1 }}
         >
           <IconButton
-            onClick={() => navigate(RoutesString.infouser)}
+            onClick={() => navigate(RoutesString.chat)}
             aria-label="back"
           >
             <ArrowBackIosIcon
