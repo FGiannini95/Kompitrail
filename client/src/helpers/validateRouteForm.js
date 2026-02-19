@@ -5,8 +5,12 @@ export const validateRouteForm = (routeData) => {
     errors.starting_point = "route.startingPointRequired";
   }
 
-  if (routeData.ending_point === "") {
-    errors.ending_point = "route.endingPointRequired";
+  if (
+    !routeData.ending_point ||
+    !routeData.ending_point.lat ||
+    !routeData.ending_point.lng
+  ) {
+    errors["ending_point.label"] = "route.endingPointRequired";
   }
 
   if (!routeData.date) {
