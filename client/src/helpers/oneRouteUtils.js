@@ -26,7 +26,7 @@ export const getRouteStatus = (date, estimated_time) => {
   const now = new Date();
   const routeStart = new Date(date);
 
-  const ONE_HOUR_MS = 60 * 60 * 1000;
+  const ONE_HOUR_MS = 30 * 60 * 1000;
   const ONE_MINUTE_MS = 60 * 1000;
   const routeDurationMs = (Number(estimated_time) || 0) * ONE_MINUTE_MS;
 
