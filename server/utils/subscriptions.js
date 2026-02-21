@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const SUBSCRIPTIONS_FILE = path.join(__dirname, "../data/subscriptions.json");
-const BACKUP_DIR = path.join(__dirname, "../data/backups");
+const SUBSCRIPTIONS_FILE = "/var/www/kompitrail/shared/data/subscriptions.json";
+const BACKUP_DIR = "/var/www/kompitrail/shared/data/backups";
 
 // Ensure backup directory exists
 const ensureBackupDir = () => {
