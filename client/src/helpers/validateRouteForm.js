@@ -18,7 +18,7 @@ export const validateRouteForm = (routeData) => {
   } else {
     const now = new Date();
     const routeStart = new Date(routeData.date);
-    const ONE_HOUR_MS = 60 * 60 * 1000;
+    const ONE_HOUR_MS = 30 * 60 * 1000;
     const enrollmentDeadline = new Date(routeStart.getTime() - ONE_HOUR_MS);
 
     // If current time is past enrollment deadline, route is too soon
