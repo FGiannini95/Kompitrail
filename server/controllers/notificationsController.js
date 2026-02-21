@@ -102,7 +102,7 @@ class notificationsController {
   sendRouteReminders = async (req, res) => {
     console.log("🔄 Checking for routes needing notifications...");
 
-    // Get current time and calculate time window (20-30 minutes from now)
+    // Get current time and calculate time window (25-35 minutes from now)
     const now = new Date();
     const timeMin = new Date(now.getTime() + 25 * 60 * 1000);
     const timeMax = new Date(now.getTime() + 35 * 60 * 1000);
