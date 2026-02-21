@@ -105,7 +105,7 @@ class notificationsController {
     // Get current time and calculate time window (20-30 minutes from now)
     const now = new Date();
     const timeMin = new Date(now.getTime() + 25 * 60 * 1000);
-    const timeMax = new Date(now.getTime() + 30 * 60 * 1000);
+    const timeMax = new Date(now.getTime() + 35 * 60 * 1000);
 
     const upcomingRoutes = `
       SELECT route_id, user_id, date, starting_point_i18n, ending_point_i18n, 
