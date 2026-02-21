@@ -56,8 +56,13 @@ app.use(cookieParser());
 
 // Static assets from server/public (images, etc.)
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/images", express.static(path.join(__dirname, "public/images")));
-app.use("/api/images", express.static(path.join(__dirname, "public/images")));
+const uploadsPath =
+  process.env.NODE_ENV === "production"
+    ? "/var/kompitrail/uploads/images"
+    : path.join(__dirname, "public/images");
+
+app.use("/images", express.static(uploadsPath));
+app.use("/api/images", express.static(uploadsPath));
 
 // API routes
 app.use("/users", usersRouter);
