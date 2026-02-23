@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { Box, Divider, IconButton, Typography } from "@mui/material";
@@ -36,6 +36,15 @@ export const ChatRoom = ({
     location.state?.title ||
     (mode === "group" ? "Chat" : "Assistant");
 
+  const [isIOS, setIsIOS] = useState(false);
+
+  useEffect(() => {
+    const iOS =
+      typeof window != "undefined" &&
+      /iphone|ipad|ipod/i.test(window.navigator.userAgent || "");
+    setIsIOS(iOS);
+  }, []);
+
   return (
     <Box
       sx={{
@@ -45,9 +54,18 @@ export const ChatRoom = ({
         flexDirection: "column",
         backgroundColor: (t) => t.palette.background.default,
         overflow: "hidden",
-        height: `calc(100dvh - ${keyboardHeight}px)`,
-        maxHeight: `calc(100dvh - ${keyboardHeight}px)`,
-        minHeight: 0,
+        ...(isIOS
+          ? {
+              // Browser handle the view
+              height: "100dvh",
+              paddingBottom: "env(safe-area-inset-bottom)",
+            }
+          : {
+              // Android use costum calculation
+              height: `calc(100dvh - ${keyboardHeight}px)`,
+              maxHeight: `calc(100dvh - ${keyboardHeight}px)`,
+              minHeight: 0,
+            }),
       }}
     >
       <Box
