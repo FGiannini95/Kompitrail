@@ -18,7 +18,6 @@ import { useRedirectParam } from "../../hooks/useRedirectParam";
 import { usePostAuthRedirect } from "../../hooks/usePostAuthRedirect";
 // Components
 import { Loading } from "../../components/Loading/Loading";
-import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
 import { SocialAuthButtons } from "../../components/Buttons/SocialAuthButtons/SocialAuthButtons";
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { ContainedButton } from "../../components/Buttons/ContainedButton/ContainedButton";
@@ -39,8 +38,6 @@ export const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
-  const [openRestorePasswordDialog, setOpenRestorePasswordDialog] =
-    useState(false);
   const [redirectRequested, setRedirectRequested] = useState(false);
   const { t } = useTranslation(["buttons", "general", "forms", "errors"]);
 
@@ -117,10 +114,6 @@ export const Login = () => {
 
   const handleBlur = () => {
     setIsPasswordSelected(false);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenRestorePasswordDialog(false);
   };
 
   const showLoading = redirectRequested && !(token && user);
@@ -264,7 +257,7 @@ export const Login = () => {
                   </Typography>
                 </Grid>
 
-                <Grid size={12}>
+                {/* <Grid size={12}>
                   <Typography textAlign="center">
                     <Trans
                       i18nKey="forgotPasswordText"
@@ -287,7 +280,7 @@ export const Login = () => {
                 <RestorePasswordDialog
                   openRestorePasswordDialog={openRestorePasswordDialog}
                   handleCloseDialog={handleCloseDialog}
-                />
+                /> */}
               </Grid>
             </form>
             <Box sx={{ mt: 3, mb: 2 }}>
