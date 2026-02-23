@@ -156,7 +156,10 @@ export const Login = () => {
                     label={t("forms:emailLabel")}
                     name="email"
                     fullWidth
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      e.target.value = e.target.value.toLowerCase();
+                      handleChange(e);
+                    }}
                     error={!!msgError.email}
                     helperText={msgError.email}
                     autoComplete="email"
