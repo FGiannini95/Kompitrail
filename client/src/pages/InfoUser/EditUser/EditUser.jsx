@@ -25,6 +25,7 @@ export const EditUser = () => {
     handleChange,
     handleConfirm,
     handleCancel,
+    isSubmitting,
   } = useEditUserForm();
   const { t } = useTranslation(["general", "forms"]);
 
@@ -76,7 +77,7 @@ export const EditUser = () => {
     >
       {/* Header */}
       <Grid container alignItems="center" justifyContent="space-between">
-        <IconButton onClick={handleCancel}>
+        <IconButton onClick={handleCancel} disabled={isSubmitting}>
           <ArrowBackIosIcon
             aria-hidden
             sx={(theme) => ({
@@ -90,7 +91,7 @@ export const EditUser = () => {
         <IconButton
           variant="text"
           onClick={handleConfirm}
-          disabled={!save}
+          disabled={!save || isSubmitting}
           sx={(theme) => ({
             color: theme.palette.text.primary,
           })}
@@ -146,6 +147,7 @@ export const EditUser = () => {
             <IconButton
               component="label"
               size="small"
+              disabled={isSubmitting}
               sx={(theme) => ({
                 backgroundColor: theme.palette.background.paper,
                 border: `1px solid ${theme.palette.text.primary}`,
@@ -165,6 +167,7 @@ export const EditUser = () => {
             {(photoPreview || editUser.img) && (
               <IconButton
                 size="small"
+                disabled={isSubmitting}
                 onClick={handleRemovePhoto}
                 sx={(theme) => ({
                   backgroundColor: theme.palette.background.paper,
@@ -190,6 +193,7 @@ export const EditUser = () => {
           fullWidth
           value={editUser?.name || ""}
           onChange={handleChange}
+          disabled={isSubmitting}
         />
       </Grid>
       <Grid size={12} sx={{ width: "100%", maxWidth: 400 }}>
@@ -200,6 +204,7 @@ export const EditUser = () => {
           fullWidth
           value={editUser?.lastname || ""}
           onChange={handleChange}
+          disabled={isSubmitting}
         />
       </Grid>
     </Grid>

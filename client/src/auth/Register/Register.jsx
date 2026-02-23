@@ -114,6 +114,10 @@ export const Register = () => {
                         value: 2,
                         message: t("errors:register.nameMinLength"),
                       },
+                      pattern: {
+                        value: /^[A-Za-zÀ-ÿ\s]+$/,
+                        message: t("errors:register.nameNoSpecialChars"),
+                      },
                     }}
                     render={({ field }) => (
                       <TextField
@@ -144,6 +148,10 @@ export const Register = () => {
                       minLength: {
                         value: 2,
                         message: t("errors:register.lastNameMinLength"),
+                      },
+                      pattern: {
+                        value: /^[A-Za-zÀ-ÿ\s]+$/,
+                        message: t("errors:register.lastNameNoSpecialChars"),
                       },
                     }}
                     render={({ field }) => (
@@ -181,6 +189,9 @@ export const Register = () => {
                     fullWidth
                     error={!!errors.email}
                     helperText={errors.email?.message}
+                    onChange={(e) => {
+                      e.target.value = e.target.value.toLowerCase();
+                    }}
                   />
                 </Grid>
                 <Grid size={12}>

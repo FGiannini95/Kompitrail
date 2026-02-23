@@ -30,7 +30,9 @@
     "passwordRequired": "Password is mandatory",
     "passwordWeak": "Password is not strong enough",
     "genericError": "Unknown error.",
-    "genericError2": "An unexpected error has occurred. Please try again."
+    "genericError2": "An unexpected error has occurred. Please try again.",
+    "nameNoSpecialChars": "The name can only contain letters and spaces",
+    "lastNameNoSpecialChars": "The last name can only contain letters and spaces"
   },
   "google": {
     "invalidCredentials": "Lack of credentials.",

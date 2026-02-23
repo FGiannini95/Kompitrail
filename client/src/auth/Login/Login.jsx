@@ -18,7 +18,6 @@ import { useRedirectParam } from "../../hooks/useRedirectParam";
 import { usePostAuthRedirect } from "../../hooks/usePostAuthRedirect";
 // Components
 import { Loading } from "../../components/Loading/Loading";
-import { RestorePasswordDialog } from "../RestorePasswordDialog/RestorePasswordDialog";
 import { SocialAuthButtons } from "../../components/Buttons/SocialAuthButtons/SocialAuthButtons";
 import { OutlinedButton } from "../../components/Buttons/OutlinedButton/OutlinedButton";
 import { ContainedButton } from "../../components/Buttons/ContainedButton/ContainedButton";
@@ -39,8 +38,6 @@ export const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [, setIsPasswordSelected] = useState(false);
-  const [openRestorePasswordDialog, setOpenRestorePasswordDialog] =
-    useState(false);
   const [redirectRequested, setRedirectRequested] = useState(false);
   const { t } = useTranslation(["buttons", "general", "forms", "errors"]);
 
@@ -119,10 +116,6 @@ export const Login = () => {
     setIsPasswordSelected(false);
   };
 
-  const handleCloseDialog = () => {
-    setOpenRestorePasswordDialog(false);
-  };
-
   const showLoading = redirectRequested && !(token && user);
 
   return (
@@ -156,7 +149,10 @@ export const Login = () => {
                     label={t("forms:emailLabel")}
                     name="email"
                     fullWidth
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      e.target.value = e.target.value.toLowerCase();
+                      handleChange(e);
+                    }}
                     error={!!msgError.email}
                     helperText={msgError.email}
                     autoComplete="email"
@@ -261,7 +257,7 @@ export const Login = () => {
                   </Typography>
                 </Grid>
 
-                <Grid size={12}>
+                {/* <Grid size={12}>
                   <Typography textAlign="center">
                     <Trans
                       i18nKey="forgotPasswordText"
@@ -284,7 +280,7 @@ export const Login = () => {
                 <RestorePasswordDialog
                   openRestorePasswordDialog={openRestorePasswordDialog}
                   handleCloseDialog={handleCloseDialog}
-                />
+                /> */}
               </Grid>
             </form>
             <Box sx={{ mt: 3, mb: 2 }}>

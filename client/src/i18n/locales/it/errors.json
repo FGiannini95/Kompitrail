@@ -30,7 +30,9 @@
     "passwordRequired": "La password è obbligatoria",
     "passwordWeak": "La password non è abbastanza forte",
     "genericError": "Errore sconosciuto.",
-    "genericError2": "Si è verificato un errore imprevisto. Si prega di riprovare."
+    "genericError2": "Si è verificato un errore imprevisto. Si prega di riprovare.",
+    "nameNoSpecialChars": "Il nome può contenere solo lettere e spazi",
+    "lastNameNoSpecialChars": "Il cognome può contenere solo lettere e spazi"
   },
   "google": {
     "invalidCredentials": "Mancanza di credenziali.",

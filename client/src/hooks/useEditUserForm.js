@@ -19,6 +19,7 @@ export const useEditUserForm = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [save, setSave] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const tokenLocalStorage = getLocalStorage("token");
   const { user_id } = jwtDecode(tokenLocalStorage).user;
@@ -85,6 +86,8 @@ export const useEditUserForm = () => {
       newFormData.append("file", editUser.photo);
     }
 
+    setIsSubmitting(true);
+
     axios
       .put(`${API_BASE}/users/edituser/${user_id}`, newFormData, {
         headers: {
@@ -120,7 +123,8 @@ export const useEditUserForm = () => {
       .catch((err) => {
         console.error("Error al actualizar el usuario:", err);
         console.error("Error:", err.response?.data);
-      });
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   const handleCancel = () => {
@@ -158,5 +162,6 @@ export const useEditUserForm = () => {
     handleChange,
     handleConfirm,
     handleCancel,
+    isSubmitting,
   };
 };

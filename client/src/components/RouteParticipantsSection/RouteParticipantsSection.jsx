@@ -109,7 +109,7 @@ export const RouteParticipantsSection = forwardRef(
       joinRoute(route_id, currentUser.user_id)
         .then(() => {
           showSnackbar(t("snackbars:routeJoinSuccess"));
-          navigate(RoutesString.home);
+          //navigate(RoutesString.home);
         })
         .catch((err) => {
           console.log(err);
