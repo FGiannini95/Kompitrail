@@ -120,24 +120,6 @@ export const useNavigationInstructions = (routeData, currentPosition) => {
     currentInstructionData,
   ]);
 
-  // useNavigationInstructions.js - Aggiungi alla fine della funzione, prima del return
-  useEffect(() => {
-    console.log("🔍 PROD DEBUG useNavigationInstructions:");
-    console.log("  - routeData exists:", !!routeData);
-    console.log("  - currentPosition exists:", !!currentPosition);
-    console.log("  - loading:", loading);
-    console.log("  - instructions.length:", instructions.length);
-    console.log("  - error:", error);
-    console.log("  - currentInstructionIndex:", currentInstructionIndex);
-  }, [
-    routeData,
-    currentPosition,
-    loading,
-    instructions.length,
-    error,
-    currentInstructionIndex,
-  ]);
-
   return {
     instructions,
     currentInstruction,
