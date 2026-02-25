@@ -98,14 +98,6 @@ export const useGPSTracking = ({
     };
   }, [autoStart]);
 
-  // useGPSTracking.js - Aggiungi alla fine della funzione, prima del return
-  useEffect(() => {
-    console.log("🔍 PROD DEBUG useGPSTracking:");
-    console.log("  - isTracking:", isTracking);
-    console.log("  - currentPosition exists:", !!currentPosition);
-    console.log("  - error:", error);
-  }, [isTracking, currentPosition, error]);
-
   return {
     currentPosition,
     isTracking,

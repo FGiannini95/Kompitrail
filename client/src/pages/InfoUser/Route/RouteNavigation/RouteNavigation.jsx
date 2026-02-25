@@ -95,17 +95,6 @@ export const RouteNavigation = () => {
     }
   }, [currentPosition, routeData, isNearStartingPoint]);
 
-  // RouteNavigation.jsx - Aggiungi dopo le dichiarazioni di stato
-  useEffect(() => {
-    console.log("🔍 PROD DEBUG RouteNavigation:");
-    console.log("  - hostname:", window.location.hostname);
-    console.log("  - currentPosition exists:", !!currentPosition);
-    console.log("  - currentPosition value:", currentPosition);
-    console.log("  - routeData exists:", !!routeData);
-    console.log("  - isNearStartingPoint:", isNearStartingPoint);
-    console.log("  - navigationStarted:", navigationStarted);
-  }, [currentPosition, routeData, isNearStartingPoint, navigationStarted]);
-
   if (!routeData) {
     return null;
   }
