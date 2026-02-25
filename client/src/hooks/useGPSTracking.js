@@ -72,7 +72,7 @@ export const useGPSTracking = ({
     watchIdRef.current = navigator.geolocation.watchPosition(
       handlePositionSuccess,
       handlePositionError,
-      gpsOptions
+      gpsOptions,
     );
   }, []);
 
@@ -97,6 +97,14 @@ export const useGPSTracking = ({
       stopTracking();
     };
   }, [autoStart]);
+
+  // useGPSTracking.js - Aggiungi alla fine della funzione, prima del return
+  useEffect(() => {
+    console.log("🔍 PROD DEBUG useGPSTracking:");
+    console.log("  - isTracking:", isTracking);
+    console.log("  - currentPosition exists:", !!currentPosition);
+    console.log("  - error:", error);
+  }, [isTracking, currentPosition, error]);
 
   return {
     currentPosition,
