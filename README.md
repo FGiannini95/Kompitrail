@@ -62,5 +62,33 @@ npm install
 npm run dev
 ```
 
+### Environment Variables (`server/.env`)
+
+```env
+DB_HOST=
+DB_USER=
+DB_PASS=
+DB_NAME=
+SECRET=
+DB_PORT=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+FRONTEND_URL=
+
+DEEPL_API_KEY=
+
+OPENAI_API_KEY=
+
+ORS_API_KEY=
+
+MAPBOX_TOKEN=
+
+VAPID_PUBLIC_KEY=
+VAPID_PRIVATE_KEY=
+VAPID_EMAIL=
+```
+
 ## 🚀 Quick Start (Production)
 - Visit the web => https://kompitrail.es/
